@@ -54,7 +54,7 @@
         },
         "serve": {
           "options": {
-            "allowedHosts": ["hms-frontend-pod3.onrender.com"]
+            "allowedHosts": ["hms-frontend-pod3.onrender.com","https://hms-frontend-pod3.onrender.com"]
           },
           "builder": "@angular/build:dev-server",
           "configurations": {
