@@ -15,7 +15,7 @@ export class LoginComponent {
   constructor(readonly fb: FormBuilder) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.email, Validators.required]],
-      password: ['', [Validators.minLength(8), Validators.required]],
+      password: ['', [Validators.required]],
     });
   }
 

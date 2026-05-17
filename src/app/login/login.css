@@ -2,14 +2,14 @@
     width: 100vw;
     height: 100vh;
     display: flex;
-    justify-content: flex-end;
+    justify-content: center;
     align-items: center;
 }
 
 .login-container{
     height: 95vh;
     width:45vw;
-    margin-right:1vw;
+    margin-left:1vw;
     background: rgba(255,255,255,0.1);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
@@ -32,7 +32,7 @@ form{
 
 .hms-logo{
     display: block;
-    width:20vw;
+    width:15vw;
     height: auto;
 }
 
