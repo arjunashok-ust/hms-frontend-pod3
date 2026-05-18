@@ -129,7 +129,7 @@ input[type='date']::-webkit-calendar-picker-indicator {
   cursor: pointer;
 }
 
-.time-slot-container{
+.slot-container{
     width: 50%;
     border: solid rgb(200, 200, 200) 1px;
     border-radius: 10px;
@@ -141,12 +141,12 @@ input[type='date']::-webkit-calendar-picker-indicator {
     padding:20px;
 }
 
-.time-slot-container select{
+.slot-container select{
     width:60%;
     font-size:12px;
 }
 
-.time-slot-container input[type="button"]{
+.slot-container input[type="button"]{
     width:60%;
     background: transparent;
     outline: none;

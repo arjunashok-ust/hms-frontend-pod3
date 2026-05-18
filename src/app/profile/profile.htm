@@ -4,7 +4,7 @@
     <div class="user-container">
       <div class="field">
         <label for="field">Employee Id : </label>
-        <span>{{ user.name }}</span>
+        <span>{{ user.employeeId }}</span>
       </div>
       <div class="field">
         <label for="field">Name : </label>
@@ -17,17 +17,9 @@
       <div class="field">
         <label for="field">Roles : </label>
         <div class="role-container" *ngFor="let role of user.roles">
-            <span>{{ role }}</span>
+          <span>{{ role }}</span>
         </div>
       </div>
-      <div class="field">
-        <label for="field">Department : </label>
-        <span>{{ user.department }}</span>
-      </div>
-      <div class="field">
-                <label for="field">Joining Date : </label>
-                <span>{{ user.joiningDate }}</span>
-    </div>
     </div>
   </div>
 </div>

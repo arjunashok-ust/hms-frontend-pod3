@@ -11,13 +11,19 @@
         <span *ngIf="signUpForm.get('email')?.errors?.['required']">email is required.</span>
         <span *ngIf="signUpForm.get('email')?.errors?.['email']">email is invalid.</span>
       </small>
-      <select id="roles" formControlName="roles">
+      <select id="roles" formControlName="roles" (change)="toggleRole(signUpForm.get('roles')?.value.role_name)">
         <option value="" disabled>Role</option>
-        <option *ngFor="let role of roles_data" [value]="role">{{ role }}</option>
+        <option *ngFor="let role of roles_data" [ngValue]="role">{{ role.role_name }}</option>
       </select>
       <small *ngIf="!signUpForm.get('roles')?.valid&&signUpForm.get('roles')?.touched"
         >role is required.</small
       >
+      <div class="slot-container" *ngIf="signUpForm.value.selectedRoles.length">
+        <label for="slot-container">Selected Roles</label>
+        <div class="selected-option" *ngFor="let role of signUpForm.value.selectedRoles">
+          <label for="selected-option">{{ role }}</label>
+        </div>
+      </div>
       <input type="password" id="password" placeholder="Password" formControlName="password" />
       <small *ngIf="signUpForm.get('password')?.touched">
         <span *ngIf="signUpForm.get('password')?.errors?.['required']">password is required.</span>
@@ -27,22 +33,31 @@
       </small>
       <select id="department" formControlName="department">
         <option value="" disabled>Department</option>
-        <option *ngFor="let department of departments_data" [value]="department">
-          {{ department }}
+        <option *ngFor="let department of departments_data" [ngValue]="department.department_name">
+          {{ department.department_name }}
         </option>
       </select>
       <small *ngIf="!signUpForm.get('department')?.valid&&signUpForm.get('department')?.touched"
         >department is required.</small
       >
+      <input
+        type="text"
+        placeholder="Designation"
+        formControlName="designation"
+      />
+      <small
+        *ngIf="!signUpForm.get('designation')?.valid&&signUpForm.get('designation')?.touched"
+        >designation is required.</small
+      >
       <select id="status" formControlName="status">
         <option value="" disabled>Status</option>
-        <option value="active">Active</option>
-        <option value="inactive">In Active</option>
+        <option value="Active">Active</option>
+        <option value="Inactive">In Active</option>
       </select>
       <small *ngIf="!signUpForm.get('status')?.valid&&signUpForm.get('status')?.touched"
         >status is required.</small
       >
-      <div class="time-slot-container">
+      <div class="slot-container">
         <label for="datePicker">Joining Date</label>
         <input type="date" placeholder="Date" formControlName="joiningDate" id="datePicker" />
         <small *ngIf="!signUpForm.get('joiningDate')?.valid&&signUpForm.get('joiningDate')?.touched"
@@ -60,8 +75,8 @@
       >
       <select id="specialization" formControlName="specialization">
         <option value="" disabled>Specialization</option>
-        <option *ngFor="let specialization of specializations_data" [value]="specialization">
-          {{ specialization }}
+        <option *ngFor="let specialization of specializations_data" [ngValue]="specialization.specialization_name">
+          {{ specialization.specialization_name }}
         </option>
       </select>
       <small
@@ -78,8 +93,8 @@
         *ngIf="!signUpForm.get('consultationFee')?.valid&&signUpForm.get('consultationFee')?.touched"
         >consultation fee is required.</small
       >
-      <div class="time-slot-container">
-        <label for="time-slot-container">Select Time Slots</label>
+      <div class="slot-container">
+        <label for="slot-container">Select Time Slots</label>
         <select id="startTime" formControlName="startHour">
           <option value="" disabled>Start Hour</option>
           <option *ngFor="let hour of hours" [value]="hour">{{ hour }}</option>
@@ -98,14 +113,14 @@
           [disabled]="signUpForm.errors?.['invalidTimeRange']"
         />
       </div>
-      <div class="time-slot-container" *ngIf="generatedSlots.length">
-        <label for="time-slot-container">Generated Time Slots</label>
+      <div class="slot-container" *ngIf="generatedSlots.length">
+        <label for="slot-container">Generated Time Slots</label>
         <div class="generated-option" *ngFor="let slot of generatedSlots">
           <input type="checkbox" [value]="slot" (change)="toggleSlot(slot)" /> {{ slot }}
         </div>
       </div>
-      <div class="time-slot-container" *ngIf="signUpForm.value.availabilitySlots.length">
-        <label for="time-slot-container">Selected Time Slots</label>
+      <div class="slot-container" *ngIf="signUpForm.value.availabilitySlots.length">
+        <label for="slot-container">Selected Time Slots</label>
         <div class="selected-option" *ngFor="let slot of signUpForm.value.availabilitySlots">
           <label for="selected-option">{{ slot }}</label>
         </div>

@@ -1,7 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { FormGroup, ReactiveFormsModule, FormBuilder, Validators, FormArray } from '@angular/forms';
 import { timeRangeValidator } from '../validators/time-range-validator';
+import { AuthService } from '../service/auth/auth.service';
+import { DepartmentModel, RoleModel, SpecializationModel } from '../models/auth/auth.model';
+import { mapToSignUpRequest } from '../mapper/mapToSignUpRequest';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-signup',
@@ -10,8 +14,29 @@ import { timeRangeValidator } from '../validators/time-range-validator';
   standalone: true,
   imports: [ReactiveFormsModule, CommonModule],
 })
-export class SignUpComponent {
+export class SignUpComponent implements OnInit {
   signUpForm: FormGroup;
+  auth: AuthService = inject(AuthService);
+  roles_data: RoleModel[] = [];
+  departments_data: DepartmentModel[] = [];
+  specializations_data: SpecializationModel[] = [];
+  route : Router = inject(Router);
+  cd: ChangeDetectorRef = inject(ChangeDetectorRef);
+
+  ngOnInit() {
+    this.auth.getUiData<RoleModel[]>('/auth/getRoles').subscribe((res) => {
+      this.roles_data = res;
+      this.cd.detectChanges();
+    });
+    this.auth.getUiData<DepartmentModel[]>('/auth/getDepartments').subscribe((res) => {
+      this.departments_data = res;
+      this.cd.detectChanges();
+    });
+    this.auth.getUiData<SpecializationModel[]>('/auth/getSpecializations').subscribe((res) => {
+      this.specializations_data = res;
+      this.cd.detectChanges();
+    });
+  }
 
   public constructor(readonly fb: FormBuilder) {
     this.signUpForm = this.fb.group(
@@ -31,6 +56,7 @@ export class SignUpComponent {
         startHour: [''],
         endHour: [''],
         availabilitySlots: this.fb.array([]),
+        selectedRoles: this.fb.array([]),
       },
       {
         validators: timeRangeValidator,
@@ -38,20 +64,6 @@ export class SignUpComponent {
     );
   }
 
-  // Roles
-  roles_data: any[] = [
-    'Doctor',
-    'Nurse',
-    'Lab Tech',
-    'Owner',
-    'Cashier',
-    'Receptionist',
-    'Pharmacist',
-  ];
-  // Departments
-  departments_data = ['OPD', 'OCD', 'ICU', 'OT'];
-  // Specialization
-  specializations_data = ['Cardiologist', 'Pediatrist', 'Dermatologist', 'Radiologist'];
   // Hours
   hours = Array.from({ length: 24 }, (_, i) => i);
   // Generated Slot
@@ -89,12 +101,35 @@ export class SignUpComponent {
     }
   }
 
+  toggleRole(role: string) {
+    console.log(role);
+    const arr = this.signUpForm.get('selectedRoles') as FormArray;
+    if (arr.value.includes(role)) {
+      const index = arr.value.indexOf(role);
+      arr.removeAt(index);
+    } else {
+      arr.push(this.fb.control(role));
+    }
+  }
+
   // Formatting
   format(i: number) {
     return i.toString().padStart(2, '0');
   }
 
   onSubmit() {
-    console.log(this.signUpForm);
+    console.log(this.signUpForm.value);
+    const payload = mapToSignUpRequest(this.signUpForm);
+    console.log(payload);
+    this.auth.signUp(payload).subscribe({
+      next: (res) => {
+        console.log(res);
+        alert(res.message);
+        this.route.navigate(['/login']);
+      },
+      error: (error) => {
+        console.log(error);
+      }
+    });
   }
 }

@@ -8,4 +8,37 @@ body {
 }
 
 
+@keyframes zoomIn{
+  0%{
+    transform: scale(0.7);
+    opacity: 0;
+  }
+  100%{
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp{
+  0%{
+    transform: translateY(50px);
+    opacity: 0;
+  }
+  100%{
+    transform: translateY(0px);
+    opacity: 1;
+  }
+}
+
+@keyframes slideRight{
+  0%{
+    transform: translateX(-50px);
+    opacity: 0;
+  }
+  100%{
+    transform: translateX(0px);
+  }
+}
+
+
 

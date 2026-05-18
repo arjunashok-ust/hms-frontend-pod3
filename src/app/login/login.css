@@ -19,6 +19,7 @@
     display: flex;
     align-items: center;
     flex-direction: column;
+    animation: zoomIn .5s ease-out;
 }
 
 form{
@@ -34,6 +35,7 @@ form{
     display: block;
     width:15vw;
     height: auto;
+    animation: zoomIn 0.8s ease-out;
 }
 
 input{
@@ -47,6 +49,7 @@ input[type="email"],input[type="password"]{
     border: 0;
     color:white;
     border-bottom: solid rgb(200, 200, 200) 1px; 
+    animation: slideRight 0.8s ease-out;
 }
 
 input[type="email"]:focus,input[type="password"]:focus{
@@ -66,6 +69,11 @@ label {
 label[for="forgot-password"]{
     margin-left: auto;
     margin-right: 20%;
+    animation: slideRight 0.8s ease-out;
+}
+
+label[for="signup"]{
+    animation: slideUp 0.8s ease-out;
 }
 
 input[type="submit"]{
@@ -73,6 +81,7 @@ input[type="submit"]{
     padding: 10px 0px;
     font-family: Arial, Helvetica, sans-serif;
     border-radius: 3px;
+    animation: slideUp 0.8s ease-out;
 }
 
 small {

@@ -1,6 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormGroup, Validators, ReactiveFormsModule, FormBuilder } from '@angular/forms';
+import { AuthService } from '../service/auth/auth.service';
+import { LoginModel } from '../models/auth/auth.model';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -9,9 +12,11 @@ import { FormGroup, Validators, ReactiveFormsModule, FormBuilder } from '@angula
   standalone: true,
   imports: [ReactiveFormsModule, CommonModule],
 })
-
 export class LoginComponent {
   loginForm: FormGroup;
+  auth: AuthService = inject(AuthService);
+  router: Router = inject(Router);
+
   constructor(readonly fb: FormBuilder) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.email, Validators.required]],
@@ -20,6 +25,15 @@ export class LoginComponent {
   }
 
   onSubmit() {
-    console.log(this.loginForm.value);
+    const payload: LoginModel = this.loginForm.value;
+    this.auth.login(payload).subscribe({
+      next: (res) => {
+        alert(`${res.message} \n Token : ${res.token}`);
+        this.router.navigate(['/profile'], {
+          queryParams: { email: payload.email },
+        });
+      },
+      error: (error) => alert(error.message),
+    });
   }
 }

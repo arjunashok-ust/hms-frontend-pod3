@@ -1,5 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
+import { UserModel } from '../models/user/user.model';
+import { UserService } from '../service/user/user.service';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-profile',
@@ -8,16 +11,39 @@ import { Component } from '@angular/core';
   standalone: true,
   imports: [CommonModule],
 })
-export class ProfileComponent {
-  user: UserData = new UserData();
-}
+export class ProfileComponent implements OnInit {
+  userService: UserService = inject(UserService);
+  savedRoute: ActivatedRoute = inject(ActivatedRoute);
+  route: Router = inject(Router);
+  cd: ChangeDetectorRef = inject(ChangeDetectorRef);
+  user: UserModel = {
+    name: '',
+    email: '',
+    designation: '',
+    employeeId: '',
+    status: '',
+    roles: '',
+    lastLoginAt: '',
+  };
 
-class UserData {
-  employeeId: string = 'EMP-000001';
-  name: string = 'John Doe';
-  email: string = 'johndoe@hms.com';
-  roles: string[] = ['Owner', 'Doctor'];
-  department: string = 'OCD';
-  joiningDate: string = '12/03/2023';
-  medicalRegistrationNo: string = 'MED12345';
+  ngOnInit(): void {
+    this.savedRoute.queryParams.subscribe((params) => {
+      let email = params['email'];
+      console.log('email ' + email);
+      if (!email) {
+        this.route.navigate(['/login']);
+        return;
+      }
+      this.userService.getUserProfile(email || '').subscribe({
+        next: (res) => {
+          console.log(res);
+          this.user = res;
+          this.cd.detectChanges();
+        },
+        error: (error) => {
+          console.log(error);
+        },
+      });
+    });
+  }
 }
