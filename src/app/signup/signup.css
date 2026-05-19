@@ -1,28 +1,3 @@
-.box-container-wrapper {
-  width: 100vw;
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.box-container {
-  height: 95vh;
-  width: 45vw;
-  margin-left: 1vw;
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border-radius: 10px;
-  border: solid 1px rgb(129, 129, 129);
-  box-shadow: 0px 2px 7px 3px rgba(0, 0, 0, 0.2);
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-  overflow-y: scroll;
-  padding-bottom: 20px;
-}
-
 form {
   display: flex;
   width: 100%;
@@ -35,6 +10,7 @@ form {
   display: block;
   width: 15vw;
   height: auto;
+  animation:zoomIn .7s ease-out;
 }
 
 input {
@@ -52,6 +28,7 @@ input[type='date'] {
   border: 0;
   color: white;
   border-bottom: solid rgb(200, 200, 200) 1px;
+  animation: .7s slideRight ease-out;
 }
 
 input[type='email']:focus,
@@ -94,14 +71,6 @@ small {
   border-radius: 2px;
 }
 
-.box-container::-webkit-scrollbar {
-  width: 0;
-}
-
-.box-container::-webkit-scrollbar-thumb {
-  background: transparent;
-}
-
 select {
   width: 60%;
   outline: none;
@@ -111,6 +80,7 @@ select {
   color: white;
   border-bottom: solid rgb(200, 200, 200) 1px;
   font-family: Arial, Helvetica, sans-serif;
+  animation:.8s slideUp ease-out;
 }
 
 option {
@@ -139,6 +109,7 @@ input[type='date']::-webkit-calendar-picker-indicator {
     flex-direction: column;
     gap:10px;
     padding:20px;
+    animation: zoomIn .5s ease-out;
 }
 
 .slot-container select{

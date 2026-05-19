@@ -1,4 +1,4 @@
-import { SignUpModel } from '../models/auth/auth.model';
+import { SignUpModel } from '../app/models/auth/auth.model';
 
 export function mapToSignUpRequest(form: any): SignUpModel {
   return {
@@ -10,7 +10,7 @@ export function mapToSignUpRequest(form: any): SignUpModel {
     designation: form.value.designation,
     status: form.value.status,
     joiningDate: form.value.joiningDate,
-    medicalRegistrationNo: form.medicalRegistrationNo || null,
+    medicalRegistrationNo: form.value.medicalRegistrationNo ?? null,
     specialization: form.value.specialization ?? null,
     qualification: form.value.qualification,
     consultationFee: form.value.consultationFee ?? null,

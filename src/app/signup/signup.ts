@@ -4,7 +4,7 @@ import { FormGroup, ReactiveFormsModule, FormBuilder, Validators, FormArray } fr
 import { timeRangeValidator } from '../validators/time-range-validator';
 import { AuthService } from '../service/auth/auth.service';
 import { DepartmentModel, RoleModel, SpecializationModel } from '../models/auth/auth.model';
-import { mapToSignUpRequest } from '../mapper/mapToSignUpRequest';
+import { mapToSignUpRequest } from '../../mapper/mapToSignUpRequest';
 import { Router } from '@angular/router';
 
 @Component({
@@ -14,6 +14,7 @@ import { Router } from '@angular/router';
   standalone: true,
   imports: [ReactiveFormsModule, CommonModule],
 })
+
 export class SignUpComponent implements OnInit {
   signUpForm: FormGroup;
   auth: AuthService = inject(AuthService);
@@ -25,6 +26,7 @@ export class SignUpComponent implements OnInit {
 
   ngOnInit() {
     this.auth.getUiData<RoleModel[]>('/auth/getRoles').subscribe((res) => {
+      console.log(res);
       this.roles_data = res;
       this.cd.detectChanges();
     });
@@ -120,7 +122,6 @@ export class SignUpComponent implements OnInit {
   onSubmit() {
     console.log(this.signUpForm.value);
     const payload = mapToSignUpRequest(this.signUpForm);
-    console.log(payload);
     this.auth.signUp(payload).subscribe({
       next: (res) => {
         console.log(res);

@@ -1,5 +1,6 @@
+@import url('https://fonts.googleapis.com/css2?family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
 body {
-  background: url('assets/cover.jpg');
+  background: url('assets/cover.jpg');                     
   background-size: cover;
   background-attachment: fixed;
   font-family: Arial, Helvetica, sans-serif;
@@ -7,6 +8,58 @@ body {
   padding: 0;
 }
 
+.box-container-wrapper {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  background: rgba(0,0,0,0.5);
+  justify-content: center;
+  align-items: center;
+}
+
+.box-container {
+  height: 95vh;
+  width: 45vw;
+  margin-left: 1vw;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 10px;
+  border: solid 1px rgb(129, 129, 129);
+  box-shadow: 0px 2px 30px 5px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  overflow-y: scroll;
+  padding-bottom: 20px;
+  animation: zoomIn .5s ease-out;
+}
+
+.box-container::-webkit-scrollbar {
+  width: 0;
+}
+
+.box-container::-webkit-scrollbar-thumb {
+  background: transparent;
+}
+
+input{
+  transition:.2s ease-out;
+}
+
+input:hover{
+  transform: scale(1.1);
+  transition:.2s ease-out;
+}
+
+select{
+  transition:.2s ease-out;
+}
+
+select:hover{
+  transform: scale(1.1);
+  transition:.2s ease-out;
+}
 
 @keyframes zoomIn{
   0%{

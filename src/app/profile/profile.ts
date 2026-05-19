@@ -29,11 +29,11 @@ export class ProfileComponent implements OnInit {
   ngOnInit(): void {
     this.savedRoute.queryParams.subscribe((params) => {
       let email = params['email'];
-      console.log('email ' + email);
       if (!email) {
         this.route.navigate(['/login']);
         return;
       }
+      
       this.userService.getUserProfile(email || '').subscribe({
         next: (res) => {
           console.log(res);
