@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
-import { UserModel } from '../models/user/user.model';
-import { UserService } from '../service/user/user.service';
+import { UserModel } from '../../models/user/user.model';
+import { UserService } from '../../services/user.service';
 import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({

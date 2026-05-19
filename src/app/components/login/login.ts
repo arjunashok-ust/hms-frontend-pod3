@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { FormGroup, Validators, ReactiveFormsModule, FormBuilder } from '@angular/forms';
-import { AuthService } from '../service/auth/auth.service';
-import { LoginModel } from '../models/auth/auth.model';
+import { AuthService } from '../../services/auth.service';
+import { LoginModel } from '../../models/auth/auth.model';
 import { Router } from '@angular/router';
 
 @Component({
@@ -28,6 +28,8 @@ export class LoginComponent {
     const payload: LoginModel = this.loginForm.value;
     this.auth.login(payload).subscribe({
       next: (res) => {
+        // saving token to local
+        localStorage.setItem('token',res.token);
         alert(`${res.message} \n Token : ${res.token}`);
         this.router.navigate(['/profile'], {
           queryParams: { email: payload.email },

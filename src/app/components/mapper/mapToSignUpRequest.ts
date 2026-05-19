@@ -1,4 +1,4 @@
-import { SignUpModel } from '../app/models/auth/auth.model';
+import { SignUpModel } from '../../models/auth/auth.model';
 
 export function mapToSignUpRequest(form: any): SignUpModel {
   return {

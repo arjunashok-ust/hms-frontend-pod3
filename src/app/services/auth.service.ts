@@ -1,8 +1,8 @@
 import { inject, Injectable } from '@angular/core';
-import { LoginModel, SignUpModel } from '../../models/auth/auth.model';
+import { LoginModel,SignUpModel } from '../models/auth/auth.model';
 import { catchError, Observable, throwError } from 'rxjs';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { ApiUrl } from '../../../environment/environment';
+import { ApiUrl } from '../environment/environment';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {

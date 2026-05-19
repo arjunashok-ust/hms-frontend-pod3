@@ -30,3 +30,4 @@ export interface DepartmentModel{
 export interface SpecializationModel{
     specialization_name: string;
 }
+

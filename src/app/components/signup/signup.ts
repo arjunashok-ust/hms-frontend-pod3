@@ -1,10 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { FormGroup, ReactiveFormsModule, FormBuilder, Validators, FormArray } from '@angular/forms';
-import { timeRangeValidator } from '../validators/time-range-validator';
-import { AuthService } from '../service/auth/auth.service';
-import { DepartmentModel, RoleModel, SpecializationModel } from '../models/auth/auth.model';
-import { mapToSignUpRequest } from '../../mapper/mapToSignUpRequest';
+import { timeRangeValidator } from '../../validators/time-range-validator';
+import { AuthService } from '../../services/auth.service';
+import { DepartmentModel, RoleModel, SpecializationModel } from '../../models/auth/auth.model';
+import { mapToSignUpRequest } from '../mapper/mapToSignUpRequest';
 import { Router } from '@angular/router';
 
 @Component({
