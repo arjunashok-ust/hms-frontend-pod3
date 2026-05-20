@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { LoginModel,SignUpModel } from '../models/auth/auth.model';
+import { LoginModel,SignUpModel } from '../models/auth.model';
 import { catchError, Observable, throwError } from 'rxjs';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { ApiUrl } from '../environment/environment';
@@ -28,7 +28,7 @@ export class AuthService {
   // error handling
   handleError(error: HttpErrorResponse) {
     console.log('API Error : ', error);
-    let message = 'Something went wrong!';
+    let message = `Error Connecting Server!`;
     if (error.error?.message) {
       message = error.error?.message;
     }

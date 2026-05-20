@@ -1,0 +1,31 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-left h3 {
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.admin-name {
+  font-weight: 600;
+}
+
+.header-right img {
+  border-radius: 50%;
+  width: 35px;
+  height: 35px;
+}

@@ -2,7 +2,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { ApiUrl } from '../environment/environment';
 import { catchError, Observable, throwError } from 'rxjs';
-import { UserModel } from '../models/user/user.model';
+import { UserModel } from '../models/user.model';
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
@@ -19,7 +19,6 @@ export class UserService {
       })
       .pipe(catchError(this.handleError));
   }
-
   handleError(err: HttpErrorResponse) {
     let message = 'Unexpected error happend!';
     if (err.error?.message) {
