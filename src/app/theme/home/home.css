@@ -1,0 +1,16 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f5f7fb;
+}
+
+.main-content {
+  margin-top: 60px;
+  margin-left: 220px;
+  padding: 20px;
+}

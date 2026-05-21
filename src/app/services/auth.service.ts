@@ -10,7 +10,6 @@ export class AuthService {
   http: HttpClient = inject(HttpClient);
   // signUp
   signUp(data: SignUpModel): Observable<any> {
-    console.log(data);
     return this.http
       .post(`${this.api.backend_url}/auth/signUp`, data)
       .pipe(catchError(this.handleError));

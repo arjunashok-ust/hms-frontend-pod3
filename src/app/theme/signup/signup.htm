@@ -15,21 +15,14 @@
         </small>
         <select
           id="roles"
-          formControlName="roles"
-          (change)="toggleRole(signUpForm.get('roles')?.value.role_name)"
+          formControlName="role"
         >
           <option value="" disabled>Role</option>
-          <option *ngFor="let role of roles_data" [ngValue]="role">{{ role.role_name }}</option>
+          <option *ngFor="let role of roles_data" [ngValue]="role.role_name">{{ role.role_name }}</option>
         </select>
         <small *ngIf="!signUpForm.get('roles')?.valid&&signUpForm.get('roles')?.touched"
           >role is required.</small
         >
-        <div class="slot-container" *ngIf="signUpForm.value.selectedRoles.length">
-          <label for="slot-container">Selected Roles</label>
-          <div class="selected-option" *ngFor="let role of signUpForm.value.selectedRoles">
-            <label for="selected-option">{{ role }}</label>
-          </div>
-        </div>
         <input type="password" id="password" placeholder="Password" formControlName="password" />
         <small *ngIf="signUpForm.get('password')?.touched">
           <span *ngIf="signUpForm.get('password')?.errors?.['required']"

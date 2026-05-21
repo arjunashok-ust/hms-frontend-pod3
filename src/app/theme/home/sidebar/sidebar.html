@@ -1,0 +1,7 @@
+<aside class="sidebar">
+  <nav>
+    <ul>
+      <li routerLinkActive="active" *ngFor="let node of nodeData"><a routerLink="{{ node.path }}"><i class="{{ node.icon }}"></i> {{ node.name }}</a></li>
+    </ul>
+  </nav>
+</aside>

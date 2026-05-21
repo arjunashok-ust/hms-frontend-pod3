@@ -1,0 +1,41 @@
+<section class="cards">
+  <div class="card employee-card">Total Employees: {{ dashboardData?.employeeCount }}</div>
+
+  <div class="card active-card">Active Employees: {{ dashboardData?.activeCount }}</div>
+
+  <div class="card approval-card">Pending Approvals: {{ dashboardData?.pendingApprovalCount }}</div>
+
+  <div class="card verify-card">Pending Verifications: {{ dashboardData?.pendingVerifyCount }}</div>
+
+  <div class="card patient-card">Patients: {{ dashboardData?.patientCount }}</div>
+
+  <div class="card department-card">Departments: {{ dashboardData?.departmentCount }}</div>
+
+  <div class="card appointment-card">Appointments: {{ dashboardData?.appointmentCount }}</div>
+</section>
+
+<section class="table-section">
+  <h3>Employee List</h3>
+
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Designation</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr *ngFor="let user of userData">
+        <td>{{ user.employeeCode }}</td>
+        <td>{{ user.name }}</td>
+        <td>{{ user.email }}</td>
+        <td>{{ user.designation }}</td>
+        <td>{{ user.status }}</td>
+      </tr>
+    </tbody>
+  </table>
+</section>

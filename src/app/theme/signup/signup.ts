@@ -25,7 +25,6 @@ export class SignUpComponent implements OnInit {
 
   ngOnInit() {
     this.auth.getUiData<RoleModel[]>('/ui/getRoles').subscribe((res) => {
-      console.log(res);
       this.roles_data = res;
       this.cd.detectChanges();
     });
@@ -44,7 +43,7 @@ export class SignUpComponent implements OnInit {
       {
         name: ['', [Validators.required]],
         email: ['', [Validators.email, Validators.required]],
-        roles: ['', [Validators.required]],
+        role: ['', [Validators.required]],
         password: ['', [Validators.required, Validators.minLength(8)]],
         department: ['', Validators.required],
         designation: ['', Validators.required],
@@ -102,24 +101,13 @@ export class SignUpComponent implements OnInit {
     }
   }
 
-  toggleRole(role: string) {
-    console.log(role);
-    const arr = this.signUpForm.get('selectedRoles') as FormArray;
-    if (arr.value.includes(role)) {
-      const index = arr.value.indexOf(role);
-      arr.removeAt(index);
-    } else {
-      arr.push(this.fb.control(role));
-    }
-  }
-
   // Formatting
   format(i: number) {
     return i.toString().padStart(2, '0');
   }
 
   onSubmit() {
-    console.log(this.signUpForm.value);
+    console.log("On Submit Sign Up : ",this.signUpForm.value);
     const payload = mapToSignUpRequest(this.signUpForm);
     this.auth.signUp(payload).subscribe({
       next: (res) => {

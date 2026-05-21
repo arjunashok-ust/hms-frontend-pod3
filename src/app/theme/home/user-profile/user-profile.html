@@ -1,0 +1,41 @@
+<section class="profile-container">
+  <div class="profile-header">
+    <div class="profile-icon">
+      <i class="bi bi-person-circle"></i>
+    </div>
+    <div>
+      <h2>{{ userData?.name }}</h2>
+      <p>{{ userData?.designation}}</p>
+    </div>
+  </div>
+
+  <div class="profile-card">
+    <h3>Personal Information</h3>
+
+    <div class="profile-grid">
+      <div class="profile-field">
+        <label for="name">Full Name</label>
+        <input type="text" [value]="userData?.name" />
+      </div>
+
+      <div class="profile-field">
+        <label for="email">Email</label>
+        <input type="email" [value]="userData?.email" />
+      </div>
+
+
+      <div class="profile-field">
+        <label for="role">Role</label>
+        <input type="text" [value]="userData?.role" />
+      </div>
+
+      <div class="profile-field">
+        <label for="status">Status</label>
+        <input type="text" value="Active" />
+      </div>
+    </div>
+
+    <div class="profile-actions">
+    </div>
+  </div>
+</section>

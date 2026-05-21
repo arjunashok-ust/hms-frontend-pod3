@@ -3,11 +3,12 @@ import { inject, Injectable } from '@angular/core';
 import { ApiUrl } from '../environment/environment';
 import { catchError, Observable, throwError } from 'rxjs';
 import { UserModel } from '../models/user.model';
+import { NodeModel } from '../models/ui.model';
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
   http: HttpClient = inject(HttpClient);
-  api = new ApiUrl();
+  api: ApiUrl = new ApiUrl();
 
   // get user profile
   getUserProfile(email: string) : Observable<any> {
@@ -19,6 +20,7 @@ export class UserService {
       })
       .pipe(catchError(this.handleError));
   }
+
   handleError(err: HttpErrorResponse) {
     let message = 'Unexpected error happend!';
     if (err.error?.message) {
@@ -26,5 +28,12 @@ export class UserService {
     }
 
     return throwError(() => new Error(message));
+  }
+
+  // get nodes
+  getNodes(role : string) : Observable<NodeModel[]> {
+    return this.http.get<NodeModel[]>(`${this.api.backend_url}/node/getNodes`,{
+      params: {role: role},
+    }).pipe(catchError(this.handleError));
   }
 }

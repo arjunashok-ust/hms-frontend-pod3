@@ -5,7 +5,7 @@ export function mapToSignUpRequest(form: any): SignUpModel {
     name: form.value.name,
     email: form.value.email,
     password: form.value.password,
-    roles: form.value.selectedRoles,
+    role: form.value.role?? null,
     department: form.value.department?? null,
     designation: form.value.designation,
     status: form.value.status,

@@ -2,17 +2,18 @@ export interface UserModel{
     name: string,
     designation: string,
     email: string,
-    employeeId: string,
+    employeeCode: string,
     status: string,
-    roles: string,
+    role: string,
     lastLoginAt: string
 }
 
 export interface UserResponseModel{
+    name: string,
     email: string,
     status: string,
-    roles: string[],
-    employeeId: string,
+    role: string,
+    employeeCode: string,
     isActivated: boolean,
     isVerified: boolean,
     firstLogin: boolean
