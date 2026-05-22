@@ -4,6 +4,7 @@ import { SignUpComponent } from './theme/signup/signup';
 import { HomeComponent } from './theme/home/home';
 import { UserProfileComponent } from './theme/home/user-profile/user-profile';
 import { DashboardComponent } from './theme/home/dashboard/dashboard';
+import { AppointmentComponent } from './theme/home/appointment/appointment';
 
 export const routes: Routes = [
   {
@@ -12,6 +13,7 @@ export const routes: Routes = [
     children: [
       { path: 'dashboard', component: DashboardComponent },
       { path: 'profile', component: UserProfileComponent },
+      { path: 'appointment', component: AppointmentComponent },
     ],
   },
   { path: 'login', component: LoginComponent },

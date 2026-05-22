@@ -11,12 +11,39 @@ export class UserService {
   api: ApiUrl = new ApiUrl();
 
   // get user profile
-  getUserProfile(email: string) : Observable<any> {
+  getUserProfile(email: string): Observable<any> {
     return this.http
       .get<UserModel>(`${this.api.backend_url}/user/getUserProfile`, {
         params: {
           email: email,
         },
+      })
+      .pipe(catchError(this.handleError));
+  }
+
+  // get nodes
+  getNodes(role: string): Observable<NodeModel[]> {
+    return this.http
+      .get<NodeModel[]>(`${this.api.backend_url}/node/getNodes`, {
+        params: { role: role },
+      })
+      .pipe(catchError(this.handleError));
+  }
+
+  // get name by employee id
+  getNameByEmployeeId(employeeId: string): Observable<any> {
+    return this.http
+      .get<any>(`${this.api.backend_url}/user/getNameByEmployeeId`, {
+        params: { employeeId: employeeId },
+      })
+      .pipe(catchError(this.handleError));
+  }
+
+  // get name by patient id
+  getNameByPatientId(patientId: string): Observable<any> {
+    return this.http
+      .get<any>(`${this.api.backend_url}/user/getNameByPatientId`, {
+        params: { patientId: patientId },
       })
       .pipe(catchError(this.handleError));
   }
@@ -28,12 +55,5 @@ export class UserService {
     }
 
     return throwError(() => new Error(message));
-  }
-
-  // get nodes
-  getNodes(role : string) : Observable<NodeModel[]> {
-    return this.http.get<NodeModel[]>(`${this.api.backend_url}/node/getNodes`,{
-      params: {role: role},
-    }).pipe(catchError(this.handleError));
   }
 }

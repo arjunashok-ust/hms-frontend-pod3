@@ -68,6 +68,7 @@
           type="text"
           placeholder="Medical Registration Number"
           formControlName="medicalRegistrationNo"
+          *ngIf="signUpForm.get('role')?.value == 'Doctor'"
         />
         <small
           *ngIf="!signUpForm.get('medicalRegistrationNo')?.valid&&signUpForm.get('medicalRegistrationNo')?.touched"
@@ -91,12 +92,12 @@
           *ngIf="!signUpForm.get('qualification')?.valid&&signUpForm.get('qualification')?.touched"
           >qualification is required.</small
         >
-        <input type="number" placeholder="Consultation Fee" formControlName="consultationFee" />
+        <input type="number" placeholder="Consultation Fee" formControlName="consultationFee" *ngIf="signUpForm.get('role')?.value == 'Doctor'"/>
         <small
           *ngIf="!signUpForm.get('consultationFee')?.valid&&signUpForm.get('consultationFee')?.touched"
           >consultation fee is required.</small
         >
-        <div class="slot-container">
+        <div class="slot-container" *ngIf="signUpForm.get('role')?.value == 'Doctor'">
           <label for="slot-container">Select Time Slots</label>
           <select id="startTime" formControlName="startHour">
             <option value="" disabled>Start Hour</option>
@@ -119,7 +120,7 @@
         <div class="slot-container" *ngIf="generatedSlots.length">
           <label for="slot-container">Generated Time Slots</label>
           <div class="generated-option" *ngFor="let slot of generatedSlots">
-            <p>{{ slot }}</p>
+            <span>{{ slot }}</span>
             <input type="checkbox"  [value]="slot" (change)="toggleSlot(slot)" /> 
           </div>
         </div>

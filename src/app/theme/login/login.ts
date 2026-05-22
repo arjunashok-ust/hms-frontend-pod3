@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { FormGroup, Validators, ReactiveFormsModule, FormBuilder } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { LoginModel } from '../../models/auth.model';
@@ -16,6 +16,7 @@ export class LoginComponent {
   loginForm: FormGroup;
   auth: AuthService = inject(AuthService);
   router: Router = inject(Router);
+  cd : ChangeDetectorRef = inject(ChangeDetectorRef);
 
   constructor(readonly fb: FormBuilder) {
     this.loginForm = this.fb.group({
@@ -33,9 +34,11 @@ export class LoginComponent {
         }
         // saving token to local
         localStorage.setItem('token', res.token);
-        localStorage.setItem('email',res.email)
+        localStorage.setItem('email',res.email);
+        
+        this.cd.detectChanges();
     
-        alert(`${res.message} \n Token : ${res.token}`);
+        alert(`${res.message} \n`);
         this.router.navigate(['/profile']);
       },
       error: (error) => alert(error.message),

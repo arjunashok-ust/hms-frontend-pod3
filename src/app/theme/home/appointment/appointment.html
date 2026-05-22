@@ -1,0 +1,371 @@
+<div class="appointment-wrapper">
+  <div class="stats-grid">
+    <div class="stat-card blue">
+      <div class="stat-top">
+        <div class="stat-icon">
+          <i class="bi bi-calendar-check fs-4"></i>
+        </div>
+        <span class="stat-trend trend-up">↑ 12%</span>
+      </div>
+      <div class="stat-body">
+        <h2>248</h2>
+        <p>Total Appointments</p>
+      </div>
+    </div>
+
+    <div class="stat-card green">
+      <div class="stat-top">
+        <div class="stat-icon">
+          <i class="bi bi-check-circle"></i>
+        </div>
+        <span class="stat-trend trend-up">↑ 8%</span>
+      </div>
+      <div class="stat-body">
+        <h2>185</h2>
+        <p>Completed</p>
+      </div>
+    </div>
+
+    <div class="stat-card amber">
+      <div class="stat-top">
+        <div class="stat-icon">
+          <i class="bi bi-clock"></i>
+        </div>
+        <span class="stat-trend trend-neutral">→ 0%</span>
+      </div>
+      <div class="stat-body">
+        <h2>Date</h2>
+        <p>12-04-2026</p>
+      </div>
+    </div>
+
+    <div class="stat-card rose">
+      <div class="stat-top">
+        <div class="stat-icon">
+          <i class="bi bi-x-circle"></i>
+        </div>
+        <span class="stat-trend trend-down">↓ 3%</span>
+      </div>
+      <div class="stat-body">
+        <h2>21</h2>
+        <p>Cancelled</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="content-grid">
+    <div class="glass-panel">
+      <div class="panel-header">
+        <div>
+          <span class="panel-subtitle">New Entry</span>
+          <h2>Book Appointment</h2>
+        </div>
+        <div class="panel-actions">
+          <button title="Reset" (click)="appointmentForm.reset()"><i class="bi bi-arrow-clockwise"></i></button>
+        </div>
+      </div>
+
+      <form [formGroup]="appointmentForm" id="appointmentForm" (submit)="onSubmit()">
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label" for="patient-id">
+              <i class="fas fa-id-card"></i>
+              Patient ID
+              <span class="required">*</span>
+            </label>
+            <input
+              type="text"
+              class="form-input"
+              id="patientId"
+              placeholder="e.g. PAT-00123"
+              formControlName="patientId"
+              required
+            />
+            <span class="helper-text">Enter registered patient ID</span>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="doctor">
+              <i class="fas fa-user-md"></i>
+              Doctor
+              <span class="required">*</span>
+            </label>
+            <select
+              class="form-select"
+              id="doctorEmployeeId"
+              formControlName="doctorEmployeeId"
+              (change)="onDoctorChange()"
+              required
+            >
+              <option value="" disabled selected>Select Doctor</option>
+              <option [value]="doctor.employeeCode" *ngFor="let doctor of doctors">
+                {{ doctor.name }} — {{ doctor.specialization }}
+              </option>
+            </select>
+          </div>
+        </div>
+        <div class="section-divider">
+          <div class="divider-line"></div>
+          <span class="divider-label">
+            <i class="fas fa-calendar-alt"></i>
+            Schedule
+          </span>
+          <div class="divider-line"></div>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group span-2">
+            <label class="form-label" for="appointment-date">
+              <i class="fas fa-calendar-day"></i>
+              Appointment Date
+              <span class="required">*</span>
+            </label>
+            <input
+              type="date"
+              class="form-input"
+              id="appointmentDate"
+              formControlName="date"
+              required
+            />
+          </div>
+
+          <div class="form-group span-2">
+            <label class="form-label" for="time-slot">
+              <i class="fas fa-clock"></i>
+              Time Slot
+              <span class="required">*</span>
+            </label>
+            <div class="time-slots-grid" *ngIf="doctorTimeSlots.length > 0">
+              <div class="time-slot-container" *ngFor="let slot of doctorTimeSlots">
+                <input
+                  type="radio"
+                  name="timeSlot"
+                  formControlName="timeSlot"
+                  id="t1"
+                  [value]="slot"
+                  class="time-radio"
+                />
+                <label for="t1" class="time-label">{{ slot }}</label>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="section-divider">
+          <div class="divider-line"></div>
+          <span class="divider-label">
+            <i class="fas fa-flag"></i>
+            Status
+          </span>
+          <div class="divider-line"></div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="status">
+            <i class="fas fa-toggle-on"></i>
+            Appointment Status
+            <span class="required">*</span>
+          </label>
+          <div class="status-group">
+            <input
+              type="radio"
+              name="status"
+              id="status-booked"
+              formControlName="status"
+              value="Booked"
+              class="status-radio"
+              checked
+            />
+            <label class="status-label" for="status-booked">
+              <span class="status-dot"></span> Booked
+            </label>
+
+            <input
+              type="radio"
+              name="status"
+              id="status-cancelled"
+              formControlName="status"
+              value="Cancelled"
+              class="status-radio"
+            />
+            <label class="status-label" for="status-cancelled">
+              <span class="status-dot"></span> Cancelled
+            </label>
+
+            <input
+              type="radio"
+              name="status"
+              id="status-completed"
+              formControlName="status"
+              value="Completed"
+              class="status-radio"
+            />
+            <label class="status-label" for="status-completed">
+              <span class="status-dot"></span> Completed
+            </label>
+          </div>
+        </div>
+        <div class="section-divider">
+          <div class="divider-line"></div>
+          <span class="divider-label">
+            <i class="fas fa-user-shield"></i>
+            Staff Info
+          </span>
+          <div class="divider-line"></div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="created-employee-id">
+            <i class="fas fa-id-badge"></i>
+            Created By (Employee ID)
+            <span class="required">*</span>
+          </label>
+          <input
+            type="text"
+            class="form-input"
+            id="createdByEmployeeId"
+            formControlName="createdByEmployeeId"
+            readonly
+          />
+          <div class="info-box">
+            <i class="fas fa-info-circle"></i>
+            Auto-filled from your logged-in session
+          </div>
+        </div>
+        <div class="form-footer">
+          <button type="button" class="btn btn-ghost" (click)="appointmentForm.reset()">
+            <i class="fas fa-redo"></i> Reset
+          </button>
+          <button type="button" class="btn btn-danger-outline" routerLink="/profile">
+            <i class="fas fa-times"></i> Cancel
+          </button>
+          <button type="submit" class="btn btn-primary">
+            <i class="fas fa-calendar-plus"></i> Book Appointment
+          </button>
+        </div>
+      </form>
+    </div>
+    <div class="glass-panel">
+      <div class="panel-header">
+        <div>
+          <span class="panel-subtitle">Today's Overview</span>
+          <h2>Quick Info</h2>
+        </div>
+        <div class="panel-actions">
+          <button title="Refresh"><i class="fas fa-sync-alt"></i></button>
+        </div>
+      </div>
+      <div class="section-divider">
+        <div class="divider-line"></div>
+        <span class="divider-label">
+          <i class="fas fa-stethoscope"></i>
+          Doctor Availability
+        </span>
+        <div class="divider-line"></div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 14px">
+        <div
+          style="
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: white;
+            padding: 16px 18px;
+            border-radius: 16px;
+          "
+          *ngFor="let doctor of doctors"
+        >
+          <div class="patient-info">
+            <div
+              class="patient-avatar"
+              style="background: linear-gradient(135deg, #2563eb, #3b82f6)"
+            >
+              {{ doctor.name.slice(0, 3).toUpperCase() }}
+            </div>
+            <div>
+              <h4 style="margin: 0; font-size: 0.95rem">{{ doctor.name }}</h4>
+              <span>{{ doctor.specialization }}</span>
+            </div>
+          </div>
+          <span
+            class="status-badge"
+            [class.status-booked]="doctor.status === 'Active'"
+            [class.status-cancelled]="doctor.status === 'Inactive'"
+            >{{ doctor.status }}</span
+          >
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="glass-panel full-width" style="margin-top: 22px">
+    <div class="panel-header">
+      <div>
+        <span class="panel-subtitle">Records</span>
+        <h2>Recent Appointments</h2>
+      </div>
+    </div>
+
+    <div class="table-wrapper">
+      <table class="modern-table">
+        <thead>
+          <tr>
+            <th>Appointment ID</th>
+            <th>Patient</th>
+            <th>Doctor</th>
+            <th>Date</th>
+            <th>Time Slot</th>
+            <th>Status</th>
+            <th>Created By</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let appointment of appointments">
+            <td>
+              <span class="apt-id">{{ appointment.appointmentId }}</span>
+            </td>
+            <td>
+              <div class="patient-info">
+                <div
+                  class="patient-avatar"
+                  style="background: linear-gradient(135deg, #16a34a, #22c55e)"
+                >
+                  AT
+                </div>
+                <div>
+                  <h4>{{ patientNameMap[appointment.patientId] | async }}</h4>
+                  <span>{{ appointment.patientId }}</span>
+                </div>
+              </div>
+            </td>
+            <td>
+              <span class="designation-badge">{{ employeeNameMap[appointment.doctorEmployeeId] | async }}</span>
+            </td>
+            <td class="muted-text">{{ appointment.date | date: 'dd, MMM hh a' }}</td>
+            <td>
+              <span class="designation-badge">{{ appointment.timeSlot }}</span>
+            </td>
+            <td>
+              <span
+                class="status-badge"
+                [class.status-booked]="appointment.status == 'Booked'"
+                [class.status-cancelled]="appointment.status == 'Cancelled'"
+                [class.status-completed]="appointment.status == 'Completed'"
+                >{{ appointment.status }}</span
+              >
+            </td>
+            <td class="muted-text"> {{ employeeNameMap[appointment.createdByEmployeeId] | async }}
+            </td>
+            <td>
+              <div class="action-btns">
+                <button class="action-btn delete" title="Delete">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

@@ -5,7 +5,7 @@
     <p class="title-text">Please enter your credentials to access your account</p>
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
       <label for="email">Email</label>
-      <input type="email" formControlName="email" placeholder="Email" id="email" />
+      <input type="email" formControlName="email" placeholder="example@gmail.com" id="email" />
       <small>
         <span *ngIf="loginForm.get('email')?.errors?.['required']&&loginForm.get('email')?.touched"
           >email is required.</span
@@ -15,7 +15,7 @@
         >
       </small>
        <label for="password">Password</label>
-      <input type="password" formControlName="password" placeholder="Password" id="password" />
+      <input type="password" formControlName="password" placeholder="password" id="password" />
       <small>
         <span
           *ngIf="loginForm.get('password')?.errors?.['required']&&loginForm.get('password')?.touched"

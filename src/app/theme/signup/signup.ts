@@ -73,11 +73,7 @@ export class SignUpComponent implements OnInit {
     let startHour = Number(this.signUpForm.get('startHour')?.value);
     let endHour = Number(this.signUpForm.get('endHour')?.value);
 
-    if (!startHour || !endHour) {
-      return;
-    }
-
-    if (startHour >= endHour) {
+    if(startHour == null || endHour == null || startHour>=endHour){
       return;
     }
 
@@ -107,7 +103,7 @@ export class SignUpComponent implements OnInit {
   }
 
   onSubmit() {
-    console.log("On Submit Sign Up : ",this.signUpForm.value);
+    console.log('On Submit Sign Up : ', this.signUpForm.value);
     const payload = mapToSignUpRequest(this.signUpForm);
     this.auth.signUp(payload).subscribe({
       next: (res) => {

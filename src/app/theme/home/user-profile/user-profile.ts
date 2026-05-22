@@ -21,6 +21,7 @@ export class UserProfileComponent implements OnInit {
       next: (res) => {
         this.userData = res;
         localStorage.setItem('role',this.userData?.role ?? '');
+        localStorage.setItem('employeeId',this.userData?.employeeId ?? '');
         this.cd.detectChanges();
       },
       error: (err) => {

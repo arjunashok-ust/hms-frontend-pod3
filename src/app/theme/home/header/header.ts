@@ -9,6 +9,8 @@ import { Router, RouterModule } from '@angular/router';
 })
 export class HeaderComponent {
   router : Router= inject(Router);
+  name = localStorage.getItem('name');
+  
   logout(){
     localStorage.clear();
     this.router.navigate(['/login']);

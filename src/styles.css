@@ -58,29 +58,20 @@ h2{
   background: transparent;
 }
 
-input{
-  transition:.2s ease-out;
-}
-
-input:hover{
-  transform: scale(1.1);
-  transition:.2s ease-out;
-}
-
-select{
-  transition:.2s ease-out;
-}
-
-select:hover{
-  transform: scale(1.1);
-  transition:.2s ease-out;
-}
 
 a{
   text-decoration: none;
   color:black;
 }
 
+.cover-image {
+  width: 55%;
+  height: 100%;
+  border-radius: 15px;
+  background: url('/assets/cover.jpg') center/cover no-repeat;
+  animation: zoomIn .5s ease-out;
+  box-shadow: inset 0px 5px 40px rgba(0,0,0,0.4);
+}
 
 @keyframes zoomIn{
   0%{
@@ -103,6 +94,7 @@ a{
     opacity: 1;
   }
 }
+
 
 @keyframes slideRight{
   0%{

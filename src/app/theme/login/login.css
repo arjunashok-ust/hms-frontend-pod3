@@ -106,16 +106,6 @@ small {
   margin-bottom: -5px;
 }
 
-.cover-image {
-  width: 55%;
-  background: url("/assets/cover.jpg");
-  border-radius: 15px;
-  background-size:cover ;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
 form label{
   color:rgb(36, 36, 36);
 }
