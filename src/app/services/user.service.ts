@@ -4,11 +4,13 @@ import { ApiUrl } from '../environment/environment';
 import { catchError, Observable, throwError } from 'rxjs';
 import { UserModel } from '../models/user.model';
 import { NodeModel } from '../models/ui.model';
+import { Router } from '@angular/router';
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
   http: HttpClient = inject(HttpClient);
   api: ApiUrl = new ApiUrl();
+  router: Router = inject(Router);
 
   // get user profile
   getUserProfile(email: string): Observable<any> {
@@ -46,6 +48,11 @@ export class UserService {
         params: { patientId: patientId },
       })
       .pipe(catchError(this.handleError));
+  }
+
+  // logout
+  logout(){
+    return this.router.navigate(['/login']);
   }
 
   handleError(err: HttpErrorResponse) {

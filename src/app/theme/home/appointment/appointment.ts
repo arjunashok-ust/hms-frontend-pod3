@@ -10,10 +10,10 @@ import { RouterModule } from '@angular/router';
 import { mapToAppointmentRequest } from '../../mapper/mapToAppointmentRequest';
 import { AppointmentService } from '../../../services/appointment.service';
 import { UserService } from '../../../services/user.service';
-import { AppointmentModel } from '../../../models/appointment.model';
+import { AppointmentModel, AppointmentResponseModel } from '../../../models/appointment.model';
 import { CommonModule } from '@angular/common';
 import { EmployeeModel } from '../../../models/user.model';
-import { Observable, shareReplay } from 'rxjs';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-appointment',
@@ -26,11 +26,13 @@ export class AppointmentComponent implements OnInit {
   appointmentService: AppointmentService = inject(AppointmentService);
   userService: UserService = inject(UserService);
   doctors: EmployeeModel[] | null = null;
+  appointmentUiData : AppointmentResponseModel | null = null;
   appointments: AppointmentModel[] | null = null;
   cd: ChangeDetectorRef = inject(ChangeDetectorRef);
 
   // for setting doctor time slots
   doctorTimeSlots: string[] = [''];
+  date = Date.now();
 
   employeeId = localStorage.getItem('employeeId');
   employeeNameMap: { [key: string]: Observable<string> } = {};
@@ -55,6 +57,14 @@ export class AppointmentComponent implements OnInit {
   }
 
   loadUiData() {
+    this.appointmentService.getAppointmentUiData().subscribe({
+      next: (res) => {
+        this.appointmentUiData = res;
+      },
+      error: (err) => {
+        console.log("Appointment Ui Data Error : ",err);
+      }
+    })
     this.appointmentService.getAllDoctors().subscribe({
       next: (res) => {
         this.doctors = res;
@@ -104,11 +114,23 @@ export class AppointmentComponent implements OnInit {
     this.appointmentForm.patchValue({ timeSlot: '' });
   }
 
+  deleteAppointment(appointmentId: string){
+    this.appointmentService.deleteAppointment(appointmentId).subscribe({
+      next: (res) => {
+        this.cd.detectChanges();
+        alert(res.message);
+      },
+      error: (err) => {
+        alert(err);
+      }
+    })
+  }
+
   onSubmit() {
     const payload = mapToAppointmentRequest(this.appointmentForm);
     this.appointmentService.createAppointment(payload).subscribe({
       next: (res) => {
-        console.log(res);
+        this.cd.detectChanges();
         alert(res.message);
       },
       error: (err) => {
@@ -116,5 +138,6 @@ export class AppointmentComponent implements OnInit {
       },
     });
     this.appointmentForm.reset();
+    this.doctorTimeSlots.length = 0;
   }
 }

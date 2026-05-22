@@ -2,7 +2,7 @@ export interface UserModel{
     name: string,
     designation: string,
     email: string,
-    employeeId: string,
+    employeeCode: string,
     status: string,
     role: string,
     lastLoginAt: string

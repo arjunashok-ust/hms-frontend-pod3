@@ -1,9 +1,9 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { ApiUrl } from '../environment/environment';
-import { AppointmentModel } from '../models/appointment.model';
+import { AppointmentModel, AppointmentResponseModel } from '../models/appointment.model';
 import { catchError, Observable, throwError } from 'rxjs';
-import { EmployeeModel, UserModel } from '../models/user.model';
+import { EmployeeModel } from '../models/user.model';
 
 @Injectable({ providedIn: 'root' })
 export class AppointmentService {
@@ -28,6 +28,22 @@ export class AppointmentService {
   getAllDoctors(): Observable<EmployeeModel[]> {
     return this.http
       .get<EmployeeModel[]>(`${this.api.backend_url}/appointment/getDoctors`)
+      .pipe(catchError(this.handleError));
+  }
+
+  // get appointment ui data
+  getAppointmentUiData(): Observable<AppointmentResponseModel> {
+    return this.http
+      .get<AppointmentResponseModel>(`${this.api.backend_url}/appointment/getAppointmentUiData`)
+      .pipe(catchError(this.handleError));
+  }
+
+  // delete appointment
+  deleteAppointment(appointmentId: string): Observable<any> {
+    return this.http
+      .get(`${this.api.backend_url}/appointment/deleteAppointment`, {
+        params: { appointmentId: appointmentId },
+      })
       .pipe(catchError(this.handleError));
   }
 

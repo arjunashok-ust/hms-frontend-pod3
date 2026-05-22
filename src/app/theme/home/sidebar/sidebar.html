@@ -1,7 +1,35 @@
 <aside class="sidebar">
-  <nav>
+  <div class="sidebar-section-label">
+    <span>Menu</span>
+  </div>
+
+  <nav class="sidebar-nav">
     <ul>
-      <li routerLinkActive="active" *ngFor="let node of nodeData"><a routerLink="{{ node.path }}"><i class="{{ node.icon }}"></i> {{ node.name }}</a></li>
+      <li *ngFor="let node of nodeData" routerLinkActive="active">
+        <a [routerLink]="node.path">
+          <span class="nav-indicator"></span>
+          <span class="nav-icon">
+            <i class="{{ node.icon }}"></i>
+          </span>
+          <span class="nav-label">{{ node.name }}</span>
+          <i class="bi bi-chevron-right nav-chevron"></i>
+        </a>
+      </li>
     </ul>
   </nav>
+
+  <div class="sidebar-footer">
+    <div class="upgrade-card">
+      <div class="upgrade-icon">
+        <i class="bi bi-stars"></i>
+      </div>
+      <div class="upgrade-text">
+        <h5>Need help?</h5>
+        <p>Check our docs &amp; support</p>
+      </div>
+      <button type="button" class="upgrade-btn" title="Open Support">
+        <i class="bi bi-arrow-up-right"></i>
+      </button>
+    </div>
+  </div>
 </aside>

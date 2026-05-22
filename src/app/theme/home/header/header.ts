@@ -10,6 +10,7 @@ import { Router, RouterModule } from '@angular/router';
 export class HeaderComponent {
   router : Router= inject(Router);
   name = localStorage.getItem('name');
+  role = localStorage.getItem('role');
   
   logout(){
     localStorage.clear();

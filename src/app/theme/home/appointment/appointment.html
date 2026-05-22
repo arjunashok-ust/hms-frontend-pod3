@@ -3,56 +3,48 @@
     <div class="stat-card blue">
       <div class="stat-top">
         <div class="stat-icon">
-          <i class="bi bi-calendar-check fs-4"></i>
+          <i class="bi bi-calendar-check"></i>
         </div>
-        <span class="stat-trend trend-up">↑ 12%</span>
       </div>
       <div class="stat-body">
-        <h2>248</h2>
+        <h2>{{ appointmentUiData?.appointmentCount }}</h2>
         <p>Total Appointments</p>
       </div>
     </div>
-
     <div class="stat-card green">
       <div class="stat-top">
         <div class="stat-icon">
           <i class="bi bi-check-circle"></i>
         </div>
-        <span class="stat-trend trend-up">↑ 8%</span>
       </div>
       <div class="stat-body">
-        <h2>185</h2>
+        <h2>{{ appointmentUiData?.completedCount }}</h2>
         <p>Completed</p>
       </div>
     </div>
-
     <div class="stat-card amber">
       <div class="stat-top">
         <div class="stat-icon">
           <i class="bi bi-clock"></i>
         </div>
-        <span class="stat-trend trend-neutral">→ 0%</span>
       </div>
       <div class="stat-body">
-        <h2>Date</h2>
-        <p>12-04-2026</p>
+        <h2>{{ appointmentUiData?.bookedCount }}</h2>
+        <p>Booked</p>
       </div>
     </div>
-
     <div class="stat-card rose">
       <div class="stat-top">
         <div class="stat-icon">
           <i class="bi bi-x-circle"></i>
         </div>
-        <span class="stat-trend trend-down">↓ 3%</span>
       </div>
       <div class="stat-body">
-        <h2>21</h2>
+        <h2>{{ appointmentUiData?.cancelledCount }}</h2>
         <p>Cancelled</p>
       </div>
     </div>
   </div>
-
   <div class="content-grid">
     <div class="glass-panel">
       <div class="panel-header">
@@ -61,15 +53,16 @@
           <h2>Book Appointment</h2>
         </div>
         <div class="panel-actions">
-          <button title="Reset" (click)="appointmentForm.reset()"><i class="bi bi-arrow-clockwise"></i></button>
+          <button type="button" title="Reset" (click)="appointmentForm.reset()">
+            <i class="bi bi-arrow-clockwise"></i>
+          </button>
         </div>
       </div>
-
       <form [formGroup]="appointmentForm" id="appointmentForm" (submit)="onSubmit()">
         <div class="form-grid">
           <div class="form-group">
-            <label class="form-label" for="patient-id">
-              <i class="fas fa-id-card"></i>
+            <label class="form-label" for="patientId">
+              <i class="bi bi-person-vcard"></i>
               Patient ID
               <span class="required">*</span>
             </label>
@@ -81,12 +74,22 @@
               formControlName="patientId"
               required
             />
-            <span class="helper-text">Enter registered patient ID</span>
+            <span class="helper-text" *ngIf="!appointmentForm.get('patientId')?.touched">
+              Enter registered patient ID
+            </span>
+            <span
+              class="error-text"
+              *ngIf="
+                !appointmentForm.get('patientId')?.valid &&
+                appointmentForm.get('patientId')?.touched
+              "
+            >
+              Patient Id is required
+            </span>
           </div>
-
           <div class="form-group">
-            <label class="form-label" for="doctor">
-              <i class="fas fa-user-md"></i>
+            <label class="form-label" for="doctorEmployeeId">
+              <i class="bi bi-person-badge"></i>
               Doctor
               <span class="required">*</span>
             </label>
@@ -98,25 +101,26 @@
               required
             >
               <option value="" disabled selected>Select Doctor</option>
-              <option [value]="doctor.employeeCode" *ngFor="let doctor of doctors">
-                {{ doctor.name }} — {{ doctor.specialization }}
-              </option>
+              <ng-container *ngFor="let doctor of doctors">
+                <option [value]="doctor.employeeCode" *ngIf="doctor.status === 'Active'">
+                  {{ doctor.name }} — {{ doctor.specialization }}
+                </option>
+              </ng-container>
             </select>
           </div>
         </div>
         <div class="section-divider">
           <div class="divider-line"></div>
           <span class="divider-label">
-            <i class="fas fa-calendar-alt"></i>
+            <i class="bi bi-calendar3"></i>
             Schedule
           </span>
           <div class="divider-line"></div>
         </div>
-
         <div class="form-grid">
           <div class="form-group span-2">
-            <label class="form-label" for="appointment-date">
-              <i class="fas fa-calendar-day"></i>
+            <label class="form-label" for="appointmentDate">
+              <i class="bi bi-calendar-date"></i>
               Appointment Date
               <span class="required">*</span>
             </label>
@@ -128,59 +132,56 @@
               required
             />
           </div>
-
           <div class="form-group span-2">
             <label class="form-label" for="time-slot">
-              <i class="fas fa-clock"></i>
+              <i class="bi bi-clock-history"></i>
               Time Slot
               <span class="required">*</span>
             </label>
-            <div class="time-slots-grid" *ngIf="doctorTimeSlots.length > 0">
-              <div class="time-slot-container" *ngFor="let slot of doctorTimeSlots">
+            <div class="time-slots-grid" *ngIf="doctorTimeSlots.length > 0; else noSlots">
+              <div class="time-slot-container" *ngFor="let slot of doctorTimeSlots; let i = index">
                 <input
                   type="radio"
-                  name="timeSlot"
                   formControlName="timeSlot"
-                  id="t1"
+                  [id]="'slot-' + i"
                   [value]="slot"
                   class="time-radio"
                 />
-                <label for="t1" class="time-label">{{ slot }}</label>
+                <label [for]="'slot-' + i" class="time-label">{{ slot }}</label>
               </div>
             </div>
+            <ng-template #noSlots>
+              <span class="helper-text">Select a doctor to view available time slots</span>
+            </ng-template>
           </div>
         </div>
         <div class="section-divider">
           <div class="divider-line"></div>
           <span class="divider-label">
-            <i class="fas fa-flag"></i>
+            <i class="bi bi-flag"></i>
             Status
           </span>
           <div class="divider-line"></div>
         </div>
         <div class="form-group">
           <label class="form-label" for="status">
-            <i class="fas fa-toggle-on"></i>
+            <i class="bi bi-toggle-on"></i>
             Appointment Status
             <span class="required">*</span>
           </label>
           <div class="status-group">
             <input
               type="radio"
-              name="status"
               id="status-booked"
               formControlName="status"
               value="Booked"
               class="status-radio"
-              checked
             />
             <label class="status-label" for="status-booked">
               <span class="status-dot"></span> Booked
             </label>
-
             <input
               type="radio"
-              name="status"
               id="status-cancelled"
               formControlName="status"
               value="Cancelled"
@@ -189,10 +190,8 @@
             <label class="status-label" for="status-cancelled">
               <span class="status-dot"></span> Cancelled
             </label>
-
             <input
               type="radio"
-              name="status"
               id="status-completed"
               formControlName="status"
               value="Completed"
@@ -206,15 +205,14 @@
         <div class="section-divider">
           <div class="divider-line"></div>
           <span class="divider-label">
-            <i class="fas fa-user-shield"></i>
+            <i class="bi bi-shield-lock"></i>
             Staff Info
           </span>
           <div class="divider-line"></div>
         </div>
-
         <div class="form-group">
-          <label class="form-label" for="created-employee-id">
-            <i class="fas fa-id-badge"></i>
+          <label class="form-label" for="createdByEmployeeId">
+            <i class="bi bi-person-badge-fill"></i>
             Created By (Employee ID)
             <span class="required">*</span>
           </label>
@@ -226,19 +224,19 @@
             readonly
           />
           <div class="info-box">
-            <i class="fas fa-info-circle"></i>
+            <i class="bi bi-info-circle"></i>
             Auto-filled from your logged-in session
           </div>
         </div>
         <div class="form-footer">
           <button type="button" class="btn btn-ghost" (click)="appointmentForm.reset()">
-            <i class="fas fa-redo"></i> Reset
+            <i class="bi bi-arrow-counterclockwise"></i> Reset
           </button>
           <button type="button" class="btn btn-danger-outline" routerLink="/profile">
-            <i class="fas fa-times"></i> Cancel
+            <i class="bi bi-x-lg"></i> Cancel
           </button>
           <button type="submit" class="btn btn-primary">
-            <i class="fas fa-calendar-plus"></i> Book Appointment
+            <i class="bi bi-calendar-plus"></i> Book Appointment
           </button>
         </div>
       </form>
@@ -250,39 +248,27 @@
           <h2>Quick Info</h2>
         </div>
         <div class="panel-actions">
-          <button title="Refresh"><i class="fas fa-sync-alt"></i></button>
+          <button type="button" title="Refresh">
+            <i class="bi bi-arrow-clockwise"></i>
+          </button>
         </div>
       </div>
       <div class="section-divider">
         <div class="divider-line"></div>
         <span class="divider-label">
-          <i class="fas fa-stethoscope"></i>
+          <i class="bi bi-heart-pulse"></i>
           Doctor Availability
         </span>
         <div class="divider-line"></div>
       </div>
-
-      <div style="display: flex; flex-direction: column; gap: 14px">
-        <div
-          style="
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: white;
-            padding: 16px 18px;
-            border-radius: 16px;
-          "
-          *ngFor="let doctor of doctors"
-        >
+      <div class="doctor-list">
+        <div class="doctor-row" *ngFor="let doctor of doctors">
           <div class="patient-info">
-            <div
-              class="patient-avatar"
-              style="background: linear-gradient(135deg, #2563eb, #3b82f6)"
-            >
-              {{ doctor.name.slice(0, 3).toUpperCase() }}
+            <div class="patient-avatar doctor-avatar">
+              {{ doctor.name.slice(0, 2).toUpperCase() }}
             </div>
             <div>
-              <h4 style="margin: 0; font-size: 0.95rem">{{ doctor.name }}</h4>
+              <h4>{{ doctor.name }}</h4>
               <span>{{ doctor.specialization }}</span>
             </div>
           </div>
@@ -290,21 +276,20 @@
             class="status-badge"
             [class.status-booked]="doctor.status === 'Active'"
             [class.status-cancelled]="doctor.status === 'Inactive'"
-            >{{ doctor.status }}</span
           >
+            {{ doctor.status }}
+          </span>
         </div>
       </div>
     </div>
   </div>
-
-  <div class="glass-panel full-width" style="margin-top: 22px">
+  <div class="glass-panel full-width recent-appointments">
     <div class="panel-header">
       <div>
         <span class="panel-subtitle">Records</span>
         <h2>Recent Appointments</h2>
       </div>
     </div>
-
     <div class="table-wrapper">
       <table class="modern-table">
         <thead>
@@ -326,11 +311,8 @@
             </td>
             <td>
               <div class="patient-info">
-                <div
-                  class="patient-avatar"
-                  style="background: linear-gradient(135deg, #16a34a, #22c55e)"
-                >
-                  AT
+                <div class="patient-avatar">
+                  {{ patientNameMap[appointment.patientId] | async | slice: 0 : 2 | uppercase }}
                 </div>
                 <div>
                   <h4>{{ patientNameMap[appointment.patientId] | async }}</h4>
@@ -339,26 +321,42 @@
               </div>
             </td>
             <td>
-              <span class="designation-badge">{{ employeeNameMap[appointment.doctorEmployeeId] | async }}</span>
+              <span class="designation-badge">
+                {{ employeeNameMap[appointment.doctorEmployeeId] | async }}
+              </span>
             </td>
-            <td class="muted-text">{{ appointment.date | date: 'dd, MMM hh a' }}</td>
+            <td class="muted-text">
+              {{ appointment.date | date: 'dd MMM, hh:mm a' }}
+            </td>
             <td>
               <span class="designation-badge">{{ appointment.timeSlot }}</span>
             </td>
             <td>
               <span
                 class="status-badge"
-                [class.status-booked]="appointment.status == 'Booked'"
-                [class.status-cancelled]="appointment.status == 'Cancelled'"
-                [class.status-completed]="appointment.status == 'Completed'"
-                >{{ appointment.status }}</span
+                [class.status-booked]="appointment.status === 'Booked'"
+                [class.status-cancelled]="appointment.status === 'Cancelled'"
+                [class.status-completed]="appointment.status === 'Completed'"
               >
+                {{ appointment.status }}
+              </span>
             </td>
-            <td class="muted-text"> {{ employeeNameMap[appointment.createdByEmployeeId] | async }}
+            <td class="muted-text">
+              {{ employeeNameMap[appointment.createdByEmployeeId] | async }}
             </td>
             <td>
               <div class="action-btns">
-                <button class="action-btn delete" title="Delete">
+                <button
+                  class="action-btn edit"
+                  title="Edit"
+                >
+                  <i class="bi bi-pencil"></i>
+                </button>
+                <button
+                  class="action-btn delete"
+                  title="Delete"
+                  (click)="deleteAppointment(appointment.appointmentId ?? '')"
+                >
                   <i class="bi bi-trash"></i>
                 </button>
               </div>

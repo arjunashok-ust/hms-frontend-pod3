@@ -1,22 +1,46 @@
 <header class="header">
   <div class="header-left">
-    <h2>HMS</h2>
+    <div class="brand-mark">
+      <i class="bi bi-heart-pulse-fill"></i>
+    </div>
+    <div class="brand-text">
+      <h2>HMS</h2>
+      <span class="brand-subtitle">Hospital Management</span>
+    </div>
   </div>
 
   <div class="header-center">
+    <div class="search-box">
+      <i class="bi bi-search"></i>
+      <input type="text" placeholder="Search patients, doctors, appointments..." />
+      <span class="search-kbd">⌘K</span>
+    </div>
   </div>
 
   <div class="header-right">
-    <input type="text" placeholder="Search..." />
-    <span class="notification"><i class="bi bi-bell"></i></span>
-    <div class="user-profile">
+
+    <button type="button" class="icon-action notification" title="Notifications">
+      <i class="bi bi-bell"></i>
+      <span class="badge-count">3</span>
+    </button>
+
+    <div class="divider"></div>
+
+    <div class="user-profile" title="Account" routerLink="/profile">
       <div class="profile-icon">
         <i class="bi bi-person-circle"></i>
+        <span class="online-dot"></span>
       </div>
-
-      <span>Name</span>
+      <div class="profile-text">
+        <span class="profile-name">{{ name }}</span>
+        <span class="profile-role">{{ role }}</span>
+      </div>
+      <i class="bi bi-chevron-down profile-caret"></i>
     </div>
 
-    <button class="logout-btn" (click)="logout()"><i class="bi bi-box-arrow-right"></i> Logout</button>
+    <button class="logout-btn" (click)="logout()">
+      <i class="bi bi-box-arrow-right"></i>
+      <span>Logout</span>
+    </button>
   </div>
 </header>

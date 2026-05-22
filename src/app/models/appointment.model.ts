@@ -7,3 +7,10 @@ export interface AppointmentModel {
     status: string,
     createdByEmployeeId: string,
 }
+
+export interface AppointmentResponseModel {
+    appointmentCount: number,
+    cancelledCount: number,
+    bookedCount: number,
+    completedCount: number
+}

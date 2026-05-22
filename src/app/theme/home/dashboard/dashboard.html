@@ -5,11 +5,6 @@
         <div class="metric-icon">
           <i class="bi bi-people-fill"></i>
         </div>
-
-        <div class="metric-trend positive">
-          <i class="bi bi-arrow-up"></i>
-          12%
-        </div>
       </div>
 
       <div class="metric-body">
@@ -22,11 +17,6 @@
       <div class="metric-top">
         <div class="metric-icon">
           <i class="bi bi-person-check-fill"></i>
-        </div>
-
-        <div class="metric-trend positive">
-          <i class="bi bi-arrow-up"></i>
-          8%
         </div>
       </div>
 
@@ -41,11 +31,6 @@
         <div class="metric-icon">
           <i class="bi bi-hourglass-split"></i>
         </div>
-
-        <div class="metric-trend neutral">
-          <i class="bi bi-dash"></i>
-          Pending
-        </div>
       </div>
 
       <div class="metric-body">
@@ -58,11 +43,6 @@
       <div class="metric-top">
         <div class="metric-icon">
           <i class="bi bi-shield-lock-fill"></i>
-        </div>
-
-        <div class="metric-trend positive">
-          <i class="bi bi-arrow-up"></i>
-          4%
         </div>
       </div>
 
@@ -77,11 +57,6 @@
         <div class="metric-icon">
           <i class="bi bi-heart-pulse-fill"></i>
         </div>
-
-        <div class="metric-trend positive">
-          <i class="bi bi-arrow-up"></i>
-          16%
-        </div>
       </div>
 
       <div class="metric-body">
@@ -95,11 +70,6 @@
         <div class="metric-icon">
           <i class="bi bi-hospital-fill"></i>
         </div>
-
-        <div class="metric-trend positive">
-          <i class="bi bi-arrow-up"></i>
-          2%
-        </div>
       </div>
 
       <div class="metric-body">
@@ -112,11 +82,6 @@
       <div class="metric-top">
         <div class="metric-icon">
           <i class="bi bi-calendar2-check-fill"></i>
-        </div>
-
-        <div class="metric-trend positive">
-          <i class="bi bi-arrow-up"></i>
-          22%
         </div>
       </div>
 
@@ -160,7 +125,7 @@
         <tbody>
           <tr *ngFor="let user of userData">
             <td>
-              <span class="employee-id"> #{{ user.employeeId }} </span>
+              <span class="employee-id"> {{ user.employeeCode }} </span>
             </td>
 
             <td>

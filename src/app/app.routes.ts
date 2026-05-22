@@ -5,6 +5,7 @@ import { HomeComponent } from './theme/home/home';
 import { UserProfileComponent } from './theme/home/user-profile/user-profile';
 import { DashboardComponent } from './theme/home/dashboard/dashboard';
 import { AppointmentComponent } from './theme/home/appointment/appointment';
+import { PasswordModalComponent } from './theme/home/modal/password-modal/password-modal';
 
 export const routes: Routes = [
   {
@@ -14,6 +15,7 @@ export const routes: Routes = [
       { path: 'dashboard', component: DashboardComponent },
       { path: 'profile', component: UserProfileComponent },
       { path: 'appointment', component: AppointmentComponent },
+      { path: 'password-modal', component: PasswordModalComponent}
     ],
   },
   { path: 'login', component: LoginComponent },
