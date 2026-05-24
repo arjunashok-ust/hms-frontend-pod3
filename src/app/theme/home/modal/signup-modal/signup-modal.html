@@ -1,0 +1,307 @@
+<div class="modal-overlay">
+  <div class="modal-content signup-modal">
+    <button routerLink="/login" type="button" class="modal-close" title="Close">
+      <i class="bi bi-x-lg"></i>
+    </button>
+    <div class="modal-header">
+      <div class="modal-icon">
+        <i class="bi bi-person-plus-fill"></i>
+      </div>
+      <span class="modal-subtitle">User Onboarding</span>
+      <h2>Create Employee</h2>
+      <p class="modal-description">
+        Fill in the details below to create a new employee account.
+      </p>
+    </div>
+    <form [formGroup]="signUpModalForm" (ngSubmit)="onSubmit()">
+      <div class="modal-form">
+
+        <!-- Row: Name & Email -->
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="name">
+              <i class="bi bi-person"></i>
+              Full Name
+              <span class="required">*</span>
+            </label>
+            <div class="input-wrapper">
+              <input type="text" id="name" class="form-input" placeholder="Enter full name" formControlName="name" />
+            </div>
+            <span class="error-text" *ngIf="!signUpModalForm.get('name')?.valid && signUpModalForm.get('name')?.touched">
+              Name is required
+            </span>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="email">
+              <i class="bi bi-envelope"></i>
+              Email Address
+              <span class="required">*</span>
+            </label>
+            <div class="input-wrapper">
+              <input type="email" id="email" class="form-input" placeholder="Enter email address" formControlName="email" />
+            </div>
+            <span class="error-text" *ngIf="signUpModalForm.get('email')?.touched">
+              <span *ngIf="signUpModalForm.get('email')?.errors?.['required']">Email is required</span>
+              <span *ngIf="signUpModalForm.get('email')?.errors?.['email']">Email is invalid</span>
+            </span>
+          </div>
+        </div>
+
+        <!-- Row: Role & Department -->
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="roles">
+              <i class="bi bi-shield-check"></i>
+              Role
+              <span class="required">*</span>
+            </label>
+            <div class="input-wrapper">
+              <select id="roles" class="form-input form-select" formControlName="role">
+                <option value="" disabled>Select role</option>
+                <option *ngFor="let role of roles_data" [ngValue]="role.role_name">{{ role.role_name }}</option>
+              </select>
+              <span class="input-icon select-icon">
+                <i class="bi bi-chevron-down"></i>
+              </span>
+            </div>
+            <span class="error-text" *ngIf="!signUpModalForm.get('roles')?.valid && signUpModalForm.get('roles')?.touched">
+              Role is required
+            </span>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="department">
+              <i class="bi bi-building"></i>
+              Department
+              <span class="required">*</span>
+            </label>
+            <div class="input-wrapper">
+              <select id="department" class="form-input form-select" formControlName="department">
+                <option value="" disabled>Select department</option>
+                <option *ngFor="let department of departments_data" [ngValue]="department.department_name">
+                  {{ department.department_name }}
+                </option>
+              </select>
+              <span class="input-icon select-icon">
+                <i class="bi bi-chevron-down"></i>
+              </span>
+            </div>
+            <span class="error-text" *ngIf="!signUpModalForm.get('department')?.valid && signUpModalForm.get('department')?.touched">
+              Department is required
+            </span>
+          </div>
+        </div>
+
+        <!-- Row: Designation & Status -->
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="designation">
+              <i class="bi bi-briefcase"></i>
+              Designation
+              <span class="required">*</span>
+            </label>
+            <div class="input-wrapper">
+              <input type="text" id="designation" class="form-input" placeholder="Enter designation" formControlName="designation" />
+            </div>
+            <span class="error-text" *ngIf="!signUpModalForm.get('designation')?.valid && signUpModalForm.get('designation')?.touched">
+              Designation is required
+            </span>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="status">
+              <i class="bi bi-toggle-on"></i>
+              Status
+              <span class="required">*</span>
+            </label>
+            <div class="input-wrapper">
+              <select id="status" class="form-input form-select" formControlName="status">
+                <option value="" disabled>Select status</option>
+                <option value="Active">Active</option>
+                <option value="Inactive">Inactive</option>
+              </select>
+              <span class="input-icon select-icon">
+                <i class="bi bi-chevron-down"></i>
+              </span>
+            </div>
+            <span class="error-text" *ngIf="!signUpModalForm.get('status')?.valid && signUpModalForm.get('status')?.touched">
+              Status is required
+            </span>
+          </div>
+        </div>
+
+        <!-- Row: Joining Date (full width) -->
+        <div class="form-group">
+          <label class="form-label" for="datePicker">
+            <i class="bi bi-calendar-event"></i>
+            Joining Date
+            <span class="required">*</span>
+          </label>
+          <div class="input-wrapper">
+            <input type="date" id="datePicker" class="form-input" formControlName="joiningDate" />
+          </div>
+          <span class="error-text" *ngIf="!signUpModalForm.get('joiningDate')?.valid && signUpModalForm.get('joiningDate')?.touched">
+            Joining date is required
+          </span>
+        </div>
+
+        <!-- Divider for Doctor-specific fields -->
+        <div class="section-divider" *ngIf="signUpModalForm.get('role')?.value == 'Doctor'">
+          <span class="section-divider-text">Doctor Details</span>
+        </div>
+
+        <!-- Row: Medical Registration & Qualification (Doctor only) -->
+        <div class="form-row" *ngIf="signUpModalForm.get('role')?.value == 'Doctor'">
+          <div class="form-group">
+            <label class="form-label" for="medicalReg">
+              <i class="bi bi-clipboard2-pulse"></i>
+              Medical Registration No.
+              <span class="required">*</span>
+            </label>
+            <div class="input-wrapper">
+              <input type="text" id="medicalReg" class="form-input" placeholder="Enter registration number" formControlName="medicalRegistrationNo" />
+            </div>
+            <span class="error-text" *ngIf="!signUpModalForm.get('medicalRegistrationNo')?.valid && signUpModalForm.get('medicalRegistrationNo')?.touched">
+              Medical registration number is required
+            </span>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="qualification">
+              <i class="bi bi-mortarboard"></i>
+              Qualification
+              <span class="required">*</span>
+            </label>
+            <div class="input-wrapper">
+              <input type="text" id="qualification" class="form-input" placeholder="Enter qualification" formControlName="qualification" />
+            </div>
+            <span class="error-text" *ngIf="!signUpModalForm.get('qualification')?.valid && signUpModalForm.get('qualification')?.touched">
+              Qualification is required
+            </span>
+          </div>
+        </div>
+
+        <!-- Row: Specialization & Consultation Fee (Doctor only) -->
+        <div class="form-row" *ngIf="signUpModalForm.get('role')?.value == 'Doctor'">
+          <div class="form-group">
+            <label class="form-label" for="specialization">
+              <i class="bi bi-award"></i>
+              Specialization
+              <span class="required">*</span>
+            </label>
+            <div class="input-wrapper">
+              <select id="specialization" class="form-input form-select" formControlName="specialization">
+                <option value="" disabled>Select specialization</option>
+                <option *ngFor="let specialization of specializations_data" [ngValue]="specialization.specialization_name">
+                  {{ specialization.specialization_name }}
+                </option>
+              </select>
+              <span class="input-icon select-icon">
+                <i class="bi bi-chevron-down"></i>
+              </span>
+            </div>
+            <span class="error-text" *ngIf="!signUpModalForm.get('specialization')?.valid && signUpModalForm.get('specialization')?.touched">
+              Specialization is required
+            </span>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="consultFee">
+              <i class="bi bi-currency-rupee"></i>
+              Consultation Fee
+              <span class="required">*</span>
+            </label>
+            <div class="input-wrapper">
+              <input type="number" id="consultFee" class="form-input" placeholder="Enter consultation fee" formControlName="consultationFee" />
+            </div>
+            <span class="error-text" *ngIf="!signUpModalForm.get('consultationFee')?.valid && signUpModalForm.get('consultationFee')?.touched">
+              Consultation fee is required
+            </span>
+          </div>
+        </div>
+
+        <!-- Time Slot Generator (Doctor only) -->
+        <div class="slot-section" *ngIf="signUpModalForm.get('role')?.value == 'Doctor'">
+          <label class="form-label">
+            <i class="bi bi-clock-history"></i>
+            Time Slots
+            <span class="required">*</span>
+          </label>
+          <div class="slot-generator">
+            <div class="input-wrapper">
+              <select id="startTime" class="form-input form-select" formControlName="startHour">
+                <option value="" disabled>Start Hour</option>
+                <option *ngFor="let hour of hours" [value]="hour">{{ hour }}</option>
+              </select>
+              <span class="input-icon select-icon">
+                <i class="bi bi-chevron-down"></i>
+              </span>
+            </div>
+            <span class="slot-separator">to</span>
+            <div class="input-wrapper">
+              <select id="endTime" class="form-input form-select" formControlName="endHour">
+                <option value="" disabled>End Hour</option>
+                <option *ngFor="let hour of hours" [value]="hour">{{ hour }}</option>
+              </select>
+              <span class="input-icon select-icon">
+                <i class="bi bi-chevron-down"></i>
+              </span>
+            </div>
+            <button type="button" class="btn btn-outline" (click)="generateTimeSlots()" [disabled]="signUpModalForm.errors?.['invalidTimeRange']">
+              <i class="bi bi-lightning-charge"></i>
+              Generate
+            </button>
+          </div>
+          <span class="error-text" *ngIf="signUpModalForm.errors?.['invalidTimeRange']">
+            Start hour must be less than end hour
+          </span>
+        </div>
+
+        <!-- Generated Slots -->
+        <div class="slot-section" *ngIf="generatedSlots.length">
+          <label class="form-label">
+            <i class="bi bi-list-check"></i>
+            Generated Slots
+          </label>
+          <div class="slot-chips">
+            <label class="slot-chip" *ngFor="let slot of generatedSlots">
+              <input type="checkbox" [value]="slot" (change)="toggleSlot(slot)" />
+              <span class="slot-chip-text">{{ slot }}</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Selected Slots -->
+        <div class="slot-section" *ngIf="signUpModalForm.value.availabilitySlots.length">
+          <label class="form-label">
+            <i class="bi bi-check2-square"></i>
+            Selected Slots
+          </label>
+          <div class="slot-chips">
+            <span class="slot-chip active" *ngFor="let slot of signUpModalForm.value.availabilitySlots">
+              {{ slot }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Info Box -->
+        <div class="info-box">
+          <i class="bi bi-info-circle"></i>
+          All fields marked with <span class="required">*</span> are mandatory
+        </div>
+
+        <!-- Footer -->
+        <div class="modal-footer">
+          <button type="button" class="btn btn-ghost" routerLink="/employee">
+            <i class="bi bi-x-lg"></i> Cancel
+          </button>
+          <button type="submit" class="btn btn-primary" [disabled]="signUpModalForm.invalid" [class.disabled]="signUpModalForm.invalid">
+            <i class="bi bi-check2-circle"></i> Create Employee
+          </button>
+        </div>
+
+      </div>
+    </form>
+  </div>
+</div>

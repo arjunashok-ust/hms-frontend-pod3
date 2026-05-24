@@ -5,10 +5,11 @@ import { DepartmentModel } from '../../../models/ui.model';
 import { AuthService } from '../../../services/auth.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from "@angular/router";
 
 @Component({
   selector: 'app-employee',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './employee.html',
   styleUrl: './employee.css',
 })
@@ -30,6 +31,7 @@ export class EmployeeComponent implements OnInit {
       next: (res) => {
         this.employeeData = res;
         this.applyFilters();
+        this.cd.detectChanges();
       },
       error: (err) => {
         alert('Error fetching data from server');

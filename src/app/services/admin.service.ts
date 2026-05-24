@@ -4,6 +4,7 @@ import { ApiUrl } from '../environment/environment';
 import { catchError, Observable, throwError } from 'rxjs';
 import { DashboardModel } from '../models/ui.model';
 import { EmployeeModel, UserModel } from '../models/user.model';
+import { SignUpModel } from '../models/auth.model';
 
 @Injectable({ providedIn: 'root' })
 export class AdminService {
@@ -33,6 +34,13 @@ export class AdminService {
       .post(`${this.apiUrl.backend_url}/admin/deleteUserProfile`, data)
       .pipe(catchError(this.handleError));
   }
+
+  // signUp
+    signUpAdmin(data: SignUpModel): Observable<any> {
+      return this.http
+        .post(`${this.apiUrl.backend_url}/auth/signUpAdmin`, data)
+        .pipe(catchError(this.handleError));
+    }
 
   handleError(error: HttpErrorResponse) {
     console.log('API Error : ', error);

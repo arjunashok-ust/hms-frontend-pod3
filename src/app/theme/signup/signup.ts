@@ -103,11 +103,9 @@ export class SignUpComponent implements OnInit {
   }
 
   onSubmit() {
-    console.log('On Submit Sign Up : ', this.signUpForm.value);
     const payload = mapToSignUpRequest(this.signUpForm);
     this.auth.signUp(payload).subscribe({
       next: (res) => {
-        console.log(res);
         alert(res.message);
         this.route.navigate(['/login']);
       },

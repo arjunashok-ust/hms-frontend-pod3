@@ -1,14 +1,12 @@
 import {  Component, inject, OnInit } from '@angular/core';
 import { SidebarComponent } from './sidebar/sidebar';
 import { HeaderComponent } from './header/header';
-import { Router, RouterOutlet } from '@angular/router';
-import { PasswordModalComponent } from "./modal/password-modal/password-modal";
-import { EmployeeComponent } from "./employee/employee";
+import { Router,  RouterOutlet } from '@angular/router';
 
 
 @Component({
   selector: 'app-home',
-  imports: [HeaderComponent, SidebarComponent, RouterOutlet, EmployeeComponent],
+  imports: [HeaderComponent, SidebarComponent, RouterOutlet],
   templateUrl: './home.html',
   styleUrl: './home.css',
 })

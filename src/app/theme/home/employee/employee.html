@@ -6,7 +6,7 @@
     </div>
     <div class="header-actions">
       <button class="btn-secondary">Approvals</button>
-      <button class="btn-primary">Add Employee</button>
+      <button class="btn-primary" routerLink="/signup-modal">Add Employee</button>
     </div>
   </div>
 
@@ -50,7 +50,7 @@
             </td>
             <td>
               <div class="employee-info">
-                <div class="avatar blue-avatar">{{ employee.name.slice(0, 3).toUpperCase() }}</div>
+                <div class="avatar blue-avatar">{{ employee.name.slice(0, 2).toUpperCase() }}</div>
                 <div>
                   <h4>{{ employee.name }}</h4>
                 </div>

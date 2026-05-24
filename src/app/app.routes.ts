@@ -7,6 +7,7 @@ import { DashboardComponent } from './theme/home/dashboard/dashboard';
 import { AppointmentComponent } from './theme/home/appointment/appointment';
 import { PasswordModalComponent } from './theme/home/modal/password-modal/password-modal';
 import { EmployeeComponent } from './theme/home/employee/employee';
+import { SignUpModalComponent } from './theme/home/modal/signup-modal/signup-modal';
 
 export const routes: Routes = [
   {
@@ -16,8 +17,9 @@ export const routes: Routes = [
       { path: 'dashboard', component: DashboardComponent },
       { path: 'profile', component: UserProfileComponent },
       { path: 'appointment', component: AppointmentComponent },
-      { path: 'password-modal', component: PasswordModalComponent },
       { path: 'employee', component: EmployeeComponent },
+      { path: 'password-modal', component: PasswordModalComponent },
+      { path: 'signup-modal', component: SignUpModalComponent}
     ],
   },
   { path: 'login', component: LoginComponent },
