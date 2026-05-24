@@ -3,11 +3,12 @@ import { SidebarComponent } from './sidebar/sidebar';
 import { HeaderComponent } from './header/header';
 import { Router, RouterOutlet } from '@angular/router';
 import { PasswordModalComponent } from "./modal/password-modal/password-modal";
+import { EmployeeComponent } from "./employee/employee";
 
 
 @Component({
   selector: 'app-home',
-  imports: [HeaderComponent, SidebarComponent,RouterOutlet],
+  imports: [HeaderComponent, SidebarComponent, RouterOutlet, EmployeeComponent],
   templateUrl: './home.html',
   styleUrl: './home.css',
 })

@@ -24,6 +24,10 @@ export class AuthService {
   getUiData<T>(url: string): Observable<T> {
     return this.http.get<T>(`${this.api.backend_url + url}`).pipe(catchError(this.handleError));
   }
+  // submit password for first login
+  setPassword(data : any) : Observable<any> {
+    return this.http.post(`${this.api.backend_url}/auth/set-password`,data).pipe(catchError(this.handleError));
+  }
   // error handling
   handleError(error: HttpErrorResponse) {
     console.log('API Error : ', error);

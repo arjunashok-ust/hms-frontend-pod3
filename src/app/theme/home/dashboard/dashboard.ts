@@ -12,8 +12,8 @@ import { CommonModule } from '@angular/common';
 })
 export class DashboardComponent implements OnInit {
   dashboardData: DashboardModel | null = null;
-
   userData: UserModel[] | null = null;
+  
   adminService: AdminService = inject(AdminService);
   cd: ChangeDetectorRef = inject(ChangeDetectorRef);
 

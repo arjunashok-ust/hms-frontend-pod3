@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, inject, Output } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -7,31 +7,45 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { passwordsMatchValidator } from '../../../../validators/password-match-validator';
+import { Router, RouterLink, RouterModule } from '@angular/router';
+import { AuthService } from '../../../../services/auth.service';
 
 @Component({
   selector: 'app-password-modal',
   standalone: true,
-  imports: [ReactiveFormsModule, FormsModule, CommonModule],
+  imports: [ReactiveFormsModule, FormsModule, CommonModule, RouterLink, RouterModule],
   templateUrl: './password-modal.html',
   styleUrl: './password-modal.css',
 })
 export class PasswordModalComponent {
   passwordForm!: FormGroup;
-  @Output() passwordSubmit = new EventEmitter<string>();
+  router: Router = inject(Router);
+  authService: AuthService = inject(AuthService);
   public constructor(readonly fb: FormBuilder) {
-    this.passwordForm = this.fb.group({
-      password: ['', [Validators.required, Validators.minLength(8)]],
-      confirmPassword: ['',Validators.required, Validators.minLength(8)]
-    });
+    this.passwordForm = this.fb.group(
+      {
+        password: ['', [Validators.required, Validators.minLength(8)]],
+        confirmPassword: ['', [Validators.required, Validators.minLength(8)]],
+      },
+      {
+        validators: [passwordsMatchValidator],
+      },
+    );
   }
 
   onSubmit() {
-    if (this.passwordForm.value.password !== this.passwordForm.value.confirmPassword) {
-      alert("Passwords Doesn't Match");
-    }
+    let email = localStorage.getItem('email');
     let password = this.passwordForm.value.password;
-    console.log(password);
-    this.passwordSubmit.emit(password);
+    const payload = { email: email, password: password };
+    this.authService.setPassword(payload).subscribe({
+      next: (res)=>{
+        alert('New Password Is Set');
+      },
+      error: (error) => {
+        alert(error);
+      }
+    });
+    this.router.navigate(['/profile']);
   }
 }

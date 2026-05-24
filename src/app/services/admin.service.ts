@@ -3,7 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { ApiUrl } from '../environment/environment';
 import { catchError, Observable, throwError } from 'rxjs';
 import { DashboardModel } from '../models/ui.model';
-import { UserModel } from '../models/user.model';
+import { EmployeeModel, UserModel } from '../models/user.model';
 
 @Injectable({ providedIn: 'root' })
 export class AdminService {
@@ -16,8 +16,22 @@ export class AdminService {
       .pipe(catchError(this.handleError));
   }
 
-  getUsers(): Observable<UserModel[]>{
-    return this.http.get<UserModel[]>(`${this.apiUrl.backend_url}/admin/getAllUsers`).pipe(catchError(this.handleError));
+  getUsers(): Observable<UserModel[]> {
+    return this.http
+      .get<UserModel[]>(`${this.apiUrl.backend_url}/admin/getAllUsers`)
+      .pipe(catchError(this.handleError));
+  }
+
+  getEmployees(): Observable<EmployeeModel[]> {
+    return this.http
+      .get<EmployeeModel[]>(`${this.apiUrl.backend_url}/admin/getAllUsers`)
+      .pipe(catchError(this.handleError));
+  }
+
+  deleteUserProfile(data: any): Observable<any> {
+    return this.http
+      .post(`${this.apiUrl.backend_url}/admin/deleteUserProfile`, data)
+      .pipe(catchError(this.handleError));
   }
 
   handleError(error: HttpErrorResponse) {

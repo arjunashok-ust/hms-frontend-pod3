@@ -16,7 +16,7 @@ export class LoginComponent {
   loginForm: FormGroup;
   auth: AuthService = inject(AuthService);
   router: Router = inject(Router);
-  cd : ChangeDetectorRef = inject(ChangeDetectorRef);
+  cd: ChangeDetectorRef = inject(ChangeDetectorRef);
 
   constructor(readonly fb: FormBuilder) {
     this.loginForm = this.fb.group({
@@ -29,17 +29,17 @@ export class LoginComponent {
     const payload: LoginModel = this.loginForm.value;
     this.auth.login(payload).subscribe({
       next: (res) => {
-        if (res.firstLogin) {
-          alert("user's first login");
-        }
         // saving token to local
         localStorage.setItem('token', res.token);
-        localStorage.setItem('email',res.email);
-        
+        localStorage.setItem('email', res.email);
         this.cd.detectChanges();
-    
         alert(`${res.message} \n`);
-        this.router.navigate(['/profile']);
+        if (res.firstLogin) {
+          this.router.navigate(['/password-modal']);
+        }
+        else{
+          this.router.navigate(['/profile']);
+        }
       },
       error: (error) => alert(error.message),
     });

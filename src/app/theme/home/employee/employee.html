@@ -1,0 +1,80 @@
+<section class="employee-wrapper">
+  <div class="panel-header">
+    <div>
+      <span class="panel-subtitle">Directory</span>
+      <h2>Employee Management</h2>
+    </div>
+    <div class="header-actions">
+      <button class="btn-secondary">Approvals</button>
+      <button class="btn-primary">Add Employee</button>
+    </div>
+  </div>
+
+  <div class="directory-panel">
+    <div class="controls">
+      <div class="search-box">
+        <input type="text" placeholder="Search Employee" [(ngModel)]="selectedText" (input)="applyFilters()"/>
+      </div>
+      <div class="filter-group">
+        <select [(ngModel)]="selectedDepartment"  (change)="applyFilters()">
+          <option value="" selected>All Department</option>
+          <option *ngFor="let department of departmentsData" [value]="department.department_name">
+            {{ department.department_name }}
+          </option>
+        </select>
+        <select [(ngModel)]="selectedStatus" (change)="applyFilters()">
+          <option value="" selected>All Status</option>
+          <option>Active</option>
+          <option>Inactive</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="table-wrapper">
+      <table class="modern-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Employee Name</th>
+            <th>Email Address</th>
+            <th>Department</th>
+            <th>Role</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let employee of filteredEmployeeData">
+            <td>
+              <span class="employee-id">{{ employee.employeeCode }}</span>
+            </td>
+            <td>
+              <div class="employee-info">
+                <div class="avatar blue-avatar">{{ employee.name.slice(0, 3).toUpperCase() }}</div>
+                <div>
+                  <h4>{{ employee.name }}</h4>
+                </div>
+              </div>
+            </td>
+            <td class="muted-text">{{ employee.email }}</td>
+            <td>
+              <span class="department-text">{{ employee.department }}</span>
+            </td>
+            <td>
+              <span class="designation-badge">{{ employee.designation }}</span>
+            </td>
+            <td>
+              <span class="status-badge active-status">{{ employee.status }}</span>
+            </td>
+            <td>
+              <div class="action-buttons">
+                <button class="icon-btn edit-btn">Edit</button>
+                <button class="icon-btn delete-btn" (click)="deleteUserProfile(employee.employeeCode)">Delete</button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
