@@ -5,7 +5,7 @@
       <h2>Employee Management</h2>
     </div>
     <div class="header-actions">
-      <button class="btn-secondary">Approvals</button>
+      <button class="btn-secondary"><a routerLink="/approval">Approvals</a></button>
       <button class="btn-primary" routerLink="/signup-modal">Add Employee</button>
     </div>
   </div>
@@ -68,7 +68,7 @@
             </td>
             <td>
               <div class="action-buttons">
-                <button class="icon-btn edit-btn">Edit</button>
+                <button class="icon-btn edit-btn" (click)="updateProfile(employee.email)">Edit</button>
                 <button class="icon-btn delete-btn" (click)="deleteUserProfile(employee.employeeCode)">Delete</button>
               </div>
             </td>

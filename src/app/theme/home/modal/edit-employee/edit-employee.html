@@ -1,17 +1,21 @@
 <div class="modal-overlay">
-  <div class="modal-content signup-modal">
-    <button routerLink="/employee" type="button" class="modal-close" title="Close">
-      <i class="bi bi-x-lg"></i>
+  <div class="modal-content">
+    <button type="button" class="modal-close">
+      <a routerLink="/employee">
+        <i class="bi bi-x-lg"></i>
+      </a>
     </button>
+
     <div class="modal-header">
-      <div class="modal-icon">
-        <i class="bi bi-person-plus-fill"></i>
+      <div class="modal-icon-wrap">
+        <i class="bi bi-person-lines-fill"></i>
       </div>
-      <span class="modal-subtitle">User Onboarding</span>
-      <h2>Create Employee</h2>
-      <p class="modal-description">Fill in the details below to create a new employee account.</p>
+      <span class="modal-kicker">Employee Profile</span>
+      <h2>Update Employee</h2>
+      <p class="modal-description">Modify the employee details below and save your changes.</p>
     </div>
-    <form [formGroup]="signUpModalForm" (ngSubmit)="onSubmit()">
+
+    <form [formGroup]="updateForm" *ngIf="updateForm" (ngSubmit)="onSubmit()">
       <div class="modal-form">
         <div class="form-row">
           <div class="form-group">
@@ -31,7 +35,7 @@
             </div>
             <span
               class="error-text"
-              *ngIf="!signUpModalForm.get('name')?.valid && signUpModalForm.get('name')?.touched"
+              *ngIf="!updateForm.get('name')?.valid && updateForm.get('name')?.touched"
             >
               Name is required
             </span>
@@ -48,15 +52,13 @@
                 type="email"
                 id="email"
                 class="form-input"
-                placeholder="Enter email address"
-                formControlName="email"
+                [placeholder]="userData?.email"
+                disabled
               />
             </div>
-            <span class="error-text" *ngIf="signUpModalForm.get('email')?.touched">
-              <span *ngIf="signUpModalForm.get('email')?.errors?.['required']"
-                >Email is required</span
-              >
-              <span *ngIf="signUpModalForm.get('email')?.errors?.['email']">Email is invalid</span>
+            <span class="error-text" *ngIf="updateForm.get('email')?.touched">
+              <span *ngIf="updateForm.get('email')?.errors?.['required']">Email is required</span>
+              <span *ngIf="updateForm.get('email')?.errors?.['email']">Email is invalid</span>
             </span>
           </div>
         </div>
@@ -80,7 +82,7 @@
             </div>
             <span
               class="error-text"
-              *ngIf="!signUpModalForm.get('roles')?.valid && signUpModalForm.get('roles')?.touched"
+              *ngIf="!updateForm.get('roles')?.valid && updateForm.get('roles')?.touched"
             >
               Role is required
             </span>
@@ -108,10 +110,7 @@
             </div>
             <span
               class="error-text"
-              *ngIf="
-                !signUpModalForm.get('department')?.valid &&
-                signUpModalForm.get('department')?.touched
-              "
+              *ngIf="!updateForm.get('department')?.valid && updateForm.get('department')?.touched"
             >
               Department is required
             </span>
@@ -136,8 +135,7 @@
             <span
               class="error-text"
               *ngIf="
-                !signUpModalForm.get('designation')?.valid &&
-                signUpModalForm.get('designation')?.touched
+                !updateForm.get('designation')?.valid && updateForm.get('designation')?.touched
               "
             >
               Designation is required
@@ -162,9 +160,7 @@
             </div>
             <span
               class="error-text"
-              *ngIf="
-                !signUpModalForm.get('status')?.valid && signUpModalForm.get('status')?.touched
-              "
+              *ngIf="!updateForm.get('status')?.valid && updateForm.get('status')?.touched"
             >
               Status is required
             </span>
@@ -181,18 +177,15 @@
           </div>
           <span
             class="error-text"
-            *ngIf="
-              !signUpModalForm.get('joiningDate')?.valid &&
-              signUpModalForm.get('joiningDate')?.touched
-            "
+            *ngIf="!updateForm.get('joiningDate')?.valid && updateForm.get('joiningDate')?.touched"
           >
             Joining date is required
           </span>
         </div>
-        <div class="section-divider" *ngIf="signUpModalForm.get('role')?.value == 'Doctor'">
+        <div class="section-divider" *ngIf="updateForm.get('role')?.value == 'Doctor'">
           <span class="section-divider-text">Doctor Details</span>
         </div>
-        <div class="form-row" *ngIf="signUpModalForm.get('role')?.value == 'Doctor'">
+        <div class="form-row" *ngIf="updateForm.get('role')?.value == 'Doctor'">
           <div class="form-group">
             <label class="form-label" for="medicalReg">
               <i class="bi bi-clipboard2-pulse"></i>
@@ -211,8 +204,8 @@
             <span
               class="error-text"
               *ngIf="
-                !signUpModalForm.get('medicalRegistrationNo')?.valid &&
-                signUpModalForm.get('medicalRegistrationNo')?.touched
+                !updateForm.get('medicalRegistrationNo')?.valid &&
+                updateForm.get('medicalRegistrationNo')?.touched
               "
             >
               Medical registration number is required
@@ -237,15 +230,14 @@
             <span
               class="error-text"
               *ngIf="
-                !signUpModalForm.get('qualification')?.valid &&
-                signUpModalForm.get('qualification')?.touched
+                !updateForm.get('qualification')?.valid && updateForm.get('qualification')?.touched
               "
             >
               Qualification is required
             </span>
           </div>
         </div>
-        <div class="form-row" *ngIf="signUpModalForm.get('role')?.value == 'Doctor'">
+        <div class="form-row" *ngIf="updateForm.get('role')?.value == 'Doctor'">
           <div class="form-group">
             <label class="form-label" for="specialization">
               <i class="bi bi-award"></i>
@@ -273,8 +265,8 @@
             <span
               class="error-text"
               *ngIf="
-                !signUpModalForm.get('specialization')?.valid &&
-                signUpModalForm.get('specialization')?.touched
+                !updateForm.get('specialization')?.valid &&
+                updateForm.get('specialization')?.touched
               "
             >
               Specialization is required
@@ -299,15 +291,15 @@
             <span
               class="error-text"
               *ngIf="
-                !signUpModalForm.get('consultationFee')?.valid &&
-                signUpModalForm.get('consultationFee')?.touched
+                !updateForm.get('consultationFee')?.valid &&
+                updateForm.get('consultationFee')?.touched
               "
             >
               Consultation fee is required
             </span>
           </div>
         </div>
-        <div class="slot-section" *ngIf="signUpModalForm.get('role')?.value == 'Doctor'">
+        <div class="slot-section" *ngIf="updateForm.get('role')?.value == 'Doctor'">
           <label class="form-label" for="role">
             <i class="bi bi-clock-history"></i>
             Time Slots
@@ -337,13 +329,13 @@
               type="button"
               class="btn btn-outline"
               (click)="generateTimeSlots()"
-              [disabled]="signUpModalForm.errors?.['invalidTimeRange']"
+              [disabled]="updateForm.errors?.['invalidTimeRange']"
             >
               <i class="bi bi-lightning-charge"></i>
               Generate
             </button>
           </div>
-          <span class="error-text" *ngIf="signUpModalForm.errors?.['invalidTimeRange']">
+          <span class="error-text" *ngIf="updateForm.errors?.['invalidTimeRange']">
             Start hour must be less than end hour
           </span>
         </div>
@@ -361,16 +353,13 @@
           </div>
         </div>
 
-        <div class="slot-section" *ngIf="signUpModalForm.value.availabilitySlots.length">
+        <div class="slot-section" *ngIf="updateForm.value.availabilitySlots.length">
           <label class="form-label" for="selected-slots">
             <i class="bi bi-check2-square"></i>
             Selected Slots
           </label>
           <div class="slot-chips">
-            <span
-              class="slot-chip active"
-              *ngFor="let slot of signUpModalForm.value.availabilitySlots"
-            >
+            <span class="slot-chip active" *ngFor="let slot of updateForm.value.availabilitySlots">
               {{ slot }}
             </span>
           </div>
@@ -388,10 +377,10 @@
           <button
             type="submit"
             class="btn btn-primary"
-            [disabled]="signUpModalForm.invalid"
-            [class.disabled]="signUpModalForm.invalid"
+            [disabled]="updateForm.invalid"
+            [class.disabled]="updateForm.invalid"
           >
-            <i class="bi bi-check2-circle"></i> Create Employee
+            <i class="bi bi-check2-circle"></i> Update Employee
           </button>
         </div>
       </div>

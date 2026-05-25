@@ -15,8 +15,7 @@
   box-sizing: border-box;
   background:
     radial-gradient(circle at top left, #dbeafe 0%, transparent 30%),
-    radial-gradient(circle at top right, #ede9fe 0%, transparent 30%),
-    #f8fafc;
+    radial-gradient(circle at top right, #ede9fe 0%, transparent 30%), #f8fafc;
   border-radius: 20px;
   overflow-x: hidden;
 }
@@ -182,10 +181,18 @@
   opacity: 0.08;
 }
 
-.stat-card.blue::before  { background: #2563eb; }
-.stat-card.green::before { background: #22c55e; }
-.stat-card.amber::before { background: #f59e0b; }
-.stat-card.rose::before  { background: #f43f5e; }
+.stat-card.blue::before {
+  background: #2563eb;
+}
+.stat-card.green::before {
+  background: #22c55e;
+}
+.stat-card.amber::before {
+  background: #f59e0b;
+}
+.stat-card.rose::before {
+  background: #f43f5e;
+}
 
 .stat-icon {
   width: 54px;
@@ -199,10 +206,18 @@
   flex-shrink: 0;
 }
 
-.blue  .stat-icon { background: linear-gradient(135deg, #2563eb, #3b82f6); }
-.green .stat-icon { background: linear-gradient(135deg, #16a34a, #22c55e); }
-.amber .stat-icon { background: linear-gradient(135deg, #d97706, #f59e0b); }
-.rose  .stat-icon { background: linear-gradient(135deg, #e11d48, #f43f5e); }
+.blue .stat-icon {
+  background: linear-gradient(135deg, #2563eb, #3b82f6);
+}
+.green .stat-icon {
+  background: linear-gradient(135deg, #16a34a, #22c55e);
+}
+.amber .stat-icon {
+  background: linear-gradient(135deg, #d97706, #f59e0b);
+}
+.rose .stat-icon {
+  background: linear-gradient(135deg, #e11d48, #f43f5e);
+}
 
 .stat-body {
   min-width: 0;

@@ -16,7 +16,7 @@ import { AdminService } from '../../../../services/admin.service';
 
 @Component({
   selector: 'app-signup-modal',
-  imports: [ReactiveFormsModule, FormsModule, CommonModule,RouterModule],
+  imports: [ReactiveFormsModule, FormsModule, CommonModule, RouterModule],
   templateUrl: './signup-modal.html',
   styleUrl: './signup-modal.css',
 })
@@ -57,7 +57,7 @@ export class SignUpModalComponent implements OnInit {
       joiningDate: ['', Validators.required],
       medicalRegistrationNo: [''],
       specialization: [''],
-      qualification: ['', [Validators.required]],
+      qualification: [''],
       consultationFee: [''],
       startHour: [''],
       endHour: [''],

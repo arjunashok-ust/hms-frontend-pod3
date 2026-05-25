@@ -2,7 +2,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { ApiUrl } from '../environment/environment';
 import { catchError, Observable, throwError } from 'rxjs';
-import { UserModel } from '../models/user.model';
+import { PatientModel, UserModel } from '../models/user.model';
 import { NodeModel } from '../models/ui.model';
 import { Router } from '@angular/router';
 
@@ -50,8 +50,29 @@ export class UserService {
       .pipe(catchError(this.handleError));
   }
 
+  // create patient
+  createPatient(data: any): Observable<any> {
+    return this.http
+      .post(`${this.api.backend_url}/user/createPatient`, data)
+      .pipe(catchError(this.handleError));
+  }
+
+  // get all patients
+  getPatients(): Observable<PatientModel[]> {
+    return this.http
+      .get<PatientModel[]>(`${this.api.backend_url}/user/getPatients`)
+      .pipe(catchError(this.handleError));
+  }
+
+  // delete patient
+  deletePatientt(data: any): Observable<any> {
+    return this.http
+      .post(`${this.api.backend_url}/user/deletePatient`, data)
+      .pipe(catchError(this.handleError));
+  }
+
   // logout
-  logout(){
+  logout() {
     return this.router.navigate(['/login']);
   }
 

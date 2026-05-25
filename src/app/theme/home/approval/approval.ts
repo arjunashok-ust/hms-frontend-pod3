@@ -1,0 +1,100 @@
+import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
+import { RouterModule } from '@angular/router';
+import { UserModel, UserResponseModel } from '../../../models/user.model';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { AdminService } from '../../../services/admin.service';
+import { UserService } from '../../../services/user.service';
+
+@Component({
+  selector: 'app-approval',
+  imports: [RouterModule, CommonModule, FormsModule],
+  templateUrl: './approval.html',
+  styleUrl: './approval.css',
+})
+export class ApprovalComponent implements OnInit {
+  adminService: AdminService = inject(AdminService);
+  userService: UserService = inject(UserService);
+  cd: ChangeDetectorRef = inject(ChangeDetectorRef);
+
+  userData: UserResponseModel[] = [];
+  filteredData: UserResponseModel[] = [];
+  
+  approvalUiData = {
+    pendingCount: 0,
+    verifiedCount: 0,
+    inActiveCount: 0,
+    firstLoginCount: 0,
+  };
+  
+  searchText = '';
+
+  ngOnInit(): void {
+    this.adminService.getUsersData().subscribe({
+      next: (res) => {
+        this.userData = res;
+        this.loadUiData();
+        this.applyFilters();
+        this.cd.detectChanges();
+      },
+      error: (error) => {
+        alert('Server Error During Get Users');
+      },
+    });
+  }
+
+  loadUiData() {
+    this.approvalUiData.pendingCount = this.userData.filter(
+      (user) => user.isActivated === false,
+    ).length;
+    this.approvalUiData.verifiedCount = this.userData.filter(
+      (user) => user.isVerified === true,
+    ).length;
+    this.approvalUiData.inActiveCount = this.userData.filter(
+      (user) => user.status !== 'Active',
+    ).length;
+    this.approvalUiData.firstLoginCount = this.userData.filter(
+      (user) => user.firstLogin === false,
+    ).length;
+  }
+
+  applyFilters() {
+    this.filteredData = this.userData.filter(
+      (user) =>
+        !this.searchText ||
+        user.email.includes(this.searchText) ||
+        user.employeeId.includes(this.searchText) ||
+        user.role.includes(this.searchText),
+    );
+    this.cd.detectChanges();
+  }
+
+  approveUser(id: string) {
+    const payload = { employeeId: id };
+    this.adminService.approveUser(payload).subscribe({
+      next: (res) => {
+        alert('Account Activated');
+        this.applyFilters();
+        this.cd.detectChanges();
+      },
+      error: (error) => {
+        alert('Server Error During Reject User');
+        console.log(error);
+      },
+    });
+  }
+
+  rejectUser(id: string) {
+    const payload = { employeeId: id };
+    this.adminService.rejectUser(payload).subscribe({
+      next: (res) => {
+        alert('Application Rejected');
+        this.applyFilters();
+        this.cd.detectChanges();
+      },
+      error: (error) => {
+        alert('Server Error During Approve User');
+      },
+    });
+  }
+}

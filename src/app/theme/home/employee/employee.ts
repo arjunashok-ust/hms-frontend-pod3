@@ -5,23 +5,25 @@ import { DepartmentModel } from '../../../models/ui.model';
 import { AuthService } from '../../../services/auth.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from "@angular/router";
+import { Router, RouterLink, RouterModule } from "@angular/router";
 
 @Component({
   selector: 'app-employee',
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink,RouterModule],
   templateUrl: './employee.html',
   styleUrl: './employee.css',
 })
 export class EmployeeComponent implements OnInit {
   adminService: AdminService = inject(AdminService);
   authService: AuthService = inject(AuthService);
+  router: Router = inject(Router);
   cd: ChangeDetectorRef = inject(ChangeDetectorRef);
 
   employeeData: EmployeeModel[] = [];
   departmentsData: DepartmentModel[] = [];
 
   filteredEmployeeData: EmployeeModel[] = [];
+
   selectedText: string = '';
   selectedDepartment: string = '';
   selectedStatus: string = '';
@@ -55,6 +57,11 @@ export class EmployeeComponent implements OnInit {
       const statusMatch = !this.selectedStatus || employee.status === this.selectedStatus;
       return searchMatch && departmentMatch && statusMatch;
     });
+  }
+
+  updateProfile(email: string){
+    localStorage.setItem('updateEmail',email);
+    this.router.navigate(['/edit-employee']);
   }
 
   deleteUserProfile(employeeId: string) {

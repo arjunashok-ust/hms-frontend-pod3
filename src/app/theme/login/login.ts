@@ -1,9 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { FormGroup, Validators, ReactiveFormsModule, FormBuilder } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { LoginModel } from '../../models/auth.model';
 import { Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-login',
@@ -12,11 +13,12 @@ import { Router } from '@angular/router';
   standalone: true,
   imports: [ReactiveFormsModule, CommonModule],
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
   loginForm: FormGroup;
   auth: AuthService = inject(AuthService);
   router: Router = inject(Router);
   cd: ChangeDetectorRef = inject(ChangeDetectorRef);
+  toast: ToastrService = inject(ToastrService);
 
   constructor(readonly fb: FormBuilder) {
     this.loginForm = this.fb.group({
@@ -25,23 +27,31 @@ export class LoginComponent {
     });
   }
 
+  ngOnInit(): void {
+    localStorage.clear();
+  }
+
   onSubmit() {
-    const payload: LoginModel = this.loginForm.value;
+    const payload = {
+      email: this.loginForm.value.email,
+      password: this.loginForm.value.password,
+    }
     this.auth.login(payload).subscribe({
       next: (res) => {
         // saving token to local
         localStorage.setItem('token', res.token);
         localStorage.setItem('email', res.email);
         this.cd.detectChanges();
-        alert(`${res.message} \n`);
         if (res.firstLogin) {
+          this.toast.info("Change your current passsword");
           this.router.navigate(['/password-modal']);
         }
         else{
+          this.toast.success("Login Sucessfull");
           this.router.navigate(['/profile']);
         }
       },
-      error: (error) => alert(error.message),
+      error: (error) => this.toast.success(error.message),
     });
   }
 }

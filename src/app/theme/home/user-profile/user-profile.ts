@@ -13,7 +13,6 @@ import { CommonModule } from '@angular/common';
 export class UserProfileComponent implements OnInit {
   userService : UserService = inject(UserService);
   userData : UserModel | null = null;
-  activatedRoute : ActivatedRoute = inject(ActivatedRoute);
   cd : ChangeDetectorRef = inject(ChangeDetectorRef);
 
   ngOnInit(){

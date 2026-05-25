@@ -3,7 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { ApiUrl } from '../environment/environment';
 import { catchError, Observable, throwError } from 'rxjs';
 import { DashboardModel } from '../models/ui.model';
-import { EmployeeModel, UserModel } from '../models/user.model';
+import { EmployeeModel, UserModel, UserResponseModel } from '../models/user.model';
 import { SignUpModel } from '../models/auth.model';
 
 @Injectable({ providedIn: 'root' })
@@ -35,12 +35,41 @@ export class AdminService {
       .pipe(catchError(this.handleError));
   }
 
+  getUsersData(): Observable<UserResponseModel[]> {
+    return this.http
+      .get<UserResponseModel[]>(`${this.apiUrl.backend_url}/admin/getUsers`)
+      .pipe(catchError(this.handleError));
+  }
+
   // signUp
-    signUpAdmin(data: SignUpModel): Observable<any> {
-      return this.http
-        .post(`${this.apiUrl.backend_url}/auth/signUpAdmin`, data)
-        .pipe(catchError(this.handleError));
-    }
+  signUpAdmin(data: SignUpModel): Observable<any> {
+    return this.http
+      .post(`${this.apiUrl.backend_url}/auth/signUpAdmin`, data)
+      .pipe(catchError(this.handleError));
+  }
+
+  // approve user profile
+  approveUser(data: any): Observable<any> {
+    console.log();
+    return this.http
+      .post(`${this.apiUrl.backend_url}/admin/approveUser`, data)
+      .pipe(catchError(this.handleError));
+  }
+
+  // reject user profile
+  rejectUser(data: any): Observable<any> {
+    console.log(data);
+    return this.http
+      .post(`${this.apiUrl.backend_url}/admin/rejectUser`, data)
+      .pipe(catchError(this.handleError));
+  }
+
+  // update user profile
+  updateUserProfile(data: any): Observable<any> {
+    return this.http
+      .post(`${this.apiUrl.backend_url}/admin/updateUserProfile`, data)
+      .pipe(catchError(this.handleError));
+  }
 
   handleError(error: HttpErrorResponse) {
     console.log('API Error : ', error);

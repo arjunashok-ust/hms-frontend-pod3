@@ -14,6 +14,7 @@ export class SidebarComponent implements OnInit{
   userService : UserService = inject(UserService);
   nodeData : NodeModel[] | null = null;
   cd : ChangeDetectorRef = inject(ChangeDetectorRef);
+
   ngOnInit() {
     const role = localStorage.getItem('role')??'';
     console.log(role);

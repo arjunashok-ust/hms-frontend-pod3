@@ -7,13 +7,11 @@ import {
   ɵInternalFormsSharedModule,
 } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { mapToAppointmentRequest } from '../../mapper/mapToAppointmentRequest';
 import { AppointmentService } from '../../../services/appointment.service';
 import { UserService } from '../../../services/user.service';
 import { AppointmentModel, AppointmentResponseModel } from '../../../models/appointment.model';
 import { CommonModule } from '@angular/common';
 import { EmployeeModel } from '../../../models/user.model';
-import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-appointment',
@@ -26,7 +24,7 @@ export class AppointmentComponent implements OnInit {
   appointmentService: AppointmentService = inject(AppointmentService);
   userService: UserService = inject(UserService);
   doctors: EmployeeModel[] | null = null;
-  appointmentUiData : AppointmentResponseModel | null = null;
+  appointmentUiData: AppointmentResponseModel | null = null;
   appointments: AppointmentModel[] | null = null;
   cd: ChangeDetectorRef = inject(ChangeDetectorRef);
 
@@ -35,8 +33,6 @@ export class AppointmentComponent implements OnInit {
   date = Date.now();
 
   employeeId = localStorage.getItem('employeeId');
-  employeeNameMap: { [key: string]: Observable<string> } = {};
-  patientNameMap: { [key: string]: Observable<string> } = {};
 
   public constructor(readonly fb: FormBuilder) {
     this.appointmentForm = this.fb.group({
@@ -60,11 +56,12 @@ export class AppointmentComponent implements OnInit {
     this.appointmentService.getAppointmentUiData().subscribe({
       next: (res) => {
         this.appointmentUiData = res;
+        this.cd.detectChanges();
       },
       error: (err) => {
-        console.log("Appointment Ui Data Error : ",err);
-      }
-    })
+        console.log('Appointment Ui Data Error : ', err);
+      },
+    });
     this.appointmentService.getAllDoctors().subscribe({
       next: (res) => {
         this.doctors = res;
@@ -77,30 +74,12 @@ export class AppointmentComponent implements OnInit {
     this.appointmentService.getAllAppointment().subscribe({
       next: (res) => {
         this.appointments = res;
-        this.preloadNames();
         this.cd.detectChanges();
       },
       error: (err) => {
         console.log('Get Doctors Error : ', err);
       },
     });
-  }
-
-  preloadNames(){
-    this.appointments?.forEach((app) => {
-      if(!this.employeeNameMap[app.doctorEmployeeId]){
-        this.employeeNameMap[app.doctorEmployeeId] = this.userService.getNameByEmployeeId(app.doctorEmployeeId);
-      }
-      if(!this.employeeNameMap[app.createdByEmployeeId]){
-        this.employeeNameMap[app.createdByEmployeeId] = this.userService.getNameByEmployeeId(app.createdByEmployeeId);
-      }
-    })
-
-    this.appointments?.forEach((app) => {
-      if(!this.patientNameMap[app.patientId]){
-        this.patientNameMap[app.patientId] = this.userService.getNameByPatientId(app.patientId);
-      }
-    })
   }
 
   onDoctorChange() {
@@ -114,7 +93,7 @@ export class AppointmentComponent implements OnInit {
     this.appointmentForm.patchValue({ timeSlot: '' });
   }
 
-  deleteAppointment(appointmentId: string){
+  deleteAppointment(appointmentId: string) {
     this.appointmentService.deleteAppointment(appointmentId).subscribe({
       next: (res) => {
         this.cd.detectChanges();
@@ -122,12 +101,20 @@ export class AppointmentComponent implements OnInit {
       },
       error: (err) => {
         alert(err);
-      }
-    })
+      },
+    });
   }
 
   onSubmit() {
-    const payload = mapToAppointmentRequest(this.appointmentForm);
+    const payload = {
+      patientId: this.appointmentForm.value.patientId,
+      doctorEmployeeId: this.appointmentForm.value.doctorEmployeeId,
+      date: this.appointmentForm.value.date,
+      timeSlot: this.appointmentForm.value.timeSlot,
+      status: this.appointmentForm.value.status,
+      createdByEmployeeId: this.appointmentForm.value.createdByEmployeeId,
+    };
+
     this.appointmentService.createAppointment(payload).subscribe({
       next: (res) => {
         this.cd.detectChanges();

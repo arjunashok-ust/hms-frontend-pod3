@@ -14,14 +14,8 @@ export class AuthService {
       .post(`${this.api.backend_url}/auth/signUp`, data)
       .pipe(catchError(this.handleError));
   }
-  // signUp
-  signUpAdmin(data: SignUpModel): Observable<any> {
-    return this.http
-      .post(`${this.api.backend_url}/auth/signUpAdmin`, data)
-      .pipe(catchError(this.handleError));
-  }
   // login
-  login(data: LoginModel): Observable<any> {
+  login(data: any): Observable<any> {
     return this.http
       .post(`${this.api.backend_url}/auth/login`, data)
       .pipe(catchError(this.handleError));
