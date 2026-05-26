@@ -10,6 +10,7 @@ import {
 import { passwordsMatchValidator } from '../../../../validators/password-match-validator';
 import { Router, RouterLink, RouterModule } from '@angular/router';
 import { AuthService } from '../../../../services/auth.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-password-modal',
@@ -20,8 +21,12 @@ import { AuthService } from '../../../../services/auth.service';
 })
 export class PasswordModalComponent {
   passwordForm!: FormGroup;
+
   router: Router = inject(Router);
   authService: AuthService = inject(AuthService);
+  toast: ToastrService = inject(ToastrService);
+
+
   public constructor(readonly fb: FormBuilder) {
     this.passwordForm = this.fb.group(
       {
@@ -40,10 +45,10 @@ export class PasswordModalComponent {
     const payload = { email: email, password: password };
     this.authService.setPassword(payload).subscribe({
       next: (res)=>{
-        alert('New Password Is Set');
+        this.toast.success('New Password Is Set');
       },
       error: (error) => {
-        alert(error);
+        this.toast.error(error.message);
       }
     });
     this.router.navigate(['/profile']);

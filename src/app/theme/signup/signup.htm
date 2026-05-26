@@ -13,12 +13,11 @@
           <span *ngIf="signUpForm.get('email')?.errors?.['required']">email is required.</span>
           <span *ngIf="signUpForm.get('email')?.errors?.['email']">email is invalid.</span>
         </small>
-        <select
-          id="roles"
-          formControlName="role"
-        >
+        <select id="roles" formControlName="role">
           <option value="" disabled>Role</option>
-          <option *ngFor="let role of roles_data" [ngValue]="role.role_name">{{ role.role_name }}</option>
+          <option *ngFor="let role of roles_data" [ngValue]="role.role_name">
+            {{ role.role_name }}
+          </option>
         </select>
         <small *ngIf="!signUpForm.get('roles')?.valid&&signUpForm.get('roles')?.touched"
           >role is required.</small
@@ -48,14 +47,6 @@
         <small *ngIf="!signUpForm.get('designation')?.valid&&signUpForm.get('designation')?.touched"
           >designation is required.</small
         >
-        <select id="status" formControlName="status">
-          <option value="" disabled>Status</option>
-          <option value="Active">Active</option>
-          <option value="Inactive">In Active</option>
-        </select>
-        <small *ngIf="!signUpForm.get('status')?.valid&&signUpForm.get('status')?.touched"
-          >status is required.</small
-        >
         <div class="slot-container">
           <label for="datePicker">Joining Date</label>
           <input type="date" placeholder="Date" formControlName="joiningDate" id="datePicker" />
@@ -68,7 +59,7 @@
           type="text"
           placeholder="Medical Registration Number"
           formControlName="medicalRegistrationNo"
-          *ngIf="signUpForm.get('role')?.value == 'Doctor'"
+          *ngIf="signUpForm.get('role')?.value == 'Doctor' || signUpForm.get('role')?.value == 'Nurse'"
         />
         <small
           *ngIf="!signUpForm.get('medicalRegistrationNo')?.valid&&signUpForm.get('medicalRegistrationNo')?.touched"
@@ -92,7 +83,12 @@
           *ngIf="!signUpForm.get('qualification')?.valid&&signUpForm.get('qualification')?.touched"
           >qualification is required.</small
         >
-        <input type="number" placeholder="Consultation Fee" formControlName="consultationFee" *ngIf="signUpForm.get('role')?.value == 'Doctor'"/>
+        <input
+          type="number"
+          placeholder="Consultation Fee"
+          formControlName="consultationFee"
+          *ngIf="signUpForm.get('role')?.value == 'Doctor'"
+        />
         <small
           *ngIf="!signUpForm.get('consultationFee')?.valid&&signUpForm.get('consultationFee')?.touched"
           >consultation fee is required.</small
@@ -121,7 +117,7 @@
           <label for="slot-container">Generated Time Slots</label>
           <div class="generated-option" *ngFor="let slot of generatedSlots">
             <span>{{ slot }}</span>
-            <input type="checkbox"  [value]="slot" (change)="toggleSlot(slot)" /> 
+            <input type="checkbox" [value]="slot" (change)="toggleSlot(slot)" />
           </div>
         </div>
         <div class="slot-container" *ngIf="signUpForm.value.availabilitySlots.length">

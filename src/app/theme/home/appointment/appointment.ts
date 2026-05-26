@@ -12,6 +12,7 @@ import { UserService } from '../../../services/user.service';
 import { AppointmentModel, AppointmentResponseModel } from '../../../models/appointment.model';
 import { CommonModule } from '@angular/common';
 import { EmployeeModel } from '../../../models/user.model';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-appointment',
@@ -21,13 +22,15 @@ import { EmployeeModel } from '../../../models/user.model';
 })
 export class AppointmentComponent implements OnInit {
   appointmentForm: FormGroup;
+
   appointmentService: AppointmentService = inject(AppointmentService);
   userService: UserService = inject(UserService);
+  cd: ChangeDetectorRef = inject(ChangeDetectorRef);
+  toast: ToastrService = inject(ToastrService);
+  
   doctors: EmployeeModel[] | null = null;
   appointmentUiData: AppointmentResponseModel | null = null;
   appointments: AppointmentModel[] | null = null;
-  cd: ChangeDetectorRef = inject(ChangeDetectorRef);
-
   // for setting doctor time slots
   doctorTimeSlots: string[] = [''];
   date = Date.now();
@@ -97,10 +100,10 @@ export class AppointmentComponent implements OnInit {
     this.appointmentService.deleteAppointment(appointmentId).subscribe({
       next: (res) => {
         this.cd.detectChanges();
-        alert(res.message);
+        this.toast.success(res.message);
       },
       error: (err) => {
-        alert(err);
+        this.toast.error(err.message);
       },
     });
   }
@@ -118,10 +121,10 @@ export class AppointmentComponent implements OnInit {
     this.appointmentService.createAppointment(payload).subscribe({
       next: (res) => {
         this.cd.detectChanges();
-        alert(res.message);
+        this.toast.success(res.message);
       },
       error: (err) => {
-        console.log(err);
+        this.toast.error(err.message);
       },
     });
     this.appointmentForm.reset();

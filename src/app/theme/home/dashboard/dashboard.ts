@@ -4,6 +4,7 @@ import { UserModel } from '../../../models/user.model';
 import { AdminService } from '../../../services/admin.service';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-dashboard',
@@ -11,12 +12,14 @@ import { RouterModule } from '@angular/router';
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css',
 })
+
 export class DashboardComponent implements OnInit {
   dashboardData: DashboardModel | null = null;
   userData: UserModel[] | null = null;
 
   adminService: AdminService = inject(AdminService);
   cd: ChangeDetectorRef = inject(ChangeDetectorRef);
+  toast: ToastrService = inject(ToastrService);
 
   ngOnInit() {
     this.adminService.getDashboardData().subscribe({
@@ -25,7 +28,7 @@ export class DashboardComponent implements OnInit {
         this.cd.detectChanges();
       },
       error: (err) => {
-        alert(err.message);
+        this.toast.error(err.message);
       },
     });
     this.adminService.getUsers().subscribe({
@@ -35,7 +38,7 @@ export class DashboardComponent implements OnInit {
         this.cd.detectChanges();
       },
       error: (err) => {
-        alert(err.message);
+        this.toast.error(err.message);
       },
     });
   }

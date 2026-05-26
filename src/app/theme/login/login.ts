@@ -2,8 +2,7 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { FormGroup, Validators, ReactiveFormsModule, FormBuilder } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
-import { LoginModel } from '../../models/auth.model';
-import { Router } from '@angular/router';
+import { Router, RouterLink, RouterModule } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 
 @Component({
@@ -11,7 +10,7 @@ import { ToastrService } from 'ngx-toastr';
   templateUrl: './login.htm',
   styleUrl: './login.css',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule],
+  imports: [ReactiveFormsModule, CommonModule, RouterLink,RouterModule],
 })
 export class LoginComponent implements OnInit {
   loginForm: FormGroup;
@@ -42,16 +41,21 @@ export class LoginComponent implements OnInit {
         localStorage.setItem('token', res.token);
         localStorage.setItem('email', res.email);
         this.cd.detectChanges();
-        if (res.firstLogin) {
+        if(res.isActivated === false){
+          this.toast.info("Your account is not activated yet,Please contact the admin");
+          this.router.navigate(['/login']);
+        }
+        else if (res.firstLogin) {
           this.toast.info("Change your current passsword");
           this.router.navigate(['/password-modal']);
         }
         else{
+          
           this.toast.success("Login Sucessfull");
           this.router.navigate(['/profile']);
         }
       },
-      error: (error) => this.toast.success(error.message),
+      error: (error) => this.toast.warning(error.message),
     });
   }
 }

@@ -1,10 +1,11 @@
 import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { UserModel, UserResponseModel } from '../../../models/user.model';
+import { UserResponseModel } from '../../../models/user.model';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AdminService } from '../../../services/admin.service';
 import { UserService } from '../../../services/user.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-approval',
@@ -16,6 +17,7 @@ export class ApprovalComponent implements OnInit {
   adminService: AdminService = inject(AdminService);
   userService: UserService = inject(UserService);
   cd: ChangeDetectorRef = inject(ChangeDetectorRef);
+  toast: ToastrService = inject(ToastrService);
 
   userData: UserResponseModel[] = [];
   filteredData: UserResponseModel[] = [];
@@ -33,12 +35,12 @@ export class ApprovalComponent implements OnInit {
     this.adminService.getUsersData().subscribe({
       next: (res) => {
         this.userData = res;
-        this.loadUiData();
         this.applyFilters();
+        this.loadUiData();
         this.cd.detectChanges();
       },
       error: (error) => {
-        alert('Server Error During Get Users');
+        this.toast.error('Server Error During Get Users');
       },
     });
   }
@@ -64,7 +66,7 @@ export class ApprovalComponent implements OnInit {
         !this.searchText ||
         user.email.includes(this.searchText) ||
         user.employeeId.includes(this.searchText) ||
-        user.role.includes(this.searchText),
+        user.role.includes(this.searchText) 
     );
     this.cd.detectChanges();
   }
@@ -73,12 +75,12 @@ export class ApprovalComponent implements OnInit {
     const payload = { employeeId: id };
     this.adminService.approveUser(payload).subscribe({
       next: (res) => {
-        alert('Account Activated');
+        this.toast.success('Account Activated');
         this.applyFilters();
         this.cd.detectChanges();
       },
       error: (error) => {
-        alert('Server Error During Reject User');
+        this.toast.error('Server Error During Reject User');
         console.log(error);
       },
     });

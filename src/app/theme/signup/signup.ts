@@ -6,6 +6,7 @@ import { AuthService } from '../../services/auth.service';
 import { DepartmentModel, RoleModel, SpecializationModel } from '../../models/ui.model';
 import { mapToSignUpRequest } from '../mapper/mapToSignUpRequest';
 import { Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-signup',
@@ -16,13 +17,16 @@ import { Router } from '@angular/router';
 })
 export class SignUpComponent implements OnInit {
   signUpForm: FormGroup;
+
   auth: AuthService = inject(AuthService);
+  route: Router = inject(Router);
+  cd: ChangeDetectorRef = inject(ChangeDetectorRef);
+  toast: ToastrService = inject(ToastrService);
+
   roles_data: RoleModel[] = [];
   departments_data: DepartmentModel[] = [];
   specializations_data: SpecializationModel[] = [];
-  route: Router = inject(Router);
-  cd: ChangeDetectorRef = inject(ChangeDetectorRef);
-
+  
   ngOnInit() {
     this.auth.getUiData<RoleModel[]>('/ui/getRoles').subscribe((res) => {
       this.roles_data = res;
@@ -47,7 +51,7 @@ export class SignUpComponent implements OnInit {
         password: ['', [Validators.required, Validators.minLength(8)]],
         department: ['', Validators.required],
         designation: ['', Validators.required],
-        status: ['', Validators.required],
+        status: ['Active'],
         joiningDate: ['', Validators.required],
         medicalRegistrationNo: [''],
         specialization: [''],
@@ -106,11 +110,12 @@ export class SignUpComponent implements OnInit {
     const payload = mapToSignUpRequest(this.signUpForm);
     this.auth.signUp(payload).subscribe({
       next: (res) => {
-        alert(res.message);
+        this.toast.success(res.message);
         this.route.navigate(['/login']);
       },
       error: (error) => {
         console.log(error);
+        this.toast.error(error.message);
       },
     });
   }

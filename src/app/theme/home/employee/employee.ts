@@ -6,6 +6,7 @@ import { AuthService } from '../../../services/auth.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink, RouterModule } from "@angular/router";
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-employee',
@@ -17,6 +18,7 @@ export class EmployeeComponent implements OnInit {
   adminService: AdminService = inject(AdminService);
   authService: AuthService = inject(AuthService);
   router: Router = inject(Router);
+  toast: ToastrService = inject(ToastrService);
   cd: ChangeDetectorRef = inject(ChangeDetectorRef);
 
   employeeData: EmployeeModel[] = [];
@@ -36,7 +38,7 @@ export class EmployeeComponent implements OnInit {
         this.cd.detectChanges();
       },
       error: (err) => {
-        alert('Error fetching data from server');
+        this.toast.error('Error fetching data from server');
       },
     });
     this.authService.getUiData<DepartmentModel[]>('/ui/getDepartments').subscribe({
@@ -71,10 +73,10 @@ export class EmployeeComponent implements OnInit {
         this.employeeData = this.employeeData.filter((employee)=>employee.employeeCode!==employeeId);
         this.applyFilters();
         this.cd.detectChanges();
-        alert('Account Deleted Sucessfully');
+        this.toast.success('Account Deleted Sucessfully');
       },
       error: (err) => {
-        alert('Server Error During Delete User Profile');
+        this.toast.error('Server Error During Delete User Profile');
       },
     });
   }

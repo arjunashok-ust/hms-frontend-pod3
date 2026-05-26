@@ -13,6 +13,7 @@ import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../../../services/auth.service';
 import { mapToSignUpRequest } from '../../../mapper/mapToSignUpRequest';
 import { AdminService } from '../../../../services/admin.service';
+import { Toast, ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-signup-modal',
@@ -24,6 +25,7 @@ export class SignUpModalComponent implements OnInit {
   signUpModalForm: FormGroup;
   auth: AuthService = inject(AuthService);
   adminService: AdminService = inject(AdminService);
+  toast: ToastrService = inject(ToastrService);
   cd: ChangeDetectorRef = inject(ChangeDetectorRef);
   router: Router = inject(Router);
 
@@ -108,11 +110,11 @@ export class SignUpModalComponent implements OnInit {
     const payload = mapToSignUpRequest(this.signUpModalForm);
     this.adminService.signUpAdmin(payload).subscribe({
       next: (res) => {
-        alert(res.message);
+        this.toast.success(res.message);
         this.router.navigate(['/employee']);
       },
       error: (error) => {
-        alert(error);
+        this.toast.error(error.message);
       },
     });
   }

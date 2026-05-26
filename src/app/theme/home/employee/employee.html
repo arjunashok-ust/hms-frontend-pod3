@@ -45,6 +45,7 @@
         </thead>
         <tbody>
           <tr *ngFor="let employee of filteredEmployeeData">
+            <ng-container *ngIf="employee.designation !== 'Admin'">
             <td>
               <span class="employee-id">{{ employee.employeeCode }}</span>
             </td>
@@ -72,6 +73,7 @@
                 <button class="icon-btn delete-btn" (click)="deleteUserProfile(employee.employeeCode)">Delete</button>
               </div>
             </td>
+            </ng-container>
           </tr>
         </tbody>
       </table>

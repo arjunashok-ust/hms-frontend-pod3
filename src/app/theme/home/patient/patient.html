@@ -95,7 +95,7 @@
               formControlName="email"
               
             />
-            <span class="error-text" *ngIf="this.patientForm.get('email')?.touched&&this.patientForm.get('email')?.errors?.['required']">Email is required</span>
+            <span class="error-text" *ngIf="this.patientForm.get('email')?.touched&&this.patientForm.get('email')?.errors?.['email']">Email is invalid</span>
           </div>
 
           <div class="form-group">

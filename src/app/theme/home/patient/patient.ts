@@ -10,6 +10,7 @@ import { RouterModule } from '@angular/router';
 import { UserService } from '../../../services/user.service';
 import { CommonModule } from '@angular/common';
 import { PatientModel } from '../../../models/user.model';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-patient',
@@ -19,9 +20,12 @@ import { PatientModel } from '../../../models/user.model';
 })
 export class PatientComponent implements OnInit {
   patientForm: FormGroup;
+
   userService: UserService = inject(UserService);
-  patientData: PatientModel[] | null = null;
+  toast: ToastrService = inject(ToastrService);
   cd: ChangeDetectorRef = inject(ChangeDetectorRef);
+
+  patientData: PatientModel[] | null = null;
 
   patientUiData = {
     patientCount: 0,
@@ -37,7 +41,7 @@ export class PatientComponent implements OnInit {
         this.cd.detectChanges();
       },
       error: (error) => {
-        alert('Server error during get patients');
+        this.toast.success('Server error during get patients');
       },
     });
   }
@@ -46,7 +50,7 @@ export class PatientComponent implements OnInit {
     this.patientForm = this.fb.group({
       name: ['', [Validators.required]],
       phone: ['', [Validators.required]],
-      email: ['', [Validators.required]],
+      email: ['', [Validators.email]],
       gender: ['', [Validators.required]],
       dob: ['', [Validators.required]],
       address: ['', [Validators.required]],

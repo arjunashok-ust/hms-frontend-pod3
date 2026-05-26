@@ -14,6 +14,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { DepartmentModel, RoleModel, SpecializationModel } from '../../../../models/ui.model';
 import { AuthService } from '../../../../services/auth.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-edit-employee',
@@ -25,6 +26,7 @@ export class EditEmployeeComponent implements OnInit {
   adminService: AdminService = inject(AdminService);
   authService: AuthService = inject(AuthService);
   router: Router = inject(Router);
+  toast: ToastrService = inject(ToastrService);
 
   cd: ChangeDetectorRef = inject(ChangeDetectorRef);
 
@@ -151,11 +153,11 @@ export class EditEmployeeComponent implements OnInit {
     };
     this.adminService.updateUserProfile(payload).subscribe({
       next: (res) => {
-        alert(res.message);
+        this.toast.success(res.message);
         this.router.navigate(['/employee']);
       },
       error: (error) => {
-        alert("Server error during update user profile");
+        this.toast.error("Server error during update user profile");
       }
     });
   }
