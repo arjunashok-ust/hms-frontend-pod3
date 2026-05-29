@@ -139,13 +139,13 @@
             <td>
               <span
                 class="state-badge"
-                [ngClass]="user.isActivated ? 'success-chip' : 'warning-chip'"
+                [ngClass]="user.status == 'Active' ? 'success-chip' : 'warning-chip'"
               >
                 <i
                   class="bi"
-                  [ngClass]="user.isActivated ? 'bi-lightning-charge-fill' : 'bi-hourglass-split'"
+                  [ngClass]="user.status == 'Active' ? 'bi-lightning-charge-fill' : 'bi-hourglass-split'"
                 ></i>
-                {{ user.isActivated ? 'Activated' : 'Not Activated' }}
+                {{ user.status == 'Active' ? 'Activated' : 'Not Activated' }}
               </span>
             </td>
 
@@ -167,7 +167,7 @@
                 <button
                   class="table-action approve"
                   title="Approve User"
-                  *ngIf="user.isActivated === false"
+                  *ngIf="user.status === 'Pending'"
                   (click)="approveUser(user.employeeId)"
                 >
                   <i class="bi bi-check2"></i>
@@ -176,7 +176,7 @@
                 <button
                   class="table-action reject"
                   title="Reject User"
-                  *ngIf="user.isActivated === true"
+                  *ngIf="user.status === 'Pending'"
                   (click)="rejectUser(user.employeeId)"
                 >
                   <i class="bi bi-x-lg"></i>

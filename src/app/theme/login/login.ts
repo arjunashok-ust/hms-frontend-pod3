@@ -14,6 +14,7 @@ import { ToastrService } from 'ngx-toastr';
 })
 export class LoginComponent implements OnInit {
   loginForm: FormGroup;
+  
   auth: AuthService = inject(AuthService);
   router: Router = inject(Router);
   cd: ChangeDetectorRef = inject(ChangeDetectorRef);
@@ -40,8 +41,9 @@ export class LoginComponent implements OnInit {
         // saving token to local
         localStorage.setItem('token', res.token);
         localStorage.setItem('email', res.email);
-        this.cd.detectChanges();
-        if(res.isActivated === false){
+        localStorage.setItem('role',res.role);
+
+        if(res.status != 'Active'){
           this.toast.info("Your account is not activated yet,Please contact the admin");
           this.router.navigate(['/login']);
         }
@@ -50,7 +52,6 @@ export class LoginComponent implements OnInit {
           this.router.navigate(['/password-modal']);
         }
         else{
-          
           this.toast.success("Login Sucessfull");
           this.router.navigate(['/profile']);
         }

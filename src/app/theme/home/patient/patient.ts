@@ -49,7 +49,7 @@ export class PatientComponent implements OnInit {
   public constructor(readonly fb: FormBuilder) {
     this.patientForm = this.fb.group({
       name: ['', [Validators.required]],
-      phone: ['', [Validators.required]],
+      phone: ['', [Validators.required,Validators.maxLength(10),Validators.pattern("^[0-9]*$")]],
       email: ['', [Validators.email]],
       gender: ['', [Validators.required]],
       dob: ['', [Validators.required]],
@@ -74,12 +74,12 @@ export class PatientComponent implements OnInit {
 
     this.userService.deletePatientt(payload).subscribe({
       next: (res) => {
-        alert("Patient deleted sucessfully");
+        this.toast.success("Patient deleted sucessfully");
         this.cd.detectChanges();
       }
       ,
       error: (error) => {
-        alert("Server error during patient deletion");
+        this.toast.error("Server error during patient deletion");
       }
     })
   }
@@ -93,15 +93,14 @@ export class PatientComponent implements OnInit {
       dob: this.patientForm.get('dob')?.value,
       address: this.patientForm.get('address')?.value,
       emergencyContact: this.patientForm.get('emergencyContact')?.value,
-      status: this.patientForm.get('status')?.value,
     };
     this.userService.createPatient(payload).subscribe({
       next: (res) => {
-        alert("Patient added sucessfully");
+        this.toast.success("Patient added sucessfully");
         this.cd.detectChanges();
       },
       error: (error) => {
-        alert('Server Error During Create Patient');
+        this.toast.error('Server Error During Create Patient');
       },
     });
   }

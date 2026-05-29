@@ -1,15 +1,13 @@
 import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { Router, RouterLink, RouterModule } from '@angular/router';
-import { EmployeeModel, UserModel } from '../../../../models/user.model';
+import { EmployeeModel } from '../../../../models/user.model';
 import { AdminService } from '../../../../services/admin.service';
-import { UserService } from '../../../../services/user.service';
 import {
   FormArray,
   FormBuilder,
   FormGroup,
   FormsModule,
   ReactiveFormsModule,
-  Validators,
 } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { DepartmentModel, RoleModel, SpecializationModel } from '../../../../models/ui.model';
@@ -42,10 +40,8 @@ export class EditEmployeeComponent implements OnInit {
     this.updateForm = this.fb.group({
       name: [''],
       email: [''],
-      role: [''],
       department: [''],
       designation: [''],
-      status: [''],
       joiningDate: [''],
       medicalRegistrationNo: [''],
       specialization: [''],
@@ -68,10 +64,8 @@ export class EditEmployeeComponent implements OnInit {
         this.updateForm.patchValue({
           name: this.userData?.name,
           email: this.userData?.email,
-          role: this.userData?.designation,
           department: this.userData?.department,
           designation: this.userData?.designation,
-          status: this.userData?.status,
           joiningDate: this.userData?.joiningDate
             ? this.userData.joiningDate.toString().split('T')[0]
             : '',

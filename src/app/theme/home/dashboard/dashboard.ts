@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { DashboardModel } from '../../../models/ui.model';
-import { UserModel } from '../../../models/user.model';
+import { UserEmployeeModel } from '../../../models/user.model';
 import { AdminService } from '../../../services/admin.service';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -15,7 +15,7 @@ import { ToastrService } from 'ngx-toastr';
 
 export class DashboardComponent implements OnInit {
   dashboardData: DashboardModel | null = null;
-  userData: UserModel[] | null = null;
+  userData: UserEmployeeModel[] | null = null;
 
   adminService: AdminService = inject(AdminService);
   cd: ChangeDetectorRef = inject(ChangeDetectorRef);

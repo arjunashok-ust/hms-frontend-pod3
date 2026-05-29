@@ -19,6 +19,7 @@ import { ToastrService } from 'ngx-toastr';
   templateUrl: './password-modal.html',
   styleUrl: './password-modal.css',
 })
+
 export class PasswordModalComponent {
   passwordForm!: FormGroup;
 

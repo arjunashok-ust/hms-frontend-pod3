@@ -62,7 +62,6 @@ a {
   border: none;
   border-radius: 10px;
   background: #f1f5f9;
-  color: #64748b;
   font-size: 0.9rem;
   cursor: pointer;
   display: flex;
@@ -83,7 +82,6 @@ a {
 
 .modal-close:hover {
   background: #fee2e2;
-  color: #dc2626;
 }
 
 .modal-header {
@@ -198,7 +196,6 @@ a {
 .form-input:disabled,
 .form-input[readonly] {
   background: #f8fafc;
-  color: #94a3b8;
   cursor: not-allowed;
   border-style: dashed;
   border-color: #e2e8f0;
@@ -400,14 +397,12 @@ a {
 
 .btn-outline:disabled {
   background: #f1f5f9;
-  color: #94a3b8;
   border-color: #e2e8f0;
   cursor: not-allowed;
 }
 
 .btn-ghost {
   background: #f1f5f9;
-  color: #64748b;
   border: 2px solid #e2e8f0;
 }
 

@@ -27,7 +27,7 @@ export class AppointmentComponent implements OnInit {
   userService: UserService = inject(UserService);
   cd: ChangeDetectorRef = inject(ChangeDetectorRef);
   toast: ToastrService = inject(ToastrService);
-  
+
   doctors: EmployeeModel[] | null = null;
   appointmentUiData: AppointmentResponseModel | null = null;
   appointments: AppointmentModel[] | null = null;
@@ -97,15 +97,20 @@ export class AppointmentComponent implements OnInit {
   }
 
   deleteAppointment(appointmentId: string) {
-    this.appointmentService.deleteAppointment(appointmentId).subscribe({
-      next: (res) => {
-        this.cd.detectChanges();
-        this.toast.success(res.message);
-      },
-      error: (err) => {
-        this.toast.error(err.message);
-      },
-    });
+    const isConfirmed = confirm(
+      `Are you sure you want to delete appointment ${appointmentId}? This action cannot be undone.`,
+    );
+    if (isConfirmed) {
+      this.appointmentService.deleteAppointment(appointmentId).subscribe({
+        next: (res) => {
+          this.cd.detectChanges();
+          this.toast.success(res.message);
+        },
+        error: (err) => {
+          this.toast.error(err.message);
+        },
+      });
+    }
   }
 
   onSubmit() {

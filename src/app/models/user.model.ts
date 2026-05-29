@@ -1,11 +1,10 @@
 export interface UserModel {
-  name: string;
-  designation: string;
   email: string;
-  employeeCode: string;
   status: string;
   role: string;
-  lastLoginAt: string;
+  employeeId: string;
+  isVerified: boolean;
+  firstLogin: boolean;
 }
 
 export interface EmployeeModel {
@@ -23,15 +22,22 @@ export interface EmployeeModel {
   availabilitySlots: string[];
 }
 
-export interface UserResponseModel {
+export interface UserEmployeeModel {
+  name: string,
   email: string;
   status: string;
   role: string;
   employeeId: string;
-  isActivated: boolean;
   isVerified: boolean;
   firstLogin: boolean;
-  lastLoginAt: boolean;
+  department: string;
+  designation: string;
+  joiningDate: Date;
+  medicalRegistrationNo: string;
+  specialization: string;
+  qualification: string;
+  consultationFee: number;
+  availabilitySlots: string[];
 }
 
 export interface PatientModel {

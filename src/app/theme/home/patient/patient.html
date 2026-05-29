@@ -76,9 +76,24 @@
               Full Name
               <span class="required">*</span>
             </label>
-            <input type="text" class="form-input" id="patientName" placeholder="e.g. John Doe" formControlName="name"/>
-            <span class="helper-text" *ngIf="!this.patientForm.get('name')?.touched">Enter patient's full legal name</span>
-            <span class="error-text" *ngIf="this.patientForm.get('name')?.touched&&this.patientForm.get('name')?.errors?.['required']">Name is required</span>
+            <input
+              type="text"
+              class="form-input"
+              id="patientName"
+              placeholder="e.g. John Doe"
+              formControlName="name"
+            />
+            <span class="helper-text" *ngIf="!this.patientForm.get('name')?.touched"
+              >Enter patient's full legal name</span
+            >
+            <span
+              class="error-text"
+              *ngIf="
+                this.patientForm.get('name')?.touched &&
+                this.patientForm.get('name')?.errors?.['required']
+              "
+              >Name is required</span
+            >
           </div>
 
           <div class="form-group">
@@ -93,9 +108,15 @@
               id="patientEmail"
               placeholder="e.g. john@email.com"
               formControlName="email"
-              
             />
-            <span class="error-text" *ngIf="this.patientForm.get('email')?.touched&&this.patientForm.get('email')?.errors?.['email']">Email is invalid</span>
+            <span
+              class="error-text"
+              *ngIf="
+                this.patientForm.get('email')?.touched &&
+                this.patientForm.get('email')?.errors?.['email']
+              "
+              >Email is invalid</span
+            >
           </div>
 
           <div class="form-group">
@@ -108,10 +129,33 @@
               type="text"
               class="form-input"
               id="patientPhone"
-              placeholder="e.g. +1 234 567 8900"
+              placeholder="e.g. 9988776655"
               formControlName="phone"
             />
-            <span class="error-text" *ngIf="this.patientForm.get('phone')?.touched&&this.patientForm.get('phone')?.errors?.['required']">Phone is required</span>
+            <span
+              class="error-text"
+              *ngIf="
+                this.patientForm.get('phone')?.touched &&
+                this.patientForm.get('phone')?.errors?.['required']
+              "
+              >Phone is required</span
+            >
+            <span
+              class="error-text"
+              *ngIf="
+                this.patientForm.get('phone')?.touched &&
+                this.patientForm.get('phone')?.errors?.['maxlength']
+              "
+              >Max length is 10</span
+            >
+            <span
+              class="error-text"
+              *ngIf="
+                this.patientForm.get('phone')?.touched &&
+                this.patientForm.get('phone')?.errors?.['pattern']
+              "
+              >Only number is allowed</span
+            >
           </div>
 
           <div class="form-group">
@@ -124,10 +168,26 @@
               type="text"
               class="form-input"
               id="emergencyContact"
-              placeholder="e.g. +1 987 654 3210"
+              placeholder="e.g. 9988776655"
               formControlName="emergencyContact"
             />
           </div>
+          <span
+            class="error-text"
+            *ngIf="
+              this.patientForm.get('emergencyContact')?.touched &&
+              this.patientForm.get('emergencyContact')?.errors?.['maxlength']
+            "
+            >Max length is 10</span
+          >
+          <span
+            class="error-text"
+            *ngIf="
+              this.patientForm.get('emergencyContact')?.touched &&
+              this.patientForm.get('emergencyContact')?.errors?.['pattern']
+            "
+            >Only number is allowed</span
+          >
         </div>
 
         <div class="section-divider">
@@ -151,7 +211,14 @@
               <option value="Male">Male</option>
               <option value="Female">Female</option>
             </select>
-             <span class="error-text" *ngIf="this.patientForm.get('gender')?.touched&&this.patientForm.get('gender')?.errors?.['required']">Gender is required</span>
+            <span
+              class="error-text"
+              *ngIf="
+                this.patientForm.get('gender')?.touched &&
+                this.patientForm.get('gender')?.errors?.['required']
+              "
+              >Gender is required</span
+            >
           </div>
 
           <div class="form-group">
@@ -160,8 +227,15 @@
               Date of Birth
               <span class="required">*</span>
             </label>
-            <input type="date" class="form-input" id="patientDob" formControlName="dob"/>
-             <span class="error-text" *ngIf="this.patientForm.get('dob')?.touched&&this.patientForm.get('dob')?.errors?.['required']">DOB is required</span>
+            <input type="date" class="form-input" id="patientDob" formControlName="dob" />
+            <span
+              class="error-text"
+              *ngIf="
+                this.patientForm.get('dob')?.touched &&
+                this.patientForm.get('dob')?.errors?.['required']
+              "
+              >DOB is required</span
+            >
           </div>
 
           <div class="form-group span-2">
@@ -177,57 +251,16 @@
               placeholder="Enter full address including city, state, and zip code"
               formControlName="address"
             ></textarea>
-             <span class="error-text" *ngIf="this.patientForm.get('address')?.touched&&this.patientForm.get('address')?.errors?.['required']">Address is required</span>
+            <span
+              class="error-text"
+              *ngIf="
+                this.patientForm.get('address')?.touched &&
+                this.patientForm.get('address')?.errors?.['required']
+              "
+              >Address is required</span
+            >
           </div>
         </div>
-
-        <div class="section-divider">
-          <div class="divider-line"></div>
-          <span class="divider-label">
-            <i class="bi bi-flag"></i>
-            Status
-          </span>
-          <div class="divider-line"></div>
-        </div>
-
-        <div class="form-group">
-          <label class="form-label" for="status">
-            <i class="bi bi-toggle-on"></i>
-            Patient Status
-            <span class="required">*</span>
-          </label>
-          <div class="status-group">
-            <input
-              type="radio"
-              id="patient-active"
-              value="Active"
-              class="status-radio"
-              formControlName="status"
-              checked
-            />
-            <label class="status-label" for="patient-active">
-              <span class="status-dot"></span> Active
-            </label>
-            <input
-              type="radio"
-              id="patient-inactive"
-              value="Inactive"
-              formControlName="status"
-              class="status-radio"
-            />
-            <label class="status-label" for="patient-inactive">
-              <span class="status-dot"></span> Inactive
-            </label>
-            <input
-              type="radio"
-              id="patient-critical"
-              value="Critical"
-              class="status-radio"
-            />
-          </div>
-           <span class="error-text" *ngIf="this.patientForm.get('status')?.touched&&this.patientForm.get('status')?.errors?.['required']">Status is required</span>
-        </div>
-
         <div class="form-footer">
           <button type="button" class="btn btn-ghost" (click)="patientForm.reset()">
             <i class="bi bi-arrow-counterclockwise"></i> Reset
@@ -235,7 +268,13 @@
           <button type="button" class="btn btn-danger-outline">
             <a routerLink="/profile"><i class="bi bi-x-lg"></i> Cancel</a>
           </button>
-          <button type="submit" class="btn btn-primary" [disabled]="!patientForm.valid" [disabled]="patientForm.invalid" [ngClass]="{ 'btn-disabled': patientForm.invalid}">
+          <button
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="!patientForm.valid"
+            [disabled]="patientForm.invalid"
+            [ngClass]="{ 'btn-disabled': patientForm.invalid }"
+          >
             <i class="bi bi-person-plus-fill"></i> Save Patient
           </button>
         </div>
@@ -250,8 +289,7 @@
           <span class="panel-subtitle">Records</span>
           <h2>All Patients</h2>
         </div>
-        <div class="table-controls">
-        </div>
+        <div class="table-controls"></div>
       </div>
 
       <div class="table-wrapper">
@@ -270,7 +308,9 @@
           </thead>
           <tbody>
             <tr *ngFor="let patient of patientData">
-              <td><span class="patient-id">{{ patient.uhid }}</span></td>
+              <td>
+                <span class="patient-id">{{ patient.uhid }}</span>
+              </td>
               <td>
                 <div class="patient-info">
                   <div class="patient-avatar pa-gradient-1">JD</div>
@@ -287,7 +327,11 @@
               <td><span class="status-badge status-active">Active</span></td>
               <td>
                 <div class="action-btns">
-                  <button class="action-btn delete" title="Delete" (click)="deletePatient(patient.uhid)">
+                  <button
+                    class="action-btn delete"
+                    title="Delete"
+                    (click)="deletePatient(patient.uhid)"
+                  >
                     <i class="bi bi-trash"></i>
                   </button>
                 </div>

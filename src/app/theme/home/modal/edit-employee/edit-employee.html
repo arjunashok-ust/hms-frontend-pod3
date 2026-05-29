@@ -64,31 +64,6 @@
         </div>
         <div class="form-row">
           <div class="form-group">
-            <label class="form-label" for="roles">
-              <i class="bi bi-shield-check"></i>
-              Role
-              <span class="required">*</span>
-            </label>
-            <div class="input-wrapper">
-              <select id="roles" class="form-input form-select" formControlName="role">
-                <option value="" disabled>Select role</option>
-                <option *ngFor="let role of roles_data" [ngValue]="role.role_name">
-                  {{ role.role_name }}
-                </option>
-              </select>
-              <span class="input-icon select-icon">
-                <i class="bi bi-chevron-down"></i>
-              </span>
-            </div>
-            <span
-              class="error-text"
-              *ngIf="!updateForm.get('roles')?.valid && updateForm.get('roles')?.touched"
-            >
-              Role is required
-            </span>
-          </div>
-
-          <div class="form-group">
             <label class="form-label" for="department">
               <i class="bi bi-building"></i>
               Department
@@ -139,30 +114,6 @@
               "
             >
               Designation is required
-            </span>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label" for="status">
-              <i class="bi bi-toggle-on"></i>
-              Status
-              <span class="required">*</span>
-            </label>
-            <div class="input-wrapper">
-              <select id="status" class="form-input form-select" formControlName="status">
-                <option value="" disabled>Select status</option>
-                <option value="Active">Active</option>
-                <option value="Inactive">Inactive</option>
-              </select>
-              <span class="input-icon select-icon">
-                <i class="bi bi-chevron-down"></i>
-              </span>
-            </div>
-            <span
-              class="error-text"
-              *ngIf="!updateForm.get('status')?.valid && updateForm.get('status')?.touched"
-            >
-              Status is required
             </span>
           </div>
         </div>

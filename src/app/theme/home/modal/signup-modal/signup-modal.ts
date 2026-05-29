@@ -12,8 +12,7 @@ import { DepartmentModel, RoleModel, SpecializationModel } from '../../../../mod
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../../../services/auth.service';
 import { mapToSignUpRequest } from '../../../mapper/mapToSignUpRequest';
-import { AdminService } from '../../../../services/admin.service';
-import { Toast, ToastrService } from 'ngx-toastr';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-signup-modal',
@@ -24,7 +23,6 @@ import { Toast, ToastrService } from 'ngx-toastr';
 export class SignUpModalComponent implements OnInit {
   signUpModalForm: FormGroup;
   auth: AuthService = inject(AuthService);
-  adminService: AdminService = inject(AdminService);
   toast: ToastrService = inject(ToastrService);
   cd: ChangeDetectorRef = inject(ChangeDetectorRef);
   router: Router = inject(Router);
@@ -55,7 +53,7 @@ export class SignUpModalComponent implements OnInit {
       role: ['', [Validators.required]],
       department: ['', Validators.required],
       designation: ['', Validators.required],
-      status: ['', Validators.required],
+      status: ['Active'],
       joiningDate: ['', Validators.required],
       medicalRegistrationNo: [''],
       specialization: [''],
@@ -108,7 +106,7 @@ export class SignUpModalComponent implements OnInit {
 
   onSubmit() {
     const payload = mapToSignUpRequest(this.signUpModalForm);
-    this.adminService.signUpAdmin(payload).subscribe({
+    this.auth.signUp(payload).subscribe({
       next: (res) => {
         this.toast.success(res.message);
         this.router.navigate(['/employee']);

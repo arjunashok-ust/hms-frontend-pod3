@@ -2,7 +2,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { ApiUrl } from '../environment/environment';
 import { catchError, Observable, throwError } from 'rxjs';
-import { PatientModel, UserModel } from '../models/user.model';
+import { PatientModel, UserEmployeeModel } from '../models/user.model';
 import { NodeModel } from '../models/ui.model';
 import { Router } from '@angular/router';
 
@@ -13,9 +13,9 @@ export class UserService {
   router: Router = inject(Router);
 
   // get user profile
-  getUserProfile(email: string): Observable<any> {
+  getUserProfile(email: string): Observable<UserEmployeeModel> {
     return this.http
-      .get<UserModel>(`${this.api.backend_url}/user/getUserProfile`, {
+      .get<UserEmployeeModel>(`${this.api.backend_url}/user/getUserProfile`, {
         params: {
           email: email,
         },
@@ -28,24 +28,6 @@ export class UserService {
     return this.http
       .get<NodeModel[]>(`${this.api.backend_url}/node/getNodes`, {
         params: { role: role },
-      })
-      .pipe(catchError(this.handleError));
-  }
-
-  // get name by employee id
-  getNameByEmployeeId(employeeId: string): Observable<any> {
-    return this.http
-      .get<any>(`${this.api.backend_url}/user/getNameByEmployeeId`, {
-        params: { employeeId: employeeId },
-      })
-      .pipe(catchError(this.handleError));
-  }
-
-  // get name by patient id
-  getNameByPatientId(patientId: string): Observable<any> {
-    return this.http
-      .get<any>(`${this.api.backend_url}/user/getNameByPatientId`, {
-        params: { patientId: patientId },
       })
       .pipe(catchError(this.handleError));
   }
@@ -73,6 +55,7 @@ export class UserService {
 
   // logout
   logout() {
+    localStorage.clear();
     return this.router.navigate(['/login']);
   }
 

@@ -3,8 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { ApiUrl } from '../environment/environment';
 import { catchError, Observable, throwError } from 'rxjs';
 import { DashboardModel } from '../models/ui.model';
-import { EmployeeModel, UserModel, UserResponseModel } from '../models/user.model';
-import { SignUpModel } from '../models/auth.model';
+import { EmployeeModel, UserEmployeeModel, UserModel } from '../models/user.model';
 
 @Injectable({ providedIn: 'root' })
 export class AdminService {
@@ -17,9 +16,9 @@ export class AdminService {
       .pipe(catchError(this.handleError));
   }
 
-  getUsers(): Observable<UserModel[]> {
+  getUsers(): Observable<UserEmployeeModel[]> {
     return this.http
-      .get<UserModel[]>(`${this.apiUrl.backend_url}/admin/getAllUsers`)
+      .get<UserEmployeeModel[]>(`${this.apiUrl.backend_url}/admin/getAllUsers`)
       .pipe(catchError(this.handleError));
   }
 
@@ -35,18 +34,12 @@ export class AdminService {
       .pipe(catchError(this.handleError));
   }
 
-  getUsersData(): Observable<UserResponseModel[]> {
+  getUsersData(): Observable<UserModel[]> {
     return this.http
-      .get<UserResponseModel[]>(`${this.apiUrl.backend_url}/admin/getUsers`)
+      .get<UserModel[]>(`${this.apiUrl.backend_url}/admin/getUsers`)
       .pipe(catchError(this.handleError));
   }
 
-  // signUp
-  signUpAdmin(data: SignUpModel): Observable<any> {
-    return this.http
-      .post(`${this.apiUrl.backend_url}/auth/signUpAdmin`, data)
-      .pipe(catchError(this.handleError));
-  }
 
   // approve user profile
   approveUser(data: any): Observable<any> {

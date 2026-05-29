@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { LoginModel,SignUpModel } from '../models/auth.model';
+import { SignUpModel } from '../models/auth.model';
 import { catchError, Observable, throwError } from 'rxjs';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { ApiUrl } from '../environment/environment';

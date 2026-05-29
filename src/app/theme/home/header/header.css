@@ -184,7 +184,6 @@
   height: 18px;
   padding: 0 5px;
   background: linear-gradient(135deg, #f43f5e, #e11d48);
-  color: white;
   border-radius: 999px;
   font-size: 0.65rem;
   font-weight: 700;
@@ -288,7 +287,6 @@
   border: none;
   border-radius: 12px;
   background: linear-gradient(135deg, #f43f5e, #e11d48);
-  color: white;
   font-family: inherit;
   font-size: 0.85rem;
   font-weight: 600;

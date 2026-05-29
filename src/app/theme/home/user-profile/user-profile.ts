@@ -1,7 +1,6 @@
 import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { UserService } from '../../../services/user.service';
-import { UserModel } from '../../../models/user.model';
-import { ActivatedRoute } from '@angular/router';
+import { UserEmployeeModel} from '../../../models/user.model';
 import { CommonModule } from '@angular/common';
 import { ToastrService } from 'ngx-toastr';
 
@@ -16,15 +15,14 @@ export class UserProfileComponent implements OnInit {
   cd: ChangeDetectorRef = inject(ChangeDetectorRef);
   toast: ToastrService = inject(ToastrService);
 
-  userData: UserModel | null = null;
+  userData: UserEmployeeModel | null = null;
 
   ngOnInit() {
     const email = localStorage.getItem('email') ?? '';
     this.userService.getUserProfile(email).subscribe({
       next: (res) => {
         this.userData = res;
-        localStorage.setItem('role', this.userData?.role ?? '');
-        localStorage.setItem('employeeId', this.userData?.employeeCode ?? '');
+        localStorage.setItem('employeeId', this.userData?.employeeId ?? '');
         localStorage.setItem('name', this.userData?.name ?? '');
         this.cd.detectChanges();
       },

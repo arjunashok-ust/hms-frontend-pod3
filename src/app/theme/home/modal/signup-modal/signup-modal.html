@@ -143,32 +143,6 @@
               Designation is required
             </span>
           </div>
-
-          <div class="form-group">
-            <label class="form-label" for="status">
-              <i class="bi bi-toggle-on"></i>
-              Status
-              <span class="required">*</span>
-            </label>
-            <div class="input-wrapper">
-              <select id="status" class="form-input form-select" formControlName="status">
-                <option value="" disabled>Select status</option>
-                <option value="Active">Active</option>
-                <option value="Inactive">Inactive</option>
-              </select>
-              <span class="input-icon select-icon">
-                <i class="bi bi-chevron-down"></i>
-              </span>
-            </div>
-            <span
-              class="error-text"
-              *ngIf="
-                !signUpModalForm.get('status')?.valid && signUpModalForm.get('status')?.touched
-              "
-            >
-              Status is required
-            </span>
-          </div>
         </div>
         <div class="form-group">
           <label class="form-label" for="datePicker">

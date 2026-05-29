@@ -15,9 +15,9 @@ import { ToastrService } from 'ngx-toastr';
   standalone: true,
   imports: [ReactiveFormsModule, CommonModule],
 })
+
 export class SignUpComponent implements OnInit {
   signUpForm: FormGroup;
-
   auth: AuthService = inject(AuthService);
   route: Router = inject(Router);
   cd: ChangeDetectorRef = inject(ChangeDetectorRef);
@@ -51,7 +51,7 @@ export class SignUpComponent implements OnInit {
         password: ['', [Validators.required, Validators.minLength(8)]],
         department: ['', Validators.required],
         designation: ['', Validators.required],
-        status: ['Active'],
+        status: ['Pending'],
         joiningDate: ['', Validators.required],
         medicalRegistrationNo: [''],
         specialization: [''],
@@ -115,7 +115,7 @@ export class SignUpComponent implements OnInit {
       },
       error: (error) => {
         console.log(error);
-        this.toast.error(error.message);
+        this.toast.error("Server error during login");
       },
     });
   }

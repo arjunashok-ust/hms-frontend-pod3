@@ -1,11 +1,11 @@
 import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { UserResponseModel } from '../../../models/user.model';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AdminService } from '../../../services/admin.service';
 import { UserService } from '../../../services/user.service';
 import { ToastrService } from 'ngx-toastr';
+import { UserModel } from '../../../models/user.model';
 
 @Component({
   selector: 'app-approval',
@@ -19,8 +19,8 @@ export class ApprovalComponent implements OnInit {
   cd: ChangeDetectorRef = inject(ChangeDetectorRef);
   toast: ToastrService = inject(ToastrService);
 
-  userData: UserResponseModel[] = [];
-  filteredData: UserResponseModel[] = [];
+  userData: UserModel[] = [];
+  filteredData: UserModel[] = [];
   
   approvalUiData = {
     pendingCount: 0,
@@ -47,16 +47,16 @@ export class ApprovalComponent implements OnInit {
 
   loadUiData() {
     this.approvalUiData.pendingCount = this.userData.filter(
-      (user) => user.isActivated === false,
+      (user) => user.status === 'Pending',
     ).length;
     this.approvalUiData.verifiedCount = this.userData.filter(
       (user) => user.isVerified === true,
     ).length;
     this.approvalUiData.inActiveCount = this.userData.filter(
-      (user) => user.status !== 'Active',
+      (user) => user.status === 'Inactive',
     ).length;
     this.approvalUiData.firstLoginCount = this.userData.filter(
-      (user) => user.firstLogin === false,
+      (user) => user.firstLogin === true,
     ).length;
   }
 
@@ -90,12 +90,12 @@ export class ApprovalComponent implements OnInit {
     const payload = { employeeId: id };
     this.adminService.rejectUser(payload).subscribe({
       next: (res) => {
-        alert('Application Rejected');
+        this.toast.success('Application Rejected');
         this.applyFilters();
         this.cd.detectChanges();
       },
       error: (error) => {
-        alert('Server Error During Approve User');
+        this.toast.error('Server Error During Approve User');
       },
     });
   }
