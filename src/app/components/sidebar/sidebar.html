@@ -1,0 +1,16 @@
+<aside class="sidebar">
+  <nav>
+    <ul class="menu-list">
+      @for (menu of menus; track menu.path) {
+        @if (menu.isActive !== false) {
+          <li class="menu-item">
+            <a [routerLink]="menu.path" routerLinkActive="active-link">
+              <i class="bi bi-{{ menu.icon || 'circle' }} menu-icon"></i>
+              <span class="menu-text">{{ menu.name }}</span>
+            </a>
+          </li>
+        }
+      }
+    </ul>
+  </nav>
+</aside>

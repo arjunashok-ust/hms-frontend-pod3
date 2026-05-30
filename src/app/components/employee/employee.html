@@ -1,0 +1,387 @@
+<div class="page-wrapper">
+  <div class="page-header">
+    <div>
+      <p class="subtitle">DIRECTORY</p>
+      <h2>{{ showPendingApprovals ? 'Pending Approvals' : 'Employee Management' }}</h2>
+    </div>
+    <div class="header-actions">
+      <button
+        class="btn-secondary position-relative"
+        (click)="toggleApprovalsView()"
+        [ngClass]="{ 'bg-light-blue': showPendingApprovals }"
+      >
+        {{ showPendingApprovals ? 'Back to Directory' : 'Approvals' }}
+        @if (!showPendingApprovals && pendingCount > 0) {
+          <span class="badge-count">{{ pendingCount }}</span>
+        }
+      </button>
+
+      <button class="btn-primary" (click)="openModal()">Add Employee</button>
+    </div>
+  </div>
+
+  <div class="card-panel mt-4">
+    <div class="filter-bar">
+      <div class="search-box">
+        <input
+          type="text"
+          placeholder="Search Employee"
+          [(ngModel)]="searchTerm"
+          (input)="applyFilters()"
+          class="form-control"
+        />
+      </div>
+
+      <div class="dropdown-group">
+        <select class="form-control" [(ngModel)]="selectedDepartment" (change)="applyFilters()">
+          <option value="">All Department</option>
+          @for (dept of departments; track dept) {
+            <option [value]="dept">{{ dept }}</option>
+          }
+        </select>
+
+        <select class="form-control" [(ngModel)]="selectedStatus" (change)="applyFilters()">
+          <option value="">All Status</option>
+          <option value="Active">Active</option>
+          <option value="Inactive">Inactive</option>
+        </select>
+      </div>
+    </div>
+
+    @if (!isLoading) {
+      <div class="table-responsive">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>EMPLOYEE NAME</th>
+              <th>EMAIL ADDRESS</th>
+              <th>DEPARTMENT</th>
+              <th>ROLE</th>
+              <th>STATUS</th>
+              <th>ACTION</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (emp of filteredEmployees; track emp.employeeCode) {
+              <tr>
+                <td class="text-blue fw-bold font-mono">
+                  <div class="id-text">{{ emp.employeeCode }}</div>
+                </td>
+
+                <td>
+                  <div class="profile-cell">
+                    <div class="avatar bg-blue-solid">{{ getInitials(emp.name) }}</div>
+                    <div class="fw-bold text-dark">{{ emp.name }}</div>
+                  </div>
+                </td>
+
+                <td class="text-muted">{{ emp.email }}</td>
+
+                <td class="fw-bold">{{ emp.department || 'N/A' }}</td>
+
+                <td>
+                  @if (emp.role) {
+                    <span class="role-pill">{{ getRoleString(emp.role) | titlecase }}</span>
+                  }
+                  @if (!emp.role) {
+                    <span class="role-pill text-muted">Unassigned</span>
+                  }
+                </td>
+
+                <td>
+                  <span
+                    class="status-pill"
+                    [ngClass]="emp.status === true ? 'pill-active' : 'pill-inactive'"
+                  >
+                    {{ emp.status === true ? 'Active' : 'Inactive' }}
+                  </span>
+                </td>
+
+                <td>
+                  <div class="action-links">
+                    @if (!showPendingApprovals) {
+                      <button class="btn-action edit" (click)="editEmployee(emp)">
+                        <i class="bi bi-pencil"></i>
+                      </button>
+                      <button class="btn-action delete" (click)="deleteEmployee(emp.employeeCode)">
+                        <i class="bi bi-trash"></i>
+                      </button>
+                    }
+
+                    @if (showPendingApprovals) {
+                      <button
+                        id="btn-approve"
+                        class="btn btn-sm btn-success fw-bold text-white rounded"
+                        (click)="approveEmployee(emp)"
+                      >
+                        <i class="bi bi-check-lg"></i> Approve
+                      </button>
+                      <button
+                        id="btn-reject"
+                        class="btn btn-sm btn-danger fw-bold text-white rounded"
+                        (click)="deleteEmployee(emp.employeeCode)"
+                      >
+                        Reject
+                      </button>
+                    }
+                  </div>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="7" class="empty-state text-center py-5 text-muted">
+                  {{
+                    showPendingApprovals
+                      ? 'No pending approvals at this time.'
+                      : 'No employees found matching your criteria.'
+                  }}
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+
+    @if (isLoading) {
+      <div class="loading-state text-center py-5">Loading directory...</div>
+    }
+  </div>
+</div>
+
+@if (showAddModal) {
+  <div class="modal-overlay">
+    <div class="hms-modal wide-modal">
+      <button class="close-btn" (click)="closeModal()">
+        <i class="bi bi-x-lg"></i>
+      </button>
+
+      <div class="modal-header-centered">
+        <div class="modal-icon text-white bg-blue-solid">
+          <i class="bi bi-person-plus-fill"></i>
+        </div>
+        <p class="modal-eyebrow">USER ONBOARDING</p>
+        <h2 class="modal-title">{{ isEditMode ? 'Update Employee' : 'Create Employee' }}</h2>
+        <p class="modal-subtitle">
+          {{
+            isEditMode
+              ? 'Modify the details for this employee.'
+              : 'Fill in the details below to create a new employee account.'
+          }}
+        </p>
+
+        @if (modalError) {
+          <div class="error-banner mb-3 text-danger fw-bold text-center">
+            {{ modalError }}
+          </div>
+        }
+      </div>
+
+      <form
+        class="modal-form-layout"
+        [formGroup]="newEmployeeForm"
+        (ngSubmit)="onSubmitNewEmployee()"
+      >
+        <div class="modal-body-scroll">
+          <div class="form-grid-2-col">
+            <div class="input-group">
+              <label for="fullNAme">FULL NAME *</label><input type="text" formControlName="name" />
+            </div>
+            <div class="input-group">
+              <label for="emailAddress">EMAIL ADDRESS *</label
+              ><input type="email" formControlName="email" />
+            </div>
+            <div class="input-group">
+              <label for="phoneNumber">PHONE NUMBER *</label
+              ><input type="text" formControlName="phone" />
+            </div>
+            <div class="input-group">
+              <label for="role">ROLE *</label>
+              <select formControlName="role">
+                <option value="" disabled>Select role</option>
+                <option value="ADMIN">Admin</option>
+                <option value="DOCTOR">Doctor</option>
+                <option value="NURSE">Nurse</option>
+              </select>
+            </div>
+            <div class="input-group">
+              <label for="department">DEPARTMENT *</label>
+              <select formControlName="department">
+                <option value="" disabled>Select department</option>
+                <option value="OPD">OPD</option>
+                <option value="IPD">IPD</option>
+              </select>
+            </div>
+            <div class="input-group">
+              <label for="designation">DESIGNATION *</label
+              ><input type="text" formControlName="designation" />
+            </div>
+            <div class="input-group col-span-2">
+              <label for="joiningDate">JOINING DATE *</label
+              ><input type="date" formControlName="joiningDate" />
+            </div>
+          </div>
+
+          @if (isMedicalRole) {
+            <div class="conditional-section mt-4">
+              <div class="section-divider"><span>Medical Credentials</span></div>
+              <div class="form-grid-2-col">
+                <div class="input-group">
+                  <label for="specialization">SPECIALIZATION *</label
+                  ><input formControlName="specialization" type="text" />
+                </div>
+                <div class="input-group">
+                  <label for="medicalRegNo">MEDICAL REG NO. *</label
+                  ><input formControlName="medicalRegistrationNo" type="text" />
+                </div>
+                <div class="input-group col-span-2">
+                  <label for="qualification">QUALIFICATIONS *</label
+                  ><input formControlName="qualification" type="text" />
+                </div>
+              </div>
+            </div>
+          }
+
+          @if (isDoctor) {
+            <div class="conditional-section mt-4">
+              <div class="section-divider"><span>Availability & Fees</span></div>
+
+              <div class="input-group mb-3">
+                <label for="consultationFee">CONSULTATION FEE (₹) *</label>
+                <input formControlName="consultationFee" type="number" placeholder="0.00" />
+              </div>
+
+              <div formArrayName="availabilitySlots" class="slots-section">
+                <div
+                  class="slots-header"
+                  style="display: flex; justify-content: space-between; margin-bottom: 10px"
+                >
+                  <label
+                    for="workingHours"
+                    style="font-weight: bold; color: #374151; font-size: 0.75rem"
+                    >WORKING HOURS</label
+                  >
+                  <button
+                    type="button"
+                    class="btn-add text-blue fw-bold border-0 bg-transparent"
+                    style="cursor: pointer"
+                    (click)="addSlot()"
+                  >
+                    + Add Slot
+                  </button>
+                </div>
+
+                @for (
+                  slot of availabilitySlots.controls;
+                  track slot.get('id')?.value;
+                  let i = $index
+                ) {
+                  <div
+                    [formGroupName]="i"
+                    class="slot-card"
+                    style="
+                      background: #f9fafb;
+                      padding: 12px;
+                      border: 1px solid #e5e7eb;
+                      border-radius: 8px;
+                      margin-bottom: 12px;
+                    "
+                  >
+                    <div
+                      class="d-flex align-items-center gap-2 mb-2"
+                      style="display: flex; gap: 10px; align-items: center"
+                    >
+                      <select formControlName="startTime" class="form-control">
+                        <option value="" disabled selected>Start</option>
+                        @for (hour of availableHours; track hour) {
+                          <option [value]="hour">{{ hour }}</option>
+                        }
+                      </select>
+                      <span style="font-size: 0.8rem; color: #6b7280">to</span>
+                      <select formControlName="endTime" class="form-control">
+                        <option value="" disabled selected>End</option>
+                        @for (hour of availableHours; track hour) {
+                          <option [value]="hour">{{ hour }}</option>
+                        }
+                      </select>
+                      <button
+                        type="button"
+                        class="btn btn-sm btn-outline-danger"
+                        style="
+                          background: transparent;
+                          border: none;
+                          color: #ef4444;
+                          font-weight: bold;
+                          cursor: pointer;
+                        "
+                        (click)="removeSlot(i)"
+                      >
+                        ✕
+                      </button>
+                    </div>
+
+                    @if (slot.get('id')?.value && rowSubSlotsMap[slot.get('id')?.value]?.length) {
+                      <div class="sub-slots-container mt-2 pt-2 border-top border-dashed">
+                        <p class="text-muted small mb-2" style="font-size: 0.75rem; color: #6b7280">
+                          Select active intervals:
+                        </p>
+                        <div class="sub-slots-grid" formArrayName="checkedSlots">
+                          @for (
+                            subSlot of rowSubSlotsMap[slot.get('id')?.value];
+                            track subSlot.label;
+                            let subIdx = $index
+                          ) {
+                            <label
+                              class="d-flex align-items-center gap-2 p-1 bg-white border rounded"
+                              style="
+                                display: flex;
+                                gap: 8px;
+                                background: white;
+                                padding: 6px;
+                                border-radius: 6px;
+                                border: 1px solid #e5e7eb;
+                                cursor: pointer;
+                              "
+                            >
+                              <input type="checkbox" [formControlName]="subIdx" />
+                              <span class="small" style="font-size: 0.75rem; color: #374151">{{
+                                subSlot.label
+                              }}</span>
+                            </label>
+                          }
+                        </div>
+                      </div>
+                    }
+                  </div>
+                }
+              </div>
+            </div>
+          }
+        </div>
+
+        <div class="modal-footer-fixed">
+          <div class="info-banner">
+            <i class="bi bi-info-circle"></i> <span>All fields marked with * are mandatory</span>
+          </div>
+          <div class="modal-actions-full">
+            <button type="button" class="btn-cancel" (click)="closeModal()">Cancel</button>
+            <button
+              type="submit"
+              class="btn-primary"
+              [disabled]="newEmployeeForm.invalid || isSubmittingModal"
+            >
+              {{
+                isSubmittingModal
+                  ? 'Processing...'
+                  : isEditMode
+                    ? 'Update Employee'
+                    : 'Create Employee'
+              }}
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+}

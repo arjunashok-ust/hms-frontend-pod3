@@ -1,0 +1,156 @@
+<div class="page-wrapper">
+  <div class="page-header">
+    <div>
+      <p class="subtitle">DIRECTORY</p>
+      <h2>Patient Management</h2>
+    </div>
+    <div class="header-actions">
+      <button class="btn-primary" (click)="openModal()">Add Patient</button>
+    </div>
+  </div>
+
+  <div class="card-panel mt-4">
+    <div class="filter-bar">
+      <div class="search-box">
+        <input
+          type="text"
+          placeholder="Search Patient"
+          [(ngModel)]="searchTerm"
+          (input)="applyFilters()"
+          class="form-control"
+        />
+      </div>
+    </div>
+
+    @if (!isLoading) {
+      <div class="table-responsive">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>UHID</th>
+              <th>NAME</th>
+              <th>EMAIL</th>
+              <th>PHONE</th>
+              <th>GENDER</th>
+              <th>ACTION</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (pat of filteredpatients; track pat.UHID) {
+              <tr>
+                <td class="text-blue fw-bold font-mono">{{ pat.UHID }}</td>
+                <td>
+                  <div class="profile-cell">
+                    <div class="avatar bg-blue-solid">{{ getInitials(pat.name) }}</div>
+                    <div class="fw-bold text-dark">{{ pat.name }}</div>
+                  </div>
+                </td>
+                <td class="text-muted">{{ pat.email }}</td>
+                <td>{{ pat.phone }}</td>
+                <td>{{ pat.gender }}</td>
+                <td>
+                  <div class="action-links">
+                    <button class="btn-action edit" (click)="editPatient(pat)">
+                      <i class="bi bi-pencil"></i>
+                    </button>
+                    <button class="btn-action delete" (click)="deletePatient(pat.UHID)">
+                      <i class="bi bi-trash"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </div>
+</div>
+
+@if (showAddModal) {
+  <div class="modal-overlay">
+    <div class="hms-modal wide-modal">
+      <button class="close-btn" (click)="closeModal()"><i class="bi bi-x-lg"></i></button>
+
+      <div class="modal-header-centered">
+        <div class="modal-icon text-white bg-blue-solid">
+          <i class="bi bi-person-plus-fill"></i>
+        </div>
+        <h2 class="modal-title">{{ isEditMode ? 'Update Patient' : 'Create Patient' }}</h2>
+      </div>
+
+      <form
+        class="modal-form-layout"
+        [formGroup]="newpatientForm"
+        (ngSubmit)="onSubmitNewpatient()"
+      >
+        <div class="modal-body-scroll">
+          <div class="form-grid-2-col">
+            <div class="input-group">
+              <label for="name">FULL NAME *</label>
+              <input type="text" formControlName="name" />
+              @if (newpatientForm.get('name')?.touched && newpatientForm.get('name')?.invalid) {
+                <span class="error-msg">Name is required</span>
+              }
+            </div>
+
+            <div class="input-group">
+              <label for="email">EMAIL *</label>
+              <input type="email" formControlName="email" />
+              @if (
+                newpatientForm.get('email')?.touched &&
+                newpatientForm.get('email')?.hasError('email')
+              ) {
+                <span class="error-msg">Enter a valid email</span>
+              }
+            </div>
+
+            <div class="input-group">
+              <label for="phone">PHONE (10 Digits) *</label>
+              <input type="text" formControlName="phone" />
+              @if (newpatientForm.get('phone')?.touched && newpatientForm.get('phone')?.invalid) {
+                <span class="error-msg">Must be 10 digits</span>
+              }
+            </div>
+
+            <div class="input-group">
+              <label for="dob">DOB *</label>
+              <input type="date" formControlName="dob"  [max]="getMaxDate()" />
+              @if (
+                newpatientForm.get('dob')?.touched &&
+                newpatientForm.get('dob')?.hasError('futureDate')
+              ) {
+                <span class="error-msg">Date cannot be in future</span>
+              }
+            </div>
+
+            <div
+              formGroupName="address"
+              class="col-span-2"
+              style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px"
+            >
+              <div class="input-group col-span-2">
+                <label for="line1">ADDRESS *</label>
+                <input type="text" formControlName="line1" />
+              </div>
+              <div class="input-group">
+                <label for="state">STATE *</label>
+                <input type="text" formControlName="state" />
+              </div>
+              <div class="input-group">
+                <label for="pincode">PINCODE *</label>
+                <input type="number" formControlName="pincode" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer-fixed">
+          <button type="submit" class="btn-primary w-100" [disabled]="newpatientForm.invalid">
+            {{ isEditMode ? 'Update Patient' : 'Create Patient' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}

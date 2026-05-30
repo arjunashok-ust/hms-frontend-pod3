@@ -1,0 +1,55 @@
+<div class="page-wrapper">
+  <div class="page-header">
+    <p class="subtitle">MY ACCOUNT</p>
+    <h2>User Profile</h2>
+  </div>
+
+  @if (!isLoading && user) {
+    <div class="profile-layout">
+      <div class="card summary-card">
+        <div class="avatar-large">{{ getInitials(user.name) }}</div>
+        <h3 class="user-name">{{ user.name }}</h3>
+        <p class="designation">{{ user.designation || 'Staff Member' }}</p>
+
+        <div class="status-wrapper">
+          <span class="badge" [ngClass]="user.status ? 'active' : 'inactive'">
+            {{ user.status ? 'Active' : 'Inactive' }}
+          </span>
+          <span class="role-badge">{{ user?.role | titlecase }}</span>
+        </div>
+      </div>
+
+      <div class="main-content">
+        <div class="card details-card">
+          <h4 class="section-title">Personal Information</h4>
+          <div class="info-grid">
+            <div class="info-group">
+              <label for="fullName">FULL NAME</label>
+              <div class="info-box">{{ user.name }}</div>
+            </div>
+            <div class="info-group">
+              <label for="emailAddress">EMAIL ADDRESS</label>
+              <div class="info-box">{{ user.email }}</div>
+            </div>
+            <div class="info-group">
+              <label for="role">ROLE</label>
+              <div class="info-box">{{ user?.role | titlecase }}</div>
+            </div>
+            <div class="info-group">
+              <label for="designation">DESIGNATION</label>
+              <div class="info-box">{{ user.designation }}</div>
+            </div>
+          </div>
+
+          <h4 class="section-title mt-4">Account Status</h4>
+          <div class="info-grid">
+            <div class="info-group">
+              <label for=" currentStatus">CURRENT STATUS</label>
+              <div class="info-box">{{ user.status ? 'Active' : 'Inactive' }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+</div>

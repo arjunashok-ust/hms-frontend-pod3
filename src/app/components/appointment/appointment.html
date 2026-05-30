@@ -1,0 +1,302 @@
+<div class="page-wrapper">
+  <div class="stats-grid">
+    <div class="stat-card theme-blue">
+      <div class="icon-box"><i class="bi bi-calendar-check"></i></div>
+      <div class="stat-details">
+        <div class="stat-value">{{ stats.total || 0 }}</div>
+        <div class="stat-label">Total Appointments</div>
+      </div>
+    </div>
+    <div class="stat-card theme-green">
+      <div class="icon-box"><i class="bi bi-check-circle"></i></div>
+      <div class="stat-details">
+        <div class="stat-value">{{ stats.completed || 0 }}</div>
+        <div class="stat-label">Completed</div>
+      </div>
+    </div>
+    <div class="stat-card theme-orange">
+      <div class="icon-box"><i class="bi bi-clock-history"></i></div>
+      <div class="stat-details">
+        <div class="stat-value">{{ stats.booked || 0 }}</div>
+        <div class="stat-label">Booked</div>
+      </div>
+    </div>
+    <div class="stat-card theme-red">
+      <div class="icon-box"><i class="bi bi-x-circle"></i></div>
+      <div class="stat-details">
+        <div class="stat-value">{{ stats.cancelled || 0 }}</div>
+        <div class="stat-label">Cancelled</div>
+      </div>
+    </div>
+  </div>
+
+  @if (userRole !== 'DOCTOR') {
+    <div class="main-content-layout">
+      <div class="form-panel card-panel">
+        <div class="panel-header">
+          <div>
+            <p class="subtitle">NEW ENTRY</p>
+            <h2 class="panel-title">Book Appointment</h2>
+          </div>
+        </div>
+
+        <form [formGroup]="appointmentForm" (ngSubmit)="onSubmit()">
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="patientID">
+                <i class="bi bi-person-badge text-blue"></i> PATIENT ID
+                <span class="text-danger">*</span>
+              </label>
+              <input
+                type="text"
+                formControlName="patientID"
+                placeholder="e.g. UHID-00123"
+                class="form-control"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="doctorEmployeeID">
+                <i class="bi bi-file-medical text-blue"></i> DOCTOR
+                <span class="text-danger">*</span>
+              </label>
+              <select formControlName="doctorEmployeeID" class="form-control custom-select">
+                <option value="" disabled selected>Select Doctor</option>
+                @for (doc of doctors; track doc.employeeCode) {
+                  <option [value]="doc.employeeCode">
+                    {{ doc.name }}
+                  </option>
+                }
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="appointmentDate">
+                <i class="bi bi-calendar3 text-blue"></i> APPOINTMENT DATE
+                <span class="text-danger">*</span>
+              </label>
+              <input type="date" formControlName="date" class="form-control" [min]="getMinDate()" />
+
+              @if (appointmentForm.get('date')?.touched) {
+                @if (appointmentForm.get('date')?.hasError('pastDate')) {
+                  <small class="text-danger">Appointments cannot be booked in the past.</small>
+                }
+                @if (appointmentForm.get('date')?.hasError('pastDateTooFar')) {
+                  <small class="text-danger">Admin limit: Cannot backdate more than 2 days.</small>
+                }
+              }
+            </div>
+
+            <div class="form-group">
+              <label for="timeSlot">
+                <i class="bi bi-clock text-blue"></i> TIME SLOT
+                <span class="text-danger">*</span>
+              </label>
+              <select
+                formControlName="timeSlot"
+                class="form-control custom-select"
+                [class.is-invalid]="
+                  appointmentForm.get('timeSlot')?.invalid &&
+                  appointmentForm.get('timeSlot')?.touched
+                "
+              >
+                <option value="" disabled selected>
+                  {{
+                    !appointmentForm.value.doctorEmployeeID || !appointmentForm.value.date
+                      ? 'Select a doctor to view available time slots'
+                      : timeSlots.length === 0
+                        ? 'No slots available'
+                        : 'Select a time slot'
+                  }}
+                </option>
+                @for (slot of timeSlots; track slot) {
+                  <option [value]="slot">{{ slot }}</option>
+                }
+              </select>
+            </div>
+          </div>
+
+          <div class="status-section">
+            <div class="section-divider">
+              <span class="divider-text"><i class="bi bi-flag"></i> STATUS</span>
+            </div>
+            <label for="appointmentStatus" class="section-label">
+              <i class="bi bi-toggle-on text-blue"></i> APPOINTMENT STATUS
+              <span class="text-danger">*</span>
+            </label>
+            <div class="radio-group">
+              <label class="radio-label">
+                <input type="radio" formControlName="status" value="Scheduled" />
+                <span class="custom-radio"></span> Booked
+              </label>
+              <label class="radio-label">
+                <input type="radio" formControlName="status" value="Cancelled" />
+                <span class="custom-radio"></span> Cancelled
+              </label>
+              <label class="radio-label">
+                <input type="radio" formControlName="status" value="Completed" />
+                <span class="custom-radio"></span> Completed
+              </label>
+            </div>
+          </div>
+
+          <div class="staff-info-section">
+            <div class="section-divider">
+              <span class="divider-text"><i class="bi bi-shield-check"></i> STAFF INFO</span>
+            </div>
+            <label for="createdByEmployee" class="section-label">
+              <i class="bi bi-person-workspace text-blue"></i> CREATED BY (EMPLOYEE ID)
+              <span class="text-danger">*</span>
+            </label>
+            <div class="dashed-box">
+              {{ currentUser?.employeeCode || 'Loading session...' }}
+            </div>
+            <div class="info-alert">
+              <i class="bi bi-info-circle"></i> Auto-filled from your logged-in session
+            </div>
+          </div>
+          <div class="form-actions">
+            <button
+              type="button"
+              class="btn btn-ghost"
+              (click)="isEditMode ? cancelEdit() : appointmentForm.reset({ status: 'Scheduled' })"
+            >
+              <i
+                class="bi"
+                [ngClass]="isEditMode ? 'bi-x-circle' : 'bi-arrow-counterclockwise'"
+              ></i>
+              {{ isEditMode ? 'Cancel Edit' : 'Reset' }}
+            </button>
+
+            <button type="submit" class="btn btn-primary" [disabled]="isSubmitting">
+              <i class="bi" [ngClass]="isEditMode ? 'bi-check2-square' : 'bi-calendar-plus'"></i>
+              {{ isEditMode ? 'Update Appointment' : 'Book Appointment' }}
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <div class="quick-info-panel card-panel">
+        <div class="panel-header">
+          <div>
+            <p class="subtitle">TODAY'S OVERVIEW</p>
+            <h2 class="panel-title">Quick Info</h2>
+          </div>
+        </div>
+
+        <div class="availability-list">
+          <div class="section-divider mb-4">
+            <span class="divider-text"><i class="bi bi-heart-pulse"></i> DOCTOR AVAILABILITY</span>
+          </div>
+
+          @for (doc of doctors; track doc.employeeCode) {
+            <div class="doctor-card">
+              <div class="doc-profile">
+                <div class="avatar bg-blue-solid">{{ getInitials(doc.name) }}</div>
+                <div>
+                  <div class="doc-name">{{ doc.name }}</div>
+                  <div class="doc-spec">{{ doc.department || 'General Medicine' }}</div>
+                </div>
+              </div>
+              <span class="status-pill" [ngClass]="doc.status ? 'pill-active' : 'pill-inactive'">
+                {{ doc.status ? 'Active' : 'Inactive' }}
+              </span>
+            </div>
+          } @empty {
+            <div class="empty-state">No doctors found.</div>
+          }
+        </div>
+      </div>
+    </div>
+  }
+
+  <div class="table-panel card-panel">
+    <p class="subtitle">RECORDS</p>
+    <h2 class="panel-title mb-4">Recent Appointments</h2>
+
+    <div class="table-responsive">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>APPOINTMENT ID</th>
+            <th>PATIENT</th>
+            <th>DOCTOR</th>
+            <th>DATE</th>
+            <th>TIME SLOT</th>
+            <th>STATUS</th>
+            <th>CREATED BY</th>
+            <th>ACTIONS</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (apt of recentAppointments; track apt.appointmentCode) {
+            <tr>
+              <td class="text-blue font-weight-bold">{{ apt.appointmentCode }}</td>
+              <td>
+                <div class="patient-cell">
+                  <div class="avatar bg-green-solid">{{ getInitials(apt.patientID) || 'AB' }}</div>
+                  <div>
+                    <div class="font-weight-bold">Patient Name</div>
+                    <div class="text-muted text-small">{{ apt.patientID }}</div>
+                  </div>
+                </div>
+              </td>
+              <td>{{ apt.doctorName }}</td>
+              <td>
+                <div class="date-cell">
+                  <span class="fw-bold">{{ apt.date | date: 'dd MMM' }}</span
+                  >,
+                  <span class="text-muted">{{ apt.date | date: 'hh:mm a' }}</span>
+                </div>
+              </td>
+              <td>
+                <span class="time-slot-badge">{{ apt.timeSlot }}</span>
+              </td>
+              <td>
+                <span class="status-pill" [ngClass]="'pill-' + apt.status.toLowerCase()">{{
+                  apt.status
+                }}</span>
+              </td>
+              <td>
+                <div class="creator-cell">
+                  <span class="fw-bold">{{ apt.creatorName || 'System' }}</span>
+                </div>
+              </td>
+              <td>
+                <div class="action-buttons">
+                  @if (userRole === 'ADMIN' || userRole === 'RECEPTIONIST') {
+                    <button class="btn-action edit" (click)="editAppointment(apt)">
+                      <i class="bi bi-pencil"></i>
+                    </button>
+                    <button
+                      class="btn-action delete"
+                      (click)="deleteAppointment(apt.appointmentCode)"
+                    >
+                      <i class="bi bi-trash"></i>
+                    </button>
+                  }
+
+                  @if (userRole === 'DOCTOR') {
+                    @if (apt.status === 'Scheduled') {
+                      <button
+                        class="btn btn-sm btn-outline-success fw-bold"
+                        style="border-radius: 8px"
+                        (click)="markAsCompleted(apt)"
+                      >
+                        <i class="bi bi-check2-circle"></i> Completed
+                      </button>
+                    }
+                  }
+                </div>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="8" class="empty-state py-5">No recent appointments found.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

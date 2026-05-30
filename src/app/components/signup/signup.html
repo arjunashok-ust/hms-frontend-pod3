@@ -1,0 +1,241 @@
+<div class="page-wrapper">
+  <div class="unified-auth-card">
+    <div class="form-column">
+      <div class="card-header">
+        <h2>Staff Registration</h2>
+        <p>Today is a new day. Establish your professional profile.</p>
+      </div>
+
+      @if (errorMessage) {
+        <div class="error-banner"><strong>Registration Failed:</strong> {{ errorMessage }}</div>
+      }
+
+      <form [formGroup]="signupForm" (ngSubmit)="onSubmit()" class="signup-form">
+        <div class="form-stack">
+          <div class="form-group">
+            <label for="fullName">Full Name *</label>
+            <input formControlName="name" type="text" placeholder="John Doe" />
+            @if (signupForm.get('name')?.touched && signupForm.get('name')?.invalid) {
+              <span class="error-msg">Name is required</span>
+            }
+          </div>
+
+          <div class="form-group">
+            <label for="emailAddress">Email Address *</label>
+            <input formControlName="email" type="email" placeholder="example@email.com" />
+            @if (signupForm.get('email')?.touched && signupForm.get('email')?.hasError('email')) {
+              <span class="error-msg">Invalid email format</span>
+            }
+          </div>
+
+          <div class="form-group">
+            <label for="password">Password *</label>
+            <input formControlName="password" type="password" placeholder="Min 6 characters" />
+            @if (
+              signupForm.get('password')?.touched && signupForm.get('password')?.hasError('pattern')
+            ) {
+              <span class="error-msg"
+                >Must have 8+ chars, uppercase, lowercase, number & special char</span
+              >
+            }
+          </div>
+          <div class="form-group">
+            <label for="confirmPassword">Confirm Password *</label>
+            <input
+              formControlName="confirmPassword"
+              type="password"
+              placeholder="Retype Password"
+            />
+            @if (
+              signupForm.get('confirmPassword')?.touched &&
+              signupForm.get('confirmPassword')?.hasError('passwordMismatch')
+            ) {
+              <span class="error-msg">Passwords do not match</span>
+            }
+          </div>
+
+          <div class="form-group">
+            <label for="phone">Phone Number *</label>
+            <input formControlName="phone" type="text" placeholder="9876543210" />
+            @if (signupForm.get('phone')?.touched && signupForm.get('phone')?.hasError('pattern')) {
+              <span class="error-msg">Use 10 digits, optional +91 prefix</span>
+            }
+          </div>
+
+          <div class="form-group">
+            <label for="role">Role</label>
+            <div class="select-wrapper">
+              <select formControlName="role">
+                <option value="" disabled selected>Select Role</option>
+                <option value="doctor">Doctor</option>
+                <option value="nurse">Nurse</option>
+                <option value="receptionist">Receptionist</option>
+                <option value="admin">Admin</option>
+                <option value="pharmacist">Pharmacist</option>
+                <option value="lab_tech">Lab Tech</option>
+              </select>
+              @if (signupForm.get('role')?.touched && signupForm.get('role')?.invalid) {
+                <span class="error-msg">Please select a role</span>
+              }
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="department">Department</label>
+            <div class="select-wrapper">
+              <select formControlName="department">
+                <option value="" disabled selected>Select Department</option>
+                <option value="OPD">OPD</option>
+                <option value="IPD">IPD</option>
+                <option value="LAB">LAB</option>
+                <option value="PHARMACY">PHARMACY</option>
+              </select>
+              @if (signupForm.get('department')?.touched && signupForm.get('department')?.invalid) {
+                <span class="error-msg">Please select a department</span>
+              }
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="designation">Designation</label>
+            <input formControlName="designation" type="text" placeholder="e.g. Senior Surgeon" />
+            @if (signupForm.get('designation')?.touched && signupForm.get('designation')?.invalid) {
+              <span class="error-msg">Designation is required</span>
+            }
+          </div>
+
+          <div class="form-group">
+            <label for="qualification">Qualifications</label>
+            <input formControlName="qualification" type="text" placeholder="e.g. MBBS, MD" />
+          </div>
+
+          <div class="form-group">
+            <label for="joiningDate">Joining Date *</label>
+            <input
+              formControlName="joiningDate"
+              type="date"
+              [min]="getMinDate()"
+              [max]="getMaxDate()"
+            />
+            @if (
+              signupForm.get('joiningDate')?.touched &&
+              signupForm.get('joiningDate')?.hasError('invalidDateRange')
+            ) {
+              <span class="error-msg">Date must be within 1 month of today</span>
+            }
+          </div>
+        </div>
+
+        @if (isMedicalRole) {
+          <div class="conditional-section">
+            <div class="section-divider">
+              <span>Medical Credentials</span>
+            </div>
+            <div class="form-stack">
+              <div class="form-group">
+                <label for="specialization">Specialization</label>
+                <input formControlName="specialization" type="text" placeholder="e.g. Cardiology" />
+              </div>
+              <div class="form-group">
+                <label for="medicalRegNo">Medical Reg No.</label>
+                <input
+                  formControlName="medicalRegistrationNo"
+                  type="text"
+                  placeholder="Registration ID"
+                />
+              </div>
+            </div>
+          </div>
+        }
+
+        @if (isDoctor) {
+          <div class="conditional-section">
+            <div class="section-divider">
+              <span>Availability</span>
+            </div>
+
+            <div class="form-group m-b-4">
+              <label for="consultationFee">Consultation Fee (₹)</label>
+              <input formControlName="consultationFee" type="number" placeholder="0.00" />
+            </div>
+
+            <div formArrayName="availabilitySlots" class="slots-section">
+              <div class="slots-header">
+                <label for="workingHours">Working Hour</label>
+                <button type="button" class="btn-add" (click)="addSlot()">+ Add</button>
+              </div>
+
+              @for (
+                slot of availabilitySlots.controls;
+                track slot.get('id')?.value;
+                let i = $index
+              ) {
+                <div [formGroupName]="i" class="slot-card">
+                  <div class="slot-row">
+                    <div class="time-inputs">
+                      <div class="select-wrapper">
+                        <select formControlName="startTime">
+                          <option value="" disabled selected>Start</option>
+                          @for (hour of availableHours; track hour) {
+                            <option [value]="hour">{{ hour }}</option>
+                          }
+                        </select>
+                      </div>
+                      <span class="time-separator">to</span>
+                      <div class="select-wrapper">
+                        <select formControlName="endTime">
+                          <option value="" disabled selected>End</option>
+                          @for (hour of availableHours; track hour) {
+                            <option [value]="hour">{{ hour }}</option>
+                          }
+                        </select>
+                      </div>
+                    </div>
+                    <button type="button" class="btn-remove" (click)="removeSlot(i)">✕</button>
+                  </div>
+
+                  @if (
+                    slot.get('id')?.value &&
+                    rowSubSlotsMap[slot.get('id')?.value] &&
+                    rowSubSlotsMap[slot.get('id')?.value].length > 0
+                  ) {
+                    <div class="sub-slots-container">
+                      <p class="sub-slots-title">Select active intervals:</p>
+                      <div class="sub-slots-grid" formArrayName="checkedSlots">
+                        @for (
+                          subSlot of rowSubSlotsMap[slot.get('id')?.value];
+                          track subSlot.label;
+                          let subIdx = $index
+                        ) {
+                          <label class="sub-slot-checkbox-label">
+                            <input type="checkbox" [formControlName]="subIdx" />
+                            <span>{{ subSlot.label }}</span>
+                          </label>
+                        }
+                      </div>
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+          </div>
+        }
+
+        <div class="form-actions">
+          <button type="submit" [disabled]="signupForm.invalid || isSubmitting" class="btn-submit">
+            {{ isSubmitting ? 'Submitting...' : 'Sign in' }}
+          </button>
+        </div>
+
+        <div class="form-footer">
+          <p>Already have an account? <a routerLink="/login" class="login-link">Sign In</a></p>
+          <div class="copyright-notice">© 2026 ALL RIGHTS RESERVED</div>
+        </div>
+      </form>
+    </div>
+
+    <div class="image-column">
+      <img src="assets/images/hospital2.jpg" alt="Hospital" class="rounded-artwork" />
+    </div>
+  </div>
+</div>

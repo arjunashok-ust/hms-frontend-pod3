@@ -1,0 +1,373 @@
+@import url('https://fonts.cdnfonts.com/css/google-sans');
+
+body,
+.main-container,
+.page-wrapper,
+input,
+select,
+button,
+textarea {
+  font-family:
+    'Product Sans',
+    'Google Sans',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    Helvetica,
+    Arial,
+    sans-serif !important;
+
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: 'Product Sans', 'Google Sans', sans-serif !important;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+:host {
+  --bg-form-pane: #f4f4f5;
+  --input-bg: #f0f4f8;
+  --text-primary: #111827;
+  --text-secondary: #6b7280;
+  --primary-accent: #1f2937;
+  --primary-hover: #374151;
+  --border-element: #e5e7eb;
+  --error-red: #da3737;
+}
+
+.page-wrapper {
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--bg-form-pane);
+  font-family: var(--font-family);
+  padding: 2rem;
+  box-sizing: border-box;
+}
+
+.unified-auth-card {
+  display: flex;
+  background: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+  width: 100%;
+  max-width: 1500px;
+  height: 85vh;
+  max-height: 800px;
+  overflow: hidden;
+}
+
+.form-column {
+  flex: 0 0 600px;
+  padding: 3rem 3rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.card-header {
+  margin-bottom: 2rem;
+}
+
+.card-header h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 0.5rem 0;
+}
+
+.card-header p {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.form-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.4rem;
+}
+
+input[type='text'],
+input[type='email'],
+input[type='password'],
+input[type='number'],
+input[type='date'],
+select {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  color: var(--text-primary);
+  background-color: var(--input-bg);
+  transition: all 0.2s ease-in-out;
+  box-sizing: border-box;
+}
+
+input:focus,
+select:focus {
+  outline: none;
+  border-color: var(--border-element);
+  background-color: #ffffff;
+  box-shadow: 0 0 0 3px rgba(31, 41, 55, 0.1);
+}
+
+.select-wrapper {
+  position: relative;
+}
+
+.select-wrapper::after {
+  content: '↓';
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+select {
+  appearance: none;
+  cursor: pointer;
+}
+
+.checkbox-container {
+  margin-top: 0.5rem;
+}
+
+.checkbox-label {
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.checkbox-label input {
+  margin-right: 0.5rem;
+  width: 16px;
+  height: 16px;
+  accent-color: var(--primary-accent);
+}
+
+.conditional-section {
+  margin-top: 2rem;
+}
+
+.section-divider {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1.2rem;
+}
+
+.section-divider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid var(--border-element);
+  margin-left: 1rem;
+}
+
+.section-divider span {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.slots-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.slots-header label {
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin: 0;
+  color: var(--text-primary);
+}
+
+.btn-add {
+  margin-top: 0.3rem;
+  background: transparent;
+  color: var(--primary-accent);
+  border: 1px solid var(--border-element);
+  padding: 0.3rem 1rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.slot-card {
+  background: #ffffff;
+  border: 1px solid var(--border-element);
+  border-radius: 8px;
+  padding: 0.8rem;
+  margin-bottom: 1rem;
+}
+
+.slot-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.time-inputs {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 1;
+}
+
+.time-inputs .select-wrapper {
+  flex: 1;
+}
+
+.btn-remove {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.sub-slots-container {
+  margin-top: 0.8rem;
+  padding-top: 0.8rem;
+  border-top: 1px dashed var(--border-element);
+}
+
+.sub-slots-title {
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+  margin: 0 0 0.5rem 0;
+}
+
+.sub-slots-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.4rem;
+}
+
+.sub-slot-checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: var(--input-bg);
+  padding: 0.4rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+}
+
+.form-actions {
+  margin-top: 2rem;
+}
+
+.btn-submit {
+  width: 100%;
+  padding: 0.875rem;
+  background-color: var(--primary-accent);
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-submit:hover:not([disabled]) {
+  background-color: var(--primary-hover);
+}
+
+.form-footer {
+  text-align: center;
+  margin-top: 1.5rem;
+}
+
+.form-footer p {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.login-link {
+  color: var(--primary-accent);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.copyright-notice {
+  font-size: 0.65rem;
+  color: #9ca3af;
+  margin-top: 2rem;
+}
+
+.image-column {
+  flex: 1;
+  padding: 1rem 1rem 1rem 0;
+  background-color: #ffffff;
+}
+
+.rounded-artwork {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 16px;
+}
+
+@media (max-width: 800px) {
+  .unified-auth-card {
+    flex-direction: column;
+    height: auto;
+    max-height: none;
+  }
+  .form-column {
+    flex: auto;
+    width: 100%;
+    padding: 2rem;
+  }
+  .image-column {
+    display: none;
+  }
+}
+
+.error-msg {
+  color: #ef4444;
+  font-size: 0.75rem;
+  margin-top: 4px;
+  display: block;
+  font-weight: 600;
+}
+
+.ng-touched.ng-invalid:not(form) {
+  border: 1px solid #ef4444 !important;
+}

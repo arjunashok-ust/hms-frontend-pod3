@@ -1,0 +1,27 @@
+<header class="top-header">
+  <div class="header-brand">
+    <div class="brand-icon">
+      <i class="bi bi-heart-pulse-fill"></i>
+    </div>
+    <div class="brand-text">
+      <h2>HMS</h2>
+      <p>Hospital Management</p>
+    </div>
+  </div>
+
+  <div class="header-actions">
+    <div class="user-profile-dropdown">
+      <div class="avatar">{{ getInitials(currentUser?.user.name) || '!' }}</div>
+      <div class="user-info">
+        <span class="user-name">
+          {{ currentUser?.user?.name || currentUser?.user.email || 'Loading...' }}</span
+        >
+        <span class="user-role">{{ currentUser?.user.email || 'Loading...' }}</span>
+      </div>
+    </div>
+
+    <button class="btn-logout" (click)="logout()">
+      <i class="bi bi-box-arrow-right"></i> Logout
+    </button>
+  </div>
+</header>

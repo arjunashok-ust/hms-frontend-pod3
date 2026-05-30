@@ -1,0 +1,65 @@
+<div class="dashboard-wrapper">
+  <div class="stats-grid">
+    @for (stat of statsCards; track $index) {
+      <div class="stat-card" [style.--blob-color]="stat.bg">
+        <div class="icon-box" [style.backgroundColor]="stat.color" style="color: white">
+          <i class="bi bi-{{ stat.icon }}"></i>
+        </div>
+        <div class="stat-details">
+          <h2 class="stat-value">{{ stat.value }}</h2>
+          <p class="stat-title">{{ stat.title }}</p>
+        </div>
+      </div>
+    }
+  </div>
+
+  <div class="table-container">
+    <div class="table-header">
+      <div>
+        <p class="table-subtitle">DIRECTORY</p>
+        <h3 class="table-title">Employee Overview</h3>
+      </div>
+    </div>
+
+    @if (!isLoading) {
+      <div class="table-responsive">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>EMPLOYEE</th>
+              <th>EMAIL ADDRESS</th>
+              <th>DESIGNATION</th>
+              <th>STATUS</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (emp of employees; track emp.employeeCode) {
+              <tr class="employee-row">
+                <td class="text-blue font-weight-bold">{{ emp.employeeCode }}</td>
+                <td>
+                  <div class="employee-cell">
+                    <div class="avatar bg-purple">{{ getInitials(emp.name) }}</div>
+                    <div>
+                      <div class="emp-name">{{ emp.name }}</div>
+                      <div class="emp-role">{{ emp['role'] || emp['designation'] || 'Staff' }}</div>
+                    </div>
+                  </div>
+                </td>
+                <td>{{ emp.email }}</td>
+                <td>
+                  <span class="badge outline-badge">{{ emp.designation }}</span>
+                </td>
+                <td>
+                  <span class="badge" [ngClass]="emp.status ? 'badge-active' : 'badge-inactive-text'">
+                    {{ emp.status ? 'Active' : 'Inactive' }}
+                  </span>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </div>
+</div>
