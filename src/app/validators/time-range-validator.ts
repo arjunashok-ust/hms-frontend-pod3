@@ -1,4 +1,4 @@
-import { AbstractControl, ValidationErrors } from '@angular/forms';
+import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 
 export function timeRangeValidator(control: AbstractControl): ValidationErrors | null {
   const start = control.get('startHour')?.value;
@@ -20,7 +20,7 @@ export function futureDateValidator(control: AbstractControl): ValidationErrors 
   if (!inputValue) {
     return null;
   }
-  
+
   let inputDate = new Date(inputValue);
   let today = new Date();
   let pastLimit = new Date();
@@ -38,14 +38,32 @@ export function futureDateValidator(control: AbstractControl): ValidationErrors 
 
 export function DobValidator(control: AbstractControl): ValidationErrors | null {
   const dob = control.get('dob')?.value;
-  if(!dob){
+  if (!dob) {
     return null;
   }
   const date = new Date(dob);
   const today = new Date();
 
-  if(date>today){
-    return {invalidDob: true};
+  if (date > today) {
+    return { invalidDob: true };
+  }
+
+  return null;
+}
+
+export function appointmentDateValidator(control: AbstractControl): ValidationErrors | null {
+  const inputDate = control.get('date')?.value;
+
+  if (!inputDate) {
+    return null;
+  }
+
+  const date = new Date(inputDate);
+  const today = new Date();
+  today.setHours(0,0,0,0);
+
+  if (date < today) {
+    return { invalidAppointmentDate: true };
   }
 
   return null;

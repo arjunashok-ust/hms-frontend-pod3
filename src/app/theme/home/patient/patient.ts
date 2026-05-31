@@ -35,6 +35,10 @@ export class PatientComponent implements OnInit {
   };
 
   ngOnInit(): void {
+    this.updateData();
+  }
+
+  updateData() {
     this.userService.getPatients().subscribe({
       next: (res) => {
         this.patientData = res;
@@ -50,20 +54,20 @@ export class PatientComponent implements OnInit {
   public constructor(readonly fb: FormBuilder) {
     this.patientForm = this.fb.group(
       {
-        name: ['', [Validators.required, Validators.pattern(/^[a-z]+( [a-z])*$/i)]],
+        name: ['', [Validators.required, Validators.pattern(/^[a-z]+( [a-z]+)*$/i)]],
         phone: [
           '',
           [Validators.required, Validators.maxLength(10), Validators.pattern('^[0-9]*$')],
         ],
-        email: ['', [Validators.email]],
+        email: [
+          '',
+          [Validators.required, Validators.pattern(/^[a-z0-9._]+@[a-z0-9]*\.[a-z]{2,}$/i)],
+        ],
         gender: ['', [Validators.required]],
         dob: ['', [Validators.required]],
         address: ['', [Validators.required]],
-        emergencyContact: [
-          '',
-          [Validators.required, Validators.maxLength(10), Validators.pattern('^[0-9]*$')],
-        ],
-        status: ['', [Validators.required]],
+        emergencyContact: ['', [Validators.maxLength(10), Validators.pattern('^[0-9]*$')]],
+        status: ['Active', [Validators.required]],
       },
       {
         validators: DobValidator,
@@ -87,7 +91,7 @@ export class PatientComponent implements OnInit {
     this.userService.deletePatientt(payload).subscribe({
       next: (res) => {
         this.toast.success('Patient deleted sucessfully');
-        this.cd.detectChanges();
+        this.updateData();
       },
       error: (error) => {
         this.toast.error('Server error during patient deletion');
@@ -96,11 +100,15 @@ export class PatientComponent implements OnInit {
   }
 
   onSubmit() {
+    if (!this.patientForm.valid) {
+      this.toast.error('Invalid input. Please check your entries and try again.');
+    }
     const payload = {
       name: this.patientForm.get('name')?.value,
       phone: this.patientForm.get('phone')?.value,
       email: this.patientForm.get('email')?.value,
       gender: this.patientForm.get('gender')?.value,
+      status: this.patientForm.get('status')?.value,
       dob: this.patientForm.get('dob')?.value,
       address: this.patientForm.get('address')?.value,
       emergencyContact: this.patientForm.get('emergencyContact')?.value,
@@ -108,9 +116,10 @@ export class PatientComponent implements OnInit {
     this.userService.createPatient(payload).subscribe({
       next: (res) => {
         this.toast.success('Patient added sucessfully');
-        this.cd.detectChanges();
+        this.updateData();
       },
       error: (error) => {
+        console.log(error);
         this.toast.error('Server Error During Create Patient');
       },
     });

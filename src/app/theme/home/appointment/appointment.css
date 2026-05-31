@@ -499,6 +499,12 @@
   transform: translateY(0);
 }
 
+.btn-disabled{
+  background: linear-gradient(135deg, #50535a, #454c60);
+  color: white;
+  box-shadow: 0 4px 20px rgba(37, 99, 235, 0.3);
+}
+
 
 .doctor-list {
   display: flex;
@@ -537,12 +543,13 @@
 
 
 .table-wrapper {
-  overflow-x: auto;
+  overflow-x: hidden;
   width: 100%;
 }
 
 .modern-table {
   width: 100%;
+  overflow-x:hidden;
   border-collapse: separate;
   border-spacing: 0 12px;
   min-width: 900px; 
@@ -701,6 +708,13 @@
 .action-btn.delete:hover {
   background: #ef4444;
   color: rgb(12, 12, 12);
+}
+
+small {
+  color: #ff6b6b;
+  font-size: 11px;
+  margin-top: -8px;
+  padding:5px;
 }
 
 @media (max-width: 1200px) {

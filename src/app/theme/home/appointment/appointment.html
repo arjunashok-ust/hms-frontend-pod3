@@ -74,20 +74,16 @@
               formControlName="patientId"
               required
             />
-            <span class="helper-text" *ngIf="!appointmentForm.get('patientId')?.touched">
-              Enter registered patient ID
-            </span>
-            <span
-              class="error-text"
-              *ngIf="
-                !appointmentForm.get('patientId')?.valid &&
-                appointmentForm.get('patientId')?.touched
-              "
-            >
-              Patient Id is required
-            </span>
+            <small *ngIf="appointmentForm.get('patientId')?.touched">
+              <span *ngIf="appointmentForm.get('patientId')?.errors?.['pattern']"
+                >Only digits,letters and hyphen are allowed.</span
+              >
+              <span *ngIf="appointmentForm.get('patientId')?.errors?.['required']"
+                >Patient id is required.</span
+              >
+            </small>
           </div>
-          <div class="form-group">
+          <div class="form-group" *ngIf="appointmentForm.get('date')?.value">
             <label class="form-label" for="doctorEmployeeId">
               <i class="bi bi-person-badge"></i>
               Doctor
@@ -107,6 +103,11 @@
                 </option>
               </ng-container>
             </select>
+            <small *ngIf="appointmentForm.get('doctorEmployeeId')?.touched">
+            <span *ngIf="appointmentForm.get('doctorEmployeeId')?.errors?.['required']"
+              >Please select a doctor.</span
+            >
+          </small>
           </div>
         </div>
         <div class="section-divider">
@@ -131,6 +132,14 @@
               formControlName="date"
               required
             />
+            <small *ngIf="appointmentForm.get('date')?.touched">
+            <span *ngIf="appointmentForm.errors?.['invalidAppointmentDate']"
+              >You cannot book an appointment in the past.</span
+            >
+            <span *ngIf="appointmentForm.get('date')?.errors?.['required']"
+              >Appointment date is required.</span
+            >
+          </small>
           </div>
           <div class="form-group span-2">
             <label class="form-label" for="time-slot">
@@ -151,55 +160,9 @@
               </div>
             </div>
             <ng-template #noSlots>
-              <span class="helper-text">Select a doctor to view available time slots</span>
+              <span class="helper-text" *ngIf="!appointmentForm.get('doctorEmployeeId')?.value">Select a doctor to view available time slots</span>
+              <span class="helper-text" *ngIf="appointmentForm.get('doctorEmployeeId')?.value&&doctorTimeSlots.length===0">No time slots available right now.</span>
             </ng-template>
-          </div>
-        </div>
-        <div class="section-divider">
-          <div class="divider-line"></div>
-          <span class="divider-label">
-            <i class="bi bi-flag"></i>
-            Status
-          </span>
-          <div class="divider-line"></div>
-        </div>
-        <div class="form-group">
-          <label class="form-label" for="status">
-            <i class="bi bi-toggle-on"></i>
-            Appointment Status
-            <span class="required">*</span>
-          </label>
-          <div class="status-group">
-            <input
-              type="radio"
-              id="status-booked"
-              formControlName="status"
-              value="Booked"
-              class="status-radio"
-            />
-            <label class="status-label" for="status-booked">
-              <span class="status-dot"></span> Booked
-            </label>
-            <input
-              type="radio"
-              id="status-cancelled"
-              formControlName="status"
-              value="Cancelled"
-              class="status-radio"
-            />
-            <label class="status-label" for="status-cancelled">
-              <span class="status-dot"></span> Cancelled
-            </label>
-            <input
-              type="radio"
-              id="status-completed"
-              formControlName="status"
-              value="Completed"
-              class="status-radio"
-            />
-            <label class="status-label" for="status-completed">
-              <span class="status-dot"></span> Completed
-            </label>
           </div>
         </div>
         <div class="section-divider">
@@ -219,8 +182,9 @@
           <input
             type="text"
             class="form-input"
-            id="createdByEmployeeId"
             formControlName="createdByEmployeeId"
+            id="createdByEmployeeId"
+            [value]="employeeId || ''"
             readonly
           />
           <div class="info-box">
@@ -229,13 +193,10 @@
           </div>
         </div>
         <div class="form-footer">
-          <button type="button" class="btn btn-ghost" (click)="appointmentForm.reset()">
-            <i class="bi bi-arrow-counterclockwise"></i> Reset
-          </button>
           <button type="button" class="btn btn-danger-outline" routerLink="/profile">
             <i class="bi bi-x-lg"></i> Cancel
           </button>
-          <button type="submit" class="btn btn-primary">
+          <button type="submit" class="btn" [ngClass]="appointmentForm.valid ? 'btn-primary':'btn-disabled'" [disabled]="!appointmentForm.valid">
             <i class="bi bi-calendar-plus"></i> Book Appointment
           </button>
         </div>
@@ -324,7 +285,7 @@
               </span>
             </td>
             <td class="muted-text">
-              {{ appointment.date | date: 'dd MMM, hh:mm a' }}
+              {{ appointment.date | date: 'dd, MMM' }}
             </td>
             <td>
               <span class="designation-badge">{{ appointment.timeSlot }}</span>

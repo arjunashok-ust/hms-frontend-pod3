@@ -13,6 +13,7 @@ import { AppointmentModel, AppointmentResponseModel } from '../../../models/appo
 import { CommonModule } from '@angular/common';
 import { EmployeeModel } from '../../../models/user.model';
 import { ToastrService } from 'ngx-toastr';
+import { appointmentDateValidator } from '../../../validators/time-range-validator';
 
 @Component({
   selector: 'app-appointment',
@@ -38,19 +39,23 @@ export class AppointmentComponent implements OnInit {
   employeeId = localStorage.getItem('employeeId');
 
   public constructor(readonly fb: FormBuilder) {
-    this.appointmentForm = this.fb.group({
-      patientId: ['', Validators.required],
-      doctorEmployeeId: ['', Validators.required],
-      date: ['', Validators.required],
-      timeSlot: ['', Validators.required],
-      status: ['', Validators.required],
-      createdByEmployeeId: [this.employeeId, Validators.required],
-    });
+    this.appointmentForm = this.fb.group(
+      {
+        patientId: ['', [Validators.required, Validators.pattern(/^[a-z0-9-]*$/i)]],
+        doctorEmployeeId: ['', Validators.required],
+        date: ['', Validators.required],
+        timeSlot: ['', Validators.required],
+        status: ['Booked', Validators.required],
+        createdByEmployeeId: [this.employeeId,Validators.required]
+      },
+      {
+        validators: appointmentDateValidator,
+      },
+    );
   }
 
   ngOnInit(): void {
     this.loadUiData();
-
     // time slot container bug fix
     this.doctorTimeSlots.length = 0;
   }
@@ -62,7 +67,7 @@ export class AppointmentComponent implements OnInit {
         this.cd.detectChanges();
       },
       error: (err) => {
-        console.log('Appointment Ui Data Error : ', err);
+        this.toast.error('Failed to fetch appointments ui data');
       },
     });
     this.appointmentService.getAllDoctors().subscribe({
@@ -71,7 +76,7 @@ export class AppointmentComponent implements OnInit {
         this.cd.detectChanges();
       },
       error: (err) => {
-        console.log('Get Doctors Error : ', err);
+        this.toast.error('Failed to fetch doctors.');
       },
     });
     this.appointmentService.getAllAppointment().subscribe({
@@ -80,20 +85,35 @@ export class AppointmentComponent implements OnInit {
         this.cd.detectChanges();
       },
       error: (err) => {
-        console.log('Get Doctors Error : ', err);
+        this.toast.error('Failed to fetch appointments');
       },
     });
   }
 
   onDoctorChange() {
-    let employeeId = this.appointmentForm.get('doctorEmployeeId')?.value;
-    let doctor = this.doctors?.find((d) => d.employeeCode === employeeId);
-    if (doctor) {
-      this.doctorTimeSlots = doctor.availabilitySlots || [''];
-    } else {
+    let doctorEmployeeId = this.appointmentForm.get('doctorEmployeeId')?.value;
+    const inputDate = this.appointmentForm.get('date')?.value;
+    const date = new Date(inputDate).toISOString();
+    let doctor = this.doctors?.find((d) => d.employeeCode === doctorEmployeeId);
+    if (!date || !doctor) {
       this.doctorTimeSlots = [];
     }
+
+    const allSlots = doctor?.availabilitySlots;
+    const bookedSlots = this.appointments
+      ?.filter((apt) => {
+        const apt_date = new Date(apt.date).toISOString();
+        console.log(date===apt_date);
+        return (
+          apt.doctorEmployeeId === doctor?.employeeCode &&
+          apt_date === date &&
+          apt.status != 'Cancelled'
+        );
+      })
+      .map((apt) => apt.timeSlot);
+    this.doctorTimeSlots = allSlots?.filter((slot) => !bookedSlots?.includes(slot)) || [];
     this.appointmentForm.patchValue({ timeSlot: '' });
+    this.cd.detectChanges();
   }
 
   deleteAppointment(appointmentId: string) {
@@ -103,6 +123,7 @@ export class AppointmentComponent implements OnInit {
     if (isConfirmed) {
       this.appointmentService.deleteAppointment(appointmentId).subscribe({
         next: (res) => {
+          this.loadUiData();
           this.cd.detectChanges();
           this.toast.success(res.message);
         },
@@ -125,6 +146,7 @@ export class AppointmentComponent implements OnInit {
 
     this.appointmentService.createAppointment(payload).subscribe({
       next: (res) => {
+        this.loadUiData();
         this.cd.detectChanges();
         this.toast.success(res.message);
       },
@@ -132,7 +154,8 @@ export class AppointmentComponent implements OnInit {
         this.toast.error(err.message);
       },
     });
-    this.appointmentForm.reset();
+    
+    this.appointmentForm.get('doctorEmployeeId')?.reset();
     this.doctorTimeSlots.length = 0;
   }
 }

@@ -86,14 +86,12 @@
             <span class="helper-text" *ngIf="!this.patientForm.get('name')?.touched"
               >Enter patient's full legal name</span
             >
-            <span
-              class="error-text"
-              *ngIf="
-                this.patientForm.get('name')?.touched &&
-                this.patientForm.get('name')?.errors?.['required']
-              "
-              >Name is required</span
-            >
+            <small *ngIf="patientForm.get('name')?.touched">
+              <span *ngIf="patientForm.get('name')?.errors?.['required']">Name is required.</span>
+              <span *ngIf="patientForm.get('name')?.errors?.['pattern']"
+                >Only letters are allowed.</span
+              >
+            </small>
           </div>
 
           <div class="form-group">
@@ -109,14 +107,10 @@
               placeholder="e.g. john@email.com"
               formControlName="email"
             />
-            <span
-              class="error-text"
-              *ngIf="
-                this.patientForm.get('email')?.touched &&
-                this.patientForm.get('email')?.errors?.['email']
-              "
-              >Email is invalid</span
-            >
+            <small *ngIf="patientForm.get('email')?.touched">
+              <span *ngIf="patientForm.get('email')?.errors?.['required']">Email is required.</span>
+              <span *ngIf="patientForm.get('email')?.errors?.['pattern']">Email is invalid.</span>
+            </small>
           </div>
 
           <div class="form-group">
@@ -125,6 +119,15 @@
               Phone Number
               <span class="required">*</span>
             </label>
+            <small *ngIf="patientForm.get('phone')?.touched">
+              <span *ngIf="patientForm.get('phone')?.errors?.['required']">Phone is required.</span>
+              <span *ngIf="patientForm.get('phone')?.errors?.['pattern']"
+                >Only digits are allowed.</span
+              >
+              <span *ngIf="patientForm.get('phone')?.errors?.['maxlength']"
+                >Maximum 10 digits is allowed.</span
+              >
+            </small>
             <input
               type="text"
               class="form-input"
@@ -132,30 +135,7 @@
               placeholder="e.g. 9988776655"
               formControlName="phone"
             />
-            <span
-              class="error-text"
-              *ngIf="
-                this.patientForm.get('phone')?.touched &&
-                this.patientForm.get('phone')?.errors?.['required']
-              "
-              >Phone is required</span
-            >
-            <span
-              class="error-text"
-              *ngIf="
-                this.patientForm.get('phone')?.touched &&
-                this.patientForm.get('phone')?.errors?.['maxlength']
-              "
-              >Max length is 10</span
-            >
-            <span
-              class="error-text"
-              *ngIf="
-                this.patientForm.get('phone')?.touched &&
-                this.patientForm.get('phone')?.errors?.['pattern']
-              "
-              >Only number is allowed</span
-            >
+            
           </div>
 
           <div class="form-group">
@@ -164,6 +144,14 @@
               Emergency Contact
               <span class="required">*</span>
             </label>
+            <small *ngIf="patientForm.get('emergencyContact')?.touched">
+            <span *ngIf="patientForm.get('emergencyContact')?.errors?.['pattern']"
+              >Only digits are allowed.</span
+            >
+            <span *ngIf="patientForm.get('emergencyContact')?.errors?.['maxlength']"
+              >Maximum 10 digits is allowed.</span
+            >
+          </small>
             <input
               type="text"
               class="form-input"
@@ -172,22 +160,6 @@
               formControlName="emergencyContact"
             />
           </div>
-          <span
-            class="error-text"
-            *ngIf="
-              this.patientForm.get('emergencyContact')?.touched &&
-              this.patientForm.get('emergencyContact')?.errors?.['maxlength']
-            "
-            >Maximum 10 digits allowed.</span
-          >
-          <span
-            class="error-text"
-            *ngIf="
-              this.patientForm.get('emergencyContact')?.touched &&
-              this.patientForm.get('emergencyContact')?.errors?.['pattern']
-            "
-            >Only number is allowed.</span
-          >
         </div>
 
         <div class="section-divider">
@@ -228,14 +200,10 @@
               <span class="required">*</span>
             </label>
             <input type="date" class="form-input" id="patientDob" formControlName="dob" />
-            <span
-              class="error-text"
-              *ngIf="
-                this.patientForm.get('dob')?.touched &&
-                this.patientForm.get('dob')?.errors?.['required']
-              "
-              >DOB is required</span
-            >
+            <small *ngIf="patientForm.get('dob')?.touched">
+              <span *ngIf="patientForm.get('dob')?.errors?.['required']">DOB is required.</span>
+              <span *ngIf="patientForm.errors?.['invalidDob']">Future dates are not allowed.</span>
+            </small>
           </div>
 
           <div class="form-group span-2">
@@ -251,14 +219,9 @@
               placeholder="Enter full address including city, state, and zip code"
               formControlName="address"
             ></textarea>
-            <span
-              class="error-text"
-              *ngIf="
-                this.patientForm.get('address')?.touched &&
-                this.patientForm.get('address')?.errors?.['required']
-              "
-              >Address is required</span
-            >
+            <small *ngIf="patientForm.get('address')?.touched">
+              <span *ngIf="patientForm.get('address')?.errors?.['required']">Address is required.</span>
+            </small>
           </div>
         </div>
         <div class="form-footer">
