@@ -29,12 +29,14 @@
                 formControlName="name"
               />
             </div>
-            <span
-              class="error-text"
-              *ngIf="!signUpModalForm.get('name')?.valid && signUpModalForm.get('name')?.touched"
-            >
-              Name is required
-            </span>
+            <small *ngIf="signUpModalForm.get('name')?.touched">
+              <span *ngIf="signUpModalForm.get('name')?.errors?.['required']"
+                >Name is required.</span
+              >
+              <span *ngIf="signUpModalForm.get('name')?.errors?.['pattern']"
+                >Only letters is allowed.</span
+              >
+            </small>
           </div>
 
           <div class="form-group">
@@ -52,12 +54,12 @@
                 formControlName="email"
               />
             </div>
-            <span class="error-text" *ngIf="signUpModalForm.get('email')?.touched">
+            <small *ngIf="signUpModalForm.get('email')?.touched">
               <span *ngIf="signUpModalForm.get('email')?.errors?.['required']"
-                >Email is required</span
+                >Email is required.</span
               >
-              <span *ngIf="signUpModalForm.get('email')?.errors?.['email']">Email is invalid</span>
-            </span>
+              <span *ngIf="signUpModalForm.get('email')?.errors?.['email']">Email is invalid.</span>
+            </small>
           </div>
         </div>
         <div class="form-row">
@@ -78,12 +80,13 @@
                 <i class="bi bi-chevron-down"></i>
               </span>
             </div>
-            <span
-              class="error-text"
-              *ngIf="!signUpModalForm.get('roles')?.valid && signUpModalForm.get('roles')?.touched"
+            <small
+              *ngIf="
+                signUpModalForm.get('role')?.errors?.['required'] &&
+                signUpModalForm.get('role')?.touched
+              "
+              >Role is required.</small
             >
-              Role is required
-            </span>
           </div>
 
           <div class="form-group">
@@ -106,15 +109,13 @@
                 <i class="bi bi-chevron-down"></i>
               </span>
             </div>
-            <span
-              class="error-text"
+            <small
               *ngIf="
                 !signUpModalForm.get('department')?.valid &&
                 signUpModalForm.get('department')?.touched
               "
+              >Department is required.</small
             >
-              Department is required
-            </span>
           </div>
         </div>
         <div class="form-row">
@@ -133,15 +134,13 @@
                 formControlName="designation"
               />
             </div>
-            <span
-              class="error-text"
+            <small
               *ngIf="
                 !signUpModalForm.get('designation')?.valid &&
                 signUpModalForm.get('designation')?.touched
               "
+              >Designation is required.</small
             >
-              Designation is required
-            </span>
           </div>
         </div>
         <div class="form-group">
@@ -153,20 +152,58 @@
           <div class="input-wrapper">
             <input type="date" id="datePicker" class="form-input" formControlName="joiningDate" />
           </div>
-          <span
-            class="error-text"
-            *ngIf="
-              !signUpModalForm.get('joiningDate')?.valid &&
-              signUpModalForm.get('joiningDate')?.touched
-            "
-          >
-            Joining date is required
-          </span>
+          <small *ngIf="signUpModalForm.get('joiningDate')?.touched">
+            <span *ngIf="signUpModalForm.get('joiningDate')?.errors?.['required']"
+              >Joining date is required.</span
+            >
+            <span *ngIf="signUpModalForm.errors?.['invalidJoiningDate']"
+              >Joining Date must be behind or forward of 3 months.</span
+            >
+          </small>
+        </div>
+        <div
+          class="form-group"
+          *ngIf="
+            signUpModalForm.get('role')?.value == 'Doctor' ||
+            signUpModalForm.get('role')?.value == 'Nurse'
+          "
+        >
+          <label class="form-label" for="qualification">
+            <i class="bi bi-mortarboard"></i>
+            Qualification
+          </label>
+          <div class="input-wrapper">
+            <input
+              type="text"
+              id="qualification"
+              class="form-input"
+              placeholder="Enter qualification"
+              formControlName="qualification"
+              *ngIf="
+                signUpModalForm.get('role')?.value == 'Doctor' ||
+                signUpModalForm.get('role')?.value == 'Nurse'
+              "
+            />
+          </div>
+          <small *ngIf="signUpModalForm.get('qualification')?.touched">
+            <span *ngIf="signUpModalForm.get('qualification')?.errors?.['pattern']"
+              >Only letters and white space is allowed.</span
+            >
+            <span *ngIf="!signUpModalForm.get('qualification')?.value"
+              >Qualification is required.</span
+            >
+          </small>
         </div>
         <div class="section-divider" *ngIf="signUpModalForm.get('role')?.value == 'Doctor'">
           <span class="section-divider-text">Doctor Details</span>
         </div>
-        <div class="form-row" *ngIf="signUpModalForm.get('role')?.value == 'Doctor'">
+        <div
+          class="form-row"
+          *ngIf="
+            signUpModalForm.get('role')?.value == 'Doctor' ||
+            signUpModalForm.get('role')?.value == 'Nurse'
+          "
+        >
           <div class="form-group">
             <label class="form-label" for="medicalReg">
               <i class="bi bi-clipboard2-pulse"></i>
@@ -182,41 +219,18 @@
                 formControlName="medicalRegistrationNo"
               />
             </div>
-            <span
-              class="error-text"
-              *ngIf="
-                !signUpModalForm.get('medicalRegistrationNo')?.valid &&
-                signUpModalForm.get('medicalRegistrationNo')?.touched
-              "
-            >
-              Medical registration number is required
-            </span>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label" for="qualification">
-              <i class="bi bi-mortarboard"></i>
-              Qualification
-              <span class="required">*</span>
-            </label>
-            <div class="input-wrapper">
-              <input
-                type="text"
-                id="qualification"
-                class="form-input"
-                placeholder="Enter qualification"
-                formControlName="qualification"
-              />
-            </div>
-            <span
-              class="error-text"
-              *ngIf="
-                !signUpModalForm.get('qualification')?.valid &&
-                signUpModalForm.get('qualification')?.touched
-              "
-            >
-              Qualification is required
-            </span>
+            <small *ngIf="signUpModalForm.get('medicalRegistrationNo')?.touched">
+              <span
+                *ngIf="
+                  !signUpModalForm.get('medicalRegistrationNo')?.value &&
+                  signUpModalForm.get('role')?.value === 'Doctor'
+                "
+                >medical registration number is required</span
+              >
+              <span *ngIf="signUpModalForm.get('medicalRegistrationNo')?.errors?.['pattern']"
+                >Only letters and numbers is allowed.</span
+              >
+            </small>
           </div>
         </div>
         <div class="form-row" *ngIf="signUpModalForm.get('role')?.value == 'Doctor'">
@@ -243,23 +257,16 @@
               <span class="input-icon select-icon">
                 <i class="bi bi-chevron-down"></i>
               </span>
-            </div>
-            <span
-              class="error-text"
-              *ngIf="
-                !signUpModalForm.get('specialization')?.valid &&
-                signUpModalForm.get('specialization')?.touched
-              "
+              <small *ngIf="signUpModalForm.get('specialization')?.value"
+              >Specialization is required</small
             >
-              Specialization is required
-            </span>
+            </div>
           </div>
 
           <div class="form-group">
             <label class="form-label" for="consultFee">
               <i class="bi bi-currency-rupee"></i>
               Consultation Fee
-              <span class="required">*</span>
             </label>
             <div class="input-wrapper">
               <input
@@ -270,15 +277,13 @@
                 formControlName="consultationFee"
               />
             </div>
-            <span
-              class="error-text"
+            <small
               *ngIf="
-                !signUpModalForm.get('consultationFee')?.valid &&
+                signUpModalForm.get('consultationFee')?.errors?.['pattern'] &&
                 signUpModalForm.get('consultationFee')?.touched
               "
+              >Only digits is allowed.</small
             >
-              Consultation fee is required
-            </span>
           </div>
         </div>
         <div class="slot-section" *ngIf="signUpModalForm.get('role')?.value == 'Doctor'">

@@ -111,14 +111,13 @@
             <th>Employee</th>
             <th>Email Address</th>
             <th>Designation</th>
-            <th>Status</th>
           </tr>
         </thead>
 
         <tbody>
           <tr *ngFor="let user of userData">
             <td>
-              <span class="employee-id"> {{ user.employeeId }} </span>
+              <span class="employee-id"> {{ user.employeeCode }} </span>
             </td>
 
             <td>
@@ -129,7 +128,7 @@
 
                 <div>
                   <h4>{{ user.name }}</h4>
-                  <span>Healthcare Staff</span>
+                  <span>{{ user.qualification }}</span>
                 </div>
               </div>
             </td>
@@ -141,18 +140,6 @@
             <td>
               <span class="designation-badge">
                 {{ user.designation }}
-              </span>
-            </td>
-
-            <td>
-              <span
-                class="status-badge"
-                [ngClass]="{
-                  'active-status': user.status === 'Active',
-                  'pending-status': user.status === 'Pending',
-                }"
-              >
-                {{ user.status }}
               </span>
             </td>
           </tr>

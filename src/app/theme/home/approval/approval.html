@@ -129,7 +129,9 @@
             <td>
               <span
                 class="status-badge"
-                [ngClass]="user.status.toLowerCase() === 'active' ? 'active-status' : 'inactive-status'"
+                [ngClass]="
+                  user.status.toLowerCase() === 'active' ? 'active-status' : 'inactive-status'
+                "
               >
                 <span class="status-dot"></span>
                 {{ user.status }}
@@ -143,7 +145,9 @@
               >
                 <i
                   class="bi"
-                  [ngClass]="user.status == 'Active' ? 'bi-lightning-charge-fill' : 'bi-hourglass-split'"
+                  [ngClass]="
+                    user.status == 'Active' ? 'bi-lightning-charge-fill' : 'bi-hourglass-split'
+                  "
                 ></i>
                 {{ user.status == 'Active' ? 'Activated' : 'Not Activated' }}
               </span>
@@ -167,12 +171,18 @@
                 <button
                   class="table-action approve"
                   title="Approve User"
-                  *ngIf="user.status === 'Pending'"
+                  *ngIf="user.status === 'Pending' || user.status === 'Inactive'"
                   (click)="approveUser(user.employeeId)"
                 >
                   <i class="bi bi-check2"></i>
                 </button>
-
+                <button
+                  class="table-action no-task"
+                  title="Approve User"
+                  *ngIf="user.status === 'Active'"
+                >
+                  <i class="bi bi-slash-circle"></i>
+                </button>
                 <button
                   class="table-action reject"
                   title="Reject User"

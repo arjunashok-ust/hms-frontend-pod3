@@ -422,6 +422,13 @@ a {
   box-shadow: 0 8px 24px rgba(37, 99, 235, 0.38);
 }
 
+small {
+  color: #ff6b6b;
+  font-size: 11px;
+  margin-top: -8px;
+  padding:5px;
+}
+
 .btn-primary:disabled,
 .btn-primary.disabled {
   background: #94a3b8;

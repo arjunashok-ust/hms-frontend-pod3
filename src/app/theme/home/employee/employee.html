@@ -38,8 +38,7 @@
             <th>Employee Name</th>
             <th>Email Address</th>
             <th>Department</th>
-            <th>Role</th>
-            <th>Status</th>
+            <th>Designation</th>
             <th>Action</th>
           </tr>
         </thead>
@@ -51,7 +50,12 @@
             </td>
             <td>
               <div class="employee-info">
-                <div class="avatar blue-avatar">{{ employee.name.slice(0, 2).toUpperCase() }}</div>
+                <div class="avatar" [ngClass]="{
+                  'amber-avatar': employee.department == 'Administration',
+                  'green-avatar': employee.department == 'OPD',
+                  'blue-avatar' : employee.department == 'IPD',
+                  'violet-avatar' : employee.department == 'ICU'
+                }">{{ employee.name.slice(0, 2).toUpperCase() }}</div>
                 <div>
                   <h4>{{ employee.name }}</h4>
                 </div>
@@ -63,9 +67,6 @@
             </td>
             <td>
               <span class="designation-badge">{{ employee.designation }}</span>
-            </td>
-            <td>
-              <span class="status-badge active-status">{{ employee.status }}</span>
             </td>
             <td>
               <div class="action-buttons">

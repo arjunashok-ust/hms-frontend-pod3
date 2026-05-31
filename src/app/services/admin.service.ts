@@ -16,15 +16,21 @@ export class AdminService {
       .pipe(catchError(this.handleError));
   }
 
-  getUsers(): Observable<UserEmployeeModel[]> {
+  getUsers(): Observable<UserModel[]> {
     return this.http
-      .get<UserEmployeeModel[]>(`${this.apiUrl.backend_url}/admin/getAllUsers`)
+      .get<UserModel[]>(`${this.apiUrl.backend_url}/admin/getAllUsers`)
       .pipe(catchError(this.handleError));
   }
 
   getEmployees(): Observable<EmployeeModel[]> {
     return this.http
       .get<EmployeeModel[]>(`${this.apiUrl.backend_url}/admin/getAllUsers`)
+      .pipe(catchError(this.handleError));
+  }
+
+  getUserEmployee(): Observable<UserEmployeeModel[]> {
+    return this.http
+      .get<UserEmployeeModel[]>(`${this.apiUrl.backend_url}/admin/getUserEmployee`)
       .pipe(catchError(this.handleError));
   }
 

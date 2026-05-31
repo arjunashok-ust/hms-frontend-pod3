@@ -13,6 +13,11 @@ import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../../../services/auth.service';
 import { mapToSignUpRequest } from '../../../mapper/mapToSignUpRequest';
 import { ToastrService } from 'ngx-toastr';
+import {
+  futureDateValidator,
+  timeRangeValidator,
+} from '../../../../validators/time-range-validator';
+import { passwordsMatchValidator } from '../../../../validators/password-match-validator';
 
 @Component({
   selector: 'app-signup-modal',
@@ -47,23 +52,34 @@ export class SignUpModalComponent implements OnInit {
   }
 
   public constructor(readonly fb: FormBuilder) {
-    this.signUpModalForm = this.fb.group({
-      name: ['', [Validators.required]],
-      email: ['', [Validators.email, Validators.required]],
-      role: ['', [Validators.required]],
-      department: ['', Validators.required],
-      designation: ['', Validators.required],
-      status: ['Active'],
-      joiningDate: ['', Validators.required],
-      medicalRegistrationNo: [''],
-      specialization: [''],
-      qualification: [''],
-      consultationFee: [''],
-      startHour: [''],
-      endHour: [''],
-      availabilitySlots: this.fb.array([]),
-      selectedRoles: this.fb.array([]),
-    });
+    this.signUpModalForm = this.fb.group(
+      {
+        name: ['', [Validators.required, Validators.pattern(/^[a-z]+( [a-z]+)*$/i)]],
+        email: [
+          '',
+          [
+            Validators.email,
+            Validators.required,
+            Validators.pattern(/^[a-z0-9._]+@[a-z0-9]+\.[a-z]{2,}$/i),
+          ],
+        ],
+        role: ['', Validators.required],
+        department: ['', Validators.required],
+        designation: ['', Validators.required],
+        status: ['Active'],
+        joiningDate: ['', Validators.required],
+        medicalRegistrationNo: ['', Validators.pattern(/^[a-z0-9]*$/i)],
+        specialization: [''],
+        qualification: ['', [Validators.pattern(/^[a-z ]*$/i)]],
+        consultationFee: [''],
+        startHour: [''],
+        endHour: [''],
+        availabilitySlots: this.fb.array([]),
+      },
+      {
+        validators: [timeRangeValidator, futureDateValidator, passwordsMatchValidator],
+      },
+    );
   }
 
   // Hours

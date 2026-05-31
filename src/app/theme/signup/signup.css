@@ -91,6 +91,7 @@ small {
   color: #ff6b6b;
   font-size: 11px;
   margin-top: -8px;
+  padding:5px;
 }
 
 label {
@@ -148,6 +149,16 @@ label {
   flex-shrink: 0;
   width: auto;
   cursor: pointer;
+}
+
+.login {
+  text-align: center;
+  font-size: 12px;
+  animation: slideUp .5s ease-out;
+}
+
+.login a{
+  pointer-events: painted;
 }
 
 input[type='date']::-webkit-calendar-picker-indicator {

@@ -316,11 +316,12 @@ a {
 }
 
 .table-wrapper {
-  overflow-x: auto;
+  overflow-x: hidden;
 }
 
 .approval-table {
   width: 100%;
+  overflow-x: hidden;
   min-width: 980px;
   border-collapse: separate;
   border-spacing: 0 14px;
@@ -485,6 +486,11 @@ a {
   color: #f27b7b;
 }
 
+.no-task{
+  background: rgba(108, 169, 255, 0.12);
+  color: #1d1d1d;
+}
+
 .approve:hover {
   transform: translateY(-3px);
   background: #16a34a;
@@ -497,6 +503,13 @@ a {
   background: #dc2626;
   color: #ffffff;
   box-shadow: 0 8px 20px rgba(220, 38, 38, 0.24);
+}
+
+.no-task:hover {
+  transform: translateY(-3px);
+  background: #768aff;
+  color: rgba(0, 0, 0);
+  box-shadow: 0 8px 20px rgba(22, 163, 74, 0.28);
 }
 
 @media (max-width: 992px) {

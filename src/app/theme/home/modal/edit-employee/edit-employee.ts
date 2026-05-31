@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { Router, RouterLink, RouterModule } from '@angular/router';
-import { EmployeeModel } from '../../../../models/user.model';
+import { UserEmployeeModel } from '../../../../models/user.model';
 import { AdminService } from '../../../../services/admin.service';
 import {
   FormArray,
@@ -8,6 +8,7 @@ import {
   FormGroup,
   FormsModule,
   ReactiveFormsModule,
+  Validators,
 } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { DepartmentModel, RoleModel, SpecializationModel } from '../../../../models/ui.model';
@@ -33,37 +34,47 @@ export class EditEmployeeComponent implements OnInit {
   roles_data: RoleModel[] = [];
   departments_data: DepartmentModel[] = [];
   specializations_data: SpecializationModel[] = [];
-  employee: EmployeeModel[] | null = null;
-  userData: EmployeeModel | null = null;
+
+  users: UserEmployeeModel[] | null = null;
+  userData: UserEmployeeModel | null = null;
 
   public constructor(readonly fb: FormBuilder) {
     this.updateForm = this.fb.group({
-      name: [''],
-      email: [''],
-      department: [''],
-      designation: [''],
-      joiningDate: [''],
-      medicalRegistrationNo: [''],
+      name: ['', [Validators.required, Validators.pattern(/^[a-z]+( [a-z]+)*$/i)]],
+      email: [
+        '',
+        [
+          Validators.email,
+          Validators.required,
+          Validators.pattern(/^[a-z0-9._]+@[a-z0-9]+\.[a-z]{2,}$/i),
+        ],
+      ],
+      role: ['', Validators.required],
+      department: ['', Validators.required],
+      designation: ['', Validators.required],
+      status: ['Active'],
+      joiningDate: ['', Validators.required],
+      medicalRegistrationNo: ['', Validators.pattern(/^[a-z0-9]*$/i)],
       specialization: [''],
-      qualification: [''],
+      qualification: ['', [Validators.pattern(/^[a-z ]*$/i)]],
       consultationFee: [''],
       startHour: [''],
       endHour: [''],
       availabilitySlots: this.fb.array([]),
-      selectedRoles: this.fb.array([]),
     });
   }
 
   ngOnInit(): void {
     const userEmail = localStorage.getItem('updateEmail') ?? '';
-    this.adminService.getEmployees().subscribe({
+    this.adminService.getUserEmployee().subscribe({
       next: (res) => {
-        this.employee = res;
-        this.userData = this.employee.find((emp) => emp.email === userEmail) || null;
-
+        console.log(res);
+        this.users = res;
+        this.userData = this.users.find((emp) => emp.email === userEmail) || null;
         this.updateForm.patchValue({
           name: this.userData?.name,
           email: this.userData?.email,
+          role: this.userData?.role,
           department: this.userData?.department,
           designation: this.userData?.designation,
           joiningDate: this.userData?.joiningDate
@@ -105,7 +116,9 @@ export class EditEmployeeComponent implements OnInit {
       return;
     }
 
-    this.generatedSlots = [];
+    if (this.userData?.availabilitySlots) {
+      this.generatedSlots.push(...(this.userData?.availabilitySlots || []));
+    }
 
     for (let i = startHour; i < endHour; i++) {
       this.generatedSlots.push(
@@ -132,7 +145,7 @@ export class EditEmployeeComponent implements OnInit {
 
   onSubmit() {
     const payload = {
-      employeeId: this.userData?.employeeCode,
+      employeeId: this.userData?.employeeId,
       data: {
         name: this.updateForm.get('name')?.value,
         role: this.updateForm.get('role')?.value,
@@ -143,7 +156,8 @@ export class EditEmployeeComponent implements OnInit {
         specialization: this.updateForm.get('specialization')?.value,
         qualification: this.updateForm.get('qualification')?.value,
         availabilitySlots: this.updateForm.get('availabilitySlots')?.value,
-      }
+        consultationFee: this.updateForm.get('consultationFee')?.value,
+      },
     };
     this.adminService.updateUserProfile(payload).subscribe({
       next: (res) => {
@@ -151,8 +165,8 @@ export class EditEmployeeComponent implements OnInit {
         this.router.navigate(['/employee']);
       },
       error: (error) => {
-        this.toast.error("Server error during update user profile");
-      }
+        this.toast.error('Server error during update user profile');
+      },
     });
   }
 }

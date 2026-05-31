@@ -140,11 +140,12 @@
 }
 
 .table-wrapper {
-  overflow-x: auto;
+  overflow-x: hidden;
 }
 
 .modern-table {
   width: 100%;
+  overflow-x: hidden;
   border-collapse: separate;
   border-spacing: 0 14px;
 }

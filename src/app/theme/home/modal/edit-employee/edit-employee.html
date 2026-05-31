@@ -33,12 +33,12 @@
                 formControlName="name"
               />
             </div>
-            <span
-              class="error-text"
-              *ngIf="!updateForm.get('name')?.valid && updateForm.get('name')?.touched"
-            >
-              Name is required
-            </span>
+            <small *ngIf="updateForm.get('name')?.touched">
+              <span *ngIf="updateForm.get('name')?.errors?.['required']">Name is required.</span>
+              <span *ngIf="updateForm.get('name')?.errors?.['pattern']"
+                >Only letters is allowed.</span
+              >
+            </small>
           </div>
 
           <div class="form-group">
@@ -56,13 +56,37 @@
                 disabled
               />
             </div>
-            <span class="error-text" *ngIf="updateForm.get('email')?.touched">
-              <span *ngIf="updateForm.get('email')?.errors?.['required']">Email is required</span>
-              <span *ngIf="updateForm.get('email')?.errors?.['email']">Email is invalid</span>
-            </span>
+            <small *ngIf="updateForm.get('email')?.touched">
+              <span *ngIf="updateForm.get('email')?.errors?.['required']"
+                >Email is required.</span
+              >
+              <span *ngIf="updateForm.get('email')?.errors?.['email']">Email is invalid.</span>
+            </small>
           </div>
         </div>
         <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="roles">
+              <i class="bi bi-shield-check"></i>
+              Role
+              <span class="required">*</span>
+            </label>
+            <div class="input-wrapper">
+              <input
+                type="text"
+                id="role"
+                class="form-input"
+                [placeholder]="userData?.role"
+                disabled
+              />
+            </div>
+            <small
+              *ngIf="
+                updateForm.get('role')?.errors?.['required'] &&
+                updateForm.get('role')?.touched
+              "
+              >Role is required.</small>
+          </div>
           <div class="form-group">
             <label class="form-label" for="department">
               <i class="bi bi-building"></i>
@@ -83,12 +107,13 @@
                 <i class="bi bi-chevron-down"></i>
               </span>
             </div>
-            <span
-              class="error-text"
-              *ngIf="!updateForm.get('department')?.valid && updateForm.get('department')?.touched"
+             <small
+              *ngIf="
+                !updateForm.get('department')?.valid &&
+                updateForm.get('department')?.touched
+              "
+              >Department is required.</small
             >
-              Department is required
-            </span>
           </div>
         </div>
         <div class="form-row">
@@ -103,18 +128,17 @@
                 type="text"
                 id="designation"
                 class="form-input"
-                placeholder="Enter designation"
+                placeholder="Enter Designation"
                 formControlName="designation"
               />
             </div>
-            <span
-              class="error-text"
+            <small
               *ngIf="
-                !updateForm.get('designation')?.valid && updateForm.get('designation')?.touched
+                !updateForm.get('designation')?.valid &&
+                updateForm.get('designation')?.touched
               "
+              >Designation is required.</small
             >
-              Designation is required
-            </span>
           </div>
         </div>
         <div class="form-group">
@@ -126,17 +150,19 @@
           <div class="input-wrapper">
             <input type="date" id="datePicker" class="form-input" formControlName="joiningDate" />
           </div>
-          <span
-            class="error-text"
-            *ngIf="!updateForm.get('joiningDate')?.valid && updateForm.get('joiningDate')?.touched"
-          >
-            Joining date is required
-          </span>
+          <small *ngIf="updateForm.get('joiningDate')?.touched">
+            <span *ngIf="updateForm.get('joiningDate')?.errors?.['required']"
+              >Joining date is required.</span
+            >
+            <span *ngIf="updateForm.errors?.['invalidJoiningDate']"
+              >Joining Date must be behind or forward of 3 months.</span
+            >
+          </small>
         </div>
         <div class="section-divider" *ngIf="updateForm.get('role')?.value == 'Doctor'">
           <span class="section-divider-text">Doctor Details</span>
         </div>
-        <div class="form-row" *ngIf="updateForm.get('role')?.value == 'Doctor'">
+        <div class="form-row" *ngIf="updateForm.get('role')?.value == 'Doctor' || updateForm.get('role')?.value == 'Nurse'">
           <div class="form-group">
             <label class="form-label" for="medicalReg">
               <i class="bi bi-clipboard2-pulse"></i>
@@ -152,15 +178,18 @@
                 formControlName="medicalRegistrationNo"
               />
             </div>
-            <span
-              class="error-text"
-              *ngIf="
-                !updateForm.get('medicalRegistrationNo')?.valid &&
-                updateForm.get('medicalRegistrationNo')?.touched
-              "
-            >
-              Medical registration number is required
-            </span>
+            <small *ngIf="updateForm.get('medicalRegistrationNo')?.touched">
+              <span
+                *ngIf="
+                  !updateForm.get('medicalRegistrationNo')?.value &&
+                updateForm.get('role')?.value === 'Doctor'
+                "
+                >medical registration number is required</span
+              >
+              <span *ngIf="updateForm.get('medicalRegistrationNo')?.errors?.['pattern']"
+                >Only letters and numbers is allowed.</span
+              >
+            </small>
           </div>
 
           <div class="form-group">
@@ -178,14 +207,14 @@
                 formControlName="qualification"
               />
             </div>
-            <span
-              class="error-text"
-              *ngIf="
-                !updateForm.get('qualification')?.valid && updateForm.get('qualification')?.touched
-              "
+            <small *ngIf="updateForm.get('qualification')?.touched">
+            <span *ngIf="updateForm.get('qualification')?.errors?.['pattern']"
+              >Only letters and white space is allowed.</span
             >
-              Qualification is required
-            </span>
+            <span *ngIf="!updateForm.get('qualification')?.value"
+              >Qualification is required</span
+            >
+          </small>
           </div>
         </div>
         <div class="form-row" *ngIf="updateForm.get('role')?.value == 'Doctor'">
@@ -212,16 +241,14 @@
               <span class="input-icon select-icon">
                 <i class="bi bi-chevron-down"></i>
               </span>
-            </div>
-            <span
-              class="error-text"
+              <small
               *ngIf="
-                !updateForm.get('specialization')?.valid &&
+                !updateForm.get('specialization')?.value &&
                 updateForm.get('specialization')?.touched
               "
+              >Specialization is required.</small
             >
-              Specialization is required
-            </span>
+            </div>
           </div>
 
           <div class="form-group">
@@ -239,15 +266,13 @@
                 formControlName="consultationFee"
               />
             </div>
-            <span
-              class="error-text"
+            <small
               *ngIf="
-                !updateForm.get('consultationFee')?.valid &&
+                updateForm.get('consultationFee')?.errors?.['pattern'] &&
                 updateForm.get('consultationFee')?.touched
               "
+              >Only digits is allowed.</small
             >
-              Consultation fee is required
-            </span>
           </div>
         </div>
         <div class="slot-section" *ngIf="updateForm.get('role')?.value == 'Doctor'">
@@ -298,12 +323,16 @@
           </label>
           <div class="slot-chips">
             <label class="slot-chip" *ngFor="let slot of generatedSlots">
-              <input type="checkbox" [value]="slot" (change)="toggleSlot(slot)" />
+              <input
+                type="checkbox"
+                [value]="slot"
+                [checked]="updateForm.value.availabilitySlots.includes(slot) || false"
+                (change)="toggleSlot(slot)"
+              />
               <span class="slot-chip-text">{{ slot }}</span>
             </label>
           </div>
         </div>
-
         <div class="slot-section" *ngIf="updateForm.value.availabilitySlots.length">
           <label class="form-label" for="selected-slots">
             <i class="bi bi-check2-square"></i>

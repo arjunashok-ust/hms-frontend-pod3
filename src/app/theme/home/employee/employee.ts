@@ -33,6 +33,7 @@ export class EmployeeComponent implements OnInit {
   ngOnInit(): void {
     this.adminService.getEmployees().subscribe({
       next: (res) => {
+        console.log(res);
         this.employeeData = res;
         this.applyFilters();
         this.cd.detectChanges();

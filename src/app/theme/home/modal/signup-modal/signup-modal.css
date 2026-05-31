@@ -451,6 +451,13 @@ body.modal-open {
   opacity: 0.6;
 }
 
+small {
+  color: #ff6b6b;
+  font-size: 11px;
+  margin-top: -8px;
+  padding:5px;
+}
+
 @media (max-width: 640px) {
   .modal-content {
     padding: 24px 20px;

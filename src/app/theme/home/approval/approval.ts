@@ -75,9 +75,10 @@ export class ApprovalComponent implements OnInit {
     const payload = { employeeId: id };
     this.adminService.approveUser(payload).subscribe({
       next: (res) => {
-        this.toast.success('Account Activated');
+        this.userData = this.userData.map((user)=> user.employeeId === id? {...user, status: 'Active'} : user);
         this.applyFilters();
         this.cd.detectChanges();
+        this.toast.success('Account Activated');
       },
       error: (error) => {
         this.toast.error('Server Error During Reject User');
@@ -90,6 +91,7 @@ export class ApprovalComponent implements OnInit {
     const payload = { employeeId: id };
     this.adminService.rejectUser(payload).subscribe({
       next: (res) => {
+        this.userData = this.userData.map((user)=> user.employeeId === id? {...user, status: 'Inactive'} : user)
         this.toast.success('Application Rejected');
         this.applyFilters();
         this.cd.detectChanges();

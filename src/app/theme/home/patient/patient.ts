@@ -11,6 +11,7 @@ import { UserService } from '../../../services/user.service';
 import { CommonModule } from '@angular/common';
 import { PatientModel } from '../../../models/user.model';
 import { ToastrService } from 'ngx-toastr';
+import { DobValidator } from '../../../validators/time-range-validator';
 
 @Component({
   selector: 'app-patient',
@@ -47,16 +48,27 @@ export class PatientComponent implements OnInit {
   }
 
   public constructor(readonly fb: FormBuilder) {
-    this.patientForm = this.fb.group({
-      name: ['', [Validators.required]],
-      phone: ['', [Validators.required,Validators.maxLength(10),Validators.pattern("^[0-9]*$")]],
-      email: ['', [Validators.email]],
-      gender: ['', [Validators.required]],
-      dob: ['', [Validators.required]],
-      address: ['', [Validators.required]],
-      emergencyContact: [''],
-      status: ['', [Validators.required]],
-    });
+    this.patientForm = this.fb.group(
+      {
+        name: ['', [Validators.required, Validators.pattern(/^[a-z]+( [a-z])*$/i)]],
+        phone: [
+          '',
+          [Validators.required, Validators.maxLength(10), Validators.pattern('^[0-9]*$')],
+        ],
+        email: ['', [Validators.email]],
+        gender: ['', [Validators.required]],
+        dob: ['', [Validators.required]],
+        address: ['', [Validators.required]],
+        emergencyContact: [
+          '',
+          [Validators.required, Validators.maxLength(10), Validators.pattern('^[0-9]*$')],
+        ],
+        status: ['', [Validators.required]],
+      },
+      {
+        validators: DobValidator,
+      },
+    );
   }
 
   loadUiData() {
@@ -74,14 +86,13 @@ export class PatientComponent implements OnInit {
 
     this.userService.deletePatientt(payload).subscribe({
       next: (res) => {
-        this.toast.success("Patient deleted sucessfully");
+        this.toast.success('Patient deleted sucessfully');
         this.cd.detectChanges();
-      }
-      ,
+      },
       error: (error) => {
-        this.toast.error("Server error during patient deletion");
-      }
-    })
+        this.toast.error('Server error during patient deletion');
+      },
+    });
   }
 
   onSubmit() {
@@ -96,7 +107,7 @@ export class PatientComponent implements OnInit {
     };
     this.userService.createPatient(payload).subscribe({
       next: (res) => {
-        this.toast.success("Patient added sucessfully");
+        this.toast.success('Patient added sucessfully');
         this.cd.detectChanges();
       },
       error: (error) => {

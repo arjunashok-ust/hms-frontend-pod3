@@ -1,19 +1,20 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { FormGroup, ReactiveFormsModule, FormBuilder, Validators, FormArray } from '@angular/forms';
-import { timeRangeValidator } from '../../validators/time-range-validator';
+import { timeRangeValidator,futureDateValidator } from '../../validators/time-range-validator';
 import { AuthService } from '../../services/auth.service';
 import { DepartmentModel, RoleModel, SpecializationModel } from '../../models/ui.model';
 import { mapToSignUpRequest } from '../mapper/mapToSignUpRequest';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
+import { passwordsMatchValidator } from '../../validators/password-match-validator';
 
 @Component({
   selector: 'app-signup',
   templateUrl: './signup.htm',
   styleUrl: './signup.css',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule],
+  imports: [ReactiveFormsModule, CommonModule,RouterModule],
 })
 
 export class SignUpComponent implements OnInit {
@@ -45,25 +46,25 @@ export class SignUpComponent implements OnInit {
   public constructor(readonly fb: FormBuilder) {
     this.signUpForm = this.fb.group(
       {
-        name: ['', [Validators.required]],
-        email: ['', [Validators.email, Validators.required]],
+        name: ['', [Validators.required,Validators.pattern(/^[a-z]+( [a-z]+)*$/i)]],
+        email: ['', [Validators.email, Validators.required,Validators.pattern(/^[a-z0-9._]+@[a-z0-9]*\.[a-z]{2,}$/i)]],
         role: ['', [Validators.required]],
         password: ['', [Validators.required, Validators.minLength(8)]],
+        confirmPassword: [''],
         department: ['', Validators.required],
         designation: ['', Validators.required],
         status: ['Pending'],
         joiningDate: ['', Validators.required],
-        medicalRegistrationNo: [''],
+        medicalRegistrationNo: ['',Validators.pattern(/^[a-z0-9]*$/i)],
         specialization: [''],
-        qualification: ['', [Validators.required]],
+        qualification: ['', [Validators.pattern(/^[a-z ]*$/i)]],
         consultationFee: [''],
         startHour: [''],
         endHour: [''],
         availabilitySlots: this.fb.array([]),
-        selectedRoles: this.fb.array([]),
       },
       {
-        validators: timeRangeValidator,
+        validators: [timeRangeValidator,futureDateValidator,passwordsMatchValidator]
       },
     );
   }
@@ -108,6 +109,7 @@ export class SignUpComponent implements OnInit {
 
   onSubmit() {
     const payload = mapToSignUpRequest(this.signUpForm);
+    console.log(payload);
     this.auth.signUp(payload).subscribe({
       next: (res) => {
         this.toast.success(res.message);
