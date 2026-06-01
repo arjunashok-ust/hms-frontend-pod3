@@ -1,4 +1,4 @@
-import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
+import { AbstractControl, ValidationErrors } from '@angular/forms';
 
 export function timeRangeValidator(control: AbstractControl): ValidationErrors | null {
   const start = control.get('startHour')?.value;
