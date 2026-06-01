@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AdminService } from '../../../services/admin.service';
@@ -18,17 +18,18 @@ export class ApprovalComponent implements OnInit {
   userService: UserService = inject(UserService);
   cd: ChangeDetectorRef = inject(ChangeDetectorRef);
   toast: ToastrService = inject(ToastrService);
+  route: Router = inject(Router);
 
   userData: UserModel[] = [];
   filteredData: UserModel[] = [];
-  
+
   approvalUiData = {
     pendingCount: 0,
     verifiedCount: 0,
     inActiveCount: 0,
     firstLoginCount: 0,
   };
-  
+
   searchText = '';
 
   ngOnInit(): void {
@@ -40,7 +41,10 @@ export class ApprovalComponent implements OnInit {
         this.cd.detectChanges();
       },
       error: (error) => {
-        this.toast.error('Server Error During Get Users');
+        this.toast.error(error.message);
+         if(error.message == 'You are not authorized to perform this action.'){
+          this.route.navigate(['/access-denied']);
+        }
       },
     });
   }
@@ -66,7 +70,7 @@ export class ApprovalComponent implements OnInit {
         !this.searchText ||
         user.email.includes(this.searchText) ||
         user.employeeId.includes(this.searchText) ||
-        user.role.includes(this.searchText) 
+        user.role.includes(this.searchText),
     );
     this.cd.detectChanges();
   }
@@ -75,14 +79,15 @@ export class ApprovalComponent implements OnInit {
     const payload = { employeeId: id };
     this.adminService.approveUser(payload).subscribe({
       next: (res) => {
-        this.userData = this.userData.map((user)=> user.employeeId === id? {...user, status: 'Active'} : user);
+        this.userData = this.userData.map((user) =>
+          user.employeeId === id ? { ...user, status: 'Active' } : user,
+        );
         this.applyFilters();
         this.cd.detectChanges();
         this.toast.success('Account Activated');
       },
       error: (error) => {
-        this.toast.error('Server Error During Reject User');
-        console.log(error);
+        this.toast.error(error.message);
       },
     });
   }
@@ -91,13 +96,15 @@ export class ApprovalComponent implements OnInit {
     const payload = { employeeId: id };
     this.adminService.rejectUser(payload).subscribe({
       next: (res) => {
-        this.userData = this.userData.map((user)=> user.employeeId === id? {...user, status: 'Inactive'} : user)
+        this.userData = this.userData.map((user) =>
+          user.employeeId === id ? { ...user, status: 'Inactive' } : user,
+        );
         this.toast.success('Application Rejected');
         this.applyFilters();
         this.cd.detectChanges();
       },
       error: (error) => {
-        this.toast.error('Server Error During Approve User');
+         this.toast.error(error.message);
       },
     });
   }

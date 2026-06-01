@@ -25,7 +25,9 @@ export class SidebarComponent implements OnInit {
         this.nodeData = res;
         this.cd.detectChanges();
       },
-      error: (err) => {console.error("Error fetching the sidebar components from server")},
+      error: (err) => {
+        this.toast.error(err.message);
+      },
     });
   }
 }

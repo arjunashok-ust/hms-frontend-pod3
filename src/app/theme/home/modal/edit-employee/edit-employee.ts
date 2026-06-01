@@ -28,6 +28,7 @@ export class EditEmployeeComponent implements OnInit {
   toast: ToastrService = inject(ToastrService);
 
   cd: ChangeDetectorRef = inject(ChangeDetectorRef);
+  route: Router = inject(Router);
 
   updateForm: FormGroup;
 
@@ -88,6 +89,12 @@ export class EditEmployeeComponent implements OnInit {
         });
         this.cd.detectChanges();
       },
+      error: (error) => {
+        this.toast.error(error.message);
+         if(error.message == 'You are not authorized to perform this action.'){
+          this.route.navigate(['/access-denied']);
+        }
+      }
     });
     this.authService.getUiData<RoleModel[]>('/ui/getRoles').subscribe((res) => {
       this.roles_data = res;
@@ -165,7 +172,7 @@ export class EditEmployeeComponent implements OnInit {
         this.router.navigate(['/employee']);
       },
       error: (error) => {
-        this.toast.error('Server error during update user profile');
+         this.toast.error(error.message);
       },
     });
   }

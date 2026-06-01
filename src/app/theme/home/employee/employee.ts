@@ -5,12 +5,12 @@ import { DepartmentModel } from '../../../models/ui.model';
 import { AuthService } from '../../../services/auth.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterLink, RouterModule } from "@angular/router";
+import { Router, RouterLink, RouterModule } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-employee',
-  imports: [CommonModule, FormsModule, RouterLink,RouterModule],
+  imports: [CommonModule, FormsModule, RouterLink, RouterModule],
   templateUrl: './employee.html',
   styleUrl: './employee.css',
 })
@@ -20,6 +20,7 @@ export class EmployeeComponent implements OnInit {
   router: Router = inject(Router);
   toast: ToastrService = inject(ToastrService);
   cd: ChangeDetectorRef = inject(ChangeDetectorRef);
+  route: Router = inject(Router);
 
   employeeData: EmployeeModel[] = [];
   departmentsData: DepartmentModel[] = [];
@@ -39,7 +40,10 @@ export class EmployeeComponent implements OnInit {
         this.cd.detectChanges();
       },
       error: (err) => {
-        this.toast.error('Error fetching data from server');
+        this.toast.error(err.message);
+        if (err.message == 'You are not authorized to perform this action.') {
+          this.route.navigate(['/access-denied']);
+        }
       },
     });
     this.authService.getUiData<DepartmentModel[]>('/ui/getDepartments').subscribe({
@@ -62,8 +66,8 @@ export class EmployeeComponent implements OnInit {
     });
   }
 
-  updateProfile(email: string){
-    localStorage.setItem('updateEmail',email);
+  updateProfile(email: string) {
+    localStorage.setItem('updateEmail', email);
     this.router.navigate(['/edit-employee']);
   }
 
@@ -71,13 +75,15 @@ export class EmployeeComponent implements OnInit {
     const payload = { employeeId: employeeId };
     this.adminService.deleteUserProfile(payload).subscribe({
       next: (res) => {
-        this.employeeData = this.employeeData.filter((employee)=>employee.employeeCode!==employeeId);
+        this.employeeData = this.employeeData.filter(
+          (employee) => employee.employeeCode !== employeeId,
+        );
         this.applyFilters();
         this.cd.detectChanges();
         this.toast.success('Account Deleted Sucessfully');
       },
       error: (err) => {
-        this.toast.error('Server Error During Delete User Profile');
+        this.toast.error(err.message);
       },
     });
   }

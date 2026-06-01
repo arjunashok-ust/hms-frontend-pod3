@@ -6,7 +6,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { UserService } from '../../../services/user.service';
 import { CommonModule } from '@angular/common';
 import { PatientModel } from '../../../models/user.model';
@@ -25,6 +25,7 @@ export class PatientComponent implements OnInit {
   userService: UserService = inject(UserService);
   toast: ToastrService = inject(ToastrService);
   cd: ChangeDetectorRef = inject(ChangeDetectorRef);
+  route: Router = inject(Router);
 
   patientData: PatientModel[] | null = null;
 
@@ -46,7 +47,10 @@ export class PatientComponent implements OnInit {
         this.cd.detectChanges();
       },
       error: (error) => {
-        this.toast.success('Server error during get patients');
+        this.toast.error(error.message);
+        if (error.message == 'You are not authorized to perform this action.') {
+          this.route.navigate(['/access-denied']);
+        }
       },
     });
   }
@@ -120,7 +124,7 @@ export class PatientComponent implements OnInit {
       },
       error: (error) => {
         console.log(error);
-        this.toast.error('Server Error During Create Patient');
+        this.toast.error(error.message);
       },
     });
   }

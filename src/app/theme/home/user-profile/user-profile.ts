@@ -1,8 +1,9 @@
 import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { UserService } from '../../../services/user.service';
-import { UserEmployeeModel} from '../../../models/user.model';
+import { UserEmployeeModel } from '../../../models/user.model';
 import { CommonModule } from '@angular/common';
 import { ToastrService } from 'ngx-toastr';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-user-profile',
@@ -14,7 +15,7 @@ export class UserProfileComponent implements OnInit {
   userService: UserService = inject(UserService);
   cd: ChangeDetectorRef = inject(ChangeDetectorRef);
   toast: ToastrService = inject(ToastrService);
-
+  route: Router = inject(Router);
   userData: UserEmployeeModel | null = null;
 
   ngOnInit() {
@@ -28,6 +29,9 @@ export class UserProfileComponent implements OnInit {
       },
       error: (err) => {
         this.toast.error(err.message);
+        if (err.message == 'You are not authorized to perform this action.') {
+          this.route.navigate(['/access-denied']);
+        }
       },
     });
   }

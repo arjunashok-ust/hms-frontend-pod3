@@ -67,7 +67,7 @@ export class AppointmentComponent implements OnInit {
         this.cd.detectChanges();
       },
       error: (err) => {
-        this.toast.error('Failed to fetch appointments ui data');
+        this.toast.error(err.message);
       },
     });
     this.appointmentService.getAllDoctors().subscribe({
@@ -76,7 +76,7 @@ export class AppointmentComponent implements OnInit {
         this.cd.detectChanges();
       },
       error: (err) => {
-        this.toast.error('Failed to fetch doctors.');
+         this.toast.error(err.message);
       },
     });
     this.appointmentService.getAllAppointment().subscribe({
@@ -85,7 +85,7 @@ export class AppointmentComponent implements OnInit {
         this.cd.detectChanges();
       },
       error: (err) => {
-        this.toast.error('Failed to fetch appointments');
+         this.toast.error(err.message);
       },
     });
   }

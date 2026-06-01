@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 
 @Component({
@@ -7,12 +7,16 @@ import { Router, RouterModule } from '@angular/router';
   templateUrl: './header.html',
   styleUrl: './header.css',
 })
-export class HeaderComponent {
-  router : Router= inject(Router);
-  name = localStorage.getItem('name');
-  role = localStorage.getItem('role');
-  
-  logout(){
+export class HeaderComponent implements OnInit {
+  router: Router = inject(Router);
+  name: string = "";
+  role: string ="";
+
+  ngOnInit(): void {
+    this.name = localStorage.getItem('name') || '';
+    this.role = localStorage.getItem('role') || '';
+  }
+  logout() {
     localStorage.clear();
     this.router.navigate(['/login']);
   }

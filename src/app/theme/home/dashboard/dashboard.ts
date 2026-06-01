@@ -1,9 +1,9 @@
 import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { DashboardModel } from '../../../models/ui.model';
-import { EmployeeModel, UserEmployeeModel } from '../../../models/user.model';
+import { EmployeeModel } from '../../../models/user.model';
 import { AdminService } from '../../../services/admin.service';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 
 @Component({
@@ -20,6 +20,7 @@ export class DashboardComponent implements OnInit {
   adminService: AdminService = inject(AdminService);
   cd: ChangeDetectorRef = inject(ChangeDetectorRef);
   toast: ToastrService = inject(ToastrService);
+  route: Router = inject(Router);
 
   ngOnInit() {
     this.adminService.getDashboardData().subscribe({
@@ -29,16 +30,18 @@ export class DashboardComponent implements OnInit {
       },
       error: (err) => {
         this.toast.error(err.message);
+        if(err.message == 'You are not authorized to perform this action.'){
+          this.route.navigate(['/access-denied']);
+        }
       },
     });
     this.adminService.getEmployees().subscribe({
       next: (res) => {
         this.userData = res;
-
         this.cd.detectChanges();
       },
       error: (err) => {
-        this.toast.error(err.message);
+        console.error(err);
       },
     });
   }
