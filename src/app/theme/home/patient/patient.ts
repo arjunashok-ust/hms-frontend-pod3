@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -22,11 +22,10 @@ import { DobValidator } from '../../../validators/time-range-validator';
 export class PatientComponent implements OnInit {
   patientForm: FormGroup;
 
-  userService: UserService = inject(UserService);
-  toast: ToastrService = inject(ToastrService);
-  cd: ChangeDetectorRef = inject(ChangeDetectorRef);
+  userService = inject(UserService);
+  toast = inject(ToastrService);
 
-  patientData: PatientModel[] | null = null;
+  patientData: PatientModel[] = [];
 
   patientUiData = {
     patientCount: 0,
@@ -34,93 +33,76 @@ export class PatientComponent implements OnInit {
     inActiveCount: 0,
   };
 
+  constructor(private fb: FormBuilder) {
+    this.patientForm = this.fb.group(
+      {
+        name: ['', [Validators.required, Validators.pattern(/^[A-Za-z ]+$/)]],
+        phone: ['', [Validators.required, Validators.pattern(/^[0-9]{10}$/)]],
+        email: ['', [Validators.required, Validators.email]],
+        gender: ['', Validators.required],
+        dob: ['', Validators.required],
+        address: ['', Validators.required],
+        emergencyContact: ['', [Validators.pattern(/^[0-9]{10}$/)]],
+        status: ['ACTIVE'],
+      },
+      {
+        validators: DobValidator,
+      }
+    );
+  }
+
   ngOnInit(): void {
     this.updateData();
   }
 
-  updateData() {
+  updateData(): void {
     this.userService.getPatients().subscribe({
       next: (res) => {
         this.patientData = res;
         this.loadUiData();
-        this.cd.detectChanges();
       },
-      error: (error) => {
-        this.toast.success('Server error during get patients');
+      error: () => {
+        this.toast.error('Failed to fetch patients');
       },
     });
   }
 
-  public constructor(readonly fb: FormBuilder) {
-    this.patientForm = this.fb.group(
-      {
-        name: ['', [Validators.required, Validators.pattern(/^[a-z]+( [a-z]+)*$/i)]],
-        phone: [
-          '',
-          [Validators.required, Validators.maxLength(10), Validators.pattern('^[0-9]*$')],
-        ],
-        email: [
-          '',
-          [Validators.required, Validators.pattern(/^[a-z0-9._]+@[a-z0-9]*\.[a-z]{2,}$/i)],
-        ],
-        gender: ['', [Validators.required]],
-        dob: ['', [Validators.required]],
-        address: ['', [Validators.required]],
-        emergencyContact: ['', [Validators.maxLength(10), Validators.pattern('^[0-9]*$')]],
-        status: ['Active', [Validators.required]],
-      },
-      {
-        validators: DobValidator,
-      },
-    );
-  }
+  loadUiData(): void {
+    this.patientUiData.patientCount = this.patientData.length;
 
-  loadUiData() {
-    this.patientUiData.patientCount = this.patientData?.length || 0;
     this.patientUiData.activeCount =
-      this.patientData?.filter((patient) => patient.status === 'Active').length || 0;
+      this.patientData.filter(p => p.status === 'ACTIVE').length;
+
     this.patientUiData.inActiveCount =
-      this.patientData?.filter((patient) => patient.status === 'InActive').length || 0;
+      this.patientData.filter(p => p.status === 'INACTIVE').length;
   }
 
-  deletePatient(patientId: string) {
-    const payload = {
-      patientId: patientId,
-    };
-
-    this.userService.deletePatientt(payload).subscribe({
-      next: (res) => {
-        this.toast.success('Patient deleted sucessfully');
+  deletePatient(patientId: string): void {
+    this.userService.deletePatient({ patientId }).subscribe({
+      next: () => {
+        this.toast.success('Deleted successfully');
         this.updateData();
       },
-      error: (error) => {
-        this.toast.error('Server error during patient deletion');
+      error: () => {
+        this.toast.error('Delete failed');
       },
     });
   }
 
-  onSubmit() {
-    if (!this.patientForm.valid) {
-      this.toast.error('Invalid input. Please check your entries and try again.');
+  onSubmit(): void {
+    if (this.patientForm.invalid) {
+      this.toast.error('Invalid input');
+      return;
     }
-    const payload = {
-      name: this.patientForm.get('name')?.value,
-      phone: this.patientForm.get('phone')?.value,
-      email: this.patientForm.get('email')?.value,
-      gender: this.patientForm.get('gender')?.value,
-      status: this.patientForm.get('status')?.value,
-      dob: this.patientForm.get('dob')?.value,
-      address: this.patientForm.get('address')?.value,
-      emergencyContact: this.patientForm.get('emergencyContact')?.value,
-    };
-    this.userService.createPatient(payload).subscribe({
-      next: (res) => {
-        this.toast.success('Patient added sucessfully');
+
+    this.userService.createPatient(this.patientForm.value).subscribe({
+      next: () => {
+        this.toast.success('Patient added');
         this.updateData();
+        this.patientForm.reset({ status: 'ACTIVE' });
       },
-      error: (error) => {
-        console.log(error);
-        this.toast.error('Server Error During Create Patient');
+      error: () => {
+        this.toast.error('Create failed');
       },
     });
   }

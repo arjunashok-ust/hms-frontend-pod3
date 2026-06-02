@@ -10,75 +10,72 @@ import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-employee',
-  imports: [CommonModule, FormsModule, RouterLink,RouterModule],
+  imports: [CommonModule, FormsModule, RouterLink, RouterModule],
   templateUrl: './employee.html',
   styleUrl: './employee.css',
 })
 export class EmployeeComponent implements OnInit {
-  adminService: AdminService = inject(AdminService);
-  authService: AuthService = inject(AuthService);
-  router: Router = inject(Router);
-  toast: ToastrService = inject(ToastrService);
+  adminService = inject(AdminService);
+  authService = inject(AuthService);
+  router = inject(Router);
+  toast = inject(ToastrService);
   cd: ChangeDetectorRef = inject(ChangeDetectorRef);
 
   employeeData: EmployeeModel[] = [];
   departmentsData: DepartmentModel[] = [];
-
   filteredEmployeeData: EmployeeModel[] = [];
 
-  selectedText: string = '';
-  selectedDepartment: string = '';
-  selectedStatus: string = '';
+  selectedText = '';
+  selectedDepartment = '';
+  selectedStatus = '';
 
   ngOnInit(): void {
     this.adminService.getEmployees().subscribe({
       next: (res) => {
-        console.log(res);
         this.employeeData = res;
         this.applyFilters();
         this.cd.detectChanges();
       },
-      error: (err) => {
-        this.toast.error('Error fetching data from server');
-      },
+      error: () => this.toast.error('Error fetching employees'),
     });
-    this.authService.getUiData<DepartmentModel[]>('/ui/getDepartments').subscribe({
-      next: (res) => {
-        this.departmentsData = res;
-      },
+
+    this.authService.getUiData<DepartmentModel[]>('/ui/getdepartments').subscribe({
+      next: (res) => this.departmentsData = res,
     });
   }
 
-  applyFilters() {
-    this.filteredEmployeeData = this.employeeData?.filter((employee) => {
+  applyFilters(): void {
+    this.filteredEmployeeData = this.employeeData.filter(emp => {
+      const search = this.selectedText.toLowerCase();
+
       const searchMatch =
-        employee.name.toLowerCase().includes(this.selectedText.toLowerCase()) ||
-        employee.email.toLowerCase().includes(this.selectedText.toLowerCase()) ||
-        employee.employeeCode.toLowerCase().includes(this.selectedText.toLowerCase());
-      const departmentMatch =
-        !this.selectedDepartment || employee.department === this.selectedDepartment;
-      const statusMatch = !this.selectedStatus || employee.status === this.selectedStatus;
-      return searchMatch && departmentMatch && statusMatch;
+        emp.name.toLowerCase().includes(search) ||
+        emp.email.toLowerCase().includes(search) ||
+        emp.employeeId.toLowerCase().includes(search);
+
+      const deptMatch =
+        !this.selectedDepartment || emp.department === this.selectedDepartment;
+
+      const statusMatch =
+        !this.selectedStatus || emp.status === this.selectedStatus;
+
+      return searchMatch && deptMatch && statusMatch;
     });
   }
 
-  updateProfile(email: string){
-    localStorage.setItem('updateEmail',email);
+  updateProfile(email: string): void {
+    localStorage.setItem('updateEmail', email);
     this.router.navigate(['/edit-employee']);
   }
 
-  deleteUserProfile(employeeId: string) {
-    const payload = { employeeId: employeeId };
-    this.adminService.deleteUserProfile(payload).subscribe({
-      next: (res) => {
-        this.employeeData = this.employeeData.filter((employee)=>employee.employeeCode!==employeeId);
+  deleteUserProfile(employeeId: string): void {
+    this.adminService.deleteUserProfile({ employeeId }).subscribe({
+      next: () => {
+        this.toast.success('Deleted successfully');
+        this.employeeData = this.employeeData.filter(emp => emp.employeeId !== employeeId);
         this.applyFilters();
-        this.cd.detectChanges();
-        this.toast.success('Account Deleted Sucessfully');
       },
-      error: (err) => {
-        this.toast.error('Server Error During Delete User Profile');
-      },
+      error: () => this.toast.error('Delete failed'),
     });
   }
 }

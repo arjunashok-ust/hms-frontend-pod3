@@ -1,53 +1,40 @@
 export interface UserModel {
   email: string;
   status: string;
-  role: string;
+  roles: string;
   employeeId: string;
   isVerified: boolean;
+  isActivated: boolean;
   firstLogin: boolean;
 }
 
 export interface EmployeeModel {
-  employeeCode: string;
+  employeeId: string;
   name: string;
   email: string;
   department: string;
   designation: string;
   status: string;
-  joiningDate: Date;
+  joiningDate: string;
   medicalRegistrationNo: string;
   specialization: string;
-  qualification: string;
+  qualification: string[];
   consultationFee: number;
   availabilitySlots: string[];
 }
 
 export interface UserEmployeeModel {
-  name: string,
-  email: string;
-  status: string;
-  role: string;
-  employeeId: string;
-  isVerified: boolean;
-  firstLogin: boolean;
-  department: string;
-  designation: string;
-  joiningDate: Date;
-  medicalRegistrationNo: string;
-  specialization: string;
-  qualification: string;
-  consultationFee: number;
-  availabilitySlots: string[];
+  employee: EmployeeModel;
 }
 
 export interface PatientModel {
+  uhid: string;
   name: string;
   phone: string;
   email: string;
   gender: string;
-  dob: Date;
+  dob: string;
   address: string;
   emergencyContact: string;
   status: string;
-  uhid: string;
 }

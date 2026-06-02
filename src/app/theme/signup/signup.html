@@ -1,0 +1,116 @@
+<div class="signup-wrapper">
+  <div class="signup-box-area">
+    <div class="signup-card">
+      <form [formGroup]="signUpForm" (ngSubmit)="onSubmit()">
+
+        <h2>SignUp</h2>
+        <p class="signup-desc">Please fill in the details to create your account.</p>
+
+        <input type="text" placeholder="Name" formControlName="name" />
+
+        @if (signUpForm.get('name')?.touched && signUpForm.get('name')?.errors) {
+          <small>
+            @if (signUpForm.get('name')?.errors?.['required']) { <span>Name is required</span> }
+            @if (signUpForm.get('name')?.errors?.['pattern']) { <span>Only letters allowed</span> }
+          </small>
+        }
+
+        <input type="email" placeholder="Email" formControlName="email" />
+
+        @if (signUpForm.get('email')?.touched && signUpForm.get('email')?.errors) {
+          <small>
+            @if (signUpForm.get('email')?.errors?.['required']) { <span>Email required</span> }
+            @if (signUpForm.get('email')?.errors?.['email']) { <span>Invalid email</span> }
+          </small>
+        }
+
+        <select formControlName="role">
+          <option value="" disabled>Role</option>
+          @for (role of roles_data; track role) {
+            <option [value]="role.roleName">{{ role.roleName }}</option>
+          }
+        </select>
+
+        @if (signUpForm.get('role')?.invalid && signUpForm.get('role')?.touched) {
+          <small>Role required</small>
+        }
+
+        <input type="password" placeholder="Password" formControlName="password" />
+
+        <input type="password" placeholder="Confirm Password" formControlName="confirmPassword" />
+
+        @if (signUpForm.errors?.['passwordMismatch'] && signUpForm.get('confirmPassword')?.touched) {
+          <small>Password mismatch</small>
+        }
+
+        <select formControlName="department">
+          <option value="" disabled>Department</option>
+          @for (dept of departments_data; track dept) {
+            <option [value]="dept.departmentName">{{ dept.departmentName }}</option>
+          }
+        </select>
+
+        <input type="text" placeholder="Designation" formControlName="designation" />
+
+        <input type="date" formControlName="joiningDate" />
+
+        @if (signUpForm.errors?.['invalidJoiningDate']) {
+          <small>Invalid joining date</small>
+        }
+
+        @if (signUpForm.get('role')?.value === 'DOCTOR' || signUpForm.get('role')?.value === 'NURSE') {
+          <input type="text" placeholder="Medical Registration No" formControlName="medicalRegistrationNo" />
+
+          <select formControlName="specialization">
+            @for (sp of specializations_data; track sp) {
+              <option [value]="sp.specializationName">{{ sp.specializationName }}</option>
+            }
+          </select>
+
+          <input type="text" placeholder="Qualification" formControlName="qualification" />
+        }
+
+        @if (signUpForm.get('role')?.value === 'DOCTOR') {
+          <input type="number" placeholder="Consultation Fee" formControlName="consultationFee" />
+
+          <div class="time-slot-box">
+            <select formControlName="startHour">
+              @for (h of hours; track h) {
+                <option [value]="h">{{ h }}</option>
+              }
+            </select>
+
+            <select formControlName="endHour">
+              @for (h of hours; track h) {
+                <option [value]="h">{{ h }}</option>
+              }
+            </select>
+
+            <input type="button" value="Generate" (click)="generateTimeSlots()" />
+          </div>
+        }
+
+        @if (generatedSlots.length) {
+          <div class="slot-list">
+            @for (slot of generatedSlots; track slot) {
+              <div class="slot-row">
+                <span>{{ slot }}</span>
+                <input type="checkbox" (change)="toggleSlot(slot)" />
+              </div>
+            }
+          </div>
+        }
+
+        <input type="submit" value="Signup" [disabled]="signUpForm.invalid" />
+
+        <span class="signup-login-link">
+          Already have an account?
+          <b><a routerLink="/login">Login</a></b>
+        </span>
+
+      </form>
+    </div>
+  </div>
+
+  <div class="signup-image-panel"></div>
+</div>

@@ -1,30 +1,29 @@
 export interface RoleModel {
-  role_name: string;
+  roleName: string;
 }
 
 export interface DepartmentModel {
-  department_name: string;
+  departmentName: string;
 }
 
 export interface SpecializationModel {
-  specialization_name: string;
+  specializationName: string;
 }
 
 export interface DashboardModel {
-  message: string;
   employeeCount: number;
-  activeCount: number;
-  pendingApprovalCount: number;
-  pendingVerifyCount: number;
-  patientCount: number;
+  customerCount: number;
   departmentCount: number;
   appointmentCount: number;
+  pendingApprovalCount: number;
+  pendingVerifyCount: number;
+  activeCount: number;
 }
 
 export interface NodeModel {
-    order: number,
-    name: string,
-    path: string,
-    role: string[],
-    icon: string,
+  order: number;
+  name: string;
+  path: string;
+  role: string;
+  icon: string;
 }

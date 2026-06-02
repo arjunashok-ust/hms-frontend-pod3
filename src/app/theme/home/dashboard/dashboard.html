@@ -1,12 +1,7 @@
 <section class="dashboard-wrapper">
   <div class="dashboard-grid">
-    <div class="metric-card blue">
-      <div class="metric-top">
-        <div class="metric-icon">
-          <i class="bi bi-people-fill"></i>
-        </div>
-      </div>
 
+    <div class="metric-card blue">
       <div class="metric-body">
         <h2>{{ dashboardData?.employeeCount }}</h2>
         <p>Total Employees</p>
@@ -14,12 +9,6 @@
     </div>
 
     <div class="metric-card green">
-      <div class="metric-top">
-        <div class="metric-icon">
-          <i class="bi bi-person-check-fill"></i>
-        </div>
-      </div>
-
       <div class="metric-body">
         <h2>{{ dashboardData?.activeCount }}</h2>
         <p>Active Employees</p>
@@ -27,12 +16,6 @@
     </div>
 
     <div class="metric-card amber">
-      <div class="metric-top">
-        <div class="metric-icon">
-          <i class="bi bi-hourglass-split"></i>
-        </div>
-      </div>
-
       <div class="metric-body">
         <h2>{{ dashboardData?.pendingApprovalCount }}</h2>
         <p>Pending Approvals</p>
@@ -40,12 +23,6 @@
     </div>
 
     <div class="metric-card violet">
-      <div class="metric-top">
-        <div class="metric-icon">
-          <i class="bi bi-shield-lock-fill"></i>
-        </div>
-      </div>
-
       <div class="metric-body">
         <h2>{{ dashboardData?.pendingVerifyCount }}</h2>
         <p>Pending Verifications</p>
@@ -53,25 +30,13 @@
     </div>
 
     <div class="metric-card cyan">
-      <div class="metric-top">
-        <div class="metric-icon">
-          <i class="bi bi-heart-pulse-fill"></i>
-        </div>
-      </div>
-
       <div class="metric-body">
-        <h2>{{ dashboardData?.patientCount }}</h2>
+        <h2>{{ dashboardData?.customerCount }}</h2>
         <p>Total Patients</p>
       </div>
     </div>
 
     <div class="metric-card slate">
-      <div class="metric-top">
-        <div class="metric-icon">
-          <i class="bi bi-hospital-fill"></i>
-        </div>
-      </div>
-
       <div class="metric-body">
         <h2>{{ dashboardData?.departmentCount }}</h2>
         <p>Departments</p>
@@ -79,17 +44,12 @@
     </div>
 
     <div class="metric-card rose">
-      <div class="metric-top">
-        <div class="metric-icon">
-          <i class="bi bi-calendar2-check-fill"></i>
-        </div>
-      </div>
-
       <div class="metric-body">
         <h2>{{ dashboardData?.appointmentCount }}</h2>
         <p>Appointments</p>
       </div>
     </div>
+
   </div>
 
   <div class="directory-panel">
@@ -97,9 +57,6 @@
       <div>
         <span class="panel-subtitle">Directory</span>
         <h2>Employee Overview</h2>
-      </div>
-
-      <div class="panel-actions">
       </div>
     </div>
 
@@ -115,34 +72,36 @@
         </thead>
 
         <tbody>
-          <tr *ngFor="let user of userData">
-            <td>
-              <span class="employee-id"> {{ user.employeeCode }} </span>
-            </td>
+          @for (user of userData; track user) {
+            <tr>
+              <td>
+                <span class="employee-id">{{ user.employeeId }}</span>
+              </td>
 
-            <td>
-              <div class="employee-info">
-                <div class="avatar">
-                  {{ user.name.charAt(0) }}
+              <td>
+                <div class="employee-info">
+                  <div class="avatar">
+                    {{ user.name ? user.name.charAt(0) : '' }}
+                  </div>
+
+                  <div>
+                    <h4>{{ user.name }}</h4>
+                    <span>{{ user.qualification.join(', ') }}</span>
+                  </div>
                 </div>
+              </td>
 
-                <div>
-                  <h4>{{ user.name }}</h4>
-                  <span>{{ user.qualification }}</span>
-                </div>
-              </div>
-            </td>
+              <td class="muted-text">
+                {{ user.email }}
+              </td>
 
-            <td class="muted-text">
-              {{ user.email }}
-            </td>
-
-            <td>
-              <span class="designation-badge">
-                {{ user.designation }}
-              </span>
-            </td>
-          </tr>
+              <td>
+                <span class="designation-badge">
+                  {{ user.designation }}
+                </span>
+              </td>
+            </tr>
+          }
         </tbody>
       </table>
     </div>

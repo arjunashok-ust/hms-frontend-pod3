@@ -6,7 +6,7 @@ export interface LoginModel {
 export interface SignUpModel {
   name: string;
   email: string;
-  role: string;
+  roles: string;
   password: string;
   department: string;
   designation: string;
@@ -18,6 +18,3 @@ export interface SignUpModel {
   consultationFee: number | null;
   availabilitySlots: string[] | null;
 }
-
-
-

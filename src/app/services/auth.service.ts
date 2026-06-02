@@ -2,39 +2,39 @@ import { inject, Injectable } from '@angular/core';
 import { SignUpModel } from '../models/auth.model';
 import { catchError, Observable, throwError } from 'rxjs';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { ApiUrl } from '../environment/environment';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  api: ApiUrl = new ApiUrl();
   http: HttpClient = inject(HttpClient);
-  // signUp
+
+  private baseUrl = 'http://localhost:5000/hms';
+
   signUp(data: SignUpModel): Observable<any> {
     return this.http
-      .post(`${this.api.backend_url}/auth/signUp`, data)
+      .post(`${this.baseUrl}/auth/employeesignup`, data)
       .pipe(catchError(this.handleError));
   }
-  // login
+
   login(data: any): Observable<any> {
     return this.http
-      .post(`${this.api.backend_url}/auth/login`, data)
+      .post(`${this.baseUrl}/auth/login`, data)
       .pipe(catchError(this.handleError));
   }
-  // Role,Departments and Specialization
-  getUiData<T>(url: string): Observable<T> {
-    return this.http.get<T>(`${this.api.backend_url + url}`).pipe(catchError(this.handleError));
+
+  getUiData<T>(endpoint: string): Observable<T> {
+    return this.http
+      .get<T>(`${this.baseUrl}${endpoint}`)
+      .pipe(catchError(this.handleError));
   }
-  // submit password for first login
-  setPassword(data : any) : Observable<any> {
-    return this.http.post(`${this.api.backend_url}/auth/set-password`,data).pipe(catchError(this.handleError));
+
+  setPassword(data: any): Observable<any> {
+    return this.http
+      .post(`${this.baseUrl}/auth/setpassword`, data)
+      .pipe(catchError(this.handleError));
   }
-  // error handling
+
   handleError(error: HttpErrorResponse) {
-    console.log('API Error : ', error);
-    let message = `Error Connecting Server!`;
-    if (error.error?.message) {
-      message = error.error?.message;
-    }
+    const message = error?.error?.message || 'Server Error';
     return throwError(() => new Error(message));
   }
 }

@@ -22,10 +22,10 @@ export const routes: Routes = [
       { path: 'appointment', component: AppointmentComponent },
       { path: 'employee', component: EmployeeComponent },
       { path: 'password-modal', component: PasswordModalComponent },
-      { path: 'signup-modal', component: SignUpModalComponent},
-      { path: 'approval', component: ApprovalComponent},
-      { path: 'patient', component: PatientComponent},
-      { path: 'edit-employee', component: EditEmployeeComponent}
+      { path: 'signup-modal', component: SignUpModalComponent },
+      { path: 'approval', component: ApprovalComponent },
+      { path: 'patient', component: PatientComponent },
+      { path: 'edit-employee', component: EditEmployeeComponent }
     ],
   },
   { path: 'login', component: LoginComponent },

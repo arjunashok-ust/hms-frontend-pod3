@@ -1,58 +1,49 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { ApiUrl } from '../environment/environment';
-import { AppointmentModel, AppointmentResponseModel } from '../models/appointment.model';
 import { catchError, Observable, throwError } from 'rxjs';
+import { AppointmentModel, AppointmentResponseModel } from '../models/appointment.model';
 import { EmployeeModel } from '../models/user.model';
 
 @Injectable({ providedIn: 'root' })
 export class AppointmentService {
   http: HttpClient = inject(HttpClient);
-  api: ApiUrl = new ApiUrl();
 
-  // create appointment
+  private baseUrl = 'http://localhost:5000/hms';
+
   createAppointment(data: AppointmentModel): Observable<any> {
     return this.http
-      .post(`${this.api.backend_url}/appointment/createAppointment`, data)
+      .post(`${this.baseUrl}/appointment/createappointment`, data)
       .pipe(catchError(this.handleError));
   }
 
-  // get all appointments
   getAllAppointment(): Observable<AppointmentModel[]> {
     return this.http
-      .get<AppointmentModel[]>(`${this.api.backend_url}/appointment/getAllAppointments`)
+      .get<AppointmentModel[]>(`${this.baseUrl}/appointment/getallappointments`)
       .pipe(catchError(this.handleError));
   }
 
-  // get all doctors
   getAllDoctors(): Observable<EmployeeModel[]> {
     return this.http
-      .get<EmployeeModel[]>(`${this.api.backend_url}/appointment/getDoctors`)
+      .get<EmployeeModel[]>(`${this.baseUrl}/appointment/getdoctors`)
       .pipe(catchError(this.handleError));
   }
 
-  // get appointment ui data
   getAppointmentUiData(): Observable<AppointmentResponseModel> {
     return this.http
-      .get<AppointmentResponseModel>(`${this.api.backend_url}/appointment/getAppointmentUiData`)
+      .get<AppointmentResponseModel>(`${this.baseUrl}/appointment/getappointmentuidata`)
       .pipe(catchError(this.handleError));
   }
 
-  // delete appointment
-  deleteAppointment(appointmentId: string): Observable<any> {
+  deleteAppointment(id: string): Observable<any> {
     return this.http
-      .get(`${this.api.backend_url}/appointment/deleteAppointment`, {
-        params: { appointmentId: appointmentId },
+      .delete(`${this.baseUrl}/appointment/deleteappointment`, {
+        params: { appointmentId: id },
       })
       .pipe(catchError(this.handleError));
   }
 
   handleError(error: HttpErrorResponse) {
-    let message = 'Unexpected Error Occured.';
-    console.log('Appointment API Error : ', message);
-    if (error.message) {
-      message = error.message;
-    }
+    const message = error?.error?.message || 'Server Error';
     return throwError(() => new Error(message));
   }
 }

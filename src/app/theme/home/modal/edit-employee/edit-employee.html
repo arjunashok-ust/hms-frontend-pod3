@@ -1,369 +1,131 @@
-<div class="modal-overlay">
-  <div class="modal-content">
-    <button type="button" class="modal-close">
+<div class="ee-overlay">
+  <div class="ee-modal">
+
+    <button class="ee-close">
       <a routerLink="/employee">
         <i class="bi bi-x-lg"></i>
       </a>
     </button>
 
-    <div class="modal-header">
-      <div class="modal-icon-wrap">
+    <div class="ee-header">
+      <div class="ee-icon">
         <i class="bi bi-person-lines-fill"></i>
       </div>
-      <span class="modal-kicker">Employee Profile</span>
       <h2>Update Employee</h2>
-      <p class="modal-description">Modify the employee details below and save your changes.</p>
     </div>
 
-    <form [formGroup]="updateForm" *ngIf="updateForm" (ngSubmit)="onSubmit()">
-      <div class="modal-form">
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label" for="name">
-              <i class="bi bi-person"></i>
-              Full Name
-              <span class="required">*</span>
-            </label>
-            <div class="input-wrapper">
-              <input
-                type="text"
-                id="name"
-                class="form-input"
-                placeholder="Enter full name"
-                formControlName="name"
-              />
-            </div>
-            <small *ngIf="updateForm.get('name')?.touched">
-              <span *ngIf="updateForm.get('name')?.errors?.['required']">Name is required.</span>
-              <span *ngIf="updateForm.get('name')?.errors?.['pattern']"
-                >Only letters is allowed.</span
-              >
-            </small>
-          </div>
+    <form [formGroup]="updateForm" (ngSubmit)="onSubmit()">
 
-          <div class="form-group">
-            <label class="form-label" for="email">
-              <i class="bi bi-envelope"></i>
-              Email Address
-              <span class="required">*</span>
-            </label>
-            <div class="input-wrapper">
-              <input
-                type="email"
-                id="email"
-                class="form-input"
-                [placeholder]="userData?.email"
-                disabled
-              />
-            </div>
-            <small *ngIf="updateForm.get('email')?.touched">
-              <span *ngIf="updateForm.get('email')?.errors?.['required']"
-                >Email is required.</span
-              >
-              <span *ngIf="updateForm.get('email')?.errors?.['email']">Email is invalid.</span>
-            </small>
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label" for="roles">
-              <i class="bi bi-shield-check"></i>
-              Role
-              <span class="required">*</span>
-            </label>
-            <div class="input-wrapper">
-              <input
-                type="text"
-                id="role"
-                class="form-input"
-                [placeholder]="userData?.role"
-                disabled
-              />
-            </div>
-            <small
-              *ngIf="
-                updateForm.get('role')?.errors?.['required'] &&
-                updateForm.get('role')?.touched
-              "
-              >Role is required.</small>
-          </div>
-          <div class="form-group">
-            <label class="form-label" for="department">
-              <i class="bi bi-building"></i>
-              Department
-              <span class="required">*</span>
-            </label>
-            <div class="input-wrapper">
-              <select id="department" class="form-input form-select" formControlName="department">
-                <option value="" disabled>Select department</option>
-                <option
-                  *ngFor="let department of departments_data"
-                  [ngValue]="department.department_name"
-                >
-                  {{ department.department_name }}
-                </option>
-              </select>
-              <span class="input-icon select-icon">
-                <i class="bi bi-chevron-down"></i>
-              </span>
-            </div>
-             <small
-              *ngIf="
-                !updateForm.get('department')?.valid &&
-                updateForm.get('department')?.touched
-              "
-              >Department is required.</small
-            >
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label" for="designation">
-              <i class="bi bi-briefcase"></i>
-              Designation
-              <span class="required">*</span>
-            </label>
-            <div class="input-wrapper">
-              <input
-                type="text"
-                id="designation"
-                class="form-input"
-                placeholder="Enter Designation"
-                formControlName="designation"
-              />
-            </div>
-            <small
-              *ngIf="
-                !updateForm.get('designation')?.valid &&
-                updateForm.get('designation')?.touched
-              "
-              >Designation is required.</small
-            >
-          </div>
-        </div>
-        <div class="form-group">
-          <label class="form-label" for="datePicker">
-            <i class="bi bi-calendar-event"></i>
-            Joining Date
-            <span class="required">*</span>
-          </label>
-          <div class="input-wrapper">
-            <input type="date" id="datePicker" class="form-input" formControlName="joiningDate" />
-          </div>
-          <small *ngIf="updateForm.get('joiningDate')?.touched">
-            <span *ngIf="updateForm.get('joiningDate')?.errors?.['required']"
-              >Joining date is required.</span
-            >
-            <span *ngIf="updateForm.errors?.['invalidJoiningDate']"
-              >Joining Date must be behind or forward of 3 months.</span
-            >
-          </small>
-        </div>
-        <div class="section-divider" *ngIf="updateForm.get('role')?.value == 'Doctor'">
-          <span class="section-divider-text">Doctor Details</span>
-        </div>
-        <div class="form-row" *ngIf="updateForm.get('role')?.value == 'Doctor' || updateForm.get('role')?.value == 'Nurse'">
-          <div class="form-group">
-            <label class="form-label" for="medicalReg">
-              <i class="bi bi-clipboard2-pulse"></i>
-              Medical Registration No.
-              <span class="required">*</span>
-            </label>
-            <div class="input-wrapper">
-              <input
-                type="text"
-                id="medicalReg"
-                class="form-input"
-                placeholder="Enter registration number"
-                formControlName="medicalRegistrationNo"
-              />
-            </div>
-            <small *ngIf="updateForm.get('medicalRegistrationNo')?.touched">
-              <span
-                *ngIf="
-                  !updateForm.get('medicalRegistrationNo')?.value &&
-                updateForm.get('role')?.value === 'Doctor'
-                "
-                >medical registration number is required</span
-              >
-              <span *ngIf="updateForm.get('medicalRegistrationNo')?.errors?.['pattern']"
-                >Only letters and numbers is allowed.</span
-              >
-            </small>
-          </div>
+      <div class="ee-grid">
 
-          <div class="form-group">
-            <label class="form-label" for="qualification">
-              <i class="bi bi-mortarboard"></i>
-              Qualification
-              <span class="required">*</span>
-            </label>
-            <div class="input-wrapper">
-              <input
-                type="text"
-                id="qualification"
-                class="form-input"
-                placeholder="Enter qualification"
-                formControlName="qualification"
-              />
-            </div>
-            <small *ngIf="updateForm.get('qualification')?.touched">
-            <span *ngIf="updateForm.get('qualification')?.errors?.['pattern']"
-              >Only letters and white space is allowed.</span
-            >
-            <span *ngIf="!updateForm.get('qualification')?.value"
-              >Qualification is required</span
-            >
-          </small>
-          </div>
-        </div>
-        <div class="form-row" *ngIf="updateForm.get('role')?.value == 'Doctor'">
-          <div class="form-group">
-            <label class="form-label" for="specialization">
-              <i class="bi bi-award"></i>
-              Specialization
-              <span class="required">*</span>
-            </label>
-            <div class="input-wrapper">
-              <select
-                id="specialization"
-                class="form-input form-select"
-                formControlName="specialization"
-              >
-                <option value="" disabled>Select specialization</option>
-                <option
-                  *ngFor="let specialization of specializations_data"
-                  [ngValue]="specialization.specialization_name"
-                >
-                  {{ specialization.specialization_name }}
-                </option>
-              </select>
-              <span class="input-icon select-icon">
-                <i class="bi bi-chevron-down"></i>
-              </span>
-              <small
-              *ngIf="
-                !updateForm.get('specialization')?.value &&
-                updateForm.get('specialization')?.touched
-              "
-              >Specialization is required.</small
-            >
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label" for="consultFee">
-              <i class="bi bi-currency-rupee"></i>
-              Consultation Fee
-              <span class="required">*</span>
-            </label>
-            <div class="input-wrapper">
-              <input
-                type="number"
-                id="consultFee"
-                class="form-input"
-                placeholder="Enter consultation fee"
-                formControlName="consultationFee"
-              />
-            </div>
-            <small
-              *ngIf="
-                updateForm.get('consultationFee')?.errors?.['pattern'] &&
-                updateForm.get('consultationFee')?.touched
-              "
-              >Only digits is allowed.</small
-            >
-          </div>
-        </div>
-        <div class="slot-section" *ngIf="updateForm.get('role')?.value == 'Doctor'">
-          <label class="form-label" for="role">
-            <i class="bi bi-clock-history"></i>
-            Time Slots
-            <span class="required">*</span>
-          </label>
-          <div class="slot-generator">
-            <div class="input-wrapper">
-              <select id="startTime" class="form-input form-select" formControlName="startHour">
-                <option value="" disabled>Start Hour</option>
-                <option *ngFor="let hour of hours" [value]="hour">{{ hour }}</option>
-              </select>
-              <span class="input-icon select-icon">
-                <i class="bi bi-chevron-down"></i>
-              </span>
-            </div>
-            <span class="slot-separator">to</span>
-            <div class="input-wrapper">
-              <select id="endTime" class="form-input form-select" formControlName="endHour">
-                <option value="" disabled>End Hour</option>
-                <option *ngFor="let hour of hours" [value]="hour">{{ hour }}</option>
-              </select>
-              <span class="input-icon select-icon">
-                <i class="bi bi-chevron-down"></i>
-              </span>
-            </div>
-            <button
-              type="button"
-              class="btn btn-outline"
-              (click)="generateTimeSlots()"
-              [disabled]="updateForm.errors?.['invalidTimeRange']"
-            >
-              <i class="bi bi-lightning-charge"></i>
-              Generate
-            </button>
-          </div>
-          <span class="error-text" *ngIf="updateForm.errors?.['invalidTimeRange']">
-            Start hour must be less than end hour
-          </span>
+        <div class="ee-group">
+          <label>Name</label>
+          <input type="text" formControlName="name" />
         </div>
 
-        <div class="slot-section" *ngIf="generatedSlots.length">
-          <label class="form-label" for="generated-slots">
-            <i class="bi bi-list-check"></i>
-            Generated Slots
-          </label>
-          <div class="slot-chips">
-            <label class="slot-chip" *ngFor="let slot of generatedSlots">
-              <input
-                type="checkbox"
-                [value]="slot"
-                [checked]="updateForm.value.availabilitySlots.includes(slot) || false"
-                (change)="toggleSlot(slot)"
-              />
-              <span class="slot-chip-text">{{ slot }}</span>
-            </label>
-          </div>
-        </div>
-        <div class="slot-section" *ngIf="updateForm.value.availabilitySlots.length">
-          <label class="form-label" for="selected-slots">
-            <i class="bi bi-check2-square"></i>
-            Selected Slots
-          </label>
-          <div class="slot-chips">
-            <span class="slot-chip active" *ngFor="let slot of updateForm.value.availabilitySlots">
-              {{ slot }}
-            </span>
-          </div>
+        <div class="ee-group">
+          <label>Email</label>
+          <input [value]="userData?.email" disabled />
         </div>
 
-        <div class="info-box">
-          <i class="bi bi-info-circle"></i>
-          All fields marked with <span class="required">*</span> are mandatory
+        <div class="ee-group">
+          <label>Department</label>
+          <select formControlName="department">
+            <option value="" disabled>Select</option>
+
+            @for (d of departments_data; track d) {
+              <option [value]="d.departmentName">
+                {{ d.departmentName }}
+              </option>
+            }
+          </select>
         </div>
 
-        <div class="modal-footer">
-          <button type="button" class="btn btn-ghost" routerLink="/employee">
-            <i class="bi bi-x-lg"></i> Cancel
-          </button>
-          <button
-            type="submit"
-            class="btn btn-primary"
-            [disabled]="updateForm.invalid"
-            [class.disabled]="updateForm.invalid"
-          >
-            <i class="bi bi-check2-circle"></i> Update Employee
-          </button>
+        <div class="ee-group">
+          <label>Designation</label>
+          <input type="text" formControlName="designation" />
+        </div>
+
+        <div class="ee-group">
+          <label>Joining Date</label>
+          <input type="date" formControlName="joiningDate" />
+        </div>
+
+        <div class="ee-group">
+          <label>Consultation Fee</label>
+          <input type="number" formControlName="consultationFee" />
         </div>
       </div>
+
+      <div class="ee-slot">
+        <label>Time Slots</label>
+        <div class="ee-slot-row">
+
+          <select formControlName="startHour">
+            <option value="" disabled>Start</option>
+
+            @for (h of hours; track h) {
+              <option [value]="h">{{ h }}</option>
+            }
+
+          </select>
+          <span>to</span>
+
+          <select formControlName="endHour">
+            <option value="" disabled>End</option>
+
+            @for (h of hours; track h) {
+              <option [value]="h">{{ h }}</option>
+            }
+
+          </select>
+
+          <button type="button" (click)="generateTimeSlots()">
+            Generate
+          </button>
+        </div>
+
+        @if (generatedSlots.length > 0) {
+          <div class="ee-slots">
+
+            @for (slot of generatedSlots; track slot) {
+              <label class="ee-chip">
+
+                <input
+                  type="checkbox"
+                  [checked]="updateForm.value.availabilitySlots.includes(slot)"
+                  (change)="toggleSlot(slot)"
+                />
+
+                <span>{{ slot }}</span>
+              </label>
+            }
+          </div>
+        }
+
+        @if (updateForm.value.availabilitySlots.length > 0) {
+          <div class="ee-selected">
+
+            @for (s of updateForm.value.availabilitySlots; track s) {
+              <span class="ee-chip-active">
+                {{ s }}
+              </span>
+            }
+          </div>
+        }
+
+      </div>
+      <div class="ee-actions">
+
+        <button type="button" routerLink="/employee">
+          Cancel
+        </button>
+
+        <button type="submit" [disabled]="updateForm.invalid">
+          Update
+        </button>
+      </div>
+
     </form>
   </div>
 </div>

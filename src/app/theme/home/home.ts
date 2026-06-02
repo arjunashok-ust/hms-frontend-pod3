@@ -11,13 +11,14 @@ import { ToastrService } from 'ngx-toastr';
   styleUrl: './home.css',
 })
 export class HomeComponent implements OnInit {
-  token = localStorage.getItem('token');
-  router: Router = inject(Router);
-  toast : ToastrService = inject(ToastrService);
+  router = inject(Router);
+  toast = inject(ToastrService);
 
-  ngOnInit() {
-    if (!this.token) {
-      this.toast.warning('You are not authorized to use this path');
+  ngOnInit(): void {
+    const token = localStorage.getItem('authToken');
+
+    if (!token) {
+      this.toast.warning('Unauthorized access');
       this.router.navigate(['/login']);
     }
   }

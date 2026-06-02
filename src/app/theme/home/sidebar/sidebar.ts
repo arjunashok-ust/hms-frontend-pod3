@@ -12,20 +12,23 @@ import { ToastrService } from 'ngx-toastr';
   styleUrl: './sidebar.css',
 })
 export class SidebarComponent implements OnInit {
-  userService: UserService = inject(UserService);
+  userService = inject(UserService);
+  toast = inject(ToastrService);
   cd: ChangeDetectorRef = inject(ChangeDetectorRef);
-  toast: ToastrService = inject(ToastrService);
 
-  nodeData: NodeModel[] | null = null;
+  nodeData: NodeModel[] = [];
 
-  ngOnInit() {
-    const role = localStorage.getItem('role') ?? '';
+  ngOnInit(): void {
+    const role = JSON.parse(localStorage.getItem('employeeData') || '{}')?.designation || '';
+
     this.userService.getNodes(role).subscribe({
       next: (res) => {
         this.nodeData = res;
         this.cd.detectChanges();
       },
-      error: (err) => {console.error("Error fetching the sidebar components from server")},
+      error: () => {
+        this.toast.error('Error loading sidebar');
+      },
     });
   }
 }

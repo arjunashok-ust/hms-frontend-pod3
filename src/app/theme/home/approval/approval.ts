@@ -3,7 +3,6 @@ import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AdminService } from '../../../services/admin.service';
-import { UserService } from '../../../services/user.service';
 import { ToastrService } from 'ngx-toastr';
 import { UserModel } from '../../../models/user.model';
 
@@ -14,91 +13,75 @@ import { UserModel } from '../../../models/user.model';
   styleUrl: './approval.css',
 })
 export class ApprovalComponent implements OnInit {
-  adminService: AdminService = inject(AdminService);
-  userService: UserService = inject(UserService);
+  adminService = inject(AdminService);
+  toast = inject(ToastrService);
   cd: ChangeDetectorRef = inject(ChangeDetectorRef);
-  toast: ToastrService = inject(ToastrService);
-
   userData: UserModel[] = [];
   filteredData: UserModel[] = [];
-  
+
   approvalUiData = {
     pendingCount: 0,
     verifiedCount: 0,
     inActiveCount: 0,
     firstLoginCount: 0,
   };
-  
+
   searchText = '';
 
   ngOnInit(): void {
-    this.adminService.getUsersData().subscribe({
+    this.adminService.getUsers().subscribe({
       next: (res) => {
         this.userData = res;
         this.applyFilters();
         this.loadUiData();
         this.cd.detectChanges();
       },
-      error: (error) => {
-        this.toast.error('Server Error During Get Users');
+      error: () => {
+        this.toast.error('Failed to fetch users');
       },
     });
   }
 
-  loadUiData() {
-    this.approvalUiData.pendingCount = this.userData.filter(
-      (user) => user.status === 'Pending',
-    ).length;
-    this.approvalUiData.verifiedCount = this.userData.filter(
-      (user) => user.isVerified === true,
-    ).length;
-    this.approvalUiData.inActiveCount = this.userData.filter(
-      (user) => user.status === 'Inactive',
-    ).length;
-    this.approvalUiData.firstLoginCount = this.userData.filter(
-      (user) => user.firstLogin === true,
-    ).length;
+  loadUiData(): void {
+    this.approvalUiData.pendingCount = this.userData.filter(u => u.status === 'Pending').length;
+    this.approvalUiData.verifiedCount = this.userData.filter(u => u.isVerified).length;
+    this.approvalUiData.inActiveCount = this.userData.filter(u => u.status === 'Inactive').length;
+    this.approvalUiData.firstLoginCount = this.userData.filter(u => u.firstLogin).length;
   }
 
-  applyFilters() {
+  applyFilters(): void {
     this.filteredData = this.userData.filter(
-      (user) =>
+      (u) =>
         !this.searchText ||
-        user.email.includes(this.searchText) ||
-        user.employeeId.includes(this.searchText) ||
-        user.role.includes(this.searchText) 
+        u.email.includes(this.searchText) ||
+        u.employeeId.includes(this.searchText) ||
+        u.roles.includes(this.searchText)
     );
-    this.cd.detectChanges();
   }
 
-  approveUser(id: string) {
-    const payload = { employeeId: id };
-    this.adminService.approveUser(payload).subscribe({
-      next: (res) => {
-        this.userData = this.userData.map((user)=> user.employeeId === id? {...user, status: 'Active'} : user);
+  approveUser(id: string): void {
+    this.adminService.approveUser({ employeeId: id }).subscribe({
+      next: () => {
+        this.toast.success('Approved');
+        this.userData = this.userData.map(u =>
+          u.employeeId === id ? { ...u, status: 'Active' } : u
+        );
         this.applyFilters();
-        this.cd.detectChanges();
-        this.toast.success('Account Activated');
       },
-      error: (error) => {
-        this.toast.error('Server Error During Reject User');
-        console.log(error);
-      },
+      error: () => this.toast.error('Approval failed'),
     });
   }
 
-  rejectUser(id: string) {
-    const payload = { employeeId: id };
-    this.adminService.rejectUser(payload).subscribe({
-      next: (res) => {
-        this.userData = this.userData.map((user)=> user.employeeId === id? {...user, status: 'Inactive'} : user)
-        this.toast.success('Application Rejected');
+  rejectUser(id: string): void {
+    this.adminService.rejectUser({ employeeId: id }).subscribe({
+      next: () => {
+        this.toast.success('Rejected');
+        this.userData = this.userData.map(u =>
+          u.employeeId === id ? { ...u, status: 'Inactive' } : u
+        );
         this.applyFilters();
-        this.cd.detectChanges();
       },
-      error: (error) => {
-        this.toast.error('Server Error During Approve User');
-      },
+      error: () => this.toast.error('Reject failed'),
     });
   }
 }

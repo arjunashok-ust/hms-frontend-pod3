@@ -4,11 +4,9 @@ import {
   FormGroup,
   ReactiveFormsModule,
   Validators,
-  ɵInternalFormsSharedModule,
 } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { AppointmentService } from '../../../services/appointment.service';
-import { UserService } from '../../../services/user.service';
 import { AppointmentModel, AppointmentResponseModel } from '../../../models/appointment.model';
 import { CommonModule } from '@angular/common';
 import { EmployeeModel } from '../../../models/user.model';
@@ -17,145 +15,98 @@ import { appointmentDateValidator } from '../../../validators/time-range-validat
 
 @Component({
   selector: 'app-appointment',
-  imports: [RouterModule, ɵInternalFormsSharedModule, CommonModule, ReactiveFormsModule],
+  imports: [RouterModule, CommonModule, ReactiveFormsModule],
   templateUrl: './appointment.html',
   styleUrl: './appointment.css',
 })
 export class AppointmentComponent implements OnInit {
   appointmentForm: FormGroup;
 
-  appointmentService: AppointmentService = inject(AppointmentService);
-  userService: UserService = inject(UserService);
+  appointmentService = inject(AppointmentService);
+  toast = inject(ToastrService);
   cd: ChangeDetectorRef = inject(ChangeDetectorRef);
-  toast: ToastrService = inject(ToastrService);
-
-  doctors: EmployeeModel[] | null = null;
+  doctors: EmployeeModel[] = [];
   appointmentUiData: AppointmentResponseModel | null = null;
-  appointments: AppointmentModel[] | null = null;
-  // for setting doctor time slots
-  doctorTimeSlots: string[] = [''];
-  date = Date.now();
+  appointments: AppointmentModel[] = [];
 
-  employeeId = localStorage.getItem('employeeId');
+  doctorTimeSlots: string[] = [];
 
-  public constructor(readonly fb: FormBuilder) {
+  employeeId = JSON.parse(localStorage.getItem('employeeData') || '{}')?.employeeId || '';
+
+  constructor(private fb: FormBuilder) {
     this.appointmentForm = this.fb.group(
       {
-        patientId: ['', [Validators.required, Validators.pattern(/^[a-z0-9-]*$/i)]],
+        patientId: ['', [Validators.required, Validators.pattern(/^[A-Za-z0-9-]+$/)]],
         doctorEmployeeId: ['', Validators.required],
         date: ['', Validators.required],
         timeSlot: ['', Validators.required],
-        status: ['Booked', Validators.required],
-        createdByEmployeeId: [this.employeeId,Validators.required]
+        status: ['BOOKED'],
+        createdByEmployeeId: [this.employeeId],
       },
       {
         validators: appointmentDateValidator,
-      },
+      }
     );
   }
 
   ngOnInit(): void {
     this.loadUiData();
-    // time slot container bug fix
-    this.doctorTimeSlots.length = 0;
-  }
-
-  loadUiData() {
-    this.appointmentService.getAppointmentUiData().subscribe({
-      next: (res) => {
-        this.appointmentUiData = res;
-        this.cd.detectChanges();
-      },
-      error: (err) => {
-        this.toast.error('Failed to fetch appointments ui data');
-      },
-    });
-    this.appointmentService.getAllDoctors().subscribe({
-      next: (res) => {
-        this.doctors = res;
-        this.cd.detectChanges();
-      },
-      error: (err) => {
-        this.toast.error('Failed to fetch doctors.');
-      },
-    });
-    this.appointmentService.getAllAppointment().subscribe({
-      next: (res) => {
-        this.appointments = res;
-        this.cd.detectChanges();
-      },
-      error: (err) => {
-        this.toast.error('Failed to fetch appointments');
-      },
-    });
-  }
-
-  onDoctorChange() {
-    let doctorEmployeeId = this.appointmentForm.get('doctorEmployeeId')?.value;
-    const inputDate = this.appointmentForm.get('date')?.value;
-    const date = new Date(inputDate).toISOString();
-    let doctor = this.doctors?.find((d) => d.employeeCode === doctorEmployeeId);
-    if (!date || !doctor) {
-      this.doctorTimeSlots = [];
-    }
-
-    const allSlots = doctor?.availabilitySlots;
-    const bookedSlots = this.appointments
-      ?.filter((apt) => {
-        const apt_date = new Date(apt.date).toISOString();
-        console.log(date===apt_date);
-        return (
-          apt.doctorEmployeeId === doctor?.employeeCode &&
-          apt_date === date &&
-          apt.status != 'Cancelled'
-        );
-      })
-      .map((apt) => apt.timeSlot);
-    this.doctorTimeSlots = allSlots?.filter((slot) => !bookedSlots?.includes(slot)) || [];
-    this.appointmentForm.patchValue({ timeSlot: '' });
     this.cd.detectChanges();
   }
 
-  deleteAppointment(appointmentId: string) {
-    const isConfirmed = confirm(
-      `Are you sure you want to delete appointment ${appointmentId}? This action cannot be undone.`,
-    );
-    if (isConfirmed) {
-      this.appointmentService.deleteAppointment(appointmentId).subscribe({
-        next: (res) => {
-          this.loadUiData();
-          this.cd.detectChanges();
-          this.toast.success(res.message);
-        },
-        error: (err) => {
-          this.toast.error(err.message);
-        },
-      });
-    }
+  loadUiData(): void {
+    this.appointmentService.getAppointmentUiData().subscribe(res => this.appointmentUiData = res);
+    this.appointmentService.getAllDoctors().subscribe(res => this.doctors = res);
+    this.appointmentService.getAllAppointment().subscribe(res => this.appointments = res);
   }
 
-  onSubmit() {
-    const payload = {
-      patientId: this.appointmentForm.value.patientId,
-      doctorEmployeeId: this.appointmentForm.value.doctorEmployeeId,
-      date: this.appointmentForm.value.date,
-      timeSlot: this.appointmentForm.value.timeSlot,
-      status: this.appointmentForm.value.status,
-      createdByEmployeeId: this.appointmentForm.value.createdByEmployeeId,
-    };
+  onDoctorChange(): void {
+    const doctorId = this.appointmentForm.get('doctorEmployeeId')?.value;
+    const dateValue = this.appointmentForm.get('date')?.value;
 
-    this.appointmentService.createAppointment(payload).subscribe({
-      next: (res) => {
+    if (!doctorId || !dateValue) {
+      this.doctorTimeSlots = [];
+      return;
+    }
+
+    const selectedDoctor = this.doctors.find(d => d.employeeId === doctorId);
+
+    if (!selectedDoctor) return;
+
+    const booked = this.appointments
+      .filter(a =>
+        a.doctorEmployeeId === doctorId &&
+        new Date(a.date).toISOString() === new Date(dateValue).toISOString() &&
+        a.status !== 'CANCELLED'
+      )
+      .map(a => a.timeSlot);
+
+    this.doctorTimeSlots =
+      selectedDoctor.availabilitySlots?.filter(slot => !booked.includes(slot)) || [];
+
+    this.appointmentForm.patchValue({ timeSlot: '' });
+  }
+
+  deleteAppointment(id: string): void {
+    this.appointmentService.deleteAppointment(id).subscribe({
+      next: () => {
+        this.toast.success('Deleted successfully');
         this.loadUiData();
-        this.cd.detectChanges();
-        this.toast.success(res.message);
       },
-      error: (err) => {
-        this.toast.error(err.message);
-      },
+      error: (err) => this.toast.error(err.message),
     });
-    
-    this.appointmentForm.get('doctorEmployeeId')?.reset();
-    this.doctorTimeSlots.length = 0;
+  }
+
+  onSubmit(): void {
+    if (this.appointmentForm.invalid) return;
+
+    this.appointmentService.createAppointment(this.appointmentForm.value).subscribe({
+      next: () => {
+        this.toast.success('Appointment booked');
+        this.loadUiData();
+        this.appointmentForm.reset({ status: 'BOOKED', createdByEmployeeId: this.employeeId });
+      },
+      error: (err) => this.toast.error(err.message),
+    });
   }
 }

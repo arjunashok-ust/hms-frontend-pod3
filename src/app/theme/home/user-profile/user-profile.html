@@ -1,150 +1,88 @@
-<section class="profile-wrapper">
-  <div class="profile-hero glass-panel">
-    <div class="hero-bg"></div>
-    <div class="hero-content">
-      <div class="profile-avatar">
+<section class="up-wrapper">
+  <div class="up-hero card-glass">
+    <div class="up-bg"></div>
+
+    <div class="up-hero-content">
+      <div class="up-avatar">
         <i class="bi bi-person-circle"></i>
       </div>
-      <div class="hero-info">
-        <span class="panel-subtitle">My Profile</span>
-        <h2>{{ userData?.name }}</h2>
-        <p class="designation">
+
+      <div class="up-info">
+        <h2>{{ userData?.employee?.name }}</h2>
+
+        <p class="up-role">
           <i class="bi bi-briefcase"></i>
-          {{ userData?.designation }}
+          {{ userData?.employee?.designation }}
         </p>
-        <div class="hero-badges">
-          <span class="status-badge status-active"> <span class="status-dot"></span> Active </span>
-          <span class="designation-badge">
-            <i class="bi bi-shield-check"></i> {{ userData?.role }}
+
+        <div class="up-badges">
+          <span class="badge-active">
+            <span class="dot"></span> Active
+          </span>
+
+          <span class="badge-role">
+            {{ userData?.employee?.department }}
           </span>
         </div>
       </div>
-      <div class="hero-actions">
-      </div>
     </div>
   </div>
 
-  <div class="stats-grid">
-    <div class="stat-card blue">
-      <div class="stat-icon"><i class="bi bi-envelope-at"></i></div>
-      <div class="stat-body">
-        <span class="stat-label">Email</span>
-        <h4>{{ userData?.email }}</h4>
-      </div>
+  <div class="up-stats">
+    <div class="up-card blue">
+      <h4>{{ userData?.employee?.email }}</h4>
+      <span>Email</span>
     </div>
 
-    <div class="stat-card green">
-      <div class="stat-icon"><i class="bi bi-person-badge"></i></div>
-      <div class="stat-body">
-        <span class="stat-label">Role</span>
-        <h4>{{ userData?.role }}</h4>
-      </div>
+    <div class="up-card green">
+      <h4>{{ userData?.employee?.department }}</h4>
+      <span>Department</span>
     </div>
 
-    <div class="stat-card amber">
-      <div class="stat-icon"><i class="bi bi-briefcase"></i></div>
-      <div class="stat-body">
-        <span class="stat-label">Designation</span>
-        <h4>{{ userData?.designation }}</h4>
-      </div>
+    <div class="up-card amber">
+      <h4>{{ userData?.employee?.designation }}</h4>
+      <span>Designation</span>
     </div>
 
-    <div class="stat-card rose">
-      <div class="stat-icon"><i class="bi bi-activity"></i></div>
-      <div class="stat-body">
-        <span class="stat-label">Status</span>
-        <h4>Active</h4>
-      </div>
+    <div class="up-card red">
+      <h4>Active</h4>
+      <span>Status</span>
     </div>
   </div>
 
-  <div class="glass-panel">
-    <div class="panel-header">
+  <div class="card-glass">
+    <h2>Profile Details</h2>
+    <div class="up-grid">
+
       <div>
-        <span class="panel-subtitle">Account Details</span>
-        <h2>Personal Information</h2>
-      </div>
-      <div class="panel-actions">
-        <button type="button" title="Refresh">
-          <i class="bi bi-arrow-clockwise"></i>
-        </button>
-      </div>
-    </div>
-
-    <div class="section-divider">
-      <div class="divider-line"></div>
-      <span class="divider-label">
-        <i class="bi bi-person-lines-fill"></i>
-        Basic Info
-      </span>
-      <div class="divider-line"></div>
-    </div>
-
-    <div class="form-grid">
-      <div class="form-group">
-        <label class="form-label" for="name">
-          <i class="bi bi-person"></i>
-          Full Name
-        </label>
-        <input type="text" id="name" class="form-input" [value]="userData?.name" readonly />
+        <label>Name</label>
+        <input [value]="userData?.employee?.name" readonly />
       </div>
 
-      <div class="form-group">
-        <label class="form-label" for="email">
-          <i class="bi bi-envelope"></i>
-          Email Address
-        </label>
-        <input type="email" id="email" class="form-input" [value]="userData?.email" readonly />
+      <div>
+        <label>Email</label>
+        <input [value]="userData?.employee?.email" readonly />
       </div>
 
-      <div class="form-group">
-        <label class="form-label" for="role">
-          <i class="bi bi-shield-lock"></i>
-          Role
-        </label>
-        <input type="text" id="role" class="form-input" [value]="userData?.role" readonly />
+      <div>
+        <label>Department</label>
+        <input [value]="userData?.employee?.department" readonly />
       </div>
 
-      <div class="form-group">
-        <label class="form-label" for="designation">
-          <i class="bi bi-briefcase"></i>
-          Designation
-        </label>
-        <input
-          type="text"
-          id="designation"
-          class="form-input"
-          [value]="userData?.designation"
-          readonly
-        />
+      <div>
+        <label>Designation</label>
+        <input [value]="userData?.employee?.designation" readonly />
       </div>
     </div>
 
-    <div class="section-divider">
-      <div class="divider-line"></div>
-      <span class="divider-label">
-        <i class="bi bi-toggle-on"></i>
-        Account Status
-      </span>
-      <div class="divider-line"></div>
-    </div>
-
-    <div class="form-group">
-      <label class="form-label" for="status">
-        <i class="bi bi-activity"></i>
-        Current Status
-      </label>
-      <input type="text" id="status" class="form-input" value="Active" readonly />
-      <div class="info-box" *ngIf="userData?.role !== 'Admin'">
-        <i class="bi bi-info-circle"></i>
-        Your account is in good standing. Contact admin to update any information.
+    @if (userData?.employee?.department !== 'Admin') {
+      <div class="info-box">
+        Account is active. Contact admin for changes.
       </div>
-    </div>
+    }
 
-    <div class="form-footer">
-      <button type="button" class="btn btn-danger-outline" (click)="logout()">
-        <i class="bi bi-box-arrow-right"></i> Logout
-      </button>
-    </div>
+    <button class="logout-btn" (click)="logout()">
+      Logout
+    </button>
   </div>
 </section>

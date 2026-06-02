@@ -1,201 +1,85 @@
 <section class="approval-dashboard">
+
   <div class="approval-hero">
-    <div class="approval-hero-copy">
-      <span class="hero-kicker">Users</span>
+    <div>
       <h1>User Approval Center</h1>
-      <p>Approve registrations, review account readiness, and manage onboarding from one place.</p>
+      <p>Manage user onboarding and approvals</p>
     </div>
 
-    <div class="approval-hero-side">
-      <div class="hero-chip">
-        <i class="bi bi-people-fill"></i>
-        <span>{{ filteredData.length }} Records</span>
-      </div>
-      <a class="primary-btn" routerLink="/employee">
-        <i class="bi bi-plus-lg"></i>
-        <span>New User</span>
-      </a>
-    </div>
+    <span>{{ filteredData.length }} Records</span>
   </div>
 
   <div class="approval-metrics">
+
     <div class="metric-card amber">
-      <div class="metric-top">
-        <div class="metric-icon">
-          <i class="bi bi-hourglass-split"></i>
-        </div>
-        <span class="metric-tag">Queue</span>
-      </div>
-      <div class="metric-body">
-        <h2>{{ approvalUiData.pendingCount }}</h2>
-        <p>Pending Approvals</p>
-      </div>
+      <h2>{{ approvalUiData.pendingCount }}</h2>
+      <p>Pending</p>
     </div>
 
     <div class="metric-card green">
-      <div class="metric-top">
-        <div class="metric-icon">
-          <i class="bi bi-patch-check-fill"></i>
-        </div>
-        <span class="metric-tag">Secure</span>
-      </div>
-      <div class="metric-body">
-        <h2>{{ approvalUiData.verifiedCount }}</h2>
-        <p>Verified Users</p>
-      </div>
+      <h2>{{ approvalUiData.verifiedCount }}</h2>
+      <p>Verified</p>
     </div>
 
     <div class="metric-card rose">
-      <div class="metric-top">
-        <div class="metric-icon">
-          <i class="bi bi-person-x-fill"></i>
-        </div>
-        <span class="metric-tag">Review</span>
-      </div>
-      <div class="metric-body">
-        <h2>{{ approvalUiData.inActiveCount }}</h2>
-        <p>Inactive Accounts</p>
-      </div>
+      <h2>{{ approvalUiData.inActiveCount }}</h2>
+      <p>Inactive</p>
     </div>
 
     <div class="metric-card violet">
-      <div class="metric-top">
-        <div class="metric-icon">
-          <i class="bi bi-box-arrow-in-right"></i>
-        </div>
-        <span class="metric-tag">Onboarding</span>
-      </div>
-      <div class="metric-body">
-        <h2>{{ approvalUiData.firstLoginCount }}</h2>
-        <p>First Login Pending</p>
-      </div>
+      <h2>{{ approvalUiData.firstLoginCount }}</h2>
+      <p>First Login</p>
     </div>
+
   </div>
 
-  <div class="approval-panel">
-    <div class="panel-header">
-      <div class="panel-heading">
-        <span class="panel-subtitle">Accounts</span>
-        <h2>Pending User Approvals</h2>
-      </div>
+  <input
+    type="text"
+    placeholder="Search"
+    [(ngModel)]="searchText"
+    (input)="applyFilters()"
+  />
 
-      <div class="panel-tools">
-        <div class="search-box">
-          <i class="bi bi-search"></i>
-          <input
-            type="text"
-            placeholder="Search by email, employee ID, or role..."
-            [(ngModel)]="searchText"
-            (input)="applyFilters()"
-          />
-        </div>
-      </div>
-    </div>
+  <table class="approval-table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Email</th>
+        <th>Role</th>
+        <th>Status</th>
+        <th>Action</th>
+      </tr>
+    </thead>
 
-    <div class="table-wrapper">
-      <table class="approval-table">
-        <thead>
-          <tr>
-            <th>Employee</th>
-            <th>Email</th>
-            <th>Role</th>
-            <th>Status</th>
-            <th>Activated</th>
-            <th>Verified</th>
-            <th>Action</th>
-          </tr>
-        </thead>
+    <tbody>
+      @for (user of filteredData; track user) {
+        <tr>
 
-        <tbody>
-          <tr *ngFor="let user of filteredData">
-            <td>
-              <div class="employee-block">
-                <div class="avatar">
-                  {{ user.email.charAt(0) | uppercase }}
-                </div>
-                <div class="employee-copy">
-                  <h4>{{ user.employeeId }}</h4>
-                  <span>User Account</span>
-                </div>
-              </div>
-            </td>
+          <td>{{ user.employeeId }}</td>
+          <td>{{ user.email }}</td>
+          <td>{{ user.roles }}</td>
 
-            <td class="muted-text">{{ user.email }}</td>
+          <td>
+            <span>{{ user.status }}</span>
+          </td>
 
-            <td>
-              <span class="role-badge">{{ user.role }}</span>
-            </td>
+          <td>
+            @if (user.status === 'Pending' || user.status === 'Inactive') {
+              <button (click)="approveUser(user.employeeId)">
+                Approve
+              </button>
+            }
 
-            <td>
-              <span
-                class="status-badge"
-                [ngClass]="
-                  user.status.toLowerCase() === 'active' ? 'active-status' : 'inactive-status'
-                "
-              >
-                <span class="status-dot"></span>
-                {{ user.status }}
-              </span>
-            </td>
+            @if (user.status === 'Pending') {
+              <button (click)="rejectUser(user.employeeId)">
+                Reject
+              </button>
+            }
+          </td>
 
-            <td>
-              <span
-                class="state-badge"
-                [ngClass]="user.status == 'Active' ? 'success-chip' : 'warning-chip'"
-              >
-                <i
-                  class="bi"
-                  [ngClass]="
-                    user.status == 'Active' ? 'bi-lightning-charge-fill' : 'bi-hourglass-split'
-                  "
-                ></i>
-                {{ user.status == 'Active' ? 'Activated' : 'Not Activated' }}
-              </span>
-            </td>
+        </tr>
+      }
+    </tbody>
+  </table>
 
-            <td>
-              <span
-                class="state-badge"
-                [ngClass]="user.isVerified ? 'success-chip' : 'pending-chip'"
-              >
-                <i
-                  class="bi"
-                  [ngClass]="user.isVerified ? 'bi-patch-check-fill' : 'bi-shield-exclamation'"
-                ></i>
-                {{ user.isVerified ? 'Verified' : 'Not Verified' }}
-              </span>
-            </td>
-
-            <td>
-              <div class="action-group">
-                <button
-                  class="table-action approve"
-                  title="Approve User"
-                  *ngIf="user.status === 'Pending' || user.status === 'Inactive'"
-                  (click)="approveUser(user.employeeId)"
-                >
-                  <i class="bi bi-check2"></i>
-                </button>
-                <button
-                  class="table-action no-task"
-                  title="Approve User"
-                  *ngIf="user.status === 'Active'"
-                >
-                  <i class="bi bi-slash-circle"></i>
-                </button>
-                <button
-                  class="table-action reject"
-                  title="Reject User"
-                  *ngIf="user.status === 'Pending'"
-                  (click)="rejectUser(user.employeeId)"
-                >
-                  <i class="bi bi-x-lg"></i>
-                </button>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
 </section>

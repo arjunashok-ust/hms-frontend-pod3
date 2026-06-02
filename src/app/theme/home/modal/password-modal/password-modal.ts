@@ -1,16 +1,16 @@
-import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
-  FormsModule,
-  ReactiveFormsModule,
   Validators,
+  ReactiveFormsModule,
+  FormsModule,
 } from '@angular/forms';
-import { passwordsMatchValidator } from '../../../../validators/password-match-validator';
+import { CommonModule } from '@angular/common';
 import { Router, RouterLink, RouterModule } from '@angular/router';
 import { AuthService } from '../../../../services/auth.service';
 import { ToastrService } from 'ngx-toastr';
+import { passwordsMatchValidator } from '../../../../validators/password-match-validator';
 
 @Component({
   selector: 'app-password-modal',
@@ -19,39 +19,39 @@ import { ToastrService } from 'ngx-toastr';
   templateUrl: './password-modal.html',
   styleUrl: './password-modal.css',
 })
-
 export class PasswordModalComponent {
-  passwordForm!: FormGroup;
+  private fb = inject(FormBuilder);
+  private router = inject(Router);
+  private authService = inject(AuthService);
+  private toast = inject(ToastrService);
 
-  router: Router = inject(Router);
-  authService: AuthService = inject(AuthService);
-  toast: ToastrService = inject(ToastrService);
+  passwordForm: FormGroup = this.fb.group(
+    {
+      password: ['', [Validators.required, Validators.minLength(8)]],
+      confirmPassword: ['', [Validators.required, Validators.minLength(8)]],
+    },
+    { validators: [passwordsMatchValidator] }
+  );
 
+  onSubmit(): void {
+    if (this.passwordForm.invalid) {
+      this.toast.error('Please fix validation errors');
+      return;
+    }
 
-  public constructor(readonly fb: FormBuilder) {
-    this.passwordForm = this.fb.group(
-      {
-        password: ['', [Validators.required, Validators.minLength(8)]],
-        confirmPassword: ['', [Validators.required, Validators.minLength(8)]],
-      },
-      {
-        validators: [passwordsMatchValidator],
-      },
-    );
-  }
+    const email = localStorage.getItem('email') || '';
+    const payload = { email,
+      password: this.passwordForm.get('password')?.value,
+    };
 
-  onSubmit() {
-    let email = localStorage.getItem('email');
-    let password = this.passwordForm.value.password;
-    const payload = { email: email, password: password };
     this.authService.setPassword(payload).subscribe({
-      next: (res)=>{
-        this.toast.success('New Password Is Set');
+      next: () => {
+        this.toast.success('Password updated successfully');
+        this.router.navigate(['/profile']);
       },
       error: (error) => {
-        this.toast.error(error.message);
-      }
+        this.toast.error(error.message || 'Update failed');
+      },
     });
-    this.router.navigate(['/profile']);
   }
 }

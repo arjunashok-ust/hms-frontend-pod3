@@ -19,14 +19,12 @@
     radial-gradient(circle at bottom right, rgba(237, 233, 254, 0.55) 0%, transparent 45%),
     rgba(255, 255, 255, 0.92);
   backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
   border-right: 1px solid rgba(226, 232, 240, 0.7);
   box-shadow: var(--sb-shadow);
   padding: 22px 16px 18px;
   display: flex;
   flex-direction: column;
   gap: 18px;
-  box-sizing: border-box;
   overflow-y: auto;
   z-index: 900;
 }
@@ -34,6 +32,7 @@
 .sidebar::-webkit-scrollbar {
   width: 6px;
 }
+
 .sidebar::-webkit-scrollbar-thumb {
   background: rgba(148, 163, 184, 0.4);
   border-radius: 999px;
@@ -80,7 +79,6 @@
 }
 
 .sidebar-nav li a {
-  position: relative;
   display: flex;
   align-items: center;
   gap: 12px;
@@ -91,18 +89,13 @@
   font-size: 0.9rem;
   font-weight: 600;
   transition: all 0.25s ease;
-  overflow: hidden;
+  position: relative;
 }
 
 .sidebar-nav li a:hover {
   background: var(--sb-accent-soft);
   color: var(--sb-accent);
   transform: translateX(3px);
-}
-
-.sidebar-nav li a:hover .nav-chevron {
-  opacity: 1;
-  transform: translateX(0);
 }
 
 .nav-indicator {
@@ -117,65 +110,56 @@
   transition: transform 0.25s ease;
 }
 
+.sidebar-nav li.active .nav-indicator {
+  transform: translateY(-50%) scaleY(1);
+}
+
 .nav-icon {
   width: 34px;
   height: 34px;
   border-radius: 10px;
   background: #f1f5f9;
-  color: var(--sb-muted);
-  display: inline-flex;
+  display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1rem;
+  color: var(--sb-muted);
   flex-shrink: 0;
-  transition: all 0.25s ease;
+  transition: 0.25s ease;
 }
 
-.sidebar-nav li a:hover .nav-icon {
-  background: white;
-  color: var(--sb-accent);
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
+.sidebar-nav li.active .nav-icon {
+  background: linear-gradient(135deg, #2563eb, #3b82f6);
+  color: white;
 }
 
 .nav-label {
   flex: 1;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .nav-chevron {
   font-size: 0.75rem;
   opacity: 0;
   transform: translateX(-4px);
-  transition: all 0.25s ease;
+  transition: 0.25s ease;
+}
+
+.sidebar-nav li a:hover .nav-chevron,
+.sidebar-nav li.active .nav-chevron {
+  opacity: 1;
+  transform: translateX(0);
 }
 
 .sidebar-nav li.active a {
-  background: linear-gradient(135deg, rgba(37, 99, 235, 0.1), rgba(124, 58, 237, 0.08));
-  color: var(--sb-accent);
-  box-shadow: 0 4px 16px rgba(37, 99, 235, 0.1);
-}
-
-.sidebar-nav li.active a .nav-indicator {
-  transform: translateY(-50%) scaleY(1);
-}
-
-.sidebar-nav li.active a .nav-icon {
-  background: linear-gradient(135deg, #2563eb, #3b82f6);
-  color: white;
-  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.35);
-}
-
-.sidebar-nav li.active a .nav-chevron {
-  opacity: 1;
-  transform: translateX(0);
+  background: linear-gradient(
+    135deg,
+    rgba(37, 99, 235, 0.1),
+    rgba(124, 58, 237, 0.08)
+  );
   color: var(--sb-accent);
 }
 
 .sidebar-footer {
   margin-top: auto;
-  padding-top: 12px;
 }
 
 .upgrade-card {
@@ -207,56 +191,43 @@
   height: 36px;
   border-radius: 12px;
   background: rgba(255, 255, 255, 0.2);
-  display: inline-flex;
+  display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.05rem;
-  flex-shrink: 0;
-  z-index: 1;
 }
 
 .upgrade-text {
   flex: 1;
-  min-width: 0;
-  z-index: 1;
 }
 
 .upgrade-text h5 {
   margin: 0;
   font-size: 0.85rem;
   font-weight: 700;
-  white-space: nowrap;
 }
 
 .upgrade-text p {
   margin: 2px 0 0;
   font-size: 0.7rem;
   opacity: 0.85;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .upgrade-btn {
   width: 32px;
   height: 32px;
-  border: none;
   border-radius: 10px;
   background: rgba(255, 255, 255, 0.22);
-  cursor: pointer;
-  font-size: 0.85rem;
-  display: inline-flex;
+  display: flex;
   align-items: center;
   justify-content: center;
+  color: white;
+  text-decoration: none;
   transition: 0.25s ease;
-  z-index: 1;
-  flex-shrink: 0;
 }
 
 .upgrade-btn:hover {
   background: white;
   color: var(--sb-accent);
-  transform: rotate(-15deg);
 }
 
 @media (max-width: 768px) {

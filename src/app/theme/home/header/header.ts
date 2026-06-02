@@ -8,11 +8,14 @@ import { Router, RouterModule } from '@angular/router';
   styleUrl: './header.css',
 })
 export class HeaderComponent {
-  router : Router= inject(Router);
-  name = localStorage.getItem('name');
-  role = localStorage.getItem('role');
-  
-  logout(){
+  router = inject(Router);
+
+  user = JSON.parse(localStorage.getItem('employeeData') || '{}');
+
+  name = this.user?.name || 'User';
+  role = this.user?.designation || 'Employee';
+
+  logout(): void {
     localStorage.clear();
     this.router.navigate(['/login']);
   }

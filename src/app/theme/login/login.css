@@ -1,11 +1,10 @@
-.container {
+.auth-main-wrapper {
   display: flex;
   height: 100vh;
-  box-sizing: border-box;
   padding: 20px;
 }
 
-.box-container {
+.auth-box-section {
   width: 45%;
   display: flex;
   justify-content: center;
@@ -13,22 +12,15 @@
   background: #f8f9fb;
 }
 
-.box {
+.auth-card-pane {
   width: 80%;
   max-width: 350px;
 }
 
-h2 {
-  margin-bottom: 10px;
-  font-family: Arial, Helvetica, sans-serif;
-  animation: slideUp .4s ease-out;
-}
-
-.title-text {
+.auth-desc-text {
   font-size: 14px;
   color: #888;
   margin-bottom: 20px;
-  animation: slideUp .5s ease-out;
 }
 
 form {
@@ -38,75 +30,50 @@ form {
 }
 
 input {
-  outline: none;
   border: none;
+  outline: none;
   font-size: 14px;
 }
 
 input[type='email'],
 input[type='password'] {
-  width: 100%;
   padding: 12px 15px;
   border-radius: 10px;
   background: white;
   box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
-  box-sizing: border-box;
-  animation: slideRight .6s ease-out;
-}
-
-input[type='email']:focus,
-input[type='password']:focus {
-  box-shadow: 0px 0px 0px 2px #212121;
-}
-
-input::placeholder {
-  color: #bbb;
 }
 
 input[type='submit'] {
   background: #010811;
-  color:white;
-  cursor: pointer;
+  color: white;
   padding: 12px;
   border-radius: 8px;
+  cursor: pointer;
   font-weight: bold;
-  transition: 0.3s ease;
-  animation: slideUp .7s ease-out;
 }
 
 input[type='submit']:disabled {
   background: #3a3a3a;
-  color:white;
   cursor: not-allowed;
 }
 
 label {
   font-size: 12px;
-  color: #777;
-  cursor: pointer;
-}
-
-.forgot-password {
-  margin-left: auto;
-  font-size: 12px;
-  animation: slideUp .6s ease-out;
-}
-
-.signup {
-  text-align: center;
-  font-size: 12px;
-  animation: slideUp .5s ease-out;
+  color: #444;
 }
 
 small {
   color: #ff6b6b;
   font-size: 11px;
-  margin-top: -10px;
-  margin-bottom: -5px;
-  padding:5px;
 }
 
-form label{
-  color:rgb(36, 36, 36);
+.auth-link-text {
+  text-align: center;
+  font-size: 12px;
+}
+
+.auth-image-pane {
+  flex: 1;
+  background: url('/assets/cover.jpg') no-repeat center center;
+  background-size: cover;
 }

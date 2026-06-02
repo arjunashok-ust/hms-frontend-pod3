@@ -1,43 +1,50 @@
 <aside class="sidebar">
+
   <div class="sidebar-section-label">
     <span>Menu</span>
   </div>
 
   <nav class="sidebar-nav">
     <ul>
-      <li *ngFor="let node of nodeData" routerLinkActive="active">
-        <a [routerLink]="node.path">
-          <span class="nav-indicator"></span>
-          <span class="nav-icon">
-            <i class="{{ node.icon }}"></i>
-          </span>
-          <span class="nav-label">{{ node.name }}</span>
-          <i class="bi bi-chevron-right nav-chevron"></i>
-        </a>
-      </li>
+      @for (node of nodeData; track node) {
+        <li routerLinkActive="active">
+          <a [routerLink]="node.path">
+            <span class="nav-indicator"></span>
+
+            <span class="nav-icon">
+              <i class="{{ node.icon }}"></i>
+            </span>
+
+            <span class="nav-label">
+              {{ node.name }}
+            </span>
+
+            <i class="bi bi-chevron-right nav-chevron"></i>
+          </a>
+        </li>
+      }
     </ul>
   </nav>
 
   <div class="sidebar-footer">
     <div class="upgrade-card">
+
       <div class="upgrade-icon">
         <i class="bi bi-stars"></i>
       </div>
+
       <div class="upgrade-text">
         <h5>Welcome To HMS</h5>
         <p>Check our repo</p>
       </div>
 
-      <button
-        type="button"
-        class="upgrade-btn"
-        title="Open Repo"
+      <a class="upgrade-btn"
         href="https://github.com/arjunashok-ust?tab=repositories"
-      >
-        <a href="https://github.com/arjunashok-ust?tab=repositories">
-          <i class="bi bi-arrow-up-right"></i
-        ></a>
-      </button>
+        target="_blank"
+        rel="noopener noreferrer">
+        <i class="bi bi-arrow-up-right"></i>
+      </a>
+
     </div>
   </div>
 </aside>

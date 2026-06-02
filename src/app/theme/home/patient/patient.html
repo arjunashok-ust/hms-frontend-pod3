@@ -1,308 +1,107 @@
-<div class="patient-wrapper">
-  <div class="patient-hero">
-    <div class="patient-hero-copy">
-      <span class="hero-kicker">Patients</span>
+<div class="pt-wrapper">
+
+  <div class="pt-hero">
+    <div>
       <h1>Patient Management</h1>
-      <p>
-        Register new patients, manage records, and track medical history from one unified dashboard.
-      </p>
+      <p>Manage patient records efficiently</p>
     </div>
-    <div class="patient-hero-side">
-      <div class="hero-chip">
-        <i class="bi bi-people-fill"></i>
-        <span>{{ patientUiData.patientCount }}</span>
-      </div>
+
+    <span class="pt-count">{{ patientUiData.patientCount }}</span>
+  </div>
+
+  <div class="pt-metrics">
+
+    <div class="pt-card blue">
+      <h2>{{ patientUiData.patientCount }}</h2>
+      <p>Total Patients</p>
+    </div>
+
+    <div class="pt-card green">
+      <h2>{{ patientUiData.activeCount }}</h2>
+      <p>Active</p>
+    </div>
+
+    <div class="pt-card red">
+      <h2>{{ patientUiData.inActiveCount }}</h2>
+      <p>Inactive</p>
     </div>
   </div>
 
-  <div class="patient-metrics">
-    <div class="metric-card blue">
-      <div class="metric-top">
-        <div class="metric-icon">
-          <i class="bi bi-people-fill"></i>
-        </div>
-        <span class="metric-tag">Total</span>
-      </div>
-      <div class="metric-body">
-        <h2>{{ patientUiData.patientCount }}</h2>
-        <p>Total Patients</p>
-      </div>
-    </div>
-    <div class="metric-card green">
-      <div class="metric-top">
-        <div class="metric-icon">
-          <i class="bi bi-person-check-fill"></i>
-        </div>
-        <span class="metric-tag">Active</span>
-      </div>
-      <div class="metric-body">
-        <h2>{{ patientUiData.activeCount }}</h2>
-        <p>Active Patients</p>
-      </div>
-    </div>
-    <div class="metric-card rose">
-      <div class="metric-top">
-        <div class="metric-icon">
-          <i class="bi bi-person-dash-fill"></i>
-        </div>
-        <span class="metric-tag">Inactive</span>
-      </div>
-      <div class="metric-body">
-        <h2>{{ patientUiData.inActiveCount }}</h2>
-        <p>Inactive Patients</p>
-      </div>
-    </div>
-  </div>
+  <div class="pt-grid">
 
-  <div class="content-grid">
-    <div class="glass-panel">
-      <div class="panel-header">
-        <div>
-          <span class="panel-subtitle">New Entry</span>
-          <h2>Register Patient</h2>
-        </div>
-        <div class="panel-actions">
-          <button type="button" title="Reset">
-            <i class="bi bi-arrow-clockwise"></i>
-          </button>
-        </div>
-      </div>
+    <div class="pt-panel">
+      <h2>Add Patient</h2>
 
-      <form [formGroup]="patientForm" (submit)="onSubmit()">
-        <div class="form-grid">
-          <div class="form-group">
-            <label class="form-label" for="patientName">
-              <i class="bi bi-person-fill"></i>
-              Full Name
-              <span class="required">*</span>
-            </label>
-            <input
-              type="text"
-              class="form-input"
-              id="patientName"
-              placeholder="e.g. John Doe"
-              formControlName="name"
-            />
-            <span class="helper-text" *ngIf="!this.patientForm.get('name')?.touched"
-              >Enter patient's full legal name</span
-            >
-            <small *ngIf="patientForm.get('name')?.touched">
-              <span *ngIf="patientForm.get('name')?.errors?.['required']">Name is required.</span>
-              <span *ngIf="patientForm.get('name')?.errors?.['pattern']"
-                >Only letters are allowed.</span
-              >
-            </small>
-          </div>
+      <form [formGroup]="patientForm" (ngSubmit)="onSubmit()">
+        <input type="text" placeholder="Name" formControlName="name" />
 
-          <div class="form-group">
-            <label class="form-label" for="patientEmail">
-              <i class="bi bi-envelope-fill"></i>
-              Email Address
-              <span class="required">*</span>
-            </label>
-            <input
-              type="email"
-              class="form-input"
-              id="patientEmail"
-              placeholder="e.g. john@email.com"
-              formControlName="email"
-            />
-            <small *ngIf="patientForm.get('email')?.touched">
-              <span *ngIf="patientForm.get('email')?.errors?.['required']">Email is required.</span>
-              <span *ngIf="patientForm.get('email')?.errors?.['pattern']">Email is invalid.</span>
-            </small>
-          </div>
+        @if (patientForm.get('name')?.touched && patientForm.get('name')?.invalid) {
+          <small>Invalid name</small>
+        }
 
-          <div class="form-group">
-            <label class="form-label" for="patientPhone">
-              <i class="bi bi-telephone-fill"></i>
-              Phone Number
-              <span class="required">*</span>
-            </label>
-            <small *ngIf="patientForm.get('phone')?.touched">
-              <span *ngIf="patientForm.get('phone')?.errors?.['required']">Phone is required.</span>
-              <span *ngIf="patientForm.get('phone')?.errors?.['pattern']"
-                >Only digits are allowed.</span
-              >
-              <span *ngIf="patientForm.get('phone')?.errors?.['maxlength']"
-                >Maximum 10 digits is allowed.</span
-              >
-            </small>
-            <input
-              type="text"
-              class="form-input"
-              id="patientPhone"
-              placeholder="e.g. 9988776655"
-              formControlName="phone"
-            />
-            
-          </div>
+        <input type="email" placeholder="Email" formControlName="email" />
+        <input type="text" placeholder="Phone" formControlName="phone" />
+        <input type="date" formControlName="dob" />
 
-          <div class="form-group">
-            <label class="form-label" for="emergencyContact">
-              <i class="bi bi-exclamation-triangle-fill"></i>
-              Emergency Contact
-              <span class="required">*</span>
-            </label>
-            <small *ngIf="patientForm.get('emergencyContact')?.touched">
-            <span *ngIf="patientForm.get('emergencyContact')?.errors?.['pattern']"
-              >Only digits are allowed.</span
-            >
-            <span *ngIf="patientForm.get('emergencyContact')?.errors?.['maxlength']"
-              >Maximum 10 digits is allowed.</span
-            >
-          </small>
-            <input
-              type="text"
-              class="form-input"
-              id="emergencyContact"
-              placeholder="e.g. 9988776655"
-              formControlName="emergencyContact"
-            />
-          </div>
-        </div>
+        @if (patientForm.errors?.['invalidDob']) {
+          <small>DOB cannot be future</small>
+        }
 
-        <div class="section-divider">
-          <div class="divider-line"></div>
-          <span class="divider-label">
-            <i class="bi bi-person-vcard"></i>
-            Personal Details
-          </span>
-          <div class="divider-line"></div>
-        </div>
+        <select formControlName="gender">
+          <option value="" disabled>Select Gender</option>
+          <option>Male</option>
+          <option>Female</option>
+        </select>
+        <textarea placeholder="Address" formControlName="address"></textarea>
+        <input type="text" placeholder="Emergency Contact" formControlName="emergencyContact"/>
 
-        <div class="form-grid">
-          <div class="form-group">
-            <label class="form-label" for="patientGender">
-              <i class="bi bi-gender-ambiguous"></i>
-              Gender
-              <span class="required">*</span>
-            </label>
-            <select class="form-select" id="patientGender" formControlName="gender">
-              <option value="" disabled selected>Select Gender</option>
-              <option value="Male">Male</option>
-              <option value="Female">Female</option>
-            </select>
-            <span
-              class="error-text"
-              *ngIf="
-                this.patientForm.get('gender')?.touched &&
-                this.patientForm.get('gender')?.errors?.['required']
-              "
-              >Gender is required</span
-            >
-          </div>
+        <button type="submit" [disabled]="patientForm.invalid">
+          Save
+        </button>
 
-          <div class="form-group">
-            <label class="form-label" for="patientDob">
-              <i class="bi bi-calendar-date"></i>
-              Date of Birth
-              <span class="required">*</span>
-            </label>
-            <input type="date" class="form-input" id="patientDob" formControlName="dob" />
-            <small *ngIf="patientForm.get('dob')?.touched">
-              <span *ngIf="patientForm.get('dob')?.errors?.['required']">DOB is required.</span>
-              <span *ngIf="patientForm.errors?.['invalidDob']">Future dates are not allowed.</span>
-            </small>
-          </div>
-
-          <div class="form-group span-2">
-            <label class="form-label" for="patientAddress">
-              <i class="bi bi-geo-alt-fill"></i>
-              Address
-              <span class="required">*</span>
-            </label>
-            <textarea
-              class="form-textarea"
-              id="patientAddress"
-              rows="3"
-              placeholder="Enter full address including city, state, and zip code"
-              formControlName="address"
-            ></textarea>
-            <small *ngIf="patientForm.get('address')?.touched">
-              <span *ngIf="patientForm.get('address')?.errors?.['required']">Address is required.</span>
-            </small>
-          </div>
-        </div>
-        <div class="form-footer">
-          <button type="button" class="btn btn-ghost" (click)="patientForm.reset()">
-            <i class="bi bi-arrow-counterclockwise"></i> Reset
-          </button>
-          <button type="button" class="btn btn-danger-outline">
-            <a routerLink="/profile"><i class="bi bi-x-lg"></i> Cancel</a>
-          </button>
-          <button
-            type="submit"
-            class="btn btn-primary"
-            [disabled]="!patientForm.valid"
-            [disabled]="patientForm.invalid"
-            [ngClass]="{ 'btn-disabled': patientForm.invalid }"
-          >
-            <i class="bi bi-person-plus-fill"></i> Save Patient
-          </button>
-        </div>
       </form>
     </div>
+    <div class="pt-panel full">
+      <h2>Patients List</h2>
+      <table class="pt-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Status</th>
+            <th></th>
+          </tr>
+        </thead>
 
-    <div class="side-stack"></div>
-
-    <div class="glass-panel full-width">
-      <div class="panel-header">
-        <div>
-          <span class="panel-subtitle">Records</span>
-          <h2>All Patients</h2>
-        </div>
-        <div class="table-controls"></div>
-      </div>
-
-      <div class="table-wrapper">
-        <table class="modern-table">
-          <thead>
+        <tbody>
+          @for (patient of patientData; track patient) {
             <tr>
-              <th>Patient ID</th>
-              <th>Patient</th>
-              <th>Email</th>
-              <th>Phone</th>
-              <th>Gender</th>
-              <th>Date of Birth</th>
-              <th>Status</th>
-              <th>Actions</th>
+
+              <td>{{ patient.uhid }}</td>
+              <td>{{ patient.name }}</td>
+              <td>{{ patient.email }}</td>
+              <td>{{ patient.phone }}</td>
+
+              <td>
+                <span class="status-chip"
+                  [class.active]="patient.status === 'ACTIVE'"
+                  [class.inactive]="patient.status === 'INACTIVE'">
+                  {{ patient.status }}
+                </span>
+              </td>
+
+              <td>
+                <button (click)="deletePatient(patient.uhid)">
+                  Delete
+                </button>
+              </td>
+
             </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let patient of patientData">
-              <td>
-                <span class="patient-id">{{ patient.uhid }}</span>
-              </td>
-              <td>
-                <div class="patient-info">
-                  <div class="patient-avatar pa-gradient-1">JD</div>
-                  <div>
-                    <h4>{{ patient.name }}</h4>
-                    <span>Emergency: {{ patient.emergencyContact }}</span>
-                  </div>
-                </div>
-              </td>
-              <td class="muted-text">{{ patient.email }}</td>
-              <td class="muted-text">{{ patient.phone }}</td>
-              <td><span class="designation-badge">Male</span></td>
-              <td class="muted-text">{{ patient.dob | date: 'dd MMM, yyyy' }}</td>
-              <td><span class="status-badge status-active">Active</span></td>
-              <td>
-                <div class="action-btns">
-                  <button
-                    class="action-btn delete"
-                    title="Delete"
-                    (click)="deletePatient(patient.uhid)"
-                  >
-                    <i class="bi bi-trash"></i>
-                  </button>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+          }
+        </tbody>
+      </table>
     </div>
   </div>
 </div>

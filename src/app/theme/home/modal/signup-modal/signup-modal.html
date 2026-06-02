@@ -1,379 +1,204 @@
 <div class="modal-overlay">
   <div class="modal-content signup-modal">
-    <button routerLink="/employee" type="button" class="modal-close" title="Close">
+
+    <button routerLink="/employee" type="button" class="modal-close">
       <i class="bi bi-x-lg"></i>
     </button>
+
     <div class="modal-header">
       <div class="modal-icon">
         <i class="bi bi-person-plus-fill"></i>
       </div>
       <span class="modal-subtitle">User Onboarding</span>
       <h2>Create Employee</h2>
-      <p class="modal-description">Fill in the details below to create a new employee account.</p>
+      <p class="modal-description">
+        Fill in details to create employee.
+      </p>
     </div>
+
     <form [formGroup]="signUpModalForm" (ngSubmit)="onSubmit()">
       <div class="modal-form">
         <div class="form-row">
           <div class="form-group">
-            <label class="form-label" for="name">
+            <label class="form-label">
               <i class="bi bi-person"></i>
-              Full Name
-              <span class="required">*</span>
+              Full Name *
             </label>
-            <div class="input-wrapper">
-              <input
-                type="text"
-                id="name"
-                class="form-input"
-                placeholder="Enter full name"
-                formControlName="name"
-              />
-            </div>
-            <small *ngIf="signUpModalForm.get('name')?.touched">
-              <span *ngIf="signUpModalForm.get('name')?.errors?.['required']"
-                >Name is required.</span
-              >
-              <span *ngIf="signUpModalForm.get('name')?.errors?.['pattern']"
-                >Only letters is allowed.</span
-              >
-            </small>
+            <input class="form-input" formControlName="name" />
+
+            @if (signUpModalForm.get('name')?.touched) {
+              @if (signUpModalForm.get('name')?.errors?.['required']) {
+                <small>Name required</small>
+              }
+              @if (signUpModalForm.get('name')?.errors?.['pattern']) {
+                <small>Only letters allowed</small>
+              }
+            }
           </div>
 
           <div class="form-group">
-            <label class="form-label" for="email">
+            <label class="form-label">
               <i class="bi bi-envelope"></i>
-              Email Address
-              <span class="required">*</span>
+              Email *
             </label>
-            <div class="input-wrapper">
-              <input
-                type="email"
-                id="email"
-                class="form-input"
-                placeholder="Enter email address"
-                formControlName="email"
-              />
-            </div>
-            <small *ngIf="signUpModalForm.get('email')?.touched">
-              <span *ngIf="signUpModalForm.get('email')?.errors?.['required']"
-                >Email is required.</span
-              >
-              <span *ngIf="signUpModalForm.get('email')?.errors?.['email']">Email is invalid.</span>
-            </small>
+            <input class="form-input" formControlName="email" />
+
+            @if (signUpModalForm.get('email')?.touched) {
+              @if (signUpModalForm.get('email')?.errors?.['required']) {
+                <small>Email required</small>
+              }
+              @if (signUpModalForm.get('email')?.errors?.['email']) {
+                <small>Invalid email</small>
+              }
+            }
           </div>
         </div>
+
         <div class="form-row">
+
           <div class="form-group">
-            <label class="form-label" for="roles">
-              <i class="bi bi-shield-check"></i>
-              Role
-              <span class="required">*</span>
-            </label>
-            <div class="input-wrapper">
-              <select id="roles" class="form-input form-select" formControlName="role">
-                <option value="" disabled>Select role</option>
-                <option *ngFor="let role of roles_data" [ngValue]="role.role_name">
-                  {{ role.role_name }}
+            <label class="form-label">Role *</label>
+
+            <select class="form-input" formControlName="role">
+              <option value="" disabled>Select role</option>
+
+              @for (role of roles_data; track role) {
+                <option [value]="role.roleName">
+                  {{ role.roleName }}
                 </option>
-              </select>
-              <span class="input-icon select-icon">
-                <i class="bi bi-chevron-down"></i>
-              </span>
-            </div>
-            <small
-              *ngIf="
-                signUpModalForm.get('role')?.errors?.['required'] &&
-                signUpModalForm.get('role')?.touched
-              "
-              >Role is required.</small
-            >
+              }
+            </select>
+
+            @if (signUpModalForm.get('role')?.touched &&
+                 signUpModalForm.get('role')?.invalid) {
+              <small>Role required</small>
+            }
           </div>
 
           <div class="form-group">
-            <label class="form-label" for="department">
-              <i class="bi bi-building"></i>
-              Department
-              <span class="required">*</span>
-            </label>
-            <div class="input-wrapper">
-              <select id="department" class="form-input form-select" formControlName="department">
-                <option value="" disabled>Select department</option>
-                <option
-                  *ngFor="let department of departments_data"
-                  [ngValue]="department.department_name"
-                >
-                  {{ department.department_name }}
+            <label class="form-label">Department *</label>
+
+            <select class="form-input" formControlName="department">
+              <option value="" disabled>Select department</option>
+
+              @for (d of departments_data; track d) {
+                <option [value]="d.departmentName">
+                  {{ d.departmentName }}
                 </option>
-              </select>
-              <span class="input-icon select-icon">
-                <i class="bi bi-chevron-down"></i>
-              </span>
-            </div>
-            <small
-              *ngIf="
-                !signUpModalForm.get('department')?.valid &&
-                signUpModalForm.get('department')?.touched
-              "
-              >Department is required.</small
-            >
+              }
+            </select>
+
+            @if (signUpModalForm.get('department')?.touched &&
+                 signUpModalForm.get('department')?.invalid) {
+              <small>Department required</small>
+            }
           </div>
         </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label" for="designation">
-              <i class="bi bi-briefcase"></i>
-              Designation
-              <span class="required">*</span>
-            </label>
-            <div class="input-wrapper">
-              <input
-                type="text"
-                id="designation"
-                class="form-input"
-                placeholder="Enter designation"
-                formControlName="designation"
-              />
-            </div>
-            <small
-              *ngIf="
-                !signUpModalForm.get('designation')?.valid &&
-                signUpModalForm.get('designation')?.touched
-              "
-              >Designation is required.</small
-            >
-          </div>
-        </div>
+
         <div class="form-group">
-          <label class="form-label" for="datePicker">
-            <i class="bi bi-calendar-event"></i>
-            Joining Date
-            <span class="required">*</span>
-          </label>
-          <div class="input-wrapper">
-            <input type="date" id="datePicker" class="form-input" formControlName="joiningDate" />
-          </div>
-          <small *ngIf="signUpModalForm.get('joiningDate')?.touched">
-            <span *ngIf="signUpModalForm.get('joiningDate')?.errors?.['required']"
-              >Joining date is required.</span
-            >
-            <span *ngIf="signUpModalForm.errors?.['invalidJoiningDate']"
-              >Joining Date must be behind or forward of 3 months.</span
-            >
-          </small>
+          <label class="form-label">Designation *</label>
+          <input class="form-input" formControlName="designation" />
+
+          @if (signUpModalForm.get('designation')?.touched &&
+               signUpModalForm.get('designation')?.invalid) {
+            <small>Designation required</small>
+          }
         </div>
-        <div
-          class="form-group"
-          *ngIf="
-            signUpModalForm.get('role')?.value == 'Doctor' ||
-            signUpModalForm.get('role')?.value == 'Nurse'
-          "
-        >
-          <label class="form-label" for="qualification">
-            <i class="bi bi-mortarboard"></i>
-            Qualification
-          </label>
-          <div class="input-wrapper">
-            <input
-              type="text"
-              id="qualification"
-              class="form-input"
-              placeholder="Enter qualification"
-              formControlName="qualification"
-              *ngIf="
-                signUpModalForm.get('role')?.value == 'Doctor' ||
-                signUpModalForm.get('role')?.value == 'Nurse'
-              "
-            />
-          </div>
-          <small *ngIf="signUpModalForm.get('qualification')?.touched">
-            <span *ngIf="signUpModalForm.get('qualification')?.errors?.['pattern']"
-              >Only letters and white space is allowed.</span
-            >
-            <span *ngIf="!signUpModalForm.get('qualification')?.value"
-              >Qualification is required.</span
-            >
-          </small>
+
+        <div class="form-group">
+          <label class="form-label">Joining Date *</label>
+          <input type="date" class="form-input" formControlName="joiningDate" />
+
+          @if (signUpModalForm.get('joiningDate')?.touched) {
+            @if (signUpModalForm.get('joiningDate')?.errors?.['required']) {
+              <small>Date required</small>
+            }
+            @if (signUpModalForm.errors?.['invalidJoiningDate']) {
+              <small>Invalid date range</small>
+            }
+          }
         </div>
-        <div class="section-divider" *ngIf="signUpModalForm.get('role')?.value == 'Doctor'">
-          <span class="section-divider-text">Doctor Details</span>
-        </div>
-        <div
-          class="form-row"
-          *ngIf="
-            signUpModalForm.get('role')?.value == 'Doctor' ||
-            signUpModalForm.get('role')?.value == 'Nurse'
-          "
-        >
+
+        @if (signUpModalForm.get('role')?.value === 'Doctor' ||
+             signUpModalForm.get('role')?.value === 'Nurse') {
+
           <div class="form-group">
-            <label class="form-label" for="medicalReg">
-              <i class="bi bi-clipboard2-pulse"></i>
-              Medical Registration No.
-              <span class="required">*</span>
-            </label>
-            <div class="input-wrapper">
-              <input
-                type="text"
-                id="medicalReg"
-                class="form-input"
-                placeholder="Enter registration number"
-                formControlName="medicalRegistrationNo"
-              />
-            </div>
-            <small *ngIf="signUpModalForm.get('medicalRegistrationNo')?.touched">
-              <span
-                *ngIf="
-                  !signUpModalForm.get('medicalRegistrationNo')?.value &&
-                  signUpModalForm.get('role')?.value === 'Doctor'
-                "
-                >medical registration number is required</span
-              >
-              <span *ngIf="signUpModalForm.get('medicalRegistrationNo')?.errors?.['pattern']"
-                >Only letters and numbers is allowed.</span
-              >
-            </small>
+            <label class="form-label">Qualification</label>
+            <input class="form-input" formControlName="qualification" />
+
+            @if (!signUpModalForm.get('qualification')?.value &&
+                 signUpModalForm.get('qualification')?.touched) {
+              <small>Qualification required</small>
+            }
           </div>
-        </div>
-        <div class="form-row" *ngIf="signUpModalForm.get('role')?.value == 'Doctor'">
+        }
+
+        @if (signUpModalForm.get('role')?.value === 'Doctor') {
           <div class="form-group">
-            <label class="form-label" for="specialization">
-              <i class="bi bi-award"></i>
-              Specialization
-              <span class="required">*</span>
-            </label>
-            <div class="input-wrapper">
-              <select
-                id="specialization"
-                class="form-input form-select"
-                formControlName="specialization"
-              >
-                <option value="" disabled>Select specialization</option>
-                <option
-                  *ngFor="let specialization of specializations_data"
-                  [ngValue]="specialization.specialization_name"
-                >
-                  {{ specialization.specialization_name }}
+            <label class="form-label">Specialization *</label>
+
+            <select class="form-input" formControlName="specialization">
+              <option value="" disabled>Select specialization</option>
+
+              @for (s of specializations_data; track s) {
+                <option [value]="s.specializationName">
+                  {{ s.specializationName }}
                 </option>
+              }
+            </select>
+
+            @if (!signUpModalForm.get('specialization')?.value) {
+              <small>Specialization required</small>
+            }
+          </div>
+        }
+
+        @if (signUpModalForm.get('role')?.value === 'Doctor') {
+          <div class="slot-section">
+            <div class="slot-generator">
+
+              <select formControlName="startHour">
+                @for (h of hours; track h) {
+                  <option [value]="h">{{ h }}</option>
+                }
               </select>
-              <span class="input-icon select-icon">
-                <i class="bi bi-chevron-down"></i>
-              </span>
-              <small *ngIf="signUpModalForm.get('specialization')?.value"
-              >Specialization is required</small
-            >
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label" for="consultFee">
-              <i class="bi bi-currency-rupee"></i>
-              Consultation Fee
-            </label>
-            <div class="input-wrapper">
-              <input
-                type="number"
-                id="consultFee"
-                class="form-input"
-                placeholder="Enter consultation fee"
-                formControlName="consultationFee"
-              />
-            </div>
-            <small
-              *ngIf="
-                signUpModalForm.get('consultationFee')?.errors?.['pattern'] &&
-                signUpModalForm.get('consultationFee')?.touched
-              "
-              >Only digits is allowed.</small
-            >
-          </div>
-        </div>
-        <div class="slot-section" *ngIf="signUpModalForm.get('role')?.value == 'Doctor'">
-          <label class="form-label" for="role">
-            <i class="bi bi-clock-history"></i>
-            Time Slots
-            <span class="required">*</span>
-          </label>
-          <div class="slot-generator">
-            <div class="input-wrapper">
-              <select id="startTime" class="form-input form-select" formControlName="startHour">
-                <option value="" disabled>Start Hour</option>
-                <option *ngFor="let hour of hours" [value]="hour">{{ hour }}</option>
+              <span>to</span>
+              <select formControlName="endHour">
+                @for (h of hours; track h) {
+                  <option [value]="h">{{ h }}</option>
+                }
               </select>
-              <span class="input-icon select-icon">
-                <i class="bi bi-chevron-down"></i>
-              </span>
+              <button type="button" (click)="generateTimeSlots()">
+                Generate
+              </button>
+
             </div>
-            <span class="slot-separator">to</span>
-            <div class="input-wrapper">
-              <select id="endTime" class="form-input form-select" formControlName="endHour">
-                <option value="" disabled>End Hour</option>
-                <option *ngFor="let hour of hours" [value]="hour">{{ hour }}</option>
-              </select>
-              <span class="input-icon select-icon">
-                <i class="bi bi-chevron-down"></i>
-              </span>
-            </div>
-            <button
-              type="button"
-              class="btn btn-outline"
-              (click)="generateTimeSlots()"
-              [disabled]="signUpModalForm.errors?.['invalidTimeRange']"
-            >
-              <i class="bi bi-lightning-charge"></i>
-              Generate
-            </button>
-          </div>
-          <span class="error-text" *ngIf="signUpModalForm.errors?.['invalidTimeRange']">
-            Start hour must be less than end hour
-          </span>
-        </div>
+            @if (generatedSlots.length) {
+              <div class="slot-chips">
 
-        <div class="slot-section" *ngIf="generatedSlots.length">
-          <label class="form-label" for="generated-slots">
-            <i class="bi bi-list-check"></i>
-            Generated Slots
-          </label>
-          <div class="slot-chips">
-            <label class="slot-chip" *ngFor="let slot of generatedSlots">
-              <input type="checkbox" [value]="slot" (change)="toggleSlot(slot)" />
-              <span class="slot-chip-text">{{ slot }}</span>
-            </label>
+                @for (slot of generatedSlots; track slot) {
+                  <label class="slot-chip">
+                    <input type="checkbox" (change)="toggleSlot(slot)" />
+                    <span>{{ slot }}</span>
+                  </label>
+                }
+              </div>
+            }
           </div>
-        </div>
-
-        <div class="slot-section" *ngIf="signUpModalForm.value.availabilitySlots.length">
-          <label class="form-label" for="selected-slots">
-            <i class="bi bi-check2-square"></i>
-            Selected Slots
-          </label>
-          <div class="slot-chips">
-            <span
-              class="slot-chip active"
-              *ngFor="let slot of signUpModalForm.value.availabilitySlots"
-            >
-              {{ slot }}
-            </span>
-          </div>
-        </div>
-
-        <div class="info-box">
-          <i class="bi bi-info-circle"></i>
-          All fields marked with <span class="required">*</span> are mandatory
-        </div>
+        }
 
         <div class="modal-footer">
           <button type="button" class="btn btn-ghost" routerLink="/employee">
-            <i class="bi bi-x-lg"></i> Cancel
+            Cancel
           </button>
-          <button
-            type="submit"
-            class="btn btn-primary"
-            [disabled]="signUpModalForm.invalid"
-            [class.disabled]="signUpModalForm.invalid"
-          >
-            <i class="bi bi-check2-circle"></i> Create Employee
+
+          <button type="submit" class="btn btn-primary"
+                  [disabled]="signUpModalForm.invalid">
+            Create Employee
           </button>
         </div>
       </div>
+
     </form>
   </div>
 </div>

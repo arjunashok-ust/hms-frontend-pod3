@@ -1,6 +1,5 @@
 import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { provideRouter } from '@angular/router';
-
 import { routes } from './app.routes';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { AuthInterceptor } from './services/interceptor/auth.interceptor';
@@ -11,6 +10,6 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
     provideHttpClient(withInterceptors([AuthInterceptor])),
-    provideToastr({positionClass: 'toast-top-center'}),
+    provideToastr({ positionClass: 'toast-top-center' }),
   ],
 };

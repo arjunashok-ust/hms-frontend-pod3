@@ -1,83 +1,70 @@
 <section class="employee-wrapper">
+
   <div class="panel-header">
-    <div>
-      <span class="panel-subtitle">Directory</span>
-      <h2>Employee Management</h2>
-    </div>
+    <h2>Employee Management</h2>
     <div class="header-actions">
-      <button class="btn-secondary"><a routerLink="/approval">Approvals</a></button>
-      <button class="btn-primary" routerLink="/signup-modal">Add Employee</button>
+      <button routerLink="/approval">Approvals</button>
+      <button routerLink="/signup-modal">Add Employee</button>
     </div>
   </div>
 
-  <div class="directory-panel">
-    <div class="controls">
-      <div class="search-box">
-        <input type="text" placeholder="Search Employee" [(ngModel)]="selectedText" (input)="applyFilters()"/>
-      </div>
-      <div class="filter-group">
-        <select [(ngModel)]="selectedDepartment"  (change)="applyFilters()">
-          <option value="" selected>All Department</option>
-          <option *ngFor="let department of departmentsData" [value]="department.department_name">
-            {{ department.department_name }}
-          </option>
-        </select>
-        <select [(ngModel)]="selectedStatus" (change)="applyFilters()">
-          <option value="" selected>All Status</option>
-          <option>Active</option>
-          <option>Inactive</option>
-        </select>
-      </div>
-    </div>
+  <input
+    type="text"
+    placeholder="Search"
+    [(ngModel)]="selectedText"
+    (input)="applyFilters()"
+  />
 
-    <div class="table-wrapper">
-      <table class="modern-table">
-        <thead>
+  <select [(ngModel)]="selectedDepartment" (change)="applyFilters()">
+    <option value="">All Departments</option>
+
+    @for (dept of departmentsData; track dept) {
+      <option [value]="dept.departmentName">
+        {{ dept.departmentName }}
+      </option>
+    }
+  </select>
+
+  <select [(ngModel)]="selectedStatus" (change)="applyFilters()">
+    <option value="">All Status</option>
+    <option>Active</option>
+    <option>Inactive</option>
+  </select>
+
+  <table class="modern-table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Department</th>
+        <th>Designation</th>
+        <th></th>
+      </tr>
+    </thead>
+
+    <tbody>
+      @for (employee of filteredEmployeeData; track employee) {
+
+        @if (employee.designation !== 'Admin') {
+
           <tr>
-            <th>ID</th>
-            <th>Employee Name</th>
-            <th>Email Address</th>
-            <th>Department</th>
-            <th>Designation</th>
-            <th>Action</th>
+            <td>{{ employee.employeeId }}</td>
+            <td>{{ employee.name }}</td>
+            <td>{{ employee.email }}</td>
+            <td>{{ employee.department }}</td>
+            <td>{{ employee.designation }}</td>
+
+            <td>
+              <button (click)="updateProfile(employee.email)">Edit</button>
+              <button (click)="deleteUserProfile(employee.employeeId)">Delete</button>
+            </td>
           </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let employee of filteredEmployeeData">
-            <ng-container *ngIf="employee.designation !== 'Admin'">
-            <td>
-              <span class="employee-id">{{ employee.employeeCode }}</span>
-            </td>
-            <td>
-              <div class="employee-info">
-                <div class="avatar" [ngClass]="{
-                  'amber-avatar': employee.department == 'Administration',
-                  'green-avatar': employee.department == 'OPD',
-                  'blue-avatar' : employee.department == 'IPD',
-                  'violet-avatar' : employee.department == 'ICU'
-                }">{{ employee.name.slice(0, 2).toUpperCase() }}</div>
-                <div>
-                  <h4>{{ employee.name }}</h4>
-                </div>
-              </div>
-            </td>
-            <td class="muted-text">{{ employee.email }}</td>
-            <td>
-              <span class="department-text">{{ employee.department }}</span>
-            </td>
-            <td>
-              <span class="designation-badge">{{ employee.designation }}</span>
-            </td>
-            <td>
-              <div class="action-buttons">
-                <button class="icon-btn edit-btn" (click)="updateProfile(employee.email)">Edit</button>
-                <button class="icon-btn delete-btn" (click)="deleteUserProfile(employee.employeeCode)">Delete</button>
-              </div>
-            </td>
-            </ng-container>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
+
+        }
+
+      }
+    </tbody>
+  </table>
+
 </section>

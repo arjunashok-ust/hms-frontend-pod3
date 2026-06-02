@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { UserService } from '../../../services/user.service';
-import { UserEmployeeModel} from '../../../models/user.model';
+import { UserEmployeeModel } from '../../../models/user.model';
 import { CommonModule } from '@angular/common';
 import { ToastrService } from 'ngx-toastr';
 
@@ -11,28 +11,27 @@ import { ToastrService } from 'ngx-toastr';
   styleUrl: './user-profile.css',
 })
 export class UserProfileComponent implements OnInit {
-  userService: UserService = inject(UserService);
-  cd: ChangeDetectorRef = inject(ChangeDetectorRef);
-  toast: ToastrService = inject(ToastrService);
 
+  userService = inject(UserService);
+  toast = inject(ToastrService);
+  cd: ChangeDetectorRef = inject(ChangeDetectorRef);
   userData: UserEmployeeModel | null = null;
 
-  ngOnInit() {
-    const email = localStorage.getItem('email') ?? '';
-    this.userService.getUserProfile(email).subscribe({
+  ngOnInit(): void {
+    this.userService.getUserProfile().subscribe({
       next: (res) => {
         this.userData = res;
-        localStorage.setItem('employeeId', this.userData?.employeeId ?? '');
-        localStorage.setItem('name', this.userData?.name ?? '');
         this.cd.detectChanges();
+        localStorage.setItem('employeeId', res?.employeeId || '');
+        localStorage.setItem('name', res?.name || '');
       },
-      error: (err) => {
-        this.toast.error(err.message);
+      error: () => {
+        this.toast.error('Failed to load profile');
       },
     });
   }
 
-  logout() {
+  logout(): void {
     this.userService.logout();
   }
 }
