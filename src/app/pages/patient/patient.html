@@ -1,0 +1,43 @@
+<div class="page-container">
+
+  <div class="page-header">
+
+    <h1>Patients</h1>
+
+  </div>
+
+  <table>
+
+    <thead>
+
+      <tr>
+        <th>Name</th>
+        <th>Age</th>
+        <th>Gender</th>
+        <th>Phone</th>
+        <th>Status</th>
+      </tr>
+
+    </thead>
+
+    <tbody>
+
+      <tr *ngFor="let patient of patients">
+
+        <td>{{ patient.name }}</td>
+
+        <td>{{ patient.age }}</td>
+
+        <td>{{ patient.gender }}</td>
+
+        <td>{{ patient.phone }}</td>
+
+        <td>{{ patient.status }}</td>
+
+      </tr>
+
+    </tbody>
+
+  </table>
+
+</div>

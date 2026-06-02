@@ -1,0 +1,74 @@
+<div *ngIf="loading">
+  Loading dashboard...
+</div>
+
+<div *ngIf="!loading">
+
+  <!-- ✅ STATS -->
+  <div class="cards-grid">
+    <div class="card blue">
+      <h2>{{ stats?.totalEmployees }}</h2>
+      <p>Total Employees</p>
+    </div>
+
+    <div class="card green">
+      <h2>{{ stats?.activeEmployees }}</h2>
+      <p>Active Employees</p>
+    </div>
+
+    <div class="card orange">
+      <h2>{{ stats?.pendingApprovals }}</h2>
+      <p>Pending Approvals</p>
+    </div>
+
+    <div class="card pink">
+      <h2>{{ stats?.appointments }}</h2>
+      <p>Appointments</p>
+    </div>
+  </div>
+
+  <!-- ✅ EMPLOYEE TABLE -->
+  <div class="employee-section">
+    <h2>Employee Overview</h2>
+
+    <div class="employee-table">
+
+      <div class="table-header">
+        <span>ID</span>
+        <span>EMPLOYEE</span>
+        <span>EMAIL</span>
+        <span>DESIGNATION</span>
+        <span>STATUS</span>
+      </div>
+
+      <div class="table-row" *ngFor="let emp of employees">
+
+        <div>{{ emp.employeeCode }}</div>
+
+        <div class="employee-info">
+          <div class="avatar">
+            {{ emp.name ? emp.name[0] : 'U' }}
+          </div>
+          <div>{{ emp.name }}</div>
+        </div>
+
+        <div>{{ emp.email }}</div>
+
+        <div>{{ emp.designation }}</div>
+
+        <div>
+          <span 
+            class="status-pill"
+            [class.active]="emp.status === 'Active'"
+            [class.inactive]="emp.status !== 'Active'">
+            {{ emp.status || 'Inactive' }}
+          </span>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+</div>
+``

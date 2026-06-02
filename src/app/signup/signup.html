@@ -1,0 +1,262 @@
+<div class="signup-page">
+
+  <div class="signup-card">
+
+    <h1>Create Account</h1>
+
+    <p class="subtitle">
+      Add new employee to Hospital Management System
+    </p>
+
+    <form [formGroup]="signupForm">
+
+      <div class="form-grid">
+
+        <!-- Name -->
+        <div class="input-group">
+
+          <label>Name</label>
+
+          <input
+            type="text"
+            placeholder="Enter Name"
+            formControlName="name"
+          >
+
+        </div>
+
+        <!-- Email -->
+        <div class="input-group">
+
+          <label>Email</label>
+
+          <input
+            type="email"
+            placeholder="Enter Email"
+            formControlName="email"
+          >
+
+        </div>
+
+        <!-- Password -->
+        <div class="input-group">
+
+          <label>Password</label>
+
+          <input
+            type="password"
+            placeholder="Enter Password"
+            formControlName="password"
+          >
+
+        </div>
+
+        <!-- Phone -->
+        <div class="input-group">
+
+          <label>Phone</label>
+
+          <input
+            type="text"
+            placeholder="Enter Phone"
+            formControlName="phone"
+          >
+
+        </div>
+
+        <!-- Department -->
+        <div class="input-group">
+
+          <label>Department</label>
+
+          <select formControlName="department">
+
+            <option value="">Select Department</option>
+
+            <option value="OPD">OPD</option>
+
+            <option value="IPD">IPD</option>
+
+            <option value="Lab">Lab</option>
+
+            <option value="Pharmacy">Pharmacy</option>
+
+            <option value="Admin">Admin</option>
+
+          </select>
+
+        </div>
+
+        <!-- Designation -->
+        <div class="input-group">
+
+          <label>Designation</label>
+
+          <input
+            type="text"
+            placeholder="Enter Designation"
+            formControlName="designation"
+          >
+
+        </div>
+
+        <!-- Role -->
+        <div class="input-group">
+
+          <label>Role</label>
+
+          <select formControlName="role">
+
+            <option value="">Select Role</option>
+
+            <option value="Owner">Owner</option>
+
+            <option value="Admin">Admin</option>
+
+            <option value="Doctor">Doctor</option>
+
+            <option value="Receptionist">Receptionist</option>
+
+            <option value="Cashier">Cashier</option>
+
+            <option value="Nurse">Nurse</option>
+
+            <option value="Lab_tech">Lab Technician</option>
+
+            <option value="Pharmicist">Pharmicist</option>
+
+          </select>
+
+        </div>
+
+        <!-- Status -->
+        <div class="input-group">
+
+          <label>Status</label>
+
+          <select formControlName="status">
+
+            <option value="Active">Active</option>
+
+            <option value="Inactive">Inactive</option>
+
+          </select>
+
+        </div>
+
+        <!-- Joining Date -->
+        <div class="input-group full-width">
+
+          <label>Joining Date</label>
+
+          <input
+            type="date"
+            formControlName="joiningDate"
+          >
+
+        </div>
+
+      </div>
+
+      <!-- MEDICAL SECTION -->
+
+      <div
+        class="medical-section"
+        *ngIf="isMedicalRole"
+      >
+
+        <h3>Medical Information</h3>
+
+        <div class="form-grid">
+
+          <!-- Medical Registration -->
+          <div class="input-group">
+
+            <label>Medical Registration No</label>
+
+            <input
+              type="text"
+              placeholder="Enter Registration Number"
+              formControlName="medicalRegistrationNo"
+            >
+
+          </div>
+
+          <!-- Specialization -->
+          <div class="input-group">
+
+            <label>Specialization</label>
+
+            <input
+              type="text"
+              placeholder="Enter Specialization"
+              formControlName="specialization"
+            >
+
+          </div>
+
+          <!-- Qualification -->
+          <div class="input-group">
+
+            <label>Qualification</label>
+
+            <input
+              type="text"
+              placeholder="Enter Qualification"
+              formControlName="qualification"
+            >
+
+          </div>
+
+          <!-- Consultation + Availability -->
+          <ng-container *ngIf="showConsultationFields">
+
+            <!-- Consultation Fee -->
+            <div class="input-group">
+
+              <label>Consultation Fee</label>
+
+              <input
+                type="number"
+                placeholder="Enter Fee"
+                formControlName="consultationFee"
+              >
+
+            </div>
+
+            <!-- Availability -->
+            <div class="input-group">
+
+              <label>Availability Slots</label>
+
+              <input
+                type="text"
+                placeholder="Example: 10AM - 1PM"
+                formControlName="availabilitySlots"
+              >
+
+            </div>
+
+          </ng-container>
+
+        </div>
+
+      </div>
+
+      <!-- BUTTON -->
+
+      <button
+        type="button"
+        class="signup-btn"
+        (click)="onsignup()"
+      >
+
+        Create User
+
+      </button>
+
+    </form>
+
+  </div>
+
+</div>

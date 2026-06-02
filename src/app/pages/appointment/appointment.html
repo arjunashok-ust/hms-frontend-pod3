@@ -1,0 +1,180 @@
+<div class="appointment-container">
+
+  <!-- ✅ STATS CARDS -->
+  <div class="cards">
+
+    <div class="card blue">
+      <div class="icon">📅</div>
+      <h2>{{ appointmentUiData.total }}</h2>
+      <p>Total Appointments</p>
+    </div>
+
+    <div class="card green">
+      <div class="icon">✅</div>
+      <h2>{{ appointmentUiData.completed }}</h2>
+      <p>Completed</p>
+    </div>
+
+    <div class="card orange">
+      <div class="icon">⏳</div>
+      <h2>{{ appointmentUiData.booked }}</h2>
+      <p>Booked</p>
+    </div>
+
+    <div class="card red">
+      <div class="icon">❌</div>
+      <h2>{{ appointmentUiData.cancelled }}</h2>
+      <p>Cancelled</p>
+    </div>
+
+  </div>
+
+  <!-- ✅ MAIN GRID -->
+  <div class="main-grid">
+
+    <!-- ✅ LEFT FORM -->
+    <div class="form-card">
+
+      <h2>Book Appointment</h2>
+
+      <!-- ✅ FIXED FORM -->
+      <form [formGroup]="appointmentForm" (ngSubmit)="onSubmit()">
+
+        <div class="form-row">
+
+          <div class="form-group">
+            <label>Patient ID</label>
+            <input type="text"
+                   formControlName="patientId"
+                   placeholder="PAT-00123">
+          </div>
+
+          <div class="form-group">
+            <label>Doctor</label>
+            <select formControlName="doctorEmployeeId"
+                    (change)="onDoctorChange()">
+
+              <option value="">Select Doctor</option>
+
+              <option *ngFor="let doc of doctors" [value]="doc._id">
+                {{ doc.name }}
+              </option>
+
+            </select>
+          </div>
+
+        </div>
+
+        <div class="form-row">
+
+          <div class="form-group">
+            <label>Date</label>
+            <input type="date"
+                   formControlName="date"
+                   (change)="onDoctorChange()">
+          </div>
+
+          <!-- ✅ TIME SLOTS -->
+          <div class="form-group">
+            <label>Time Slot</label>
+
+            <div class="slots">
+
+              <button
+                *ngFor="let slot of doctorTimeSlots"
+                type="button"
+                (click)="appointmentForm.patchValue({ timeSlot: slot })"
+                [class.active]="appointmentForm.value.timeSlot === slot">
+
+                {{ slot }}
+
+              </button>
+
+            </div>
+
+          </div>
+
+        </div>
+
+        <button class="primary-btn" type="submit">
+          Book Appointment
+        </button>
+
+      </form>
+
+    </div>
+
+    <!-- ✅ RIGHT SIDE -->
+    <div class="info-card">
+
+      <h2>Doctor Availability</h2>
+
+      <div *ngFor="let doc of doctors" class="doctor-row">
+
+        <div class="avatar">
+          {{ doc.name?.charAt(0) }}
+        </div>
+
+        <div>
+          <div>{{ doc.name }}</div>
+          <small>{{ doc.department || 'General' }}</small>
+        </div>
+
+        <span
+          class="status"
+          [class.active]="doc.status === 'Active'"
+          [class.inactive]="doc.status !== 'Active'">
+
+          {{ doc.status }}
+
+        </span>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- ✅ TABLE -->
+  <div class="table-section">
+
+    <h3>Appointments</h3>
+
+    <table>
+
+      <thead>
+        <tr>
+          <th>Patient</th>
+          <th>Doctor</th>
+          <th>Date</th>
+          <th>Time</th>
+          <th>Status</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+
+      <tbody>
+
+        <tr *ngFor="let appt of appointments">
+
+          <td>{{ appt.patientId?.name }}</td>
+          <td>{{ appt.doctorEmployeeId?.name }}</td>
+          <td>{{ appt.date | date:'dd-MM-yyyy' }}</td>
+          <td>{{ appt.timeSlot }}</td>
+          <td>{{ appt.status }}</td>
+
+          <td>
+            <button (click)="deleteAppointment(appt._id)">
+              Delete
+            </button>
+          </td>
+
+        </tr>
+
+      </tbody>
+
+    </table>
+
+  </div>
+
+</div>

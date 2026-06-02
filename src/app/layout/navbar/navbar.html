@@ -1,0 +1,48 @@
+<div class="navbar">
+
+  <div class="search-box">
+
+    <input
+      type="text"
+      placeholder="Search patients, doctors..."
+    />
+
+  </div>
+
+  <div class="right-section">
+
+    <button class="notification-btn">
+
+      🔔
+
+    </button>
+
+    <div class="profile-section">
+
+      <div class="avatar">
+
+        {{ user?.name?.charAt(0) }}
+
+      </div>
+
+      <div class="profile-info">
+
+        <h4>{{ user?.name }}</h4>
+
+        <p>{{ user?.role }}</p>
+
+      </div>
+
+    </div>
+
+    <button
+      class="logout-btn"
+      (click)="logout()">
+
+      Logout
+
+    </button>
+
+  </div>
+
+</div>

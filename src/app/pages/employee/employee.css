@@ -1,0 +1,43 @@
+.page-container {
+
+  background: white;
+
+  padding: 25px;
+
+  border-radius: 20px;
+
+}
+
+.page-header {
+
+  margin-bottom: 25px;
+
+}
+
+table {
+
+  width: 100%;
+
+  border-collapse: collapse;
+
+}
+
+th {
+
+  background: #2563eb;
+
+  color: white;
+
+  padding: 15px;
+
+  text-align: left;
+
+}
+
+td {
+
+  padding: 15px;
+
+  border-bottom: 1px solid #eee;
+
+}

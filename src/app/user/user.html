@@ -1,0 +1,99 @@
+<div class="profile-page">
+
+  <div class="profile-card">
+
+    <!-- PROFILE HEADER -->
+
+    <div class="profile-header">
+
+      <div class="profile-icon">
+
+        {{ user?.employeeId?.name?.charAt(0) || 'U' }}
+
+      </div>
+
+      <div>
+
+        <h1>
+          {{ user?.employeeId?.name || 'User Profile' }}
+        </h1>
+
+        <p class="role-text">
+          {{ user?.employeeId?.designation }}
+        </p>
+
+      </div>
+
+    </div>
+
+    <!-- LOADING -->
+
+    <div
+      *ngIf="!user"
+      class="loading-text"
+    >
+
+      Loading Profile...
+
+    </div>
+
+    <!-- PROFILE DETAILS -->
+
+    <div
+      *ngIf="user"
+      class="profile-details"
+    >
+
+      <div class="detail-box">
+
+        <span>Email</span>
+
+        <p>{{ user.email }}</p>
+
+      </div>
+
+      <div class="detail-box">
+
+        <span>Phone</span>
+
+        <p>{{ user.employeeId?.phone }}</p>
+
+      </div>
+
+      <div class="detail-box">
+
+        <span>Department</span>
+
+        <p>{{ user.employeeId?.department }}</p>
+
+      </div>
+
+      <div class="detail-box">
+
+        <span>Designation</span>
+
+        <p>{{ user.employeeId?.designation }}</p>
+
+      </div>
+
+      <div class="detail-box">
+
+        <span>Status</span>
+
+        <p>{{ user.status }}</p>
+
+      </div>
+
+      <div class="detail-box">
+
+        <span>Role</span>
+
+        <p>{{ user.roles }}</p>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

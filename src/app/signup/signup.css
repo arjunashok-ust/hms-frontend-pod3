@@ -1,0 +1,217 @@
+.signup-page{
+
+  width:100%;
+
+  min-height:100vh;
+
+  display:flex;
+
+  justify-content:center;
+
+  align-items:center;
+
+  padding:40px 20px;
+
+  background:#f8fafc;
+}
+
+/* CARD */
+
+.signup-card{
+
+  width:100%;
+
+  max-width:950px;
+
+  background:white;
+
+  border:1px solid #e5e7eb;
+
+  border-radius:20px;
+
+  padding:45px 40px;
+
+  box-shadow:0 4px 20px rgba(0,0,0,0.08);
+}
+
+/* TITLE */
+
+.signup-card h1{
+
+  font-size:36px;
+
+  font-weight:700;
+
+  color:#111827;
+
+  margin-bottom:10px;
+}
+
+.subtitle{
+
+  color:#6b7280;
+
+  margin-bottom:35px;
+
+  font-size:15px;
+}
+
+/* GRID */
+
+.form-grid{
+
+  display:grid;
+
+  grid-template-columns:1fr 1fr;
+
+  gap:22px;
+}
+
+/* INPUT GROUP */
+
+.input-group{
+
+  display:flex;
+
+  flex-direction:column;
+}
+
+.input-group label{
+
+  margin-bottom:8px;
+
+  font-size:14px;
+
+  font-weight:600;
+
+  color:#374151;
+}
+
+/* INPUTS */
+
+.input-group input,
+.input-group select{
+
+  width:100%;
+
+  padding:14px;
+
+  border:1px solid #d1d5db;
+
+  border-radius:12px;
+
+  outline:none;
+
+  font-size:15px;
+
+  background:white;
+
+  transition:0.3s;
+}
+
+.input-group input:focus,
+.input-group select:focus{
+
+  border-color:#2563eb;
+}
+
+/* PLACEHOLDER */
+
+.input-group input::placeholder{
+
+  color:#9ca3af;
+}
+
+/* SELECT */
+
+select{
+
+  cursor:pointer;
+}
+
+/* FULL WIDTH */
+
+.full-width{
+
+  grid-column:span 2;
+}
+
+/* MEDICAL SECTION */
+
+.medical-section{
+
+  margin-top:40px;
+
+  padding-top:30px;
+
+  border-top:1px solid #e5e7eb;
+}
+
+.medical-section h3{
+
+  font-size:22px;
+
+  color:#111827;
+
+  margin-bottom:25px;
+}
+
+/* BUTTON */
+
+.signup-btn{
+
+  display:block;
+
+  width:240px;
+
+  margin:35px auto 0;
+
+  padding:15px;
+
+  border:none;
+
+  border-radius:12px;
+
+  background:#111827;
+
+  color:white;
+
+  font-size:16px;
+
+  font-weight:600;
+
+  cursor:pointer;
+
+  transition:0.3s;
+}
+
+.signup-btn:hover{
+
+  opacity:0.9;
+}
+
+/* RESPONSIVE */
+
+@media(max-width:768px){
+
+  .signup-card{
+
+    padding:35px 24px;
+  }
+
+  .form-grid{
+
+    grid-template-columns:1fr;
+  }
+
+  .full-width{
+
+    grid-column:span 1;
+  }
+
+  .signup-btn{
+
+    width:100%;
+  }
+
+}

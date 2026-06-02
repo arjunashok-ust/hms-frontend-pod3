@@ -1,0 +1,52 @@
+<div class="employee-container">
+
+  <!-- ✅ LOADING -->
+  <div *ngIf="loading" class="loader">
+    <p>Loading employees...</p>
+  </div>
+
+  <div *ngIf="!loading">
+
+    <h2>All Employees</h2>
+
+    <table class="styled-table">
+
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Department</th>
+          <th>Designation</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+
+      <tbody>
+
+        <!-- ✅ Employee rows -->
+        <tr *ngFor="let emp of employees">
+          <td>#{{ emp.id }}</td>
+          <td>{{ emp.name }}</td>
+          <td>{{ emp.email }}</td>
+          <td>{{ emp.department }}</td>
+          <td>{{ emp.designation }}</td>
+          <td>
+            <span class="status-tag">
+              {{ emp.status }}
+            </span>
+          </td>
+        </tr>
+
+        <!-- ✅ Empty -->
+        <tr *ngIf="employees.length === 0">
+          <td colspan="6">No employees found</td>
+        </tr>
+
+      </tbody>
+
+    </table>
+
+  </div>
+
+</div>
