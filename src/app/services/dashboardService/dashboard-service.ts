@@ -6,12 +6,12 @@ import { environment } from '../../../environments';
 
 @Injectable({ providedIn: 'root' })
 export class DashboardService {
-  private readonly apiUrl = environment.apiUrl
+  private readonly apiUrl = environment.apiUrl;
 
   constructor(
     private readonly http: HttpClient,
-    @Inject(PLATFORM_ID) private readonly platformId: Object
-  ) { }
+    @Inject(PLATFORM_ID) private readonly platformId: Object,
+  ) {}
 
   getStats(): Observable<any> {
     if (isPlatformBrowser(this.platformId)) {

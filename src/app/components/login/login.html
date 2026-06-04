@@ -1,13 +1,22 @@
 <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
-  
   @if (errorMessage) {
-    <div class="error-banner" style="color: #dc2626; background: #fee2e2; padding: 10px; border-radius: 8px; margin-bottom: 1rem; font-size: 0.85rem; font-weight: 600;">
+    <div
+      class="error-banner"
+      style="
+        color: #b30000;
+        background: #f6e7e7;
+        padding: 10px;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        font-size: 0.85rem;
+        font-weight: 600;
+      "
+    >
       <i class="bi bi-exclamation-triangle"></i> {{ errorMessage }}
     </div>
   }
 
-  <div class="form-stack">
-    </div>
+  <div class="form-stack"></div>
 </form>
 <div class="page-wrapper">
   <div class="unified-auth-card">
@@ -102,10 +111,10 @@
               formControlName="confirmPassword"
               placeholder="Confirm new password"
             />
-            @if (passwordForm.hasError('mismatch') && passwordForm.get('confirmPassword')?.touched) {
-              <small class="error-text">
-                Passwords do not match.
-              </small>
+            @if (
+              passwordForm.hasError('mismatch') && passwordForm.get('confirmPassword')?.touched
+            ) {
+              <small class="error-text"> Passwords do not match. </small>
             }
           </div>
         </div>

@@ -16,10 +16,9 @@ export interface MenuNode {
 
 @Injectable({ providedIn: 'root' })
 export class ApiService {
+  private readonly backendUrl = environment.apiUrl;
 
-  private readonly backendUrl = environment.apiUrl
-
-  constructor(private readonly http: HttpClient) { }
+  constructor(private readonly http: HttpClient) {}
 
   getMenus(): Observable<MenuNode[]> {
     return this.http.get<MenuNode[]>(`${this.backendUrl}/api/menuNode/getMenus`);
@@ -78,9 +77,11 @@ export class ApiService {
   }
 
   checkRoutePermission(path: string): Observable<boolean> {
-    return this.http.get<{ allowed: boolean }>(`${this.backendUrl}/api/menuNode/check-permission/${path}`).pipe(
-      map(res => res.allowed),
-      catchError(() => of(false))
-    );
+    return this.http
+      .get<{ allowed: boolean }>(`${this.backendUrl}/api/menuNode/check-permission/${path}`)
+      .pipe(
+        map((res) => res.allowed),
+        catchError(() => of(false)),
+      );
   }
 }

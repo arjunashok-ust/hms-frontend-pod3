@@ -92,28 +92,56 @@
                 <i class="bi bi-clock text-blue"></i> TIME SLOT
                 <span class="text-danger">*</span>
               </label>
-              <select
-                formControlName="timeSlot"
-                class="form-control custom-select"
-                [class.is-invalid]="
-                  appointmentForm.get('timeSlot')?.invalid &&
-                  appointmentForm.get('timeSlot')?.touched
+              <div
+                class="time-slot-container"
+                [ngClass]="
+                  !appointmentForm.value.doctorEmployeeID ||
+                  !appointmentForm.value.date ||
+                  timeSlots.length === 0
+                    ? 'empty-state-box'
+                    : 'grid-state-box'
                 "
               >
-                <option value="" disabled selected>
-                  {{
-                    !appointmentForm.value.doctorEmployeeID || !appointmentForm.value.date
-                      ? 'Select a doctor to view available time slots'
-                      : timeSlots.length === 0
-                        ? 'No slots available'
-                        : 'Select a time slot'
-                  }}
-                </option>
-                @for (slot of timeSlots; track slot) {
-                  <option [value]="slot">{{ slot }}</option>
+                @if (!appointmentForm.value.doctorEmployeeID || !appointmentForm.value.date) {
+                  <div class="empty-slot-message-timeslot">
+                    <i class="bi bi-info-circle"></i> Select doctor and date
+                  </div>
+                } @else if (timeSlots.length === 0) {
+                  <div class="empty-slot-message text-danger">
+                    <i class="bi bi-calendar-x"></i> No slots available
+                  </div>
+                } @else {
+                  <div class="time-slot-grid">
+                    @for (slot of timeSlots; track slot) {
+                      <label
+                        class="slot-box"
+                        [class.selected-slot]="appointmentForm.get('timeSlot')?.value === slot"
+                      >
+                        <input
+                          type="radio"
+                          formControlName="timeSlot"
+                          [value]="slot"
+                          class="hidden-radio"
+                        />
+                        {{ slot }}
+                      </label>
+                    }
+                  </div>
                 }
-              </select>
+              </div>
+
+              @if (
+                appointmentForm.get('timeSlot')?.invalid && appointmentForm.get('timeSlot')?.touched
+              ) {
+                <small class="text-danger mt-1 d-block">Please select a time slot.</small>
+              }
             </div>
+
+            @if (
+              appointmentForm.get('timeSlot')?.invalid && appointmentForm.get('timeSlot')?.touched
+            ) {
+              <small class="text-danger mt-1 d-block">Please select a time slot.</small>
+            }
           </div>
 
           <div class="status-section">
@@ -244,9 +272,7 @@
               <td>{{ apt.doctorName }}</td>
               <td>
                 <div class="date-cell">
-                  <span class="fw-bold">{{ apt.date | date: 'dd MMM' }}</span
-                  >,
-                  <span class="text-muted">{{ apt.date | date: 'hh:mm a' }}</span>
+                  <span class="fw-bold">{{ apt.date | date: 'dd MMM' }}</span>
                 </div>
               </td>
               <td>

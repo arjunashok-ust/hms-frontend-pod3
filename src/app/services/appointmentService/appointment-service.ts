@@ -6,25 +6,28 @@ import { environment } from '../../../environments';
 
 @Injectable({ providedIn: 'root' })
 export class AppointmentService {
-  private readonly apiUrl = environment.apiUrl
+  private readonly apiUrl = environment.apiUrl;
 
   constructor(
     private readonly http: HttpClient,
-    @Inject(PLATFORM_ID) private readonly platformId: Object
-  ) { }
+    @Inject(PLATFORM_ID) private readonly platformId: Object,
+  ) {}
 
   getStats(): Observable<any> {
-    if (isPlatformBrowser(this.platformId)) return this.http.get<any>(`${this.apiUrl}/api/appointment/stats`);
+    if (isPlatformBrowser(this.platformId))
+      return this.http.get<any>(`${this.apiUrl}/api/appointment/stats`);
     return of({});
   }
 
   getDoctors(): Observable<any[]> {
-    if (isPlatformBrowser(this.platformId)) return this.http.get<any[]>(`${this.apiUrl}/api/appointment/doctors`);
+    if (isPlatformBrowser(this.platformId))
+      return this.http.get<any[]>(`${this.apiUrl}/api/appointment/doctors`);
     return of([]);
   }
 
   getRecentAppointments(): Observable<any[]> {
-    if (isPlatformBrowser(this.platformId)) return this.http.get<any[]>(`${this.apiUrl}/api/appointment/recent`);
+    if (isPlatformBrowser(this.platformId))
+      return this.http.get<any[]>(`${this.apiUrl}/api/appointment/recent`);
     return of([]);
   }
 
@@ -47,6 +50,9 @@ export class AppointmentService {
       const token = localStorage.getItem('token');
       if (token) headers = headers.set('Authorization', `Bearer ${token}`);
     }
-    return this.http.get<string[]>(`${this.apiUrl}/api/appointment/slots?doctorId=${doctorId}&date=${date}`, { headers });
+    return this.http.get<string[]>(
+      `${this.apiUrl}/api/appointment/slots?doctorId=${doctorId}&date=${date}`,
+      { headers },
+    );
   }
 }

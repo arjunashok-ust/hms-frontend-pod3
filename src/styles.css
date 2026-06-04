@@ -1,10 +1,12 @@
 @import url('https://fonts.cdnfonts.com/css/google-sans');
+@import 'ngx-toastr/toastr';
 
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-    font-family:
+  font-family:
     'Product Sans',
     'Google Sans',
     -apple-system,

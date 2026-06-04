@@ -8,7 +8,7 @@ import { ApiService, MenuNode } from '../../services/apiService/api-service';
   standalone: true,
   imports: [CommonModule, RouterModule],
   templateUrl: './sidebar.html',
-  styleUrls: ['./sidebar.css']
+  styleUrls: ['./sidebar.css'],
 })
 export class Sidebar implements OnInit {
   menus: MenuNode[] = [];
@@ -16,17 +16,18 @@ export class Sidebar implements OnInit {
   constructor(
     private readonly api: ApiService,
     @Inject(PLATFORM_ID) private readonly platformId: Object,
-    private readonly cdr: ChangeDetectorRef
-  ) { }
+    private readonly cdr: ChangeDetectorRef,
+  ) {}
 
   ngOnInit(): void {
     if (isPlatformBrowser(this.platformId)) {
-
       const userRole = this.getUserRoleFromToken();
 
       this.api.getMenus().subscribe({
         next: (response: any) => {
-          let rawMenus = Array.isArray(response) ? response : (response.data || response.menuItems || response.menus || []);
+          let rawMenus = Array.isArray(response)
+            ? response
+            : response.data || response.menuItems || response.menus || [];
 
           if (userRole) {
             rawMenus = rawMenus.filter((menu: MenuNode) => {
@@ -38,7 +39,7 @@ export class Sidebar implements OnInit {
           this.menus = rawMenus.sort((a: any, b: any) => (a.order || 0) - (b.order || 0));
           this.cdr.detectChanges();
         },
-        error: (err) => console.error('Failed to fetch menus.', err)
+        error: (err) => console.error('Failed to fetch menus.', err),
       });
     }
   }

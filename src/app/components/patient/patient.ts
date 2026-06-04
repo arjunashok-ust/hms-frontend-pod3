@@ -1,8 +1,13 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
-  FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators, AbstractControl,
-  ValidationErrors
+  FormsModule,
+  ReactiveFormsModule,
+  FormBuilder,
+  FormGroup,
+  Validators,
+  AbstractControl,
+  ValidationErrors,
 } from '@angular/forms';
 import { ApiService } from '../../services/apiService/api-service';
 
@@ -11,7 +16,7 @@ import { ApiService } from '../../services/apiService/api-service';
   standalone: true,
   imports: [CommonModule, FormsModule, ReactiveFormsModule],
   templateUrl: './patient.html',
-  styleUrls: ['./patient.css']
+  styleUrls: ['./patient.css'],
 })
 export class Patient implements OnInit {
   patients: any[] = [];
@@ -28,7 +33,7 @@ export class Patient implements OnInit {
   constructor(
     private readonly apiService: ApiService,
     private readonly cdr: ChangeDetectorRef,
-    private readonly fb: FormBuilder
+    private readonly fb: FormBuilder,
   ) {
     this.initForm();
   }
@@ -49,9 +54,9 @@ export class Patient implements OnInit {
         line1: ['', Validators.required],
         line2: [''],
         state: ['', Validators.required],
-        pincode: ['', Validators.required]
+        pincode: ['', Validators.required],
       }),
-      status: [true]
+      status: [true],
     });
   }
 
@@ -78,18 +83,24 @@ export class Patient implements OnInit {
         this.isLoading = false;
         this.cdr.markForCheck();
       },
-      error: (err) => { console.error(err); this.isLoading = false; }
+      error: (err) => {
+        console.error(err);
+        this.isLoading = false;
+      },
     });
   }
 
   applyFilters() {
-    this.filteredpatients = this.patients.filter(p =>
-      p.name.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-      p.email.toLowerCase().includes(this.searchTerm.toLowerCase())
+    this.filteredpatients = this.patients.filter(
+      (p) =>
+        p.name.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+        p.email.toLowerCase().includes(this.searchTerm.toLowerCase()),
     );
   }
 
-  openModal() { this.showAddModal = true; }
+  openModal() {
+    this.showAddModal = true;
+  }
 
   closeModal() {
     this.showAddModal = false;
@@ -121,10 +132,19 @@ export class Patient implements OnInit {
       : this.apiService.createPatient(payload);
 
     action$.subscribe({
-      next: () => { this.fetchPatients(); this.closeModal(); this.isSubmittingModal = false; },
-      error: (err) => { this.modalError = err.message; this.isSubmittingModal = false; }
+      next: () => {
+        this.fetchPatients();
+        this.closeModal();
+        this.isSubmittingModal = false;
+      },
+      error: (err) => {
+        this.modalError = err.message;
+        this.isSubmittingModal = false;
+      },
     });
   }
 
-  getInitials(name: string): string { return name ? name.substring(0, 2).toUpperCase() : 'NA'; }
+  getInitials(name: string): string {
+    return name ? name.substring(0, 2).toUpperCase() : 'NA';
+  }
 }

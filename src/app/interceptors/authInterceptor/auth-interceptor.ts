@@ -17,9 +17,11 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     token = localStorage.getItem('token');
   }
 
-  const authReq = token ? req.clone({
-    setHeaders: { Authorization: `Bearer ${token}` }
-  }) : req;
+  const authReq = token
+    ? req.clone({
+        setHeaders: { Authorization: `Bearer ${token}` },
+      })
+    : req;
 
   return next(authReq).pipe(
     catchError((error: HttpErrorResponse) => {
@@ -28,6 +30,6 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
         router.navigate(['/login']);
       }
       return throwError(() => error);
-    })
+    }),
   );
 };

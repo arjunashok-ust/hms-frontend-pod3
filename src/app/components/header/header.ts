@@ -8,7 +8,7 @@ import { Router } from '@angular/router';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './header.html',
-  styleUrls: ['./header.css']
+  styleUrls: ['./header.css'],
 })
 export class Header implements OnInit {
   currentUser: any = null;
@@ -17,8 +17,8 @@ export class Header implements OnInit {
     private readonly api: ApiService,
     @Inject(PLATFORM_ID) private readonly platformId: Object,
     private readonly cdr: ChangeDetectorRef,
-    private readonly router: Router
-  ) { }
+    private readonly router: Router,
+  ) {}
 
   ngOnInit() {
     if (isPlatformBrowser(this.platformId)) {
@@ -28,7 +28,7 @@ export class Header implements OnInit {
 
           this.cdr.detectChanges();
         },
-        error: (err) => console.error('Error fetching profile', err)
+        error: (err) => console.error('Error fetching profile', err),
       });
     }
   }
@@ -39,14 +39,10 @@ export class Header implements OnInit {
   }
 
   logout() {
-
     localStorage.removeItem('token');
 
-
     localStorage.removeItem('userRole');
-
 
     this.router.navigate(['/login']);
   }
 }
-

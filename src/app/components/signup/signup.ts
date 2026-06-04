@@ -7,7 +7,7 @@ import {
   FormsModule,
   Validators,
   AbstractControl,
-  ValidationErrors
+  ValidationErrors,
 } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { RouterLink, Router } from '@angular/router';
@@ -21,12 +21,12 @@ import { TimeSlotUtil, GeneratedSlot } from '../../utils/timeSlot';
   templateUrl: './signup.html',
   styleUrl: './signup.css',
 })
-
 export class Signup {
   private readonly auth = inject(Auth);
   private readonly fb = inject(FormBuilder);
   private readonly router = inject(Router);
-  private readonly passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+  private readonly passwordPattern =
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
   private readonly phonePattern = /^(\+91[\s-]?)?[6789]\d{9}$/;
 
   signupForm: FormGroup;
@@ -43,26 +43,29 @@ export class Signup {
   isSubmitting = false;
 
   constructor() {
-    this.signupForm = this.fb.group({
-      name: ['', Validators.required],
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.pattern(this.passwordPattern)]],
-      confirmPassword: ['', Validators.required],
-      phone: ['', [Validators.required, Validators.pattern(this.phonePattern)]],
-      role: ['', Validators.required],
-      status: [true],
-      department: ['', Validators.required],
-      designation: ['', Validators.required],
-      joiningDate: ['', [Validators.required, this.joiningDateValidator]],
+    this.signupForm = this.fb.group(
+      {
+        name: ['', Validators.required],
+        email: ['', [Validators.required, Validators.email]],
+        password: ['', [Validators.required, Validators.pattern(this.passwordPattern)]],
+        confirmPassword: ['', Validators.required],
+        phone: ['', [Validators.required, Validators.pattern(this.phonePattern)]],
+        role: ['', Validators.required],
+        status: [true],
+        department: ['', Validators.required],
+        designation: ['', Validators.required],
+        joiningDate: ['', [Validators.required, this.joiningDateValidator]],
 
-      medicalRegistrationNo: [''],
-      specialization: [''],
-      qualification: [''],
-      consultationFee: [null],
-      availabilitySlots: this.fb.array([]),
-    }, {
-      validators: this.passwordMatchValidator
-    });
+        medicalRegistrationNo: [''],
+        specialization: [''],
+        qualification: [''],
+        consultationFee: [null],
+        availabilitySlots: this.fb.array([]),
+      },
+      {
+        validators: this.passwordMatchValidator,
+      },
+    );
 
     this.signupForm.get('role')?.valueChanges.subscribe((role) => {
       this.updateMedicalValidators(role);
@@ -138,16 +141,11 @@ export class Signup {
       id: [uniqueId],
       startTime: ['', Validators.required],
       endTime: ['', Validators.required],
-      checkedSlots: this.fb.array([])
+      checkedSlots: this.fb.array([]),
     });
 
     slotGroup.valueChanges.subscribe((changes) => {
-      this.generateHourlySlots(
-        uniqueId,
-        slotGroup,
-        changes.startTime ?? '',
-        changes.endTime ?? ''
-      );
+      this.generateHourlySlots(uniqueId, slotGroup, changes.startTime ?? '', changes.endTime ?? '');
     });
 
     this.availabilitySlots.push(slotGroup);
@@ -165,7 +163,7 @@ export class Signup {
   }
 
   generateHourlySlots(uniqueId: string, slotGroup: FormGroup, start: string, end: string) {
-    TimeSlotUtil.populateHourlySlots(uniqueId, slotGroup, start, end, this.rowSubSlotsMap);
+    TimeSlotUtil.populateHalfHourSlots(uniqueId, slotGroup, start, end, this.rowSubSlotsMap);
   }
 
   updateMedicalValidators(role: string) {
@@ -210,9 +208,9 @@ export class Signup {
       const parsedQualifications =
         rawQual && typeof rawQual === 'string' && rawQual.trim() !== ''
           ? rawQual
-            .split(',')
-            .map((q: string) => q.trim())
-            .filter((q: string) => q !== '')
+              .split(',')
+              .map((q: string) => q.trim())
+              .filter((q: string) => q !== '')
           : [];
 
       const formattedAvailability: any[] = [];
@@ -226,7 +224,7 @@ export class Signup {
           if (checkedBools[subIdx] === true) {
             formattedAvailability.push({
               startTime: item.startTime,
-              endTime: item.endTime
+              endTime: item.endTime,
             });
           }
         });
@@ -238,7 +236,7 @@ export class Signup {
         department: rawValues.department.toUpperCase(),
         qualification: parsedQualifications,
         consultationFee: this.isDoctor ? Number(rawValues.consultationFee) : undefined,
-        availabilitySlots: this.isDoctor ? formattedAvailability : []
+        availabilitySlots: this.isDoctor ? formattedAvailability : [],
       };
 
       this.auth.signup(payload).subscribe({

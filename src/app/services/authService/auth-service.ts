@@ -6,9 +6,6 @@ import { Observable, tap } from 'rxjs';
 @Injectable({
   providedIn: 'root',
 })
-
-
-
 export class Auth {
   private readonly http = inject(HttpClient);
   private readonly apiUrl = '/api/auth';
@@ -38,14 +35,13 @@ export class Auth {
 
   login(credentials: any): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/login`, credentials).pipe(
-      tap(response => {
-
+      tap((response) => {
         if (response?.token) {
           localStorage.setItem('token', response.token);
           localStorage.setItem('user_session', JSON.stringify(response.user));
           this.currentUserSignal.set(response.user);
         }
-      })
+      }),
     );
   }
 
@@ -64,10 +60,10 @@ export class Auth {
 
   getMe(): Observable<any> {
     return this.http.get<any>(`${this.profileUrl}/me`).pipe(
-      tap(user => {
+      tap((user) => {
         localStorage.setItem('user_session', JSON.stringify(user));
         this.currentUserSignal.set(user);
-      })
+      }),
     );
   }
 

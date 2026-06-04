@@ -1,6 +1,13 @@
 import { Component, OnInit, ChangeDetectorRef, Inject, PLATFORM_ID } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
+import {
+  ReactiveFormsModule,
+  FormBuilder,
+  FormGroup,
+  Validators,
+  AbstractControl,
+  ValidationErrors,
+} from '@angular/forms';
 import { AppointmentService } from '../../services/appointmentService/appointment-service';
 import { ApiService } from '../../services/apiService/api-service';
 
@@ -9,7 +16,7 @@ import { ApiService } from '../../services/apiService/api-service';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './appointment.html',
-  styleUrls: ['./appointment.css']
+  styleUrls: ['./appointment.css'],
 })
 export class Appointment implements OnInit {
   appointmentForm!: FormGroup;
@@ -29,7 +36,7 @@ export class Appointment implements OnInit {
     private readonly appointmentService: AppointmentService,
     private readonly apiService: ApiService,
     private readonly cdr: ChangeDetectorRef,
-    @Inject(PLATFORM_ID) private readonly platformId: Object
+    @Inject(PLATFORM_ID) private readonly platformId: Object,
   ) {
     this.initForm();
   }
@@ -41,8 +48,6 @@ export class Appointment implements OnInit {
     }
     return d.toISOString().split('T')[0];
   }
-
-
 
   pastDateValidator = (control: AbstractControl): ValidationErrors | null => {
     if (!control.value) return null;
@@ -87,19 +92,19 @@ export class Appointment implements OnInit {
       doctorEmployeeID: ['', Validators.required],
       date: ['', [Validators.required, this.pastDateValidator]],
       timeSlot: ['', Validators.required],
-      status: ['Scheduled', Validators.required]
+      status: ['Scheduled', Validators.required],
     });
   }
 
   loadData() {
     if (this.userRole !== 'DOCTOR') {
-      this.appointmentService.getStats().subscribe(data => {
+      this.appointmentService.getStats().subscribe((data) => {
         this.stats = data;
         this.cdr.markForCheck();
       });
     }
 
-    this.appointmentService.getDoctors().subscribe(data => {
+    this.appointmentService.getDoctors().subscribe((data) => {
       this.doctors = data;
       this.cdr.markForCheck();
     });
@@ -108,18 +113,17 @@ export class Appointment implements OnInit {
   }
 
   fetchRecentAppointments() {
-    this.appointmentService.getRecentAppointments().subscribe(data => {
-
+    this.appointmentService.getRecentAppointments().subscribe((data) => {
       if (this.userRole === 'DOCTOR') {
-        this.recentAppointments = data.filter((apt: any) =>
-          apt.doctorEmployeeID === this.currentUser?.employeeCode
+        this.recentAppointments = data.filter(
+          (apt: any) => apt.doctorEmployeeID === this.currentUser?.employeeCode,
         );
 
         this.stats = {
           total: this.recentAppointments.length,
-          completed: this.recentAppointments.filter(a => a.status === 'Completed').length,
-          booked: this.recentAppointments.filter(a => a.status === 'Scheduled').length,
-          cancelled: this.recentAppointments.filter(a => a.status === 'Cancelled').length
+          completed: this.recentAppointments.filter((a) => a.status === 'Completed').length,
+          booked: this.recentAppointments.filter((a) => a.status === 'Scheduled').length,
+          cancelled: this.recentAppointments.filter((a) => a.status === 'Cancelled').length,
         };
       } else {
         this.recentAppointments = data;
@@ -140,7 +144,7 @@ export class Appointment implements OnInit {
 
         this.cdr.markForCheck();
       },
-      error: (err) => console.error('Failed to fetch user', err)
+      error: (err) => console.error('Failed to fetch user', err),
     });
   }
 
@@ -156,18 +160,20 @@ export class Appointment implements OnInit {
     this.isSubmitting = true;
 
     if (this.isEditMode && this.editingAptCode) {
-      this.appointmentService.updateAppointment(this.editingAptCode, this.appointmentForm.value).subscribe({
-        next: () => {
-          alert('Appointment updated successfully!');
-          this.cancelEdit();
-          this.loadData();
-          this.isSubmitting = false;
-        },
-        error: (err) => {
-          alert('Error updating appointment. ' + (err.error?.message || ''));
-          this.isSubmitting = false;
-        }
-      });
+      this.appointmentService
+        .updateAppointment(this.editingAptCode, this.appointmentForm.value)
+        .subscribe({
+          next: () => {
+            alert('Appointment updated successfully!');
+            this.cancelEdit();
+            this.loadData();
+            this.isSubmitting = false;
+          },
+          error: (err) => {
+            alert('Error updating appointment. ' + (err.error?.message || ''));
+            this.isSubmitting = false;
+          },
+        });
     } else {
       this.appointmentService.bookAppointment(this.appointmentForm.value).subscribe({
         next: () => {
@@ -179,7 +185,7 @@ export class Appointment implements OnInit {
         error: (err) => {
           alert('Error booking appointment. ' + (err.error?.message || ''));
           this.isSubmitting = false;
-        }
+        },
       });
     }
   }
@@ -207,7 +213,7 @@ export class Appointment implements OnInit {
         error: (err) => {
           console.error('Error fetching slots:', err);
           this.timeSlots = [];
-        }
+        },
       });
     } else {
       this.timeSlots = [];
@@ -221,13 +227,16 @@ export class Appointment implements OnInit {
 
     const formattedDate = new Date(apt.date).toISOString().split('T')[0];
 
-    this.appointmentForm.patchValue({
-      patientID: apt.patientID,
-      doctorEmployeeID: apt.doctorEmployeeID,
-      date: formattedDate,
-      timeSlot: apt.timeSlot,
-      status: apt.status
-    }, { emitEvent: false });
+    this.appointmentForm.patchValue(
+      {
+        patientID: apt.patientID,
+        doctorEmployeeID: apt.doctorEmployeeID,
+        date: formattedDate,
+        timeSlot: apt.timeSlot,
+        status: apt.status,
+      },
+      { emitEvent: false },
+    );
 
     this.updateDynamicTimeSlots(apt.timeSlot);
 
@@ -241,7 +250,9 @@ export class Appointment implements OnInit {
     this.timeSlots = [];
   }
   deleteAppointment(appointmentCode: string) {
-    const isConfirmed = confirm(`Are you sure you want to delete appointment ${appointmentCode}? This action cannot be undone.`);
+    const isConfirmed = confirm(
+      `Are you sure you want to delete appointment ${appointmentCode}? This action cannot be undone.`,
+    );
 
     if (isConfirmed) {
       this.appointmentService.deleteAppointment(appointmentCode).subscribe({
@@ -251,7 +262,7 @@ export class Appointment implements OnInit {
         },
         error: (err) => {
           alert('Error deleting appointment: ' + (err.error?.message || 'Unknown error'));
-        }
+        },
       });
     }
   }
@@ -289,9 +300,8 @@ export class Appointment implements OnInit {
         },
         error: (err) => {
           alert('Error updating status: ' + (err.error?.message || 'Unknown error'));
-        }
+        },
       });
     }
   }
-
 }

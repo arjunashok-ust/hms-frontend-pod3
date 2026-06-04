@@ -42,8 +42,8 @@
 
         <select class="form-control" [(ngModel)]="selectedStatus" (change)="applyFilters()">
           <option value="">All Status</option>
-          <option value="Active">Active</option>
-          <option value="Inactive">Inactive</option>
+          <option value="ACTIVE">Active</option>
+          <option value="INACTIVE">Inactive</option>
         </select>
       </div>
     </div>
@@ -92,9 +92,11 @@
                 <td>
                   <span
                     class="status-pill"
-                    [ngClass]="emp.status === true ? 'pill-active' : 'pill-inactive'"
+                    [ngClass]="
+                      emp.status?.toUpperCase() === 'ACTIVE' ? 'pill-active' : 'pill-inactive'
+                    "
                   >
-                    {{ emp.status === true ? 'Active' : 'Inactive' }}
+                    {{ emp.status?.toUpperCase() === 'ACTIVE' ? 'Active' : 'Inactive' }}
                   </span>
                 </td>
 
@@ -196,13 +198,22 @@
               <label for="phoneNumber">PHONE NUMBER *</label
               ><input type="text" formControlName="phone" />
             </div>
+
             <div class="input-group">
               <label for="role">ROLE *</label>
               <select formControlName="role">
                 <option value="" disabled>Select role</option>
-                <option value="ADMIN">Admin</option>
-                <option value="DOCTOR">Doctor</option>
-                <option value="NURSE">Nurse</option>
+                @for (role of availableRoles; track role.value) {
+                  <option [value]="role.value">{{ role.label }}</option>
+                }
+              </select>
+            </div>
+
+            <div class="input-group">
+              <label for="status">STATUS *</label>
+              <select formControlName="status">
+                <option value="ACTIVE">Active</option>
+                <option value="INACTIVE">Inactive</option>
               </select>
             </div>
             <div class="input-group">
@@ -292,6 +303,25 @@
                       class="d-flex align-items-center gap-2 mb-2"
                       style="display: flex; gap: 10px; align-items: center"
                     >
+                      <div
+                        class="d-flex align-items-center gap-2 mb-2"
+                        style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap"
+                      >
+                        <select
+                          formControlName="dayOfWeek"
+                          class="form-control"
+                          style="min-width: 120px"
+                        >
+                          <option value="" disabled selected>Day</option>
+                          <option value="MONDAY">Monday</option>
+                          <option value="TUESDAY">Tuesday</option>
+                          <option value="WEDNESDAY">Wednesday</option>
+                          <option value="THURSDAY">Thursday</option>
+                          <option value="FRIDAY">Friday</option>
+                          <option value="SATURDAY">Saturday</option>
+                          <option value="SUNDAY">Sunday</option>
+                        </select>
+                      </div>
                       <select formControlName="startTime" class="form-control">
                         <option value="" disabled selected>Start</option>
                         @for (hour of availableHours; track hour) {

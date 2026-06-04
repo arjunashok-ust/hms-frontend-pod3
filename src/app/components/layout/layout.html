@@ -1,11 +1,28 @@
-<div class="layout-wrapper">
-  <app-header></app-header>
+@if (isBrowser) {
+  <div class="layout-wrapper">
+    <app-header></app-header>
 
-  <div class="main-container">
-    <app-sidebar></app-sidebar>
+    <div class="main-container">
+      <app-sidebar></app-sidebar>
 
-    <main class="content-area">
-      <router-outlet></router-outlet>
-    </main>
+      <main class="content-area">
+        <router-outlet></router-outlet>
+      </main>
+    </div>
   </div>
-</div>
+} @else {
+  <div
+    class="global-loading-screen"
+    style="
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #f8f9fa;
+    "
+  >
+    <output class="spinner-border text-primary">
+      <span class="visually-hidden">Loading...</span>
+    </output>
+  </div>
+}

@@ -23,7 +23,7 @@ export const routes: Routes = [
       { path: 'profile', component: Profile, canActivate: [roleGuard] },
       { path: 'employees', component: Employee, canActivate: [roleGuard] },
       { path: 'patients', component: Patient, canActivate: [roleGuard] },
-      { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
-    ]
+      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+    ],
   },
 ];

@@ -1,55 +1,278 @@
 <div class="page-wrapper">
-  <div class="page-header">
-    <p class="subtitle">MY ACCOUNT</p>
-    <h2>User Profile</h2>
-  </div>
-
   @if (!isLoading && user) {
-    <div class="profile-layout">
-      <div class="card summary-card">
-        <div class="avatar-large">{{ getInitials(user.name) }}</div>
-        <h3 class="user-name">{{ user.name }}</h3>
-        <p class="designation">{{ user.designation || 'Staff Member' }}</p>
-
-        <div class="status-wrapper">
-          <span class="badge" [ngClass]="user.status ? 'active' : 'inactive'">
-            {{ user.status ? 'Active' : 'Inactive' }}
-          </span>
-          <span class="role-badge">{{ user?.role | titlecase }}</span>
-        </div>
+    <div class="profile-banner">
+      <div class="avatar-app">
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+          <circle cx="12" cy="7" r="4"></circle>
+        </svg>
       </div>
 
-      <div class="main-content">
-        <div class="card details-card">
-          <h4 class="section-title">Personal Information</h4>
-          <div class="info-grid">
-            <div class="info-group">
-              <label for="fullName">FULL NAME</label>
-              <div class="info-box">{{ user.name }}</div>
-            </div>
-            <div class="info-group">
-              <label for="emailAddress">EMAIL ADDRESS</label>
-              <div class="info-box">{{ user.email }}</div>
-            </div>
-            <div class="info-group">
-              <label for="role">ROLE</label>
-              <div class="info-box">{{ user?.role | titlecase }}</div>
-            </div>
-            <div class="info-group">
-              <label for="designation">DESIGNATION</label>
-              <div class="info-box">{{ user.designation }}</div>
-            </div>
-          </div>
+      <div class="banner-info">
+        <p class="eyebrow-text">MY PROFILE</p>
+        <h2 class="user-name">{{ user.name }}</h2>
+        <div class="designation-row">
+          <svg
+            class="icon-small"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+          </svg>
+          <span>{{ user.designation || 'Staff Member' }}</span>
+        </div>
 
-          <h4 class="section-title mt-4">Account Status</h4>
-          <div class="info-grid">
-            <div class="info-group">
-              <label for=" currentStatus">CURRENT STATUS</label>
-              <div class="info-box">{{ user.status ? 'Active' : 'Inactive' }}</div>
-            </div>
-          </div>
+        <div class="status-wrapper">
+          <span class="badge" [ngClass]="user.status === 'ACTIVE' ? 'active' : 'inactive'">
+            <span class="status-dot"></span>
+            {{ user.status === 'ACTIVE' ? 'Active' : 'Inactive' }}
+          </span>
+          <span class="role-badge">
+            <svg
+              class="icon-small"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+            </svg>
+            {{ user?.role | titlecase }}
+          </span>
         </div>
       </div>
     </div>
+
+    <div class="quick-stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon blue">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path
+              d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"
+            ></path>
+            <polyline points="22,6 12,13 2,6"></polyline>
+          </svg>
+        </div>
+        <div class="stat-text">
+          <label for="email">EMAIL</label>
+          <span class="truncate">{{ user.email || 'N/A' }}</span>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon green">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+          </svg>
+        </div>
+        <div class="stat-text">
+          <label for="role">ROLE</label>
+          <span class="truncate">{{ user.role | titlecase }}</span>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon orange">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+          </svg>
+        </div>
+        <div class="stat-text">
+          <label for="designation">DESIGNATION</label>
+          <span class="truncate">{{ user.designation || 'N/A' }}</span>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon red">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+          </svg>
+        </div>
+        <div class="stat-text">
+          <label for="status">STATUS</label>
+          <span class="truncate">{{ user.status === 'ACTIVE' ? 'Active' : 'Inactive' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="details-card">
+      <div class="details-header-row">
+        <div>
+          <p class="account-details-subtitle">ACCOUNT DETAILS</p>
+          <h3 class="section-title">Personal Information</h3>
+        </div>
+        <button class="refresh-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="23 4 23 10 17 10"></polyline>
+            <polyline points="1 20 1 14 7 14"></polyline>
+            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+          </svg>
+        </button>
+      </div>
+
+      <div class="sub-header-center">
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          class="icon-small"
+        >
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+          <circle cx="12" cy="7" r="4"></circle>
+        </svg>
+        <span>BASIC INFO</span>
+      </div>
+
+      <div class="info-grid">
+        <div class="info-group">
+          <label for="fullName">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              class="label-icon"
+            >
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            FULL NAME
+          </label>
+          <div class="info-box">{{ user.name || 'N/A' }}</div>
+        </div>
+        <div class="info-group">
+          <label for="emailAddress">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              class="label-icon"
+            >
+              <path
+                d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"
+              ></path>
+              <polyline points="22,6 12,13 2,6"></polyline>
+            </svg>
+            EMAIL ADDRESS
+          </label>
+          <div class="info-box">{{ user.email || 'N/A' }}</div>
+        </div>
+        <div class="info-group">
+          <label for="role">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              class="label-icon"
+            >
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+            </svg>
+            ROLE
+          </label>
+          <div class="info-box">{{ user.role || 'N/A' }}</div>
+        </div>
+        <div class="info-group">
+          <label for="designation">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              class="label-icon"
+            >
+              <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+              <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+            </svg>
+            DESIGNATION
+          </label>
+          <div class="info-box">{{ user.designation || 'N/A' }}</div>
+        </div>
+      </div>
+
+      <div class="sub-header-center mt-4">
+        <span>ACCOUNT STATUS</span>
+      </div>
+
+      <div class="info-grid single-col">
+        <div class="info-group">
+          <label for="currentStatus">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              class="label-icon"
+            >
+              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+            </svg>
+            CURRENT STATUS
+          </label>
+          <div class="info-box">{{ user.status === 'ACTIVE' ? 'Active' : 'Inactive' }}</div>
+        </div>
+      </div>
+
+      @if (user.medicalRegistrationNo || user.specialization) {
+        <div class="sub-header-center mt-4">
+          <span>MEDICAL CREDENTIALS</span>
+        </div>
+        <div class="info-grid">
+          <div class="info-group">
+            <label for="medicalRegistrationNo">MEDICAL REGISTRATION NO.</label>
+            <div class="info-box">{{ user.medicalRegistrationNo || 'N/A' }}</div>
+          </div>
+          <div class="info-group">
+            <label for="specialization">SPECIALIZATION</label>
+            <div class="info-box">{{ user.specialization || 'N/A' }}</div>
+          </div>
+          <div class="info-group">
+            <label for="qualification">QUALIFICATIONS</label>
+            <div class="info-box">
+              {{ user.qualification?.length ? user.qualification.join(', ') : 'N/A' }}
+            </div>
+          </div>
+          <div class="info-group">
+            <label for="consultationFee">CONSULTATION FEE</label>
+            <div class="info-box">
+              {{
+                user.consultationFee
+                  ? (user.consultationFee | currency: 'INR' : 'symbol' : '1.0-0')
+                  : 'N/A'
+              }}
+            </div>
+          </div>
+        </div>
+      }
+
+      @if (user.availabilitySlots && user.availabilitySlots.length > 0) {
+        <div class="sub-header-center mt-4">
+          <span>CONSULTATION SCHEDULE</span>
+        </div>
+        <div class="info-grid">
+          @for (slot of user.availabilitySlots; track slot._id) {
+            <div class="info-group">
+              <label for="timeSlot">SLOT</label>
+              <div class="info-box">{{ slot.startTime }} - {{ slot.endTime }}</div>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  } @else if (isLoading) {
+    <div class="loading-spinner">Loading profile...</div>
   }
 </div>

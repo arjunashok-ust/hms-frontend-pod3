@@ -6,7 +6,7 @@ import {
   FormsModule,
   Validators,
   AbstractControl,
-  ValidationErrors
+  ValidationErrors,
 } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { RouterLink, Router } from '@angular/router';
@@ -24,7 +24,7 @@ export class Login {
   private readonly fb = inject(FormBuilder);
   private readonly router = inject(Router);
   private readonly api = inject(ApiService);
-  private readonly cdr = inject(ChangeDetectorRef)
+  private readonly cdr = inject(ChangeDetectorRef);
 
   errorMessage: string | null = null;
   loginForm: FormGroup;
@@ -40,21 +40,25 @@ export class Login {
       password: ['', [Validators.required, Validators.minLength(6)]],
     });
 
-    this.passwordForm = this.fb.group({
-      newPassword: ['', [Validators.required, Validators.minLength(6)]],
-      confirmPassword: ['', Validators.required]
-    }, {
-      validators: this.passwordMatchValidator
-    });
+    this.passwordForm = this.fb.group(
+      {
+        newPassword: ['', [Validators.required, Validators.minLength(6)]],
+        confirmPassword: ['', Validators.required],
+      },
+      {
+        validators: this.passwordMatchValidator,
+      },
+    );
   }
 
   passwordMatchValidator(control: AbstractControl): ValidationErrors | null {
     return control.get('newPassword')?.value === control.get('confirmPassword')?.value
-      ? null : { mismatch: true };
+      ? null
+      : { mismatch: true };
   }
   onSubmit() {
     if (this.loginForm.valid) {
-      this.isLoading = true
+      this.isLoading = true;
 
       console.log(this.loginForm.value);
       this.auth.login(this.loginForm.value).subscribe({
@@ -85,7 +89,7 @@ export class Login {
         error: (error) => {
           this.isLoading = false;
           this.errorMessage = error.error?.message || 'Invalid email or password';
-          this.cdr.markForCheck(); 
+          this.cdr.markForCheck();
         },
       });
     } else {
@@ -99,7 +103,7 @@ export class Login {
     const payload = {
       email: this.tempEmail,
       oldPassword: this.tempOldPassword,
-      newPassword: this.passwordForm.value.newPassword
+      newPassword: this.passwordForm.value.newPassword,
     };
 
     this.api.changeFirstPassword(payload).subscribe({
@@ -117,7 +121,7 @@ export class Login {
       error: (err) => {
         this.isLoading = false;
         alert(err.error?.message || 'Failed to update password');
-      }
+      },
     });
   }
 
@@ -126,5 +130,4 @@ export class Login {
     this.passwordForm.reset();
     this.loginForm.reset();
   }
-
 }

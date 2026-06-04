@@ -11,9 +11,9 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
       } else {
         errorMessage = `Server returned code: ${error.status}, error message is: ${error.message}`;
       }
-      
+
       console.error('Error Interceptor caught:', errorMessage);
       return throwError(() => error);
-    })
+    }),
   );
 };
