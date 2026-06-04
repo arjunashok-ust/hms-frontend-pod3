@@ -28,7 +28,6 @@ export class EditEmployeeComponent implements OnInit {
   toast: ToastrService = inject(ToastrService);
 
   cd: ChangeDetectorRef = inject(ChangeDetectorRef);
-  route: Router = inject(Router);
 
   updateForm: FormGroup;
 
@@ -58,9 +57,9 @@ export class EditEmployeeComponent implements OnInit {
       medicalRegistrationNo: ['', Validators.pattern(/^[a-z0-9]*$/i)],
       specialization: [''],
       qualification: ['', [Validators.pattern(/^[a-z ]*$/i)]],
-      consultationFee: [''],
-      startHour: [''],
-      endHour: [''],
+      consultationFee: ['', [Validators.pattern(/^\d+$/)]],
+      startHour: ['', [Validators.min(0)]],
+      endHour: ['', [Validators.max(23)]],
       availabilitySlots: this.fb.array([]),
     });
   }
@@ -69,7 +68,6 @@ export class EditEmployeeComponent implements OnInit {
     const userEmail = localStorage.getItem('updateEmail') ?? '';
     this.adminService.getUserEmployee().subscribe({
       next: (res) => {
-        console.log(res);
         this.users = res;
         this.userData = this.users.find((emp) => emp.email === userEmail) || null;
         this.updateForm.patchValue({
@@ -85,16 +83,22 @@ export class EditEmployeeComponent implements OnInit {
           specialization: this.userData?.specialization,
           qualification: this.userData?.qualification,
           consultationFee: this.userData?.consultationFee,
-          availabilitySlots: this.userData?.availabilitySlots,
         });
+        // availability slots patch
+        const slotsArray = this.updateForm.get('availabilitySlots') as FormArray;
+        slotsArray.clear();
+        (this.userData?.availabilitySlots || []).forEach((slot) =>
+          slotsArray.push(this.fb.control(slot)),
+        );
+
         this.cd.detectChanges();
       },
-      error: (error) => {
-        this.toast.error(error.message);
-         if(error.message == 'You are not authorized to perform this action.'){
-          this.route.navigate(['/access-denied']);
+      error: (err) => {
+        this.toast.error(err?.error?.message);
+        if(err.status === 403){
+          this.router.navigate(['/access-denied']);
         }
-      }
+      },
     });
     this.authService.getUiData<RoleModel[]>('/ui/getRoles').subscribe((res) => {
       this.roles_data = res;
@@ -123,6 +127,8 @@ export class EditEmployeeComponent implements OnInit {
       return;
     }
 
+    this.generatedSlots = [];
+
     if (this.userData?.availabilitySlots) {
       this.generatedSlots.push(...(this.userData?.availabilitySlots || []));
     }
@@ -137,11 +143,13 @@ export class EditEmployeeComponent implements OnInit {
 
   toggleSlot(slot: string) {
     const arr = this.updateForm.get('availabilitySlots') as FormArray;
-    if (arr.value.includes(slot)) {
-      const index = arr.value.indexOf(slot);
-      arr.removeAt(index);
-    } else {
+
+    const index: number = arr.value.indexOf(slot);
+
+    if (index === -1) {
       arr.push(this.fb.control(slot));
+    } else {
+      arr.removeAt(index);
     }
   }
 
@@ -172,7 +180,7 @@ export class EditEmployeeComponent implements OnInit {
         this.router.navigate(['/employee']);
       },
       error: (error) => {
-         this.toast.error(error.message);
+        this.toast.error(error.message);
       },
     });
   }

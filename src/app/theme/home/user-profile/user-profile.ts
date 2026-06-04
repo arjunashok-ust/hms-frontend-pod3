@@ -28,8 +28,8 @@ export class UserProfileComponent implements OnInit {
         this.cd.detectChanges();
       },
       error: (err) => {
-        this.toast.error(err.message);
-        if (err.message == 'You are not authorized to perform this action.') {
+        this.toast.error(err?.error?.message);
+        if(err.status === 403){
           this.route.navigate(['/access-denied']);
         }
       },

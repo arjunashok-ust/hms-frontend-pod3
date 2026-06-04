@@ -64,7 +64,7 @@ input::placeholder {
   color: #bbb;
 }
 
-input[type='submit'] {
+button {
   background: #010811;
   color:white;
   cursor: pointer;

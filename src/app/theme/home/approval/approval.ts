@@ -41,8 +41,8 @@ export class ApprovalComponent implements OnInit {
         this.cd.detectChanges();
       },
       error: (error) => {
-        this.toast.error(error.message);
-         if(error.message == 'You are not authorized to perform this action.'){
+        this.toast.error(error?.error?.message);
+        if(error.status === 403){
           this.route.navigate(['/access-denied']);
         }
       },

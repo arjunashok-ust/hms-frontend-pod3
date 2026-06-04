@@ -1,11 +1,5 @@
 import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
-import {
-  FormBuilder,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-  ɵInternalFormsSharedModule,
-} from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { AppointmentService } from '../../../services/appointment.service';
 import { UserService } from '../../../services/user.service';
@@ -14,10 +8,11 @@ import { CommonModule } from '@angular/common';
 import { EmployeeModel } from '../../../models/user.model';
 import { ToastrService } from 'ngx-toastr';
 import { appointmentDateValidator } from '../../../validators/time-range-validator';
+import { take } from 'rxjs';
 
 @Component({
   selector: 'app-appointment',
-  imports: [RouterModule, ɵInternalFormsSharedModule, CommonModule, ReactiveFormsModule],
+  imports: [RouterModule, CommonModule, ReactiveFormsModule],
   templateUrl: './appointment.html',
   styleUrl: './appointment.css',
 })
@@ -33,7 +28,7 @@ export class AppointmentComponent implements OnInit {
   appointmentUiData: AppointmentResponseModel | null = null;
   appointments: AppointmentModel[] | null = null;
   // for setting doctor time slots
-  doctorTimeSlots: string[] = [''];
+  doctorTimeSlots: string[] = [];
   date = Date.now();
 
   employeeId = localStorage.getItem('employeeId');
@@ -46,7 +41,7 @@ export class AppointmentComponent implements OnInit {
         date: ['', Validators.required],
         timeSlot: ['', Validators.required],
         status: ['Booked', Validators.required],
-        createdByEmployeeId: [this.employeeId,Validators.required]
+        createdByEmployeeId: [this.employeeId, Validators.required],
       },
       {
         validators: appointmentDateValidator,
@@ -61,33 +56,42 @@ export class AppointmentComponent implements OnInit {
   }
 
   loadUiData() {
-    this.appointmentService.getAppointmentUiData().subscribe({
-      next: (res) => {
-        this.appointmentUiData = res;
-        this.cd.detectChanges();
-      },
-      error: (err) => {
-        this.toast.error(err.message);
-      },
-    });
-    this.appointmentService.getAllDoctors().subscribe({
-      next: (res) => {
-        this.doctors = res;
-        this.cd.detectChanges();
-      },
-      error: (err) => {
-         this.toast.error(err.message);
-      },
-    });
-    this.appointmentService.getAllAppointment().subscribe({
-      next: (res) => {
-        this.appointments = res;
-        this.cd.detectChanges();
-      },
-      error: (err) => {
-         this.toast.error(err.message);
-      },
-    });
+    this.appointmentService
+      .getAppointmentUiData()
+      .pipe(take(1))
+      .subscribe({
+        next: (res) => {
+          this.appointmentUiData = res;
+          this.cd.detectChanges();
+        },
+        error: (err) => {
+          this.toast.error(err?.error?.message);
+        },
+      });
+    this.appointmentService
+      .getAllDoctors()
+      .pipe(take(1))
+      .subscribe({
+        next: (res) => {
+          this.doctors = res;
+          this.cd.detectChanges();
+        },
+        error: (err) => {
+          this.toast.error(err?.error?.message);
+        },
+      });
+    this.appointmentService
+      .getAllAppointment()
+      .pipe(take(1))
+      .subscribe({
+        next: (res) => {
+          this.appointments = res;
+          this.cd.detectChanges();
+        },
+        error: (err) => {
+          this.toast.error(err?.message);
+        },
+      });
   }
 
   onDoctorChange() {
@@ -97,13 +101,13 @@ export class AppointmentComponent implements OnInit {
     let doctor = this.doctors?.find((d) => d.employeeCode === doctorEmployeeId);
     if (!date || !doctor) {
       this.doctorTimeSlots = [];
+      return;
     }
 
     const allSlots = doctor?.availabilitySlots;
     const bookedSlots = this.appointments
       ?.filter((apt) => {
         const apt_date = new Date(apt.date).toISOString();
-        console.log(date===apt_date);
         return (
           apt.doctorEmployeeId === doctor?.employeeCode &&
           apt_date === date &&
@@ -128,7 +132,7 @@ export class AppointmentComponent implements OnInit {
           this.toast.success(res.message);
         },
         error: (err) => {
-          this.toast.error(err.message);
+          this.toast.error(err?.err?.message);
         },
       });
     }
@@ -151,10 +155,10 @@ export class AppointmentComponent implements OnInit {
         this.toast.success(res.message);
       },
       error: (err) => {
-        this.toast.error(err.message);
+        this.toast.error(err.error.message);
       },
     });
-    
+
     this.appointmentForm.get('doctorEmployeeId')?.reset();
     this.doctorTimeSlots.length = 0;
   }

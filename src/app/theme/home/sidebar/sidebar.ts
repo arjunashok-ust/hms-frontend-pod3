@@ -26,7 +26,7 @@ export class SidebarComponent implements OnInit {
         this.cd.detectChanges();
       },
       error: (err) => {
-        this.toast.error(err.message);
+        this.toast.error(err.error.message);
       },
     });
   }

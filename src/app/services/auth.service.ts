@@ -12,29 +12,28 @@ export class AuthService {
   signUp(data: SignUpModel): Observable<any> {
     return this.http
       .post(`${this.api.backend_url}/auth/signUp`, data)
-      .pipe(catchError(this.handleError));
+      .pipe(catchError((error) => this.handleError(error)));
   }
   // login
   login(data: any): Observable<any> {
     return this.http
       .post(`${this.api.backend_url}/auth/login`, data)
-      .pipe(catchError(this.handleError));
+      .pipe(catchError((error) => this.handleError(error)));
   }
   // Role,Departments and Specialization
   getUiData<T>(url: string): Observable<T> {
-    return this.http.get<T>(`${this.api.backend_url + url}`).pipe(catchError(this.handleError));
+    return this.http
+      .get<T>(`${this.api.backend_url + url}`)
+      .pipe(catchError((error) => this.handleError(error)));
   }
   // submit password for first login
-  setPassword(data : any) : Observable<any> {
-    return this.http.post(`${this.api.backend_url}/auth/set-password`,data).pipe(catchError(this.handleError));
+  setPassword(data: any): Observable<any> {
+    return this.http
+      .post(`${this.api.backend_url}/auth/set-password`, data)
+      .pipe(catchError((error) => this.handleError(error)));
   }
   // error handling
   handleError(error: HttpErrorResponse) {
-    console.log('API Error : ', error);
-    let message = `Error Connecting Server!`;
-    if (error.error?.message) {
-      message = error.error?.message;
-    }
-    return throwError(() => new Error(message));
+    return throwError(() => error);
   }
 }

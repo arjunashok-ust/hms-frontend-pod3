@@ -46,9 +46,9 @@ export class PatientComponent implements OnInit {
         this.loadUiData();
         this.cd.detectChanges();
       },
-      error: (error) => {
-        this.toast.error(error.message);
-        if (error.message == 'You are not authorized to perform this action.') {
+      error: (err) => {
+        this.toast.error(err?.error?.message);
+        if(err.status === 403){
           this.route.navigate(['/access-denied']);
         }
       },
@@ -120,6 +120,7 @@ export class PatientComponent implements OnInit {
     this.userService.createPatient(payload).subscribe({
       next: (res) => {
         this.toast.success('Patient added sucessfully');
+        this.patientForm.reset();
         this.updateData();
       },
       error: (error) => {

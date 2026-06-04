@@ -257,10 +257,10 @@
               <span class="input-icon select-icon">
                 <i class="bi bi-chevron-down"></i>
               </span>
-              <small *ngIf="signUpModalForm.get('specialization')?.value"
+            </div>
+            <small *ngIf="!signUpModalForm.get('specialization')?.value"
               >Specialization is required</small
             >
-            </div>
           </div>
 
           <div class="form-group">

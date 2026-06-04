@@ -14,28 +14,28 @@ export class AppointmentService {
   createAppointment(data: AppointmentModel): Observable<any> {
     return this.http
       .post(`${this.api.backend_url}/appointment/createAppointment`, data)
-      .pipe(catchError(this.handleError));
+      .pipe(catchError((error) => this.handleError(error)));
   }
 
   // get all appointments
   getAllAppointment(): Observable<AppointmentModel[]> {
     return this.http
       .get<AppointmentModel[]>(`${this.api.backend_url}/appointment/getAllAppointments`)
-      .pipe(catchError(this.handleError));
+      .pipe(catchError((error) => this.handleError(error)));
   }
 
   // get all doctors
   getAllDoctors(): Observable<EmployeeModel[]> {
     return this.http
       .get<EmployeeModel[]>(`${this.api.backend_url}/appointment/getDoctors`)
-      .pipe(catchError(this.handleError));
+      .pipe(catchError((error) => this.handleError(error)));
   }
 
   // get appointment ui data
   getAppointmentUiData(): Observable<AppointmentResponseModel> {
     return this.http
       .get<AppointmentResponseModel>(`${this.api.backend_url}/appointment/getAppointmentUiData`)
-      .pipe(catchError(this.handleError));
+      .pipe(catchError((error) => this.handleError(error)));
   }
 
   // delete appointment
@@ -44,14 +44,13 @@ export class AppointmentService {
       .get(`${this.api.backend_url}/appointment/deleteAppointment`, {
         params: { appointmentId: appointmentId },
       })
-      .pipe(catchError(this.handleError));
+      .pipe(catchError((error) => this.handleError(error)));
   }
 
   handleError(error: HttpErrorResponse) {
     let message = 'Unexpected Error Occured.';
-    console.log('Appointment API Error : ', message);
-    if (error.message) {
-      message = error.message;
+    if (error?.error?.message) {
+      message = error?.error?.message;
     }
     return throwError(() => new Error(message));
   }

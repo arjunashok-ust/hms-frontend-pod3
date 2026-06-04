@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { FormGroup, Validators, ReactiveFormsModule, FormBuilder } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { Router, RouterLink, RouterModule } from '@angular/router';
@@ -10,14 +10,13 @@ import { ToastrService } from 'ngx-toastr';
   templateUrl: './login.htm',
   styleUrl: './login.css',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, RouterLink,RouterModule],
+  imports: [ReactiveFormsModule, CommonModule, RouterLink, RouterModule],
 })
 export class LoginComponent implements OnInit {
   loginForm: FormGroup;
-  
+
   auth: AuthService = inject(AuthService);
   router: Router = inject(Router);
-  cd: ChangeDetectorRef = inject(ChangeDetectorRef);
   toast: ToastrService = inject(ToastrService);
 
   constructor(readonly fb: FormBuilder) {
@@ -32,31 +31,43 @@ export class LoginComponent implements OnInit {
   }
 
   onSubmit() {
+    if (this.loginForm.invalid) {
+      this.toast.warning('Please fill the required fields.');
+      return;
+    }
+
     const payload = {
       email: this.loginForm.value.email,
       password: this.loginForm.value.password,
-    }
+    };
     this.auth.login(payload).subscribe({
       next: (res) => {
+        if (res.status !== 'Active') {
+          this.toast.info('Your account is not activated yet,Please contact the admin');
+          this.router.navigate(['/login']);
+          return;
+        }
+
         // saving token to local
         localStorage.setItem('token', res.token);
         localStorage.setItem('email', res.email);
-        localStorage.setItem('role',res.role);
+        localStorage.setItem('role', res.role);
 
-        if(res.status != 'Active'){
-          this.toast.info("Your account is not activated yet,Please contact the admin");
-          this.router.navigate(['/login']);
-        }
-        else if (res.firstLogin) {
-          this.toast.info("Change your current passsword");
+        if (res.firstLogin) {
+          this.toast.info('Change your current passsword');
           this.router.navigate(['/password-modal']);
-        }
-        else{
-          this.toast.success("Login Sucessfull");
+        } else {
+          this.toast.success('Login Sucessfull');
           this.router.navigate(['/profile']);
         }
       },
-      error: (error) => this.toast.warning(error.message),
+      error: (error) => {
+        if (error.status === 401) {
+          this.toast.warning('Invalid email or password');
+        } else {
+          this.toast.warning(error?.error?.message || 'Login Failed');
+        }
+      },
     });
   }
 }
