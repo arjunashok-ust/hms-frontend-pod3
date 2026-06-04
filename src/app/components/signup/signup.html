@@ -30,7 +30,7 @@
 
           <div class="form-group">
             <label for="password">Password *</label>
-            <input formControlName="password" type="password" placeholder="Min 6 characters" />
+            <input formControlName="password" type="password" placeholder="Min 8 characters" />
             @if (
               signupForm.get('password')?.touched && signupForm.get('password')?.hasError('pattern')
             ) {
@@ -85,10 +85,9 @@
             <div class="select-wrapper">
               <select formControlName="department">
                 <option value="" disabled selected>Select Department</option>
-                <option value="OPD">OPD</option>
-                <option value="IPD">IPD</option>
-                <option value="LAB">LAB</option>
-                <option value="PHARMACY">PHARMACY</option>
+                @for (dept of departments; track dept) {
+                  <option [value]="dept">{{ dept }}</option>
+                }
               </select>
               @if (signupForm.get('department')?.touched && signupForm.get('department')?.invalid) {
                 <span class="error-msg">Please select a department</span>
@@ -229,7 +228,6 @@
 
         <div class="form-footer">
           <p>Already have an account? <a routerLink="/login" class="login-link">Sign In</a></p>
-          <div class="copyright-notice">© 2026 ALL RIGHTS RESERVED</div>
         </div>
       </form>
     </div>

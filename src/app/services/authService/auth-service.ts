@@ -23,7 +23,7 @@ export class Auth {
   }
 
   signup(userData: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/signup`, userData);
+    return this.http.post(`${this.apiUrl}/signupByUser`, userData);
   }
 
   isAuthenticated(): boolean {

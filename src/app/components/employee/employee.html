@@ -218,10 +218,11 @@
             </div>
             <div class="input-group">
               <label for="department">DEPARTMENT *</label>
-              <select formControlName="department">
-                <option value="" disabled>Select department</option>
-                <option value="OPD">OPD</option>
-                <option value="IPD">IPD</option>
+               <select formControlName="department">
+                <option value="" disabled selected>Select Department</option>
+                @for (dept of departments; track dept) {
+                  <option [value]="dept">{{ dept }}</option>
+                }
               </select>
             </div>
             <div class="input-group">

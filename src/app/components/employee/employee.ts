@@ -28,7 +28,7 @@ export class Employee implements OnInit {
   searchTerm: string = '';
   selectedDepartment: string = '';
   selectedStatus: string = '';
-  departments: string[] = [];
+  departments = ["OPD", "IPD", "ADMIN", "LAB", "PHARMACY"]
 
   showAddModal = false;
   isSubmittingModal = false;
@@ -80,8 +80,6 @@ export class Employee implements OnInit {
         this.pendingCount = data.filter(
           (emp: any) => emp.status === 'ADMIN_APPROVAL_PENDING',
         ).length;
-        const depts = new Set(data.map((emp: any) => emp.department).filter(Boolean));
-        this.departments = Array.from(depts) as string[];
         this.applyFilters();
         this.isLoading = false;
         this.cdr.markForCheck();

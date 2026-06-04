@@ -325,12 +325,6 @@ select {
   font-weight: 600;
 }
 
-.copyright-notice {
-  font-size: 0.65rem;
-  color: #9ca3af;
-  margin-top: 2rem;
-}
-
 .image-column {
   flex: 1;
   padding: 1rem 1rem 1rem 0;

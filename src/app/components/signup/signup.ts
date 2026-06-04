@@ -31,8 +31,8 @@ export class Signup {
 
   signupForm: FormGroup;
   medicalRoles = ['doctor', 'nurse', 'lab_tech', 'pharmacist'];
-
   rowSubSlotsMap: { [uniqueId: string]: GeneratedSlot[] } = {};
+  departments = ["OPD", "IPD", "ADMIN", "LAB", "PHARMACY"]
 
   availableHours: string[] = Array.from({ length: 24 }, (_, i) => {
     const hour = i.toString().padStart(2, '0');
@@ -55,7 +55,6 @@ export class Signup {
         department: ['', Validators.required],
         designation: ['', Validators.required],
         joiningDate: ['', [Validators.required, this.joiningDateValidator]],
-
         medicalRegistrationNo: [''],
         specialization: [''],
         qualification: [''],
@@ -208,9 +207,9 @@ export class Signup {
       const parsedQualifications =
         rawQual && typeof rawQual === 'string' && rawQual.trim() !== ''
           ? rawQual
-              .split(',')
-              .map((q: string) => q.trim())
-              .filter((q: string) => q !== '')
+            .split(',')
+            .map((q: string) => q.trim())
+            .filter((q: string) => q !== '')
           : [];
 
       const formattedAvailability: any[] = [];

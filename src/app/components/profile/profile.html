@@ -222,7 +222,7 @@
             </svg>
             CURRENT STATUS
           </label>
-          <div class="info-box">{{ user.status === 'ACTIVE' ? 'Active' : 'Inactive' }}</div>
+          <div class="info-box"> {{ user.status?.toUpperCase() === 'ACTIVE' ? 'Active' : 'Inactive' }}</div>
         </div>
       </div>
 

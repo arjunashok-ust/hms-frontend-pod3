@@ -130,23 +130,6 @@ input:focus {
   box-shadow: 0 0 0 4px var(--focus-ring);
 }
 
-.forgot-password-container {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 0.4rem;
-}
-
-.forgot-link {
-  font-size: 0.8rem;
-  color: #0056b3;
-  text-decoration: none;
-  font-weight: 600;
-}
-
-.forgot-link:hover {
-  text-decoration: underline;
-}
-
 .error-text {
   color: var(--error-color);
   font-size: 0.78rem;
@@ -257,13 +240,6 @@ input:focus {
 
 .signup-link:hover {
   text-decoration: underline;
-}
-
-.copyright-notice {
-  font-size: 0.75rem;
-  color: #9fb3c8;
-  letter-spacing: 0.05em;
-  font-weight: 500;
 }
 
 .image-column {
