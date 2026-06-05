@@ -1,0 +1,197 @@
+<div class="main-container">
+
+  <div class="card-wrapper">
+
+    <!-- LEFT PANEL -->
+
+    <div class="left-panel">
+
+      <!-- LOGO -->
+
+      <div class="logo">
+
+        <span class="icon">
+          ➕
+        </span>
+
+        <div>
+
+          <h3>
+            CareMatrix
+          </h3>
+
+          <p>
+            HOSPITAL MANAGEMENT
+          </p>
+
+        </div>
+
+      </div>
+
+      <!-- TITLE -->
+
+      <h1>
+        Welcome Back
+      </h1>
+
+      <p class="subtitle">
+
+        Sign in to continue to your account.
+
+      </p>
+
+      <!-- ERROR -->
+
+      <div *ngIf="errorMessage" class="error-message">
+
+        {{ errorMessage }}
+
+      </div>
+
+      <!-- FIRST LOGIN -->
+
+      <div *ngIf="firstLoginMessage" class="success-message">
+
+        {{ firstLoginMessage }}
+
+      </div>
+
+      <!-- FORM -->
+
+      <form #loginForm="ngForm" (ngSubmit)="onLogin(loginForm)" novalidate>
+
+        <!-- EMAIL -->
+
+        <label>
+          Email
+        </label>
+
+        <div class="input-box" [class.invalid]="
+            emailField.invalid &&
+            emailField.touched
+          ">
+
+          <input type="email" [(ngModel)]="email" name="email" #emailField="ngModel" placeholder="Enter your email"
+            required email>
+
+        </div>
+
+        <!-- EMAIL ERROR -->
+
+        <div class="validation-error" *ngIf="
+            emailField.invalid &&
+            emailField.touched
+          ">
+
+          <span *ngIf="emailField.errors?.['required']">
+
+            Email is required
+
+          </span>
+
+          <span *ngIf="emailField.errors?.['email']">
+
+            Enter a valid email
+
+          </span>
+
+        </div>
+
+        <!-- PASSWORD -->
+
+        <label>
+          Password
+        </label>
+
+        <div class="input-box" [class.invalid]="
+            passwordField.invalid &&
+            passwordField.touched
+          ">
+
+          <input type="password" [(ngModel)]="password" name="password" #passwordField="ngModel"
+            placeholder="Enter your password" required minlength="8">
+
+        </div>
+
+        <!-- PASSWORD ERROR -->
+
+        <div class="validation-error" *ngIf="
+            passwordField.invalid &&
+            passwordField.touched
+          ">
+
+          <span *ngIf="passwordField.errors?.['required']">
+
+            Password is required
+
+          </span>
+
+          <span *ngIf="passwordField.errors?.['minlength']">
+
+            Minimum 8 characters required
+
+          </span>
+
+        </div>
+
+        <!-- FORGOT -->
+
+        <div class="forgot">
+
+          Forgot Password?
+
+        </div>
+
+        <!-- BUTTON -->
+
+        <button type="submit">
+
+          Sign In
+
+        </button>
+
+      </form>
+
+      <!-- DIVIDER -->
+
+      <div class="divider">
+
+        Or
+
+      </div>
+
+      <!-- JOIN -->
+
+      <div class="join-section">
+
+        Want to join our Organization ?
+
+        <a routerLink="/signup">
+
+          Join Us
+
+        </a>
+
+      </div>
+
+      <!-- FOOTER -->
+
+      <div class="footer">
+
+        © 2026 CareMatrix HMS.
+
+      </div>
+
+    </div>
+
+    <!-- RIGHT PANEL -->
+
+    <div class="right-panel">
+
+      <img src="images/loginLogo.jpg" alt="Login Illustration">
+
+    </div>
+
+  </div>
+
+</div>

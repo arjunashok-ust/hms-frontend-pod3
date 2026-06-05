@@ -1,0 +1,424 @@
+<div class="profile-page">
+
+  <!-- LOADING -->
+
+  <div class="loading-screen" *ngIf="loading">
+
+    <h2>
+      Loading Profile...
+    </h2>
+
+  </div>
+
+  <!-- PROFILE -->
+
+  <div *ngIf="!loading">
+
+    <!-- HERO -->
+
+    <div class="profile-hero">
+
+      <div class="hero-left">
+
+        <!-- AVATAR -->
+
+        <div class="profile-avatar">
+
+          {{ getInitial(user?.name) }}
+
+        </div>
+
+        <!-- INFO -->
+
+        <div class="hero-info">
+
+          <span class="hero-label">
+
+            MY PROFILE
+
+          </span>
+
+          <h1>
+
+            {{ user?.name }}
+
+          </h1>
+
+          <p class="designation">
+
+            {{ user?.designation || 'Healthcare Staff' }}
+
+          </p>
+
+          <div class="hero-badges">
+
+            <span class="active-badge">
+
+              ●
+
+              {{ user?.status ? 'ACTIVE' : 'INACTIVE' }}
+
+            </span>
+
+            <span class="role-badge">
+
+              {{ user?.role }}
+
+            </span>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- MINI CARDS -->
+
+    <div class="mini-cards">
+
+      <!-- EMAIL -->
+
+      <div class="mini-card">
+
+        <div class="mini-icon blue">
+
+          ✉
+
+        </div>
+
+        <div>
+
+          <span>
+            EMAIL
+          </span>
+
+          <h4>
+
+            {{ user?.email }}
+
+          </h4>
+
+        </div>
+
+      </div>
+
+      <!-- ROLE -->
+
+      <div class="mini-card">
+
+        <div class="mini-icon green">
+
+          👤
+
+        </div>
+
+        <div>
+
+          <span>
+            ROLE
+          </span>
+
+          <h4>
+
+            {{ user?.role }}
+
+          </h4>
+
+        </div>
+
+      </div>
+
+      <!-- DESIGNATION -->
+
+      <div class="mini-card">
+
+        <div class="mini-icon orange">
+
+          💼
+
+        </div>
+
+        <div>
+
+          <span>
+            DESIGNATION
+          </span>
+
+          <h4>
+
+            {{ user?.designation || '—' }}
+
+          </h4>
+
+        </div>
+
+      </div>
+
+      <!-- STATUS -->
+
+      <div class="mini-card">
+
+        <div class="mini-icon pink">
+
+          📈
+
+        </div>
+
+        <div>
+
+          <span>
+            STATUS
+          </span>
+
+          <h4>
+
+            {{ user?.status ? 'ACTIVE' : 'INACTIVE' }}
+
+          </h4>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- DETAILS CARD -->
+
+    <div class="details-card">
+
+      <!-- HEADER -->
+
+      <div class="details-header">
+
+        <div>
+
+          <span class="section-label">
+
+            ACCOUNT DETAILS
+
+          </span>
+
+          <h2>
+
+            Personal Information
+
+          </h2>
+
+        </div>
+
+      </div>
+
+      <!-- GRID -->
+
+      <div class="details-grid">
+
+        <!-- FULL NAME -->
+
+        <div class="input-group">
+
+          <label>
+
+            FULL NAME
+
+          </label>
+
+          <input type="text" [value]="user?.name" readonly>
+
+        </div>
+
+        <!-- EMAIL -->
+
+        <div class="input-group">
+
+          <label>
+
+            EMAIL ADDRESS
+
+          </label>
+
+          <input type="text" [value]="user?.email" readonly>
+
+        </div>
+
+        <!-- ROLE -->
+
+        <div class="input-group">
+
+          <label>
+
+            ROLE
+
+          </label>
+
+          <input type="text" [value]="user?.role" readonly>
+
+        </div>
+
+        <!-- DESIGNATION -->
+
+        <div class="input-group">
+
+          <label>
+
+            DESIGNATION
+
+          </label>
+
+          <input type="text" [value]="user?.designation || '—'" readonly>
+
+        </div>
+
+        <!-- PHONE -->
+
+        <div class="input-group">
+
+          <label>
+
+            PHONE
+
+          </label>
+
+          <input type="text" [value]="user?.phone || '—'" readonly>
+
+        </div>
+
+        <!-- DEPARTMENT -->
+
+        <div class="input-group">
+
+          <label>
+
+            DEPARTMENT
+
+          </label>
+
+          <input type="text" [value]="user?.department || '—'" readonly>
+
+        </div>
+
+        <!-- JOINING DATE -->
+
+        <div class="input-group">
+
+          <label>
+
+            JOINING DATE
+
+          </label>
+
+          <input type="text" [value]="formatDate(user?.joiningDate)" readonly>
+
+        </div>
+
+        <!-- QUALIFICATION -->
+
+        <div class="input-group">
+
+          <label>
+
+            QUALIFICATION
+
+          </label>
+
+          <input type="text" [value]="user?.qualification || '—'" readonly>
+
+        </div>
+
+        <!-- MEDICAL REGISTRATION -->
+
+        <div class="input-group" *ngIf="
+            user?.role === 'doctor'
+          ">
+
+          <label>
+
+            MEDICAL REGISTRATION NO
+
+          </label>
+
+          <input type="text" [value]="user?.medicalRegistrationNo || '—'" readonly>
+
+        </div>
+
+        <!-- SPECIALIZATION -->
+
+        <div class="input-group" *ngIf="
+            user?.role === 'doctor'
+          ">
+
+          <label>
+
+            SPECIALIZATION
+
+          </label>
+
+          <input type="text" [value]="user?.specialization || '—'" readonly>
+
+        </div>
+
+        <!-- CONSULTATION FEE -->
+
+        <div class="input-group" *ngIf="
+            user?.role === 'doctor'
+          ">
+
+          <label>
+
+            CONSULTATION FEE
+
+          </label>
+
+          <input type="text" [value]="user?.consultationFee || '—'" readonly>
+
+        </div>
+
+        <!-- AVAILABILITY -->
+
+        <div class="input-group full-width" *ngIf="
+            user?.role === 'doctor'
+            &&
+            user?.availabilitySlots?.length
+          ">
+
+          <label>
+
+            AVAILABILITY SLOTS
+
+          </label>
+
+          <div class="slots-wrapper">
+
+            <span class="slot-badge" *ngFor="
+                let slot of
+                user?.availabilitySlots
+              ">
+
+              {{ slot }}
+
+            </span>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- LOGOUT -->
+
+      <div class="logout-section">
+
+        <button class="logout-btn" (click)="logout()">
+
+          Logout
+
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

@@ -1,0 +1,147 @@
+<div class="main-container">
+  <div class="card-wrapper">
+    <!-- LEFT PANEL -->
+    <div class="left-panel">
+      <!-- LOGO -->
+      <div class="logo">
+        <span class="icon"> ➕ </span>
+        <div>
+          <h3> CareMatrix </h3>
+          <p> HOSPITAL MANAGEMENT </p>
+        </div>
+      </div>
+      <!-- TITLE -->
+      <h1> Join Our Organization </h1>
+      <p class="subtitle"> Submit your professional details for verification and onboarding. </p>
+      <!-- ERROR -->
+      <div *ngIf="errorMessage" class="error-message">
+        {{ errorMessage }}
+      </div>
+      <!-- SUCCESS -->
+      <div *ngIf="successMessage" class="success-message">
+        {{ successMessage }}
+      </div>
+      <!-- FORM -->
+      <form #signupForm="ngForm" (ngSubmit)="onSignup()">
+        <div class="form-grid">
+          <!-- NAME -->
+          <div>
+            <label> Full Name </label>
+            <div class="input-box" [class.invalid]="nameField.invalid && nameField.touched">
+              <input type="text" [(ngModel)]="name" name="name" #nameField="ngModel" placeholder="Enter full name" required minlength="3">
+            </div>
+            <div class="validation-error" *ngIf="nameField.invalid && nameField.touched">
+              <span *ngIf="nameField.errors?.['required']"> Name is required </span>
+              <span *ngIf="nameField.errors?.['minlength']"> Minimum 3 characters required </span>
+            </div>
+          </div>
+          <!-- EMAIL -->
+          <div>
+            <label> Email </label>
+            <div class="input-box" [class.invalid]="emailField.invalid && emailField.touched">
+              <input type="email" [(ngModel)]="email" name="email" #emailField="ngModel" placeholder="Enter email" required email>
+            </div>
+            <div class="validation-error" *ngIf="emailField.invalid && emailField.touched">
+              <span *ngIf="emailField.errors?.['required']"> Email is required </span>
+              <span *ngIf="emailField.errors?.['email']"> Enter valid email </span>
+            </div>
+          </div>
+          <!-- PASSWORD -->
+          <div>
+            <label> Password </label>
+            <div class="input-box" [class.invalid]="passwordField.invalid && passwordField.touched">
+              <input type="password" [(ngModel)]="password" name="password" #passwordField="ngModel" placeholder="Create password" required minlength="8">
+            </div>
+            <div class="validation-error" *ngIf="passwordField.invalid && passwordField.touched">
+              <span *ngIf="passwordField.errors?.['required']"> Password is required </span>
+              <span *ngIf="passwordField.errors?.['minlength']"> Minimum 8 characters required </span>
+            </div>
+          </div>
+          <!-- PHONE -->
+          <div>
+            <label> Phone </label>
+            <div class="input-box" [class.invalid]="phoneField.invalid && phoneField.touched">
+              <input type="text" [(ngModel)]="phone" name="phone" #phoneField="ngModel" placeholder="Enter phone number" required minlength="10">
+            </div>
+            <div class="validation-error" *ngIf="phoneField.invalid && phoneField.touched">
+              <span *ngIf="phoneField.errors?.['required']"> Phone number is required </span>
+              <span *ngIf="phoneField.errors?.['minlength']"> Enter valid phone number </span>
+            </div>
+          </div>
+          <!-- ROLE -->
+          <div>
+            <label> Role </label>
+            <div class="input-box" [class.invalid]="roleField.invalid && roleField.touched">
+              <select [(ngModel)]="role" name="role" #roleField="ngModel" required>
+                <option value=""> Select Role </option>
+                <option value="doctor"> Doctor </option>
+                <option value="nurse"> Nurse </option>
+                <option value="lab_Tech"> Lab Technician </option>
+                <option value="pharmacist"> Pharmacist </option>
+                <option value="receptionist"> Receptionist </option>
+                <option value="cashier"> Cashier </option>
+              </select>
+            </div>
+            <div class="validation-error" *ngIf="roleField.invalid && roleField.touched"> Role is required </div>
+          </div>
+          <!-- DEPARTMENT -->
+          <div>
+            <label> Department </label>
+            <div class="input-box" [class.invalid]="departmentField.invalid && departmentField.touched">
+              <input type="text" [(ngModel)]="department" name="department" #departmentField="ngModel" placeholder="Enter department" required>
+            </div>
+            <div class="validation-error" *ngIf="departmentField.invalid && departmentField.touched"> Department is required </div>
+          </div>
+          <!-- DESIGNATION -->
+          <div>
+            <label> Designation </label>
+            <div class="input-box" [class.invalid]="designationField.invalid && designationField.touched">
+              <input type="text" [(ngModel)]="designation" name="designation" #designationField="ngModel" placeholder="Enter designation" required>
+            </div>
+            <div class="validation-error" *ngIf="designationField.invalid && designationField.touched"> Designation is required </div>
+          </div>
+          <!-- JOINING DATE -->
+          <div>
+            <label> Joining Date </label>
+            <div class="input-box">
+              <input type="date" [(ngModel)]="joiningDate" name="joiningDate">
+            </div>
+          </div>
+          <!-- MEDICAL REGISTRATION -->
+          <div class="full-width" *ngIf="role === 'doctor'">
+            <label> Medical Registration Number </label>
+            <div class="input-box" [class.invalid]="medicalField.invalid && medicalField.touched">
+              <input type="text" [(ngModel)]="medicalRegistrationNo" name="medicalRegistrationNo" #medicalField="ngModel" placeholder="Enter registration number" required>
+            </div>
+            <div class="validation-error" *ngIf="medicalField.invalid && medicalField.touched"> Medical registration number is required </div>
+          </div>
+          <!-- SPECIALIZATION -->
+          <div *ngIf="role === 'doctor'">
+            <label> Specialization </label>
+            <div class="input-box">
+              <input type="text" [(ngModel)]="specialization" name="specialization" placeholder="Enter specialization">
+            </div>
+          </div>
+          <!-- QUALIFICATION -->
+          <div>
+            <label> Qualification </label>
+            <div class="input-box">
+              <input type="text" [(ngModel)]="qualification" name="qualification" placeholder="Enter qualification">
+            </div>
+          </div>
+        </div>
+        <!-- BUTTON -->
+        <button type="submit" [disabled]="signupForm.invalid"> Submit Request </button>
+      </form>
+      <!-- LOGIN -->
+      <div class="join-section"> Already have an account? <a routerLink="/login"> Login </a>
+      </div>
+      <!-- FOOTER -->
+      <div class="footer"> © 2026 CareMatrix HMS. </div>
+    </div>
+    <!-- RIGHT PANEL -->
+    <div class="right-panel">
+      <img src="images/loginLogo.jpg" alt="Signup Illustration">
+    </div>
+  </div>
+</div>

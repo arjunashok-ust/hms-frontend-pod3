@@ -1,0 +1,270 @@
+.dashboard-container{
+
+    display:grid;
+
+    grid-template-columns:
+    repeat(auto-fit,minmax(280px,1fr));
+
+    gap:28px;
+
+}
+
+/* CARD */
+
+.card{
+
+    background:white;
+
+    border-radius:30px;
+
+    padding:32px;
+
+    position:relative;
+
+    overflow:hidden;
+
+    min-height:220px;
+
+    box-shadow:
+    0 15px 40px rgba(15,23,42,0.06);
+
+    transition:0.3s ease;
+
+}
+
+.card:hover{
+
+    transform:translateY(-5px);
+
+}
+
+/* TOP RIGHT SHAPE */
+
+.card::before{
+
+    content:"";
+
+    position:absolute;
+
+    width:150px;
+
+    height:150px;
+
+    border-radius:50%;
+
+    top:-40px;
+
+    right:-40px;
+
+    opacity:0.12;
+
+}
+
+/* ICON */
+
+.icon{
+
+    width:78px;
+
+    height:78px;
+
+    border-radius:24px;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    font-size:32px;
+
+    margin-bottom:28px;
+
+    color:white;
+
+    position:relative;
+
+    z-index:2;
+
+}
+
+/* TITLE */
+
+.card h2{
+
+    font-size:20px;
+
+    color:#334155;
+
+    margin-bottom:18px;
+
+    position:relative;
+
+    z-index:2;
+
+}
+
+/* VALUE */
+
+.card p{
+
+    font-size:60px;
+
+    font-weight:800;
+
+    position:relative;
+
+    z-index:2;
+
+}
+
+/* BLUE */
+
+.blue::before{
+
+    background:#2563eb;
+
+}
+
+.blue .icon{
+
+    background:#2563eb;
+
+}
+
+.blue p{
+
+    color:#2563eb;
+
+}
+
+/* GREEN */
+
+.green::before{
+
+    background:#16a34a;
+
+}
+
+.green .icon{
+
+    background:#16a34a;
+
+}
+
+.green p{
+
+    color:#16a34a;
+
+}
+
+/* ORANGE */
+
+.orange::before{
+
+    background:#f59e0b;
+
+}
+
+.orange .icon{
+
+    background:#f59e0b;
+
+}
+
+.orange p{
+
+    color:#f59e0b;
+
+}
+
+/* PURPLE */
+
+.purple::before{
+
+    background:#7c3aed;
+
+}
+
+.purple .icon{
+
+    background:#7c3aed;
+
+}
+
+.purple p{
+
+    color:#7c3aed;
+
+}
+
+/* CYAN */
+
+.cyan::before{
+
+    background:#06b6d4;
+
+}
+
+.cyan .icon{
+
+    background:#06b6d4;
+
+}
+
+.cyan p{
+
+    color:#06b6d4;
+
+}
+
+/* DARK */
+
+.dark::before{
+
+    background:#475569;
+
+}
+
+.dark .icon{
+
+    background:#475569;
+
+}
+
+.dark p{
+
+    color:#475569;
+
+}
+
+/* PINK */
+
+.pink::before{
+
+    background:#f43f5e;
+
+}
+
+.pink .icon{
+
+    background:#f43f5e;
+
+}
+
+.pink p{
+
+    color:#f43f5e;
+
+}
+.loading{
+
+    padding:40px;
+
+    font-size:22px;
+
+    font-weight:600;
+
+    color:#2563eb;
+
+}

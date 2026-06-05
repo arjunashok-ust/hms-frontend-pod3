@@ -1,0 +1,91 @@
+.layout-container{
+
+    display:flex;
+
+    width:100%;
+
+    min-height:100vh;
+
+    background:#f1f5f9;
+
+}
+
+/* SIDEBAR */
+
+.sidebar-section{
+
+    width:245px;
+
+    min-width:245px;
+
+    background:white;
+
+    border-right:1px solid #e2e8f0;
+
+    position:fixed;
+
+    top:0;
+
+    left:0;
+
+    height:100vh;
+
+    overflow-y:auto;
+
+    z-index:1000;
+
+}
+
+/* MAIN */
+
+.main-section{
+
+    margin-left:245px;
+
+    width:calc(100% - 245px);
+
+    min-height:100vh;
+
+    background:#f1f5f9;
+
+}
+
+/* NAVBAR */
+
+.navbar-section{
+
+    width:100%;
+
+}
+
+/* PAGE */
+
+.page-content{
+
+    width:100%;
+
+    padding:30px;
+
+}
+
+/* RESPONSIVE */
+
+@media(max-width:900px){
+
+    .sidebar-section{
+
+        width:80px;
+
+        min-width:80px;
+
+    }
+
+    .main-section{
+
+        margin-left:80px;
+
+        width:calc(100% - 80px);
+
+    }
+
+}

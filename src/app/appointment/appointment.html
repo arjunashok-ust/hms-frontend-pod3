@@ -1,0 +1,195 @@
+<div class="appointment-page">
+  <!-- ALERTS -->
+  <div class="success-message" *ngIf="successMessage">
+    {{ successMessage }}
+  </div>
+
+  <div class="error-message" *ngIf="errorMessage">
+    {{ errorMessage }}
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-grid">
+    <div class="stat-card blue-card">
+      <div class="stat-icon">📅</div>
+      <h2>{{ totalAppointments }}</h2>
+      <p>Total Appointments</p>
+    </div>
+
+    <div class="stat-card green-card">
+      <div class="stat-icon">✅</div>
+      <h2>{{ completedAppointments }}</h2>
+      <p>Completed</p>
+    </div>
+
+    <div class="stat-card orange-card">
+      <div class="stat-icon">🕒</div>
+      <h2>{{ bookedAppointments }}</h2>
+      <p>Booked</p>
+    </div>
+
+    <div class="stat-card red-card">
+      <div class="stat-icon">❌</div>
+      <h2>{{ cancelledAppointments }}</h2>
+      <p>Cancelled</p>
+    </div>
+  </div>
+
+  <!-- CONTENT GRID -->
+  <div class="content-grid">
+    <!-- FORM -->
+    <div class="form-card">
+      <div class="section-header">
+        <span>NEW ENTRY</span>
+        <h2>Book Appointment</h2>
+      </div>
+
+      <form class="appointment-form" (ngSubmit)="createAppointment()">
+        <!-- PATIENT + DOCTOR -->
+        <div class="form-row">
+          <div class="input-group">
+            <label>PATIENT ID</label>
+            <input type="text" placeholder="e.g. UHID-000001" [(ngModel)]="formData.patientId" name="patientId"
+              required />
+          </div>
+
+          <div class="input-group">
+            <label>DOCTOR</label>
+            <select [(ngModel)]="formData.doctorEmployeeId" name="doctorEmployeeId" required>
+              <option value="">Select Doctor</option>
+              <option *ngFor="let doctor of doctors" [value]="doctor.employeeId">
+                {{ doctor.name }}
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <!-- DATE + SLOT -->
+        <div class="form-row">
+          <div class="input-group">
+            <label>APPOINTMENT DATE</label>
+            <input type="date" [(ngModel)]="formData.date" name="date" required />
+          </div>
+
+          <div class="input-group">
+            <label>TIME SLOT</label>
+            <input type="text" placeholder="10:00 AM - 10:30 AM" [(ngModel)]="formData.timeSlot" name="timeSlot"
+              required />
+          </div>
+        </div>
+
+        <!-- STATUS -->
+        <div class="status-section">
+          <label>APPOINTMENT STATUS</label>
+
+          <div class="status-options">
+            <div class="status-option" [class.active]="formData.status === 'BOOKED'" (click)="formData.status='BOOKED'">
+              Booked
+            </div>
+
+            <div class="status-option" [class.active]="formData.status === 'CANCELLED'"
+              (click)="formData.status='CANCELLED'">
+              Cancelled
+            </div>
+
+            <div class="status-option" [class.active]="formData.status === 'COMPLETED'"
+              (click)="formData.status='COMPLETED'">
+              Completed
+            </div>
+          </div>
+        </div>
+
+        <!-- BUTTONS -->
+        <div class="form-actions">
+          <button type="button" class="reset-btn" (click)="resetForm()">
+            Reset
+          </button>
+
+          <button type="submit" class="submit-btn">
+            Book Appointment
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- QUICK INFO -->
+    <div class="quick-card">
+      <div class="section-header">
+        <span>TODAY'S OVERVIEW</span>
+        <h2>Quick Info</h2>
+      </div>
+
+      <div class="doctor-list">
+        <div class="doctor-item" *ngFor="let doctor of doctors">
+          <div class="doctor-left">
+            <div class="doctor-avatar">
+              {{ doctor?.name?.charAt(0) }}
+            </div>
+
+            <div>
+              <h4>{{ doctor.name }}</h4>
+              <p>{{ doctor.department }}</p>
+            </div>
+          </div>
+
+          <span class="doctor-status" [class.inactive]="!doctor.status">
+            {{ doctor.status ? 'Active' : 'Inactive' }}
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TABLE -->
+  <div class="table-card">
+    <div class="section-header">
+      <span>RECORDS</span>
+      <h2>Recent Appointments</h2>
+    </div>
+
+    <!-- LOADING -->
+    <div class="loading" *ngIf="loading">
+      Loading appointments...
+    </div>
+
+    <!-- TABLE -->
+    <table *ngIf="!loading">
+      <thead>
+        <tr>
+          <th>APPOINTMENT ID</th>
+          <th>PATIENT</th>
+          <th>DOCTOR</th>
+          <th>DATE</th>
+          <th>TIME SLOT</th>
+          <th>STATUS</th>
+          <th>ACTIONS</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let appointment of appointments">
+          <td class="appointment-id">
+            {{ appointment.appointmentId }}
+          </td>
+
+          <td>{{ appointment.patientName }}</td>
+          <td>Dr.{{ appointment.doctorName }}</td>
+          <td>{{ appointment.date | date:'dd MMM yyyy' }}</td>
+          <td>{{ appointment.timeSlot }}</td>
+
+          <td>
+            <span class="status-pill" [ngClass]="getStatusClass(appointment.status)">
+              {{ appointment.status }}
+            </span>
+          </td>
+
+          <td>
+            <button class="delete-btn" (click)="deleteAppointment(appointment.appointmentId)">
+              🗑
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

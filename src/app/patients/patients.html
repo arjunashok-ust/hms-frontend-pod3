@@ -1,0 +1,157 @@
+<div class="patients-page">
+
+    <div class="success-message" *ngIf="successMessage">
+        {{successMessage}}
+    </div>
+
+    <div class="error-message" *ngIf="errorMessage">
+        {{errorMessage}}
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card blue-card">
+            <div class="stat-icon">👨‍⚕️</div>
+            <h2>{{totalPatients}}</h2>
+            <p>Total Patients</p>
+        </div>
+    </div>
+
+    <div class="form-card">
+        <div class="section-header">
+            <span>NEW ENTRY</span>
+            <h2>Create Patient</h2>
+        </div>
+
+        <form class="patient-form" (ngSubmit)="createPatient()">
+
+            <div class="form-row">
+                <div class="input-group">
+                    <label>FULL NAME</label>
+                    <input type="text" [(ngModel)]="formData.name" name="name" required>
+                </div>
+                <div class="input-group">
+                    <label>PHONE NUMBER</label>
+                    <input type="text" [(ngModel)]="formData.phone" name="phone" required>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="input-group">
+                    <label>GENDER</label>
+                    <select [(ngModel)]="formData.gender" name="gender">
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>DATE OF BIRTH</label>
+                    <input type="date" [(ngModel)]="formData.date_of_birth" name="date_of_birth" required>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="input-group">
+                    <label>EMERGENCY CONTACT</label>
+                    <input type="text" [(ngModel)]="formData.emergencyContact" name="emergencyContact">
+                </div>
+                <div class="input-group">
+                    <label>STATUS</label>
+                    <select [(ngModel)]="formData.status" name="status">
+                        <option [ngValue]="true">Active</option>
+                        <option [ngValue]="false">Inactive</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="input-group">
+                    <label>ADDRESS LINE</label>
+                    <input type="text" [(ngModel)]="formData.address.line1" name="line1" required>
+                </div>
+                <div class="input-group">
+                    <label>CITY</label>
+                    <input type="text" [(ngModel)]="formData.address.city" name="city" required>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="input-group">
+                    <label>POSTCODE</label>
+                    <input type="text" [(ngModel)]="formData.address.postcode" name="postcode" required>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="submit-btn">Create Patient</button>
+            </div>
+
+        </form>
+    </div>
+
+    <div class="table-card">
+        <div class="section-header">
+            <span>DIRECTORY</span>
+            <h2>Patient Records</h2>
+        </div>
+
+        <div *ngIf="loading">
+            <h3 style="margin-top:20px;">Loading patients...</h3>
+        </div>
+
+        <div *ngIf="!loading && patients.length===0">
+            <h3 style="margin-top:20px;">No patients found</h3>
+        </div>
+
+        <table *ngIf="!loading && patients.length>0">
+            <thead>
+                <tr>
+                    <th>UHID</th>
+                    <th>PATIENT</th>
+                    <th>AGE</th>
+                    <th>GENDER</th>
+                    <th>STATUS</th>
+                    <th>ACTIONS</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr *ngFor="let patient of patients">
+
+                    <td class="patient-id">{{patient.UHID}}</td>
+
+                    <td>
+                        <div class="patient-cell">
+                            <div class="patient-avatar">{{getInitial(patient.name)}}</div>
+                            <div>
+                                <h4>{{patient.name}}</h4>
+                                <p>{{patient.phone}}</p>
+                            </div>
+                        </div>
+                    </td>
+
+                    <td>{{calculateAge(patient.date_of_birth)}}</td>
+
+                    <td>
+                        <span class="gender-pill">{{patient.gender}}</span>
+                    </td>
+
+                    <td>
+                        <span class="status-pill" [ngClass]="patient.status?'active-status':'critical-status'">
+                            {{patient.status?'Active':'Inactive'}}
+                        </span>
+                    </td>
+
+                    <td>
+                        <div class="action-buttons">
+                            <button class="delete-btn" (click)="deletePatient(patient.UHID)">🗑</button>
+                        </div>
+                    </td>
+
+                </tr>
+            </tbody>
+        </table>
+
+    </div>
+
+</div>

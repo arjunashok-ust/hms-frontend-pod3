@@ -1,0 +1,61 @@
+<!-- LOADING -->
+<div class="loading" *ngIf="isLoading"> Loading Dashboard... </div>
+<!-- DASHBOARD -->
+<div class="dashboard-container" *ngIf="!isLoading">
+  <!-- ADMIN ONLY -->
+  <div class="card blue" *ngIf="stats.totalEmployees !== undefined">
+    <div class="icon"> 👥 </div>
+    <h2> Total Employees </h2>
+    <p>
+      {{ stats.totalEmployees }}
+    </p>
+  </div>
+  <!-- ADMIN ONLY -->
+  <div class="card green" *ngIf="stats.activeEmployees !== undefined">
+    <div class="icon"> ✅ </div>
+    <h2> Active Employees </h2>
+    <p>
+      {{ stats.activeEmployees }}
+    </p>
+  </div>
+  <!-- ADMIN ONLY -->
+  <div class="card orange" *ngIf="stats.pendingApprovals !== undefined">
+    <div class="icon"> ⏳ </div>
+    <h2> Pending Approvals </h2>
+    <p>
+      {{ stats.pendingApprovals }}
+    </p>
+  </div>
+  <!-- ADMIN ONLY -->
+  <div class="card purple" *ngIf="stats.pendingVerifications !== undefined">
+    <div class="icon"> 🛡️ </div>
+    <h2> Pending Verifications </h2>
+    <p>
+      {{ stats.pendingVerifications }}
+    </p>
+  </div>
+  <!-- COMMON -->
+  <div class="card cyan" *ngIf="stats.totalPatients !== undefined">
+    <div class="icon"> ❤️ </div>
+    <h2> Total Patients </h2>
+    <p>
+      {{ stats.totalPatients }}
+    </p>
+  </div>
+  <!-- ADMIN ONLY -->
+  <div class="card dark" *ngIf="stats.totalDepartments !== undefined">
+    <div class="icon"> 🏥 </div>
+    <h2> Departments </h2>
+    <p>
+      {{ stats.totalDepartments }}
+    </p>
+  </div>
+  <!-- COMMON -->
+  <div class="card pink" *ngIf="stats.totalAppointments !== undefined">
+    <div class="icon"> 📅 </div>
+    <h2> Appointments </h2>
+    <p>
+      {{ stats.totalAppointments }}
+    </p>
+  </div>
+</div>

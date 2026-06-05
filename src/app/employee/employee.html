@@ -1,0 +1,547 @@
+<section class="employee-wrapper">
+
+    <!-- HEADER -->
+
+    <div class="panel-header">
+
+        <div>
+
+            <span class="panel-subtitle">
+                HMS Directory
+            </span>
+
+            <h2>
+                Employee Management
+            </h2>
+
+        </div>
+
+        <div class="header-actions">
+
+            <button class="btn-secondary">
+                Pending Approvals
+            </button>
+
+            <button class="btn-primary" (click)="openModal()">
+                Add Employee
+            </button>
+
+        </div>
+
+    </div>
+
+    <!-- PANEL -->
+
+    <div class="directory-panel">
+
+        <!-- CONTROLS -->
+
+        <div class="controls">
+
+            <!-- SEARCH -->
+
+            <div class="search-box">
+
+                <input type="text" placeholder="Search Employee" [(ngModel)]="selectedText" (input)="applyFilters()">
+
+            </div>
+
+            <!-- FILTERS -->
+
+            <div class="filter-group">
+
+                <!-- DEPARTMENT -->
+
+                <select [(ngModel)]="selectedDepartment" (change)="applyFilters()">
+
+                    <option value="">
+                        All Departments
+                    </option>
+
+                    <option *ngFor="let dept of departments" [value]="dept">
+
+                        {{ dept }}
+
+                    </option>
+
+                </select>
+
+                <!-- STATUS -->
+
+                <select [(ngModel)]="selectedStatus" (change)="applyFilters()">
+
+                    <option value="">
+                        All Status
+                    </option>
+
+                    <option value="true">
+                        Active
+                    </option>
+
+                    <option value="false">
+                        Inactive
+                    </option>
+
+                </select>
+
+            </div>
+
+        </div>
+
+        <!-- TABLE -->
+
+        <div class="table-wrapper">
+
+            <table class="modern-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>ID</th>
+
+                        <th>Employee</th>
+
+                        <th>Email</th>
+
+                        <th>Department</th>
+
+                        <th>Role</th>
+
+                        <th>Status</th>
+
+                        <th>Action</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody *ngIf="filteredEmployeeData.length > 0">
+
+                    <tr *ngFor="let employee of filteredEmployeeData">
+
+                        <!-- ID -->
+
+                        <td>
+
+                            <span class="employee-id">
+
+                                {{ employee.employeeId }}
+
+                            </span>
+
+                        </td>
+
+                        <!-- NAME -->
+
+                        <td>
+
+                            <div class="employee-info">
+
+                                <div class="avatar blue-avatar">
+
+                                    {{ employee.name.slice(0,2).toUpperCase() }}
+
+                                </div>
+
+                                <div>
+
+                                    <h4>
+                                        {{ employee.name }}
+                                    </h4>
+
+                                </div>
+
+                            </div>
+
+                        </td>
+
+                        <!-- EMAIL -->
+
+                        <td class="muted-text">
+
+                            {{ employee.email }}
+
+                        </td>
+
+                        <!-- DEPARTMENT -->
+
+                        <td>
+
+                            <span class="department-text">
+
+                                {{ employee.department }}
+
+                            </span>
+
+                        </td>
+
+                        <!-- ROLE -->
+
+                        <td>
+
+                            <span class="designation-badge">
+
+                                {{ employee.role }}
+
+                            </span>
+
+                        </td>
+
+                        <!-- STATUS -->
+
+                        <td>
+
+                            <span class="status-badge"
+                                [ngClass]="employee.status ? 'active-status' : 'inactive-status'">
+
+                                {{ employee.status ? 'Active' : 'Inactive' }}
+
+                            </span>
+
+                        </td>
+
+                        <!-- ACTION -->
+
+                        <td>
+
+                            <div class="action-buttons">
+
+                                <button class="icon-btn edit-btn">
+
+                                    Edit
+
+                                </button>
+
+                                <button class="icon-btn delete-btn" (click)="deleteEmployee(employee.employeeId)">
+
+                                    Delete
+
+                                </button>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- MODAL -->
+
+<div class="modal-overlay" *ngIf="showModal">
+
+    <div class="employee-modal">
+
+        <!-- HEADER -->
+
+        <div class="modal-header">
+
+            <h2>
+                Add Employee
+            </h2>
+
+            <button class="close-btn" (click)="closeModal()">
+                ✕
+            </button>
+
+        </div>
+
+        <!-- ERROR -->
+
+        <div class="error-message" *ngIf="errorMessage">
+
+            {{ errorMessage }}
+
+        </div>
+
+        <!-- SUCCESS -->
+
+        <div class="success-message" *ngIf="successMessage">
+
+            {{ successMessage }}
+
+        </div>
+
+        <!-- FORM -->
+
+        <form #employeeFormRef="ngForm" (ngSubmit)="addEmployee(employeeFormRef)">
+
+            <div class="form-grid">
+
+                <!-- NAME -->
+
+                <div class="input-group">
+
+                    <label>
+                        Full Name
+                    </label>
+
+                    <input type="text" [(ngModel)]="employeeForm.name" name="name" required>
+
+                </div>
+
+                <!-- EMAIL -->
+
+                <div class="input-group">
+
+                    <label>
+                        Email
+                    </label>
+
+                    <input type="email" [(ngModel)]="employeeForm.email" name="email" required email>
+
+                </div>
+
+                <!-- PHONE -->
+
+                <div class="input-group">
+
+                    <label>
+                        Phone
+                    </label>
+
+                    <input type="text" [(ngModel)]="employeeForm.phone" name="phone" required>
+
+                </div>
+
+                <!-- ROLE -->
+
+                <div class="input-group">
+
+                    <label>
+                        Role
+                    </label>
+
+                    <select [(ngModel)]="employeeForm.role" name="role" required>
+
+                        <option value="">
+                            Select Role
+                        </option>
+
+                        <option value="doctor">
+                            Doctor
+                        </option>
+
+                        <option value="nurse">
+                            Nurse
+                        </option>
+
+                        <option value="receptionist">
+                            Receptionist
+                        </option>
+
+                        <option value="pharmacist">
+                            Pharmacist
+                        </option>
+
+                        <option value="lab_Tech">
+                            Lab Technician
+                        </option>
+
+                    </select>
+
+                </div>
+
+                <!-- DEPARTMENT -->
+
+                <div class="input-group">
+
+                    <label>
+                        Department
+                    </label>
+
+                    <input type="text" [(ngModel)]="employeeForm.department" name="department" required>
+
+                </div>
+
+                <!-- DESIGNATION -->
+
+                <div class="input-group">
+
+                    <label>
+                        Designation
+                    </label>
+
+                    <input type="text" [(ngModel)]="employeeForm.designation" name="designation" required>
+
+                </div>
+
+                <!-- JOINING DATE -->
+
+                <div class="input-group">
+
+                    <label>
+                        Joining Date
+                    </label>
+
+                    <input type="date" [(ngModel)]="employeeForm.joiningDate" name="joiningDate">
+
+                </div>
+
+                <!-- QUALIFICATION -->
+
+                <div class="input-group">
+
+                    <label>
+                        Qualification
+                    </label>
+
+                    <input type="text" [(ngModel)]="employeeForm.qualification" name="qualification">
+
+                </div>
+
+                <!-- DOCTOR ONLY -->
+
+                <div class="input-group" *ngIf="employeeForm.role === 'doctor'">
+
+                    <label>
+                        Medical Registration No
+                    </label>
+
+                    <input type="text" [(ngModel)]="employeeForm.medicalRegistrationNo" name="medicalRegistrationNo"
+                        required>
+
+                </div>
+
+                <!-- SPECIALIZATION -->
+
+                <div class="input-group" *ngIf="employeeForm.role === 'doctor'">
+
+                    <label>
+                        Specialization
+                    </label>
+
+                    <input type="text" [(ngModel)]="employeeForm.specialization" name="specialization">
+
+                </div>
+
+                <!-- CONSULTATION FEE -->
+
+                <div class="input-group" *ngIf="employeeForm.role === 'doctor'">
+
+                    <label>
+                        Consultation Fee
+                    </label>
+
+                    <input type="number" [(ngModel)]="employeeForm.consultationFee" name="consultationFee">
+
+                </div>
+
+                <!-- AVAILABILITY SLOTS -->
+
+                <!-- SLOT GENERATOR -->
+
+                <div class="slot-wrapper" *ngIf="employeeForm.role === 'doctor'">
+
+                    <label class="slot-title">
+                        Doctor Availability Slots
+                    </label>
+
+                    <!-- TIME SELECT -->
+
+                    <div class="slot-time-grid">
+
+                        <!-- START -->
+
+                        <div class="input-group">
+
+                            <label>
+                                Start Hour
+                            </label>
+
+                            <select [(ngModel)]="employeeForm.startHour" name="startHour">
+
+                                <option value="">
+                                    Select Start Hour
+                                </option>
+
+                                <option *ngFor="let hour of hours" [value]="hour">
+
+                                    {{ formatHour(hour) }}
+
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                        <!-- END -->
+
+                        <div class="input-group">
+
+                            <label>
+                                End Hour
+                            </label>
+
+                            <select [(ngModel)]="employeeForm.endHour" name="endHour">
+
+                                <option value="">
+                                    Select End Hour
+                                </option>
+
+                                <option *ngFor="let hour of hours" [value]="hour">
+
+                                    {{ formatHour(hour) }}
+
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+                    <!-- GENERATE -->
+
+                    <button type="button" class="generate-btn" (click)="generateTimeSlots()">
+
+                        Generate Slots
+
+                    </button>
+
+                    <!-- GENERATED SLOTS -->
+
+                    <div class="generated-slots" *ngIf="generatedSlots.length">
+
+                        <div class="slot-item" *ngFor="let slot of generatedSlots">
+
+                            <label>
+
+                                <input type="checkbox" [checked]="isSlotSelected(slot)" (change)="toggleSlot(slot)">
+
+                                <span>
+                                    {{ slot }}
+                                </span>
+
+                            </label>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- BUTTON -->
+
+            <button type="submit" class="submit-btn">
+
+                Create Employee
+
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
