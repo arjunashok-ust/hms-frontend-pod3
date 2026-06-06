@@ -98,7 +98,7 @@
             >
               <option value="" disabled selected>Select Doctor</option>
               <ng-container *ngFor="let doctor of doctors">
-                <option [value]="doctor.employeeCode" *ngIf="doctor.status === 'Active'">
+                <option [value]="doctor.employeeCode">
                   {{ doctor.name }} — {{ doctor.specialization }}
                 </option>
               </ng-container>
@@ -134,7 +134,7 @@
             />
             <small *ngIf="appointmentForm.get('date')?.touched">
             <span *ngIf="appointmentForm.errors?.['invalidAppointmentDate']"
-              >You cannot book an appointment in the past.</span
+              >Appointments cannot be booked for today or any past date.</span
             >
             <span *ngIf="appointmentForm.get('date')?.errors?.['required']"
               >Appointment date is required.</span

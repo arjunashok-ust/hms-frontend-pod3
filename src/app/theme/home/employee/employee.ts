@@ -20,7 +20,6 @@ export class EmployeeComponent implements OnInit {
   router: Router = inject(Router);
   toast: ToastrService = inject(ToastrService);
   cd: ChangeDetectorRef = inject(ChangeDetectorRef);
-  route: Router = inject(Router);
 
   employeeData: EmployeeModel[] = [];
   departmentsData: DepartmentModel[] = [];
@@ -34,15 +33,15 @@ export class EmployeeComponent implements OnInit {
   ngOnInit(): void {
     this.adminService.getEmployees().subscribe({
       next: (res) => {
-        console.log(res);
         this.employeeData = res;
         this.applyFilters();
+
         this.cd.detectChanges();
       },
       error: (err) => {
-        this.toast.error(err?.error?.message);
-        if(err.status === 403){
-          this.route.navigate(['/access-denied']);
+        this.toast.error(err?.error?.message || "Error getting employees data");
+        if (err.status === 403) {
+          this.router.navigate(['/access-denied']);
         }
       },
     });
@@ -50,22 +49,30 @@ export class EmployeeComponent implements OnInit {
       next: (res) => {
         this.departmentsData = res;
       },
+      error: (err) => {
+         this.toast.error(err?.error?.message || "Error getting departments data");
+      }
     });
   }
 
   applyFilters() {
     this.filteredEmployeeData = this.employeeData?.filter((employee) => {
+
       const searchMatch =
         employee.name.toLowerCase().includes(this.selectedText.toLowerCase()) ||
         employee.email.toLowerCase().includes(this.selectedText.toLowerCase()) ||
         employee.employeeCode.toLowerCase().includes(this.selectedText.toLowerCase());
+
       const departmentMatch =
         !this.selectedDepartment || employee.department === this.selectedDepartment;
+
       const statusMatch = !this.selectedStatus || employee.status === this.selectedStatus;
+
       return searchMatch && departmentMatch && statusMatch;
     });
   }
 
+  // saving email to use it in the update profile
   updateProfile(email: string) {
     localStorage.setItem('updateEmail', email);
     this.router.navigate(['/edit-employee']);
@@ -80,10 +87,10 @@ export class EmployeeComponent implements OnInit {
         );
         this.applyFilters();
         this.cd.detectChanges();
-        this.toast.success('Account Deleted Sucessfully');
+        this.toast.success(res?.message || "Account deleted successfully");
       },
       error: (err) => {
-        this.toast.error(err.message);
+        this.toast.error(err?.error?.message || "Error deleting the account");
       },
     });
   }

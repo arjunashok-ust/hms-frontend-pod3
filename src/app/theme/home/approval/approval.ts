@@ -16,6 +16,7 @@ import { UserModel } from '../../../models/user.model';
 export class ApprovalComponent implements OnInit {
   adminService: AdminService = inject(AdminService);
   userService: UserService = inject(UserService);
+  
   cd: ChangeDetectorRef = inject(ChangeDetectorRef);
   toast: ToastrService = inject(ToastrService);
   route: Router = inject(Router);
@@ -36,8 +37,10 @@ export class ApprovalComponent implements OnInit {
     this.adminService.getUsersData().subscribe({
       next: (res) => {
         this.userData = res;
+
         this.applyFilters();
         this.loadUiData();
+
         this.cd.detectChanges();
       },
       error: (error) => {
@@ -53,12 +56,15 @@ export class ApprovalComponent implements OnInit {
     this.approvalUiData.pendingCount = this.userData.filter(
       (user) => user.status === 'Pending',
     ).length;
+
     this.approvalUiData.verifiedCount = this.userData.filter(
       (user) => user.isVerified === true,
     ).length;
+
     this.approvalUiData.inActiveCount = this.userData.filter(
       (user) => user.status === 'Inactive',
     ).length;
+
     this.approvalUiData.firstLoginCount = this.userData.filter(
       (user) => user.firstLogin === true,
     ).length;
@@ -72,22 +78,25 @@ export class ApprovalComponent implements OnInit {
         user.employeeId.includes(this.searchText) ||
         user.role.includes(this.searchText),
     );
+
     this.cd.detectChanges();
   }
 
   approveUser(id: string) {
     const payload = { employeeId: id };
+
     this.adminService.approveUser(payload).subscribe({
       next: (res) => {
         this.userData = this.userData.map((user) =>
           user.employeeId === id ? { ...user, status: 'Active' } : user,
         );
         this.applyFilters();
+
         this.cd.detectChanges();
-        this.toast.success('Account Activated');
+        this.toast.success(res.message || "Account Activated.");
       },
       error: (error) => {
-        this.toast.error(error.message);
+        this.toast.error(error?.error?.message || "Something went wrong!");
       },
     });
   }
@@ -99,12 +108,15 @@ export class ApprovalComponent implements OnInit {
         this.userData = this.userData.map((user) =>
           user.employeeId === id ? { ...user, status: 'Inactive' } : user,
         );
-        this.toast.success('Application Rejected');
+
         this.applyFilters();
+
         this.cd.detectChanges();
+
+        this.toast.success(res?.message || "Application Rejected!");
       },
       error: (error) => {
-         this.toast.error(error.message);
+         this.toast.error(error?.error?.message || "Something went wrong!");
       },
     });
   }

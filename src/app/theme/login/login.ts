@@ -40,8 +40,10 @@ export class LoginComponent implements OnInit {
       email: this.loginForm.value.email,
       password: this.loginForm.value.password,
     };
+
     this.auth.login(payload).subscribe({
       next: (res) => {
+
         if (res.status !== 'Active') {
           this.toast.info('Your account is not activated yet,Please contact the admin');
           this.router.navigate(['/login']);
@@ -54,7 +56,7 @@ export class LoginComponent implements OnInit {
         localStorage.setItem('role', res.role);
 
         if (res.firstLogin) {
-          this.toast.info('Change your current passsword');
+          this.toast.info('Set your password');
           this.router.navigate(['/password-modal']);
         } else {
           this.toast.success('Login Sucessfull');

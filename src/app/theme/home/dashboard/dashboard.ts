@@ -29,7 +29,7 @@ export class DashboardComponent implements OnInit {
         this.cd.detectChanges();
       },
       error: (err) => {
-        this.toast.error(err?.error?.message);
+        this.toast.error(err?.error?.message || "You are not authorized to visit this page.");
         if(err.status === 403){
           this.route.navigate(['/access-denied']);
         }
@@ -42,6 +42,7 @@ export class DashboardComponent implements OnInit {
       },
       error: (err) => {
         console.error(err);
+        this.toast.error(err?.error?.message || "Error getting employee data");
       },
     });
   }

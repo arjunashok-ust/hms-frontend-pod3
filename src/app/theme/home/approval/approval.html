@@ -107,7 +107,8 @@
         </thead>
 
         <tbody>
-          <tr *ngFor="let user of filteredData">
+          <ng-container *ngFor="let user of filteredData">
+            <tr *ngIf="user.role !== 'Patient'">
             <td>
               <div class="employee-block">
                 <div class="avatar">
@@ -194,6 +195,7 @@
               </div>
             </td>
           </tr>
+          </ng-container>
         </tbody>
       </table>
     </div>

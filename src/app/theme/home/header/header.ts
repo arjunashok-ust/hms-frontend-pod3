@@ -9,13 +9,14 @@ import { Router, RouterModule } from '@angular/router';
 })
 export class HeaderComponent implements OnInit {
   router: Router = inject(Router);
-  name: string = "";
-  role: string ="";
+  name: string = '';
+  role: string = '';
 
   ngOnInit(): void {
     this.name = localStorage.getItem('name') || '';
     this.role = localStorage.getItem('role') || '';
   }
+
   logout() {
     localStorage.clear();
     this.router.navigate(['/login']);

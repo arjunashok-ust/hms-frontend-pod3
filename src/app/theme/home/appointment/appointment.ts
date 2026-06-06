@@ -8,7 +8,6 @@ import { CommonModule } from '@angular/common';
 import { EmployeeModel } from '../../../models/user.model';
 import { ToastrService } from 'ngx-toastr';
 import { appointmentDateValidator } from '../../../validators/time-range-validator';
-import { take } from 'rxjs';
 
 @Component({
   selector: 'app-appointment',
@@ -24,9 +23,9 @@ export class AppointmentComponent implements OnInit {
   cd: ChangeDetectorRef = inject(ChangeDetectorRef);
   toast: ToastrService = inject(ToastrService);
 
-  doctors: EmployeeModel[] | null = null;
+  doctors: EmployeeModel[] = [];
   appointmentUiData: AppointmentResponseModel | null = null;
-  appointments: AppointmentModel[] | null = null;
+  appointments: AppointmentModel[]  = [];
   // for setting doctor time slots
   doctorTimeSlots: string[] = [];
   date = Date.now();
@@ -40,7 +39,6 @@ export class AppointmentComponent implements OnInit {
         doctorEmployeeId: ['', Validators.required],
         date: ['', Validators.required],
         timeSlot: ['', Validators.required],
-        status: ['Booked', Validators.required],
         createdByEmployeeId: [this.employeeId, Validators.required],
       },
       {
@@ -58,7 +56,6 @@ export class AppointmentComponent implements OnInit {
   loadUiData() {
     this.appointmentService
       .getAppointmentUiData()
-      .pipe(take(1))
       .subscribe({
         next: (res) => {
           this.appointmentUiData = res;
@@ -70,7 +67,6 @@ export class AppointmentComponent implements OnInit {
       });
     this.appointmentService
       .getAllDoctors()
-      .pipe(take(1))
       .subscribe({
         next: (res) => {
           this.doctors = res;
@@ -82,7 +78,6 @@ export class AppointmentComponent implements OnInit {
       });
     this.appointmentService
       .getAllAppointment()
-      .pipe(take(1))
       .subscribe({
         next: (res) => {
           this.appointments = res;
@@ -96,18 +91,22 @@ export class AppointmentComponent implements OnInit {
 
   onDoctorChange() {
     let doctorEmployeeId = this.appointmentForm.get('doctorEmployeeId')?.value;
+
     const inputDate = this.appointmentForm.get('date')?.value;
-    const date = new Date(inputDate).toISOString();
+    const date = new Date(inputDate).toDateString();
+
     let doctor = this.doctors?.find((d) => d.employeeCode === doctorEmployeeId);
+
     if (!date || !doctor) {
       this.doctorTimeSlots = [];
       return;
     }
 
-    const allSlots = doctor?.availabilitySlots;
+    const allSlots = doctor?.availabilitySlots || [];
+
     const bookedSlots = this.appointments
       ?.filter((apt) => {
-        const apt_date = new Date(apt.date).toISOString();
+        const apt_date = new Date(apt.date).toDateString();
         return (
           apt.doctorEmployeeId === doctor?.employeeCode &&
           apt_date === date &&
@@ -115,6 +114,7 @@ export class AppointmentComponent implements OnInit {
         );
       })
       .map((apt) => apt.timeSlot);
+
     this.doctorTimeSlots = allSlots?.filter((slot) => !bookedSlots?.includes(slot)) || [];
     this.appointmentForm.patchValue({ timeSlot: '' });
     this.cd.detectChanges();
@@ -132,7 +132,7 @@ export class AppointmentComponent implements OnInit {
           this.toast.success(res.message);
         },
         error: (err) => {
-          this.toast.error(err?.err?.message);
+          this.toast.error(err?.error?.message);
         },
       });
     }
@@ -144,7 +144,7 @@ export class AppointmentComponent implements OnInit {
       doctorEmployeeId: this.appointmentForm.value.doctorEmployeeId,
       date: this.appointmentForm.value.date,
       timeSlot: this.appointmentForm.value.timeSlot,
-      status: this.appointmentForm.value.status,
+      status: '',
       createdByEmployeeId: this.appointmentForm.value.createdByEmployeeId,
     };
 
@@ -155,7 +155,7 @@ export class AppointmentComponent implements OnInit {
         this.toast.success(res.message);
       },
       error: (err) => {
-        this.toast.error(err.error.message);
+        this.toast.error(err?.error?.message || "Something went wrong!");
       },
     });
 
