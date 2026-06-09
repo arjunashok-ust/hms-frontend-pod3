@@ -1,6 +1,6 @@
 import { Component, OnInit, ChangeDetectorRef } from "@angular/core";
 
-import { RouterLink } from "@angular/router";
+import { RouterLink,RouterLinkActive } from "@angular/router";
 
 import { CommonModule } from "@angular/common";
 
@@ -11,7 +11,7 @@ import { Auth } from "../../services/auth";
 
   standalone: true,
 
-  imports: [RouterLink, CommonModule],
+  imports: [RouterLink,RouterLinkActive, CommonModule],
 
   templateUrl: "./sidebar.html",
 
@@ -19,17 +19,15 @@ import { Auth } from "../../services/auth";
 })
 export class Sidebar implements OnInit {
   user: any;
-
   isAdmin = false;
-
   constructor(
-    private auth: Auth,
+    readonly auth: Auth,
 
-    private cd: ChangeDetectorRef
+    readonly cd: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
-    if (typeof window !== "undefined") {
+    if (globalThis.window) {
       const token = localStorage.getItem("token");
 
       if (token) {

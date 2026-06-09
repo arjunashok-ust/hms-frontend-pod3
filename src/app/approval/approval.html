@@ -1,0 +1,131 @@
+<div class="approval-container">
+
+    <!-- HERO -->
+    <div class="hero-section">
+
+        <div>
+            <span class="hero-label">USERS</span>
+
+            <h1>User Approval Center</h1>
+
+            <p>
+                Approve registrations, review account readiness,
+                and manage onboarding from one place.
+            </p>
+        </div>
+
+    </div>
+
+    <!-- STATS -->
+
+    <div class="stats-grid">
+
+        <div class="stat-card">
+            <div class="stat-icon yellow">⏳</div>
+
+            <h2>{{ pendingApprovals }}</h2>
+
+            <p>Pending Approvals</p>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon green">✔</div>
+
+            <h2>{{ verifiedUsers }}</h2>
+
+            <p>Verified Users</p>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon red">✖</div>
+
+            <h2>{{ inactiveAccounts }}</h2>
+
+            <p>Inactive Accounts</p>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon purple">↪</div>
+
+            <h2>{{ firstLoginPending }}</h2>
+
+            <p>First Login Pending</p>
+        </div>
+
+    </div>
+
+    <!-- TABLE -->
+
+    <div class="table-section">
+
+        <div class="table-header">
+
+            <div>
+                <span class="table-label">ACCOUNTS</span>
+
+                <h2>Pending User Approvals</h2>
+            </div>
+
+            <input type="text" placeholder="Search by email, employee ID, or role..." />
+
+        </div>
+
+        <table>
+
+            <thead>
+
+                <tr>
+                    <th>EMPLOYEE</th>
+                    <th>EMAIL</th>
+                    <th>ROLE</th>
+                    <th>STATUS</th>
+                    <th>ACTIVATED</th>
+                    <th>VERIFIED</th>
+                    <th>ACTION</th>
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                <tr *ngFor="let user of pendingUsers">
+
+                    <td>{{ user.employeeId }}</td>
+
+                    <td>{{ user.email }}</td>
+
+                    <td>{{ user.role }}</td>
+
+                    <td>
+                        <span class="badge">
+                            Pending
+                        </span>
+                    </td>
+
+                    <td>
+                        <span class="badge">
+                            No
+                        </span>
+                    </td>
+
+                    <td>
+                        <span class="badge">
+                            {{ user.isFirstLogin ? 'Yes' : 'No' }}
+                        </span>
+                    </td>
+
+                    <td>
+                        <button class="approve-btn" (click)="approveEmployee(user.employeeId)">
+                            Approve
+                        </button>
+                    </td>
+
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>

@@ -18,60 +18,37 @@
 
     <div class="menu">
 
-        <!-- COMMON -->
-
-        <a routerLink="/dashboard">
-
+        <!-- ADMIN ONLY -->
+        <a *ngIf="user?.role === 'admin'" routerLink="/dashboard" routerLinkActive="active">
             Dashboard
-
         </a>
 
-        <a routerLink="/profile">
-
+        <!-- ALL USERS -->
+        <a routerLink="/profile" routerLinkActive="active">
             Profile
-
         </a>
 
         <!-- ADMIN ONLY -->
-
-        <a *ngIf="user?.role === 'admin'" routerLink="/employees">
-
+        <a *ngIf="user?.role === 'admin'" routerLink="/employees" routerLinkActive="active">
             Employees
-
         </a>
 
-        <a *ngIf="user?.role === 'admin'" routerLink="/approvals">
-
-            Approvals
-
+        <!-- ADMIN ONLY -->
+        <a *ngIf="user?.role === 'admin'" routerLink="/approval" routerLinkActive="active">
+            Approval
         </a>
 
-        <!-- PATIENTS -->
-
+        <!-- ADMIN + RECEPTIONIST -->
         <a *ngIf="
         user?.role === 'admin' ||
-        user?.role === 'receptionist' ||
-        user?.role === 'doctor'
-      " routerLink="/patients">
-
+        user?.role === 'receptionist'
+    " routerLink="/patients" routerLinkActive="active">
             Patients
-
         </a>
 
-        <!-- APPOINTMENTS -->
-
-        <a routerLink="/appointments">
-
+        <!-- ALL USERS -->
+        <a routerLink="/appointments" routerLinkActive="active">
             Appointments
-
-        </a>
-
-        <!-- DOCTOR ONLY -->
-
-        <a *ngIf="user?.role === 'doctor'" routerLink="/schedule">
-
-            Schedule
-
         </a>
 
     </div>

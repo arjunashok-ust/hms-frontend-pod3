@@ -47,7 +47,7 @@ body{
     height:100%;
 
     padding:50px 60px;
-
+    overflow-y: auto;
     display:flex;
     flex-direction:column;
     justify-content:center;
@@ -128,6 +128,7 @@ label{
     border-color:#2563eb;
     box-shadow:0 0 0 4px rgba(37,99,235,0.12);
     background:white;
+    
 }
 
 /* FORGOT PASSWORD */
@@ -263,44 +264,18 @@ button:disabled{
 
 }
 
-/* INPUT TRANSITION */
-
-.input-box{
-
-    transition:0.25s ease;
-
-}
-
-/* INPUT FOCUS */
-
-.input-box:focus-within{
-
-    border-color:#2563eb;
-
-    background:white;
-
-    box-shadow:
-    0 0 0 4px rgba(37,99,235,0.12);
-
-}
-
 /* ERROR MESSAGE */
 
-.error-message{
-    margin-bottom:20px;
-    padding:12px;
-    background:#fee2e2;
-    color:#b91c1c;
-    border-radius:10px;
-    font-size:14px;
-    display:block;
-}
-.error-message{
+.error-message {
+    padding: 12px;
+    background: #fee2e2;
+    color: #b91c1c;
+    border-radius: 10px;
+    font-size: 14px;
+    display: block;
     margin: 20px 0;
 }
-.left-panel{
-    overflow-y: auto;
-}
+
 
 /* SUCCESS MESSAGE */
 

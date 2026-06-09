@@ -1,9 +1,7 @@
-import { Component, OnInit } from '@angular/core';
-
+import { Component, OnInit,ChangeDetectorRef  } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
 import { Auth } from '../services/auth';
-import { ChangeDetectorRef } from '@angular/core';
+
 
 @Component({
   selector: 'app-dashboard',
@@ -46,13 +44,13 @@ export class Dashboard implements OnInit {
   };
 
   constructor(
-    private auth: Auth,
-    private cd: ChangeDetectorRef
+    readonly auth: Auth,
+    readonly cd: ChangeDetectorRef
   ) { }
 
   ngOnInit(): void {
 
-    if (typeof window !== 'undefined') {
+    if (globalThis.window) {
 
       const token = localStorage.getItem("token");
 

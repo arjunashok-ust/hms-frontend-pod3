@@ -40,11 +40,11 @@ export class User implements OnInit {
 
   constructor(
 
-    private auth:Auth,
+    readonly auth:Auth,
 
-    private cd:ChangeDetectorRef,
+    readonly cd:ChangeDetectorRef,
 
-    private router:Router
+    readonly router:Router
 
   ) {}
 
@@ -58,7 +58,7 @@ export class User implements OnInit {
 
   loadProfile(){
 
-    if(typeof window !== 'undefined'){
+    if (globalThis.window) {
 
       const token =
 
@@ -137,9 +137,7 @@ export class User implements OnInit {
       {
 
         day:'2-digit',
-
         month:'short',
-
         year:'numeric'
 
       }
@@ -152,13 +150,10 @@ export class User implements OnInit {
 
   logout(){
 
-    localStorage.removeItem(
-      'token'
-    );
+    localStorage.removeItem('token');
+    localStorage.removeItem('role');
 
-    this.router.navigate([
-      '/login'
-    ]);
+    this.router.navigate(['/login']);
 
   }
 

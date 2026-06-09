@@ -20,7 +20,7 @@ color:#15803d;
 
 .error-message{
 background:#fee2e2;
-color:#dc2626;
+color:#991b1b;
 }
 
 /* STATS */
@@ -209,7 +209,7 @@ font-size:15px;
 
 .reset-btn{
 background:#fff1f2;
-color:#ef4444;
+color:#991b1b;
 }
 
 .submit-btn{
@@ -279,7 +279,7 @@ color:#15803d;
 
 .doctor-status.inactive{
 background:#fee2e2;
-color:#dc2626;
+color:#991b1b;
 }
 
 /* TABLE */
@@ -314,9 +314,9 @@ font-size:12px;
 font-weight:700;
 }
 
-.booked-status{
-background:#dbeafe;
-color:#2563eb;
+.booked-status {
+  background: #dbeafe;
+  color: #1e3a8a;
 }
 
 .completed-status{
@@ -326,7 +326,7 @@ color:#15803d;
 
 .cancelled-status{
 background:#fee2e2;
-color:#dc2626;
+color: #991b1b;
 }
 
 .delete-btn{

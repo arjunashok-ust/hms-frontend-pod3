@@ -26,20 +26,33 @@
         <div class="form-grid">
           <!-- NAME -->
           <div>
-            <label> Full Name </label>
+            <label for="full name"> Full Name </label>
             <div class="input-box" [class.invalid]="nameField.invalid && nameField.touched">
-              <input type="text" [(ngModel)]="name" name="name" #nameField="ngModel" placeholder="Enter full name" required minlength="3">
+              <input type="text" [(ngModel)]="name" name="name" #nameField="ngModel" placeholder="Enter full name"
+                required pattern="^[A-Za-z ]+$" minlength="3">
             </div>
             <div class="validation-error" *ngIf="nameField.invalid && nameField.touched">
-              <span *ngIf="nameField.errors?.['required']"> Name is required </span>
-              <span *ngIf="nameField.errors?.['minlength']"> Minimum 3 characters required </span>
+
+              <span *ngIf="nameField.errors?.['required']">
+                Name is required
+              </span>
+
+              <span *ngIf="nameField.errors?.['minlength']">
+                Minimum 3 characters required
+              </span>
+
+              <span *ngIf="nameField.errors?.['pattern']">
+                Name can contain only alphabets and spaces
+              </span>
+
             </div>
           </div>
           <!-- EMAIL -->
           <div>
-            <label> Email </label>
+            <label for="Email"> Email </label>
             <div class="input-box" [class.invalid]="emailField.invalid && emailField.touched">
-              <input type="email" [(ngModel)]="email" name="email" #emailField="ngModel" placeholder="Enter email" required email>
+              <input type="email" [(ngModel)]="email" name="email" #emailField="ngModel" placeholder="Enter email"
+                required email>
             </div>
             <div class="validation-error" *ngIf="emailField.invalid && emailField.touched">
               <span *ngIf="emailField.errors?.['required']"> Email is required </span>
@@ -48,9 +61,10 @@
           </div>
           <!-- PASSWORD -->
           <div>
-            <label> Password </label>
+            <label for="password"> Password </label>
             <div class="input-box" [class.invalid]="passwordField.invalid && passwordField.touched">
-              <input type="password" [(ngModel)]="password" name="password" #passwordField="ngModel" placeholder="Create password" required minlength="8">
+              <input type="password" [(ngModel)]="password" name="password" #passwordField="ngModel"
+                placeholder="Create password" required minlength="8">
             </div>
             <div class="validation-error" *ngIf="passwordField.invalid && passwordField.touched">
               <span *ngIf="passwordField.errors?.['required']"> Password is required </span>
@@ -59,18 +73,26 @@
           </div>
           <!-- PHONE -->
           <div>
-            <label> Phone </label>
+            <label for="phone"> Phone </label>
             <div class="input-box" [class.invalid]="phoneField.invalid && phoneField.touched">
-              <input type="text" [(ngModel)]="phone" name="phone" #phoneField="ngModel" placeholder="Enter phone number" required minlength="10">
+              <input type="tel" [(ngModel)]="phone" name="phone" #phoneField="ngModel" placeholder="Enter phone number"
+                required pattern="^[0-9]{10}$" maxlength="10">
             </div>
             <div class="validation-error" *ngIf="phoneField.invalid && phoneField.touched">
-              <span *ngIf="phoneField.errors?.['required']"> Phone number is required </span>
-              <span *ngIf="phoneField.errors?.['minlength']"> Enter valid phone number </span>
+
+              <span *ngIf="phoneField.errors?.['required']">
+                Phone number is required
+              </span>
+
+              <span *ngIf="phoneField.errors?.['pattern']">
+                Enter a valid 10-digit phone number
+              </span>
+
             </div>
           </div>
           <!-- ROLE -->
           <div>
-            <label> Role </label>
+            <label for="role"> Role </label>
             <div class="input-box" [class.invalid]="roleField.invalid && roleField.touched">
               <select [(ngModel)]="role" name="role" #roleField="ngModel" required>
                 <option value=""> Select Role </option>
@@ -86,45 +108,166 @@
           </div>
           <!-- DEPARTMENT -->
           <div>
-            <label> Department </label>
+            <label for="Department"> Department </label>
+
             <div class="input-box" [class.invalid]="departmentField.invalid && departmentField.touched">
-              <input type="text" [(ngModel)]="department" name="department" #departmentField="ngModel" placeholder="Enter department" required>
+
+              <select [(ngModel)]="department" name="department" #departmentField="ngModel" required>
+
+                <option value="">
+                  Select Department
+                </option>
+
+                <option value="OPD">
+                  OPD
+                </option>
+
+                <option value="IPD">
+                  IPD
+                </option>
+
+                <option value="Lab">
+                  Lab
+                </option>
+
+                <option value="Pharmacy">
+                  Pharmacy
+                </option>
+
+                <option value="Administration">
+                  Administration
+                </option>
+
+                <option value="Front Office">
+                  Front Office
+                </option>
+
+              </select>
+
             </div>
-            <div class="validation-error" *ngIf="departmentField.invalid && departmentField.touched"> Department is required </div>
+
+            <div class="validation-error" *ngIf="departmentField.invalid && departmentField.touched">
+
+              Department is required
+
+            </div>
           </div>
           <!-- DESIGNATION -->
           <div>
-            <label> Designation </label>
+            <label for="Designation"> Designation </label>
             <div class="input-box" [class.invalid]="designationField.invalid && designationField.touched">
-              <input type="text" [(ngModel)]="designation" name="designation" #designationField="ngModel" placeholder="Enter designation" required>
+              <input type="text" [(ngModel)]="designation" name="designation" #designationField="ngModel"
+                placeholder="Enter designation" required>
             </div>
-            <div class="validation-error" *ngIf="designationField.invalid && designationField.touched"> Designation is required </div>
+            <div class="validation-error" *ngIf="designationField.invalid && designationField.touched"> Designation is
+              required </div>
           </div>
           <!-- JOINING DATE -->
           <div>
-            <label> Joining Date </label>
+            <label for="joining date"> Joining Date </label>
             <div class="input-box">
               <input type="date" [(ngModel)]="joiningDate" name="joiningDate">
             </div>
           </div>
           <!-- MEDICAL REGISTRATION -->
           <div class="full-width" *ngIf="role === 'doctor'">
-            <label> Medical Registration Number </label>
+            <label for="Medical Registration Number"> Medical Registration Number </label>
             <div class="input-box" [class.invalid]="medicalField.invalid && medicalField.touched">
-              <input type="text" [(ngModel)]="medicalRegistrationNo" name="medicalRegistrationNo" #medicalField="ngModel" placeholder="Enter registration number" required>
+              <input type="text" [(ngModel)]="medicalRegistrationNo" name="medicalRegistrationNo"
+                #medicalField="ngModel" placeholder="Enter registration number" required>
             </div>
-            <div class="validation-error" *ngIf="medicalField.invalid && medicalField.touched"> Medical registration number is required </div>
+            <div class="validation-error" *ngIf="medicalField.invalid && medicalField.touched"> Medical registration
+              number is required </div>
           </div>
           <!-- SPECIALIZATION -->
           <div *ngIf="role === 'doctor'">
-            <label> Specialization </label>
+            <label for="specialization"> Specialization </label>
             <div class="input-box">
               <input type="text" [(ngModel)]="specialization" name="specialization" placeholder="Enter specialization">
             </div>
           </div>
+          <!-- DOCTOR AVAILABILITY -->
+
+          <div class="full-width" *ngIf="role === 'doctor'">
+
+            <label for="Doctor Availability Slots">
+              Doctor Availability Slots
+            </label>
+
+            <div class="slot-time-grid">
+
+              <div>
+
+                <label for="starthour">
+                  Start Hour
+                </label>
+
+                <select [(ngModel)]="startHour" name="startHour">
+
+                  <option value="">
+                    Select Start Hour
+                  </option>
+
+                  <option *ngFor="let hour of hours" [value]="hour">
+
+                    {{ formatHour(hour) }}
+
+                  </option>
+
+                </select>
+
+              </div>
+
+              <div>
+
+                <label for="EndHour">
+                  End Hour
+                </label>
+
+                <select [(ngModel)]="endHour" name="endHour">
+
+                  <option value="">
+                    Select End Hour
+                  </option>
+
+                  <option *ngFor="let hour of hours" [value]="hour">
+
+                    {{ formatHour(hour) }}
+
+                  </option>
+
+                </select>
+
+              </div>
+
+            </div>
+
+            <button type="button" (click)="generateTimeSlots()">
+
+              Generate Slots
+
+            </button>
+
+            <div class="generated-slots" *ngIf="generatedSlots.length">
+
+              <div class="slot-item" *ngFor="let slot of generatedSlots">
+
+                <label>
+
+                  <input type="checkbox" [checked]="isSlotSelected(slot)" (change)="toggleSlot(slot)">
+
+                  {{ slot }}
+
+                </label>
+
+              </div>
+
+            </div>
+
+          </div>
           <!-- QUALIFICATION -->
           <div>
-            <label> Qualification </label>
+            <label for="qualification"> Qualification </label>
             <div class="input-box">
               <input type="text" [(ngModel)]="qualification" name="qualification" placeholder="Enter qualification">
             </div>
@@ -141,7 +284,7 @@
     </div>
     <!-- RIGHT PANEL -->
     <div class="right-panel">
-      <img src="images/loginLogo.jpg" alt="Signup Illustration">
+      <img src="assets/image.jpg" alt="Signup Illustration">
     </div>
   </div>
 </div>

@@ -38,7 +38,10 @@
   <!-- CONTENT GRID -->
   <div class="content-grid">
     <!-- FORM -->
-    <div class="form-card">
+    <div class="form-card" *ngIf="
+    userRole === 'admin' ||
+    userRole === 'receptionist'
+  ">
       <div class="section-header">
         <span>NEW ENTRY</span>
         <h2>Book Appointment</h2>
@@ -48,14 +51,15 @@
         <!-- PATIENT + DOCTOR -->
         <div class="form-row">
           <div class="input-group">
-            <label>PATIENT ID</label>
+            <label for="patient id">PATIENT ID</label>
             <input type="text" placeholder="e.g. UHID-000001" [(ngModel)]="formData.patientId" name="patientId"
               required />
           </div>
 
           <div class="input-group">
-            <label>DOCTOR</label>
-            <select [(ngModel)]="formData.doctorEmployeeId" name="doctorEmployeeId" required>
+            <label for="doctor">DOCTOR</label>
+            <select [(ngModel)]="formData.doctorEmployeeId" name="doctorEmployeeId" (change)="onDoctorChange()"
+              required>
               <option value="">Select Doctor</option>
               <option *ngFor="let doctor of doctors" [value]="doctor.employeeId">
                 {{ doctor.name }}
@@ -67,36 +71,55 @@
         <!-- DATE + SLOT -->
         <div class="form-row">
           <div class="input-group">
-            <label>APPOINTMENT DATE</label>
+            <label for="appointment date">APPOINTMENT DATE</label>
             <input type="date" [(ngModel)]="formData.date" name="date" required />
           </div>
 
           <div class="input-group">
-            <label>TIME SLOT</label>
-            <input type="text" placeholder="10:00 AM - 10:30 AM" [(ngModel)]="formData.timeSlot" name="timeSlot"
-              required />
+            <label for="timeslot">TIME SLOT</label>
+            <select [(ngModel)]="formData.timeSlot" name="timeSlot" required>
+
+              <option value="">
+                Select Time Slot
+              </option>
+
+              <option *ngFor="let slot of availableSlots" [value]="slot">
+                {{ slot }}
+              </option>
+
+            </select>
           </div>
         </div>
 
         <!-- STATUS -->
         <div class="status-section">
-          <label>APPOINTMENT STATUS</label>
+          <label for="appointment status">APPOINTMENT STATUS</label>
 
           <div class="status-options">
-            <div class="status-option" [class.active]="formData.status === 'BOOKED'" (click)="formData.status='BOOKED'">
-              Booked
-            </div>
+  <button
+    type="button"
+    class="status-option"
+    [class.active]="formData.status === 'BOOKED'"
+    (click)="formData.status='BOOKED'">
+    Booked
+  </button>
 
-            <div class="status-option" [class.active]="formData.status === 'CANCELLED'"
-              (click)="formData.status='CANCELLED'">
-              Cancelled
-            </div>
+  <button
+    type="button"
+    class="status-option"
+    [class.active]="formData.status === 'CANCELLED'"
+    (click)="formData.status='CANCELLED'">
+    Cancelled
+  </button>
 
-            <div class="status-option" [class.active]="formData.status === 'COMPLETED'"
-              (click)="formData.status='COMPLETED'">
-              Completed
-            </div>
-          </div>
+  <button
+    type="button"
+    class="status-option"
+    [class.active]="formData.status === 'COMPLETED'"
+    (click)="formData.status='COMPLETED'">
+    Completed
+  </button>
+</div>
         </div>
 
         <!-- BUTTONS -->
@@ -184,8 +207,11 @@
           </td>
 
           <td>
-            <button class="delete-btn" (click)="deleteAppointment(appointment.appointmentId)">
-              🗑
+            <button *ngIf="
+    userRole === 'admin' ||
+    userRole === 'receptionist'
+  " class="delete-btn" (click)="deleteAppointment(appointment.appointmentId)">
+              Delete
             </button>
           </td>
         </tr>

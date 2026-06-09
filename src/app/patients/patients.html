@@ -26,18 +26,18 @@
 
             <div class="form-row">
                 <div class="input-group">
-                    <label>FULL NAME</label>
+                    <label for="FULL NAME">FULL NAME</label>
                     <input type="text" [(ngModel)]="formData.name" name="name" required>
                 </div>
                 <div class="input-group">
-                    <label>PHONE NUMBER</label>
+                    <label for="phone number">PHONE NUMBER</label>
                     <input type="text" [(ngModel)]="formData.phone" name="phone" required>
                 </div>
             </div>
 
             <div class="form-row">
                 <div class="input-group">
-                    <label>GENDER</label>
+                    <label for="gender">GENDER</label>
                     <select [(ngModel)]="formData.gender" name="gender">
                         <option value="Male">Male</option>
                         <option value="Female">Female</option>
@@ -45,18 +45,18 @@
                     </select>
                 </div>
                 <div class="input-group">
-                    <label>DATE OF BIRTH</label>
+                    <label for="date of birth">DATE OF BIRTH</label>
                     <input type="date" [(ngModel)]="formData.date_of_birth" name="date_of_birth" required>
                 </div>
             </div>
 
             <div class="form-row">
                 <div class="input-group">
-                    <label>EMERGENCY CONTACT</label>
+                    <label for="Emergency contact">EMERGENCY CONTACT</label>
                     <input type="text" [(ngModel)]="formData.emergencyContact" name="emergencyContact">
                 </div>
                 <div class="input-group">
-                    <label>STATUS</label>
+                    <label for="status">STATUS</label>
                     <select [(ngModel)]="formData.status" name="status">
                         <option [ngValue]="true">Active</option>
                         <option [ngValue]="false">Inactive</option>
@@ -66,18 +66,18 @@
 
             <div class="form-row">
                 <div class="input-group">
-                    <label>ADDRESS LINE</label>
+                    <label for="address line">ADDRESS LINE</label>
                     <input type="text" [(ngModel)]="formData.address.line1" name="line1" required>
                 </div>
                 <div class="input-group">
-                    <label>CITY</label>
+                    <label for="city">CITY</label>
                     <input type="text" [(ngModel)]="formData.address.city" name="city" required>
                 </div>
             </div>
 
             <div class="form-row">
                 <div class="input-group">
-                    <label>POSTCODE</label>
+                    <label for="postcode">POSTCODE</label>
                     <input type="text" [(ngModel)]="formData.address.postcode" name="postcode" required>
                 </div>
             </div>

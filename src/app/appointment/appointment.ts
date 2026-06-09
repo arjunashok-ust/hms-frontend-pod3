@@ -12,6 +12,10 @@ import { Auth } from '../services/auth';
   styleUrl: './appointment.css',
 })
 export class Appointment implements OnInit {
+  availableSlots: string[] = [];
+  /* CURRENT USER ROLE */
+  userRole = '';
+
   /* APPOINTMENT DATA */
   appointments: any[] = [];
   doctors: any[] = [];
@@ -36,14 +40,37 @@ export class Appointment implements OnInit {
     status: 'BOOKED',
   };
 
-  constructor(private auth: Auth, private cdr: ChangeDetectorRef) {}
+  constructor(readonly auth: Auth, readonly cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {
+    this.auth.getCurrentUser().subscribe({
+      next: (response: any) => {
+        this.userRole = response.role;
+        this.cdr.detectChanges();
+      },
+      error: (err: any) => {
+        console.log(err);
+      },
+    });
+
     this.loadAppointments();
     this.loadDoctors();
     this.loadAppointmentUI();
   }
 
+  onDoctorChange() {
+
+  const selectedDoctor = this.doctors.find(
+    doctor =>
+      doctor.employeeId ===
+      this.formData.doctorEmployeeId
+  );
+
+  this.availableSlots =
+    selectedDoctor?.availabilitySlots || [];
+
+  this.formData.timeSlot = '';
+}
   /* LOAD APPOINTMENTS */
   loadAppointments() {
     this.loading = true;
@@ -155,4 +182,3 @@ export class Appointment implements OnInit {
     return 'cancelled-status';
   }
 }
-``

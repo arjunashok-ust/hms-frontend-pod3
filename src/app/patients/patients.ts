@@ -34,11 +34,11 @@ export class Patients implements OnInit {
     }
   };
 
-  constructor(private auth: Auth, private cdr: ChangeDetectorRef) { }
+  constructor(readonly auth: Auth, readonly cdr: ChangeDetectorRef) { }
 
   ngOnInit(): void {
 
-    if (typeof window !== 'undefined') {
+     if (globalThis.window)  {
 
       const token = localStorage.getItem('token');
 

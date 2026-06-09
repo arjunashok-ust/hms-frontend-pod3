@@ -18,7 +18,7 @@
 
         <div class="header-actions">
 
-            <button class="btn-secondary">
+            <button class="btn-secondary" routerLink="/approval">
                 Pending Approvals
             </button>
 
@@ -281,7 +281,7 @@
 
                 <div class="input-group">
 
-                    <label>
+                    <label for="full name">
                         Full Name
                     </label>
 
@@ -293,7 +293,7 @@
 
                 <div class="input-group">
 
-                    <label>
+                    <label for="email">
                         Email
                     </label>
 
@@ -305,7 +305,7 @@
 
                 <div class="input-group">
 
-                    <label>
+                    <label for="phone">
                         Phone
                     </label>
 
@@ -317,7 +317,7 @@
 
                 <div class="input-group">
 
-                    <label>
+                    <label for="role">
                         Role
                     </label>
 
@@ -355,11 +355,22 @@
 
                 <div class="input-group">
 
-                    <label>
+                    <label for="department">
                         Department
                     </label>
 
-                    <input type="text" [(ngModel)]="employeeForm.department" name="department" required>
+                    <select [(ngModel)]="employeeForm.department" name="department" required>
+                        <option value="">
+                            Select Department
+                        </option>
+
+                        <option value="OPD">OPD</option>
+                        <option value="IPD">IPD</option>
+                        <option value="Lab">Lab</option>
+                        <option value="Pharmacy">Pharmacy</option>
+                        <option value="Administration">Administration</option>
+                        <option value="Front Office">Front Office</option>
+                    </select>
 
                 </div>
 
@@ -367,7 +378,7 @@
 
                 <div class="input-group">
 
-                    <label>
+                    <label for="designation">
                         Designation
                     </label>
 
@@ -379,7 +390,7 @@
 
                 <div class="input-group">
 
-                    <label>
+                    <label for="joining date">
                         Joining Date
                     </label>
 
@@ -391,7 +402,7 @@
 
                 <div class="input-group">
 
-                    <label>
+                    <label for="qualification">
                         Qualification
                     </label>
 
@@ -403,7 +414,7 @@
 
                 <div class="input-group" *ngIf="employeeForm.role === 'doctor'">
 
-                    <label>
+                    <label for="medical registration no">
                         Medical Registration No
                     </label>
 
@@ -416,7 +427,7 @@
 
                 <div class="input-group" *ngIf="employeeForm.role === 'doctor'">
 
-                    <label>
+                    <label for="specialization">
                         Specialization
                     </label>
 
@@ -428,7 +439,7 @@
 
                 <div class="input-group" *ngIf="employeeForm.role === 'doctor'">
 
-                    <label>
+                    <label for="consultation fee">
                         Consultation Fee
                     </label>
 
@@ -442,7 +453,7 @@
 
                 <div class="slot-wrapper" *ngIf="employeeForm.role === 'doctor'">
 
-                    <label class="slot-title">
+                    <label class="slot-title" for="doctor slots">
                         Doctor Availability Slots
                     </label>
 
@@ -454,7 +465,7 @@
 
                         <div class="input-group">
 
-                            <label>
+                            <label for="start hour">
                                 Start Hour
                             </label>
 
@@ -478,7 +489,7 @@
 
                         <div class="input-group">
 
-                            <label>
+                            <label for="end hour">
                                 End Hour
                             </label>
 

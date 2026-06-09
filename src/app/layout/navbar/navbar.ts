@@ -14,7 +14,7 @@ import { Router } from "@angular/router";
   styleUrl: "./navbar.css",
 })
 export class Navbar {
-  constructor(private router: Router) {}
+  constructor(readonly router: Router) {}
 
   logout() {
     // CLEAR STORAGE

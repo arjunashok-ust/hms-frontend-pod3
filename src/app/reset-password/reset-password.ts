@@ -39,9 +39,9 @@ export class ResetPassword {
 
   constructor(
 
-    private auth:Auth,
+    readonly auth:Auth,
 
-    private router:Router
+    readonly router:Router
 
   ){}
 
