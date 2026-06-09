@@ -69,7 +69,7 @@ export class Signup {
       },
       {
         validators: [this.passwordMatchValidator, this.doctorSlotValidator]
-        
+
       },
     );
 
@@ -124,7 +124,7 @@ export class Signup {
 
     const slotGroup = this.fb.group({
       id: [uniqueId],
-      dayOfWeek: ['', Validators.required], 
+      dayOfWeek: ['', Validators.required],
       startTime: ['', Validators.required],
       endTime: ['', Validators.required],
       checkedSlots: this.fb.array([]),
@@ -188,7 +188,7 @@ export class Signup {
     if (this.signupForm.valid) {
       this.isSubmitting = true;
       this.errorMessage = null;
-      this.cdr.markForCheck(); 
+      this.cdr.markForCheck();
 
       const rawValues = this.signupForm.value;
 
@@ -235,7 +235,7 @@ export class Signup {
         department: rawValues.department.toUpperCase(),
         qualification: parsedQualifications,
         consultationFee: this.isDoctor ? Number(rawValues.consultationFee) : undefined,
-        weeklySchedule: this.isDoctor ? formattedWeeklySchedule : [], 
+        weeklySchedule: this.isDoctor ? formattedWeeklySchedule : [],
       };
 
       delete payload.availabilitySlots;
@@ -243,7 +243,7 @@ export class Signup {
       this.auth.signup(payload).subscribe({
         next: () => {
           this.isSubmitting = false;
-          this.cdr.markForCheck(); 
+          this.cdr.markForCheck();
           this.router.navigate(['/login']);
         },
         error: (error) => {

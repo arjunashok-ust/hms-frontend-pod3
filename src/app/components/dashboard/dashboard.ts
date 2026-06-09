@@ -17,7 +17,7 @@ export class Dashboard implements OnInit {
   constructor(
     private readonly dashboardService: DashboardService,
     private readonly cdr: ChangeDetectorRef,
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.fetchDashboardData();

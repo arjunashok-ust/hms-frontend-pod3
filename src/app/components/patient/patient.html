@@ -115,7 +115,7 @@
 
             <div class="input-group">
               <label for="dob">DOB *</label>
-              <input type="date" formControlName="dob"  [min]="getMinDate()" [max]="getMaxDate()" />
+              <input type="date" formControlName="dob" [min]="getMinDate()" [max]="getMaxDate()" />
               @if (
                 newpatientForm.get('dob')?.touched &&
                 newpatientForm.get('dob')?.hasError('futureDate')

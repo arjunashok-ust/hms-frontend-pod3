@@ -162,7 +162,7 @@
                   <small class="text-danger">Appointments cannot be booked in the past.</small>
                 }
                 @if (appointmentForm.get('date')?.hasError('pastDateTooFar')) {
-                  <small class="text-danger">Admin limit: Cannot backdate more than 2 days.</small>
+                  <small class="text-danger">Admin limit: Cannot backdate too far.</small>
                 }
               }
             </div>
@@ -267,7 +267,7 @@
             <button
               type="button"
               class="btn btn-ghost"
-              (click)="isEditMode ? cancelEdit() : appointmentForm.reset({ status: 'Scheduled' })"
+              (click)="isEditMode ? cancelEdit() : resetForm()"
             >
               <i
                 class="bi"
@@ -384,10 +384,7 @@
 
                   @if (['DOCTOR', 'ADMIN', 'RECEPTIONIST'].includes(userRole)) {
                     @if (apt.status === 'Scheduled') {
-                      <button
-                        class="btn-action complete"
-                        (click)="markAsCompleted(apt)"
-                      >
+                      <button class="btn-action complete" (click)="markAsCompleted(apt)">
                         <i class="bi bi-check2-circle"></i>
                       </button>
                     }

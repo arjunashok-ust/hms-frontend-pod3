@@ -10,6 +10,9 @@
         [ngClass]="{ 'bg-light-blue': showPendingApprovals }"
       >
         {{ showPendingApprovals ? 'Back to Directory' : 'Approvals' }}
+        @if (!showPendingApprovals) {
+          <span class="notification-badge">{{ stats.pending }}</span>
+        }
       </button>
       @if (!showPendingApprovals) {
         <button class="btn-primary" (click)="openModal()">Add Employee</button>
@@ -186,11 +189,7 @@
                       <button class="icon-btn edit" (click)="editEmployee(emp)">
                         <i class="bi bi-pencil"></i>
                       </button>
-                      <button
-                        class="icon-btn delete"
-                        style="color: #ef4444"
-                        (click)="deleteEmployee(emp.employeeCode)"
-                      >
+                      <button class="icon-btn delete" (click)="deleteEmployee(emp.employeeCode)">
                         <i class="bi bi-trash"></i>
                       </button>
                     }
@@ -208,7 +207,7 @@
                         class="btn btn-sm btn-danger fw-bold text-white rounded"
                         (click)="deleteEmployee(emp.employeeCode)"
                       >
-                        Reject
+                        <i class="bi bi-x-lg"></i> Reject
                       </button>
                     }
                   </div>
@@ -460,6 +459,16 @@
                         <option value="SATURDAY">Saturday</option>
                         <option value="SUNDAY">Sunday</option>
                       </select>
+                      <label
+                        for="endTime"
+                        style="
+                          font-size: 0.8rem;
+                          color: #374151;
+                          margin-bottom: 4px;
+                          display: block;
+                        "
+                        >Start Time</label
+                      >
                       <select id="startTime" formControlName="startTime" class="form-control">
                         <option value="" disabled selected>Start</option>
                         @for (hour of availableHours; track hour) {
@@ -512,21 +521,18 @@
                             Select active intervals:
                           </p>
                           <div class="sub-slots-grid" formArrayName="checkedSlots">
-                            @for (
-                              subSlot of rowSubSlotsMap[slotId];
-                              track subSlot.label;
-                              let subIdx = $index
-                            ) {
-                              <label
-                                class="d-flex align-items-center gap-2 p-1 bg-white border rounded"
-                                style="cursor: pointer"
-                              >
-                                <input type="checkbox" [formControlName]="subIdx" />
-                                <span class="small" style="font-size: 0.75rem; color: #374151">{{
-                                  subSlot.label
-                                }}</span>
-                              </label>
-                            }
+                            <div class="interval-container">
+                              @for (
+                                subSlot of rowSubSlotsMap[slotId];
+                                track subSlot.label;
+                                let subIdx = $index
+                              ) {
+                                <label class="interval-chip">
+                                  <input type="checkbox" [formControlName]="subIdx" />
+                                  <span>{{ subSlot.label }}</span>
+                                </label>
+                              }
+                            </div>
                           </div>
                         </div>
                       }

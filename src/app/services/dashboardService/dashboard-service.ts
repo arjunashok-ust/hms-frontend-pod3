@@ -11,7 +11,7 @@ export class DashboardService {
   constructor(
     private readonly http: HttpClient,
     @Inject(PLATFORM_ID) private readonly platformId: Object,
-  ) {}
+  ) { }
 
   getStats(): Observable<any> {
     if (isPlatformBrowser(this.platformId)) {

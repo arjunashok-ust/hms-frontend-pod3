@@ -1,4 +1,4 @@
-import { Component, inject,OnInit, ChangeDetectorRef, Inject, PLATFORM_ID } from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectorRef, Inject, PLATFORM_ID } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { AppointmentService } from '../../services/appointmentService/appointment-service';
@@ -40,7 +40,7 @@ export class Appointment implements OnInit {
     private readonly appointmentService: AppointmentService,
     private readonly apiService: ApiService,
     private readonly cdr: ChangeDetectorRef,
-    
+
     @Inject(PLATFORM_ID) private readonly platformId: Object
   ) {
     this.initForm();
@@ -179,6 +179,7 @@ export class Appointment implements OnInit {
     this.displayPatients = [...this.patients];
   }
 
+
   closePatientDropdown() {
     setTimeout(() => {
       this.isPatientDropdownOpen = false;
@@ -227,6 +228,27 @@ export class Appointment implements OnInit {
     }, 200);
   }
 
+  resetForm() {
+    this.appointmentForm.reset({ status: 'Scheduled' });
+
+    this.selectedPatientDisplay = '';
+    this.selectedDoctorDisplay = '';
+    this.appointmentForm.patchValue({
+      patientID: '',
+      doctorEmployeeID: ''
+    });
+
+    this.timeSlots = [];
+    this.displayPatients = [...this.patients];
+    this.displayDoctors = [...this.doctors];
+
+    this.isPatientDropdownOpen = false;
+    this.isDoctorDropdownOpen = false;
+    setTimeout(() => {
+      this.cdr.detectChanges();
+    });
+  }
+
   onSubmit() {
     if (this.appointmentForm.invalid) {
       this.appointmentForm.markAllAsTouched();
@@ -246,6 +268,8 @@ export class Appointment implements OnInit {
           this.loadData();
           this.isSubmitting = false;
           this.cdr.markForCheck();
+          this.displayPatients = [...this.patients];
+          this.displayDoctors = [...this.doctors];
         },
         error: (err) => {
           this.toast.error('Error updating appointment. ' + (err.error?.message || ''));

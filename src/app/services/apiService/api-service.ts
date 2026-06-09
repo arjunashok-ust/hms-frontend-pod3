@@ -18,7 +18,7 @@ export interface MenuNode {
 export class ApiService {
   private readonly backendUrl = environment.apiUrl;
 
-  constructor(private readonly http: HttpClient) {}
+  constructor(private readonly http: HttpClient) { }
 
   getMenus(): Observable<MenuNode[]> {
     return this.http.get<MenuNode[]>(`${this.backendUrl}/api/menuNode/getMenus`);

@@ -17,7 +17,7 @@ export class Sidebar implements OnInit {
     private readonly api: ApiService,
     @Inject(PLATFORM_ID) private readonly platformId: Object,
     private readonly cdr: ChangeDetectorRef,
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     if (isPlatformBrowser(this.platformId)) {

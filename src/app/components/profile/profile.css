@@ -4,7 +4,7 @@
   --text-secondary: #6b7280;
   --border-color: #f3f4f6;
   --accent-blue: #4f46e5;
-  --dashed-border: #111827; 
+  --dashed-border: #111827;
 }
 
 .page-wrapper {
@@ -267,16 +267,15 @@
 }
 
 #person-icon-main {
-  font-size: 60px; 
+  font-size: 60px;
 }
 
 .stat-icon i {
-  font-size: 24px;   
-  color: white;     
+  font-size: 24px;
+  color: white;
 }
 
-.info-group i {  
+.info-group i {
   color: rgb(20, 106, 245);
-  font-size:15px ;     
+  font-size: 15px;
 }
-

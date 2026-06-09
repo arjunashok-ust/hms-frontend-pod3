@@ -7,7 +7,16 @@ input,
 select,
 button,
 textarea {
-  font-family: 'Product Sans', 'Google Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important;
+  font-family:
+    'Product Sans',
+    'Google Sans',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    Helvetica,
+    Arial,
+    sans-serif !important;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -183,7 +192,7 @@ h6 {
 .avatar.bg-purple {
   width: 42px;
   height: 42px;
-  background: #3267a3;
+  background: rgb(0, 68, 255);
   color: white;
   border-radius: 12px;
   display: flex;
@@ -263,6 +272,8 @@ h6 {
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
+  overflow: visible;
+  position: relative;
 }
 .btn-secondary:hover {
   background-color: #f3f4f6;
@@ -273,9 +284,9 @@ h6 {
   color: #3730a3;
 }
 
-.icon-btn {
+.icon-btn.edit {
   background: #f8f9fa;
-  border: 1px solid #e9ecef;
+  border: 2px solid #85addc;
   color: #3267a3;
   border-radius: 12px;
   padding: 10px 14px;
@@ -283,8 +294,25 @@ h6 {
   margin-left: 12px;
   transition: 0.2s;
 }
-.icon-btn:hover {
-  background: #e0e7ff;
+.icon-btn.edit:hover {
+  background: #063cef;
+  color: white;
+}
+
+.icon-btn.delete {
+  background: #ffffff;
+  border: 2px solid #d06868;
+  color: #e40202;
+  border-radius: 12px;
+  padding: 10px 14px;
+  cursor: pointer;
+  margin-left: 12px;
+  transition: 0.2s;
+}
+
+.icon-btn.delete:hover {
+  background: #e40606;
+  color: white;
 }
 
 .badge {
@@ -451,16 +479,21 @@ h6 {
   cursor: pointer;
 }
 #btn-approve {
-  border-radius: 6px;
-  background-color: #10b981;
+  border-radius: 12px;
+  background-color: #aae5c2;
   border: 1px solid #d1d5db;
   padding: 6px 12px;
+  color: rgb(2, 110, 2);
+  font-weight: 600;
 }
+
 #btn-reject {
-  border-radius: 6px;
-  background-color: #ef4444;
+  border-radius: 12px;
+  background-color: #efb7b7;
   border: 1px solid #d1d5db;
   padding: 6px 12px;
+  color: rgb(144, 0, 0);
+  font-weight: 600;
 }
 .btn-cancel {
   background-color: #a80202;
@@ -515,4 +548,70 @@ h6 {
 .pill-onboarding {
   background-color: #fee2e2;
   color: rgb(198, 0, 0);
+}
+
+.interval-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.interval-chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border: 1px solid #6c8ef5;
+  border-radius: 999px;
+  background-color: #ffffff;
+  font-size: 0.8rem;
+  color: #374151;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.interval-chip input[type='checkbox'] {
+  accent-color: #4f46e5;
+  cursor: pointer;
+}
+
+.interval-chip input[type='checkbox']:checked + span {
+  font-weight: 500;
+  color: #1e40af;
+}
+
+.interval-chip:has(input:checked) {
+  background-color: #eef2ff;
+  border-color: #4f46e5;
+}
+
+.interval-chip:hover {
+  background-color: #f5f7ff;
+}
+
+.notification-badge {
+  position: absolute;
+
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+
+  background-color: #d60505;
+  color: #ffffff;
+
+  font-size: 11px;
+  font-weight: 600;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  top: -8px;
+  right: -8px;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }

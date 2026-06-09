@@ -31,7 +31,7 @@ export class Patient implements OnInit {
   isSubmittingModal = false;
   searchTerm: string = '';
   toast: ToastrService = inject(ToastrService);
-  
+
   constructor(
     private readonly apiService: ApiService,
     private readonly cdr: ChangeDetectorRef,

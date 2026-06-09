@@ -123,12 +123,7 @@
 
           <div class="form-group">
             <label for="joiningDate">Joining Date *</label>
-            <input
-              formControlName="joiningDate"
-              type="date"
-              [min]="minDate"
-              [max]="maxDate"
-            />
+            <input formControlName="joiningDate" type="date" [min]="minDate" [max]="maxDate" />
             @if (
               signupForm.get('joiningDate')?.touched &&
               signupForm.get('joiningDate')?.hasError('invalidDateRange')
