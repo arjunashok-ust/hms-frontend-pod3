@@ -105,7 +105,6 @@
           type="text"
           placeholder="Qualification"
           formControlName="qualification"
-          *ngIf="signUpForm.get('role')?.value =='Doctor'||signUpForm.get('role')?.value =='Nurse'"
         />
         <small *ngIf="signUpForm.get('qualification')?.touched">
           <span *ngIf="signUpForm.get('qualification')?.errors?.['pattern']"

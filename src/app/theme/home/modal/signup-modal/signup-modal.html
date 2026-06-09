@@ -179,10 +179,6 @@
               class="form-input"
               placeholder="Enter qualification"
               formControlName="qualification"
-              *ngIf="
-                signUpModalForm.get('role')?.value == 'Doctor' ||
-                signUpModalForm.get('role')?.value == 'Nurse'
-              "
             />
           </div>
           <small *ngIf="signUpModalForm.get('qualification')?.touched">
