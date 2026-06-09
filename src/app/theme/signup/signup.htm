@@ -137,6 +137,9 @@
           <small *ngIf="signUpForm.errors?.['invalidTimeRange']"
             >Start hour must be less than end hour.</small
           >
+           <small *ngIf="signUpForm.errors?.['sameTimeRange']"
+            >Start hour and end hour should not be same.</small
+          >
           <input
             type="button"
             value="Generate"

@@ -8,6 +8,10 @@ export function timeRangeValidator(control: AbstractControl): ValidationErrors |
     return null;
   }
 
+  if(start==end){
+    return { sameTimeRange: true};
+  }
+
   if (start != end && start >= end) {
     return { invalidTimeRange: true };
   }
