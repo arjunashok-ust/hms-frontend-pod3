@@ -1,5 +1,5 @@
 <div class="appointment-wrapper">
-  <div class="stats-grid">
+  <div class="stats-grid" *ngIf="role!='Doctor'">
     <div class="stat-card blue">
       <div class="stat-top">
         <div class="stat-icon">
@@ -45,7 +45,8 @@
       </div>
     </div>
   </div>
-  <div class="content-grid">
+
+  <div class="content-grid" *ngIf="role!='Doctor'">
     <div class="glass-panel">
       <div class="panel-header">
         <div>
@@ -104,10 +105,10 @@
               </ng-container>
             </select>
             <small *ngIf="appointmentForm.get('doctorEmployeeId')?.touched">
-            <span *ngIf="appointmentForm.get('doctorEmployeeId')?.errors?.['required']"
-              >Please select a doctor.</span
-            >
-          </small>
+              <span *ngIf="appointmentForm.get('doctorEmployeeId')?.errors?.['required']"
+                >Please select a doctor.</span
+              >
+            </small>
           </div>
         </div>
         <div class="section-divider">
@@ -133,13 +134,13 @@
               required
             />
             <small *ngIf="appointmentForm.get('date')?.touched">
-            <span *ngIf="appointmentForm.errors?.['invalidAppointmentDate']"
-              >Appointments cannot be booked for today or any past date.</span
-            >
-            <span *ngIf="appointmentForm.get('date')?.errors?.['required']"
-              >Appointment date is required.</span
-            >
-          </small>
+              <span *ngIf="appointmentForm.errors?.['invalidAppointmentDate']"
+                >Appointments cannot be booked for today or any past date.</span
+              >
+              <span *ngIf="appointmentForm.get('date')?.errors?.['required']"
+                >Appointment date is required.</span
+              >
+            </small>
           </div>
           <div class="form-group span-2">
             <label class="form-label" for="time-slot">
@@ -160,8 +161,16 @@
               </div>
             </div>
             <ng-template #noSlots>
-              <span class="helper-text" *ngIf="!appointmentForm.get('doctorEmployeeId')?.value">Select a doctor to view available time slots</span>
-              <span class="helper-text" *ngIf="appointmentForm.get('doctorEmployeeId')?.value&&doctorTimeSlots.length===0">No time slots available right now.</span>
+              <span class="helper-text" *ngIf="!appointmentForm.get('doctorEmployeeId')?.value"
+                >Select a doctor to view available time slots</span
+              >
+              <span
+                class="helper-text"
+                *ngIf="
+                  appointmentForm.get('doctorEmployeeId')?.value && doctorTimeSlots.length === 0
+                "
+                >No time slots available right now.</span
+              >
             </ng-template>
           </div>
         </div>
@@ -196,7 +205,12 @@
           <button type="button" class="btn btn-danger-outline" routerLink="/profile">
             <i class="bi bi-x-lg"></i> Cancel
           </button>
-          <button type="submit" class="btn" [ngClass]="appointmentForm.valid ? 'btn-primary':'btn-disabled'" [disabled]="!appointmentForm.valid">
+          <button
+            type="submit"
+            class="btn"
+            [ngClass]="appointmentForm.valid ? 'btn-primary' : 'btn-disabled'"
+            [disabled]="!appointmentForm.valid"
+          >
             <i class="bi bi-calendar-plus"></i> Book Appointment
           </button>
         </div>
@@ -233,18 +247,13 @@
               <span>{{ doctor.specialization }}</span>
             </div>
           </div>
-          <span
-            class="status-badge"
-            [class.status-booked]="doctor.status === 'Active'"
-            [class.status-cancelled]="doctor.status === 'Inactive'"
-          >
-            {{ doctor.status }}
-          </span>
+          <span class="status-badge status-booked"> Active </span>
         </div>
       </div>
     </div>
   </div>
-  <div class="glass-panel full-width recent-appointments">
+
+  <div class="glass-panel full-width recent-appointments" *ngIf="role!='Doctor'">
     <div class="panel-header">
       <div>
         <span class="panel-subtitle">Records</span>
@@ -313,6 +322,71 @@
                   <i class="bi bi-trash"></i>
                 </button>
               </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="glass-panel full-width recent-appointments" *ngIf="role==='Doctor'">
+    <div class="panel-header">
+      <div>
+        <span class="panel-subtitle">Records</span>
+        <h2>Recent Appointments For You</h2>
+      </div>
+    </div>
+    <div class="table-wrapper">
+      <table class="modern-table">
+        <thead>
+          <tr>
+            <th>Appointment ID</th>
+            <th>Patient</th>
+            <th>Doctor</th>
+            <th>Date</th>
+            <th>Time Slot</th>
+            <th>Status</th>
+            <th>Created By</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngIf="doctorAppointments.length === 0"><td>No appointments scheduled for you</td></tr>
+          <tr *ngFor="let appointment of doctorAppointments">
+            <td>
+              <span class="apt-id">{{ appointment.appointmentId }}</span>
+            </td>
+            <td>
+              <div class="patient-info">
+                <div class="patient-avatar">P</div>
+                <div>
+                  <h4>{{ appointment.patientId }}</h4>
+                  <span>Patient ID</span>
+                </div>
+              </div>
+            </td>
+            <td>
+              <span class="designation-badge">
+                {{ appointment.doctorEmployeeId }}
+              </span>
+            </td>
+            <td class="muted-text">
+              {{ appointment.date | date: 'dd, MMM' }}
+            </td>
+            <td>
+              <span class="designation-badge">{{ appointment.timeSlot }}</span>
+            </td>
+            <td>
+              <span
+                class="status-badge"
+                [class.status-booked]="appointment.status === 'Booked'"
+                [class.status-cancelled]="appointment.status === 'Cancelled'"
+                [class.status-completed]="appointment.status === 'Completed'"
+              >
+                {{ appointment.status }}
+              </span>
+            </td>
+            <td class="muted-text">
+              {{ appointment.createdByEmployeeId }}
             </td>
           </tr>
         </tbody>

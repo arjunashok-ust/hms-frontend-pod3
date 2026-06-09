@@ -15,7 +15,7 @@ import { ToastrService } from 'ngx-toastr';
 
 export class DashboardComponent implements OnInit {
   dashboardData: DashboardModel | null = null;
-  userData: EmployeeModel[] | null = null;
+  userData: EmployeeModel[]  = [];
 
   adminService: AdminService = inject(AdminService);
   cd: ChangeDetectorRef = inject(ChangeDetectorRef);
@@ -35,6 +35,7 @@ export class DashboardComponent implements OnInit {
         }
       },
     });
+    
     this.adminService.getEmployees().subscribe({
       next: (res) => {
         this.userData = res;

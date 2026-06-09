@@ -41,8 +41,9 @@ export function DobValidator(control: AbstractControl): ValidationErrors | null 
   if (!dob) {
     return null;
   }
-  const date = new Date(dob).toDateString();
-  const today = new Date().toDateString();
+
+  const date = new Date(dob);
+  const today = new Date();
 
   if (date > today) {
     return { invalidDob: true };
@@ -58,10 +59,13 @@ export function appointmentDateValidator(control: AbstractControl): ValidationEr
     return null;
   }
 
-  const date = new Date(inputDate).toDateString();
-  const today = new Date().toDateString();
+  const date = new Date(inputDate);
+  const today = new Date();
 
-  if (date <= today) {
+  date.setHours(0,0,0,0);
+  today.setHours(0,0,0,0);
+
+  if (date < today) {
     return { invalidAppointmentDate: true };
   }
 

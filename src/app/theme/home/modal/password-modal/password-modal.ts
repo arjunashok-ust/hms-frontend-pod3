@@ -19,7 +19,6 @@ import { ToastrService } from 'ngx-toastr';
   templateUrl: './password-modal.html',
   styleUrl: './password-modal.css',
 })
-
 export class PasswordModalComponent {
   passwordForm!: FormGroup;
 
@@ -27,11 +26,10 @@ export class PasswordModalComponent {
   authService: AuthService = inject(AuthService);
   toast: ToastrService = inject(ToastrService);
 
-
   public constructor(readonly fb: FormBuilder) {
     this.passwordForm = this.fb.group(
       {
-        password: ['', [Validators.required, Validators.minLength(8)]],
+        password: ['', [Validators.required, Validators.minLength(8),Validators.pattern(/^(?=.*[A-Z])(?=.*\d).+$/)]],
         confirmPassword: ['', [Validators.required, Validators.minLength(8)]],
       },
       {
@@ -41,17 +39,23 @@ export class PasswordModalComponent {
   }
 
   onSubmit() {
-    let email = localStorage.getItem('email');
-    let password = this.passwordForm.value.password;
+    if (this.passwordForm.invalid) {
+      this.toast.warning("Validation failed,please check the inputs")
+      this.passwordForm.markAllAsTouched();
+      return;
+    }
+
+    const email = localStorage.getItem('email');
+    const password = this.passwordForm.value.password;
     const payload = { email: email, password: password };
     this.authService.setPassword(payload).subscribe({
-      next: (res)=>{
+      next: (res) => {
         this.toast.success('New Password Is Set');
+        this.router.navigate(['/profile']);
       },
-      error: (error) => {
-        this.toast.error(error.message);
-      }
+      error: (err) => {
+        this.toast.error(err?.error?.message || err?.message || 'Something went wrong!');
+      },
     });
-    this.router.navigate(['/profile']);
   }
 }

@@ -57,9 +57,7 @@
               />
             </div>
             <small *ngIf="updateForm.get('email')?.touched">
-              <span *ngIf="updateForm.get('email')?.errors?.['required']"
-                >Email is required.</span
-              >
+              <span *ngIf="updateForm.get('email')?.errors?.['required']">Email is required.</span>
               <span *ngIf="updateForm.get('email')?.errors?.['email']">Email is invalid.</span>
             </small>
           </div>
@@ -82,10 +80,10 @@
             </div>
             <small
               *ngIf="
-                updateForm.get('role')?.errors?.['required'] &&
-                updateForm.get('role')?.touched
+                updateForm.get('role')?.errors?.['required'] && updateForm.get('role')?.touched
               "
-              >Role is required.</small>
+              >Role is required.</small
+            >
           </div>
           <div class="form-group">
             <label class="form-label" for="department">
@@ -107,11 +105,8 @@
                 <i class="bi bi-chevron-down"></i>
               </span>
             </div>
-             <small
-              *ngIf="
-                !updateForm.get('department')?.valid &&
-                updateForm.get('department')?.touched
-              "
+            <small
+              *ngIf="!updateForm.get('department')?.valid && updateForm.get('department')?.touched"
               >Department is required.</small
             >
           </div>
@@ -134,8 +129,7 @@
             </div>
             <small
               *ngIf="
-                !updateForm.get('designation')?.valid &&
-                updateForm.get('designation')?.touched
+                !updateForm.get('designation')?.valid && updateForm.get('designation')?.touched
               "
               >Designation is required.</small
             >
@@ -154,15 +148,20 @@
             <span *ngIf="updateForm.get('joiningDate')?.errors?.['required']"
               >Joining date is required.</span
             >
-            <span *ngIf="updateForm.errors?.['invalidJoiningDate']"
-              >Joining Date must be behind or forward of 3 months.</span
+            <span *ngIf="updateForm.errors?.['invalidJoiningDate']">
+              Joining Date must be behind or forward of 3 months.</span
             >
           </small>
         </div>
         <div class="section-divider" *ngIf="updateForm.get('role')?.value == 'Doctor'">
           <span class="section-divider-text">Doctor Details</span>
         </div>
-        <div class="form-row" *ngIf="updateForm.get('role')?.value == 'Doctor' || updateForm.get('role')?.value == 'Nurse'">
+        <div
+          class="form-row"
+          *ngIf="
+            updateForm.get('role')?.value == 'Doctor' || updateForm.get('role')?.value == 'Nurse'
+          "
+        >
           <div class="form-group">
             <label class="form-label" for="medicalReg">
               <i class="bi bi-clipboard2-pulse"></i>
@@ -182,7 +181,7 @@
               <span
                 *ngIf="
                   !updateForm.get('medicalRegistrationNo')?.value &&
-                updateForm.get('role')?.value === 'Doctor'
+                  updateForm.get('role')?.value === 'Doctor'
                 "
                 >medical registration number is required</span
               >
@@ -208,13 +207,11 @@
               />
             </div>
             <small *ngIf="updateForm.get('qualification')?.touched">
-            <span *ngIf="updateForm.get('qualification')?.errors?.['pattern']"
-              >Only letters and white space is allowed.</span
-            >
-            <span *ngIf="!updateForm.get('qualification')?.value"
-              >Qualification is required</span
-            >
-          </small>
+              <span *ngIf="updateForm.get('qualification')?.errors?.['pattern']"
+                >Only letters and white space is allowed.</span
+              >
+              <span *ngIf="!updateForm.get('qualification')?.value">Qualification is required</span>
+            </small>
           </div>
         </div>
         <div class="form-row" *ngIf="updateForm.get('role')?.value == 'Doctor'">
@@ -242,12 +239,12 @@
                 <i class="bi bi-chevron-down"></i>
               </span>
               <small
-              *ngIf="
-                !updateForm.get('specialization')?.value &&
-                updateForm.get('specialization')?.touched
-              "
-              >Specialization is required.</small
-            >
+                *ngIf="
+                  !updateForm.get('specialization')?.value &&
+                  updateForm.get('specialization')?.touched
+                "
+                >Specialization is required.</small
+              >
             </div>
           </div>
 
@@ -360,7 +357,7 @@
             [disabled]="updateForm.invalid"
             [class.disabled]="updateForm.invalid"
           >
-            <i class="bi bi-check2-circle"></i> Update Employee
+            <i class="bi bi-check2-circle"></i> {{isLoading?"Processing...":"Edit Profile"}}
           </button>
         </div>
       </div>

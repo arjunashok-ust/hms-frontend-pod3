@@ -13,7 +13,6 @@ export interface EmployeeModel {
   email: string;
   department: string;
   designation: string;
-  status: string;
   joiningDate: Date;
   medicalRegistrationNo: string;
   specialization: string;

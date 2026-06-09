@@ -21,7 +21,14 @@ export class LoginComponent implements OnInit {
 
   constructor(readonly fb: FormBuilder) {
     this.loginForm = this.fb.group({
-      email: ['', [Validators.email, Validators.required]],
+      email: [
+        '',
+        [
+          Validators.email,
+          Validators.required,
+          Validators.pattern(/^[a-z0-9._]+@[a-z0-9]*\.[a-z]{2,}$/i),
+        ],
+      ],
       password: ['', [Validators.required]],
     });
   }
@@ -33,6 +40,7 @@ export class LoginComponent implements OnInit {
   onSubmit() {
     if (this.loginForm.invalid) {
       this.toast.warning('Please fill the required fields.');
+      this.loginForm.markAllAsTouched();
       return;
     }
 
@@ -43,7 +51,6 @@ export class LoginComponent implements OnInit {
 
     this.auth.login(payload).subscribe({
       next: (res) => {
-
         if (res.status !== 'Active') {
           this.toast.info('Your account is not activated yet,Please contact the admin');
           this.router.navigate(['/login']);
@@ -54,7 +61,7 @@ export class LoginComponent implements OnInit {
         localStorage.setItem('token', res.token);
         localStorage.setItem('email', res.email);
         localStorage.setItem('role', res.role);
-
+        console.log(res.firstLogin);
         if (res.firstLogin) {
           this.toast.info('Set your password');
           this.router.navigate(['/password-modal']);
@@ -67,7 +74,7 @@ export class LoginComponent implements OnInit {
         if (error.status === 401) {
           this.toast.warning('Invalid email or password');
         } else {
-          this.toast.warning(error?.error?.message || 'Login Failed');
+          this.toast.error(error?.error?.message || error?.message || 'Login Failed!');
         }
       },
     });

@@ -122,10 +122,7 @@
             <small *ngIf="patientForm.get('phone')?.touched">
               <span *ngIf="patientForm.get('phone')?.errors?.['required']">Phone is required.</span>
               <span *ngIf="patientForm.get('phone')?.errors?.['pattern']"
-                >Only digits are allowed.</span
-              >
-              <span *ngIf="patientForm.get('phone')?.errors?.['maxlength']"
-                >Maximum 10 digits is allowed.</span
+                >Invalid phone number.</span
               >
             </small>
             <input
@@ -146,10 +143,7 @@
             </label>
             <small *ngIf="patientForm.get('emergencyContact')?.touched">
             <span *ngIf="patientForm.get('emergencyContact')?.errors?.['pattern']"
-              >Only digits are allowed.</span
-            >
-            <span *ngIf="patientForm.get('emergencyContact')?.errors?.['maxlength']"
-              >Maximum 10 digits is allowed.</span
+              >Invalid Number.</span
             >
           </small>
             <input
@@ -199,7 +193,7 @@
               Date of Birth
               <span class="required">*</span>
             </label>
-            <input type="date" class="form-input" id="patientDob" formControlName="dob" />
+            <input type="date" class="form-input" id="patientDob" formControlName="dob" [min]="minDate()"/>
             <small *ngIf="patientForm.get('dob')?.touched">
               <span *ngIf="patientForm.get('dob')?.errors?.['required']">DOB is required.</span>
               <span *ngIf="patientForm.errors?.['invalidDob']">Future dates are not allowed.</span>

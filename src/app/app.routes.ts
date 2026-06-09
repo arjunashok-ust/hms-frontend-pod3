@@ -12,6 +12,7 @@ import { ApprovalComponent } from './theme/home/approval/approval';
 import { PatientComponent } from './theme/home/patient/patient';
 import { EditEmployeeComponent } from './theme/home/modal/edit-employee/edit-employee';
 import { AccessDeniedComponent } from './theme/home/modal/access-denied/access-denied';
+import { NotFoundComponent } from './theme/home/modal/not-found/not-found';
 
 export const routes: Routes = [
   {
@@ -32,4 +33,5 @@ export const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'signUp', component: SignUpComponent },
   { path: 'access-denied', component: AccessDeniedComponent },
+  { path: '**', component: NotFoundComponent}
 ];

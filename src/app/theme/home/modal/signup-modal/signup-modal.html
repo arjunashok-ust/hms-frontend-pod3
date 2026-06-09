@@ -189,7 +189,7 @@
             <span *ngIf="signUpModalForm.get('qualification')?.errors?.['pattern']"
               >Only letters and white space is allowed.</span
             >
-            <span *ngIf="!signUpModalForm.get('qualification')?.value"
+            <span *ngIf="signUpModalForm.get('qualification')?.errors?.['required']"
               >Qualification is required.</span
             >
           </small>
@@ -258,9 +258,11 @@
                 <i class="bi bi-chevron-down"></i>
               </span>
             </div>
-            <small *ngIf="!signUpModalForm.get('specialization')?.value"
-              >Specialization is required</small
-            >
+            <small *ngIf="signUpModalForm.get('specialization')?.touched">
+              <span *ngIf="!signUpModalForm.get('specialization')?.value"
+                >Specialization is required</span
+              >
+            </small>
           </div>
 
           <div class="form-group">
@@ -370,7 +372,8 @@
             [disabled]="signUpModalForm.invalid"
             [class.disabled]="signUpModalForm.invalid"
           >
-            <i class="bi bi-check2-circle"></i> Create Employee
+            <i class="bi bi-check2-circle"></i>
+            {{ isLoading ? 'Processing...' : 'Create Employee' }}
           </button>
         </div>
       </div>

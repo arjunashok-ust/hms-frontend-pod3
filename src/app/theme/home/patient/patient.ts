@@ -27,7 +27,7 @@ export class PatientComponent implements OnInit {
   cd: ChangeDetectorRef = inject(ChangeDetectorRef);
   route: Router = inject(Router);
 
-  patientData: PatientModel[] | null = null;
+  patientData: PatientModel[] = [];
 
   patientUiData = {
     patientCount: 0,
@@ -48,11 +48,17 @@ export class PatientComponent implements OnInit {
       },
       error: (err) => {
         this.toast.error(err?.error?.message);
-        if(err.status === 403){
+        if (err.status === 403) {
           this.route.navigate(['/access-denied']);
         }
       },
     });
+  }
+
+  minDate() {
+    const d = new Date();
+    d.setFullYear(d.getFullYear() - 100);
+    return d.toISOString().split("T")[0];
   }
 
   public constructor(readonly fb: FormBuilder) {
@@ -61,16 +67,16 @@ export class PatientComponent implements OnInit {
         name: ['', [Validators.required, Validators.pattern(/^[a-z]+( [a-z]+)*$/i)]],
         phone: [
           '',
-          [Validators.required, Validators.maxLength(10), Validators.pattern('^[0-9]*$')],
+          [Validators.required, Validators.pattern(/^(\+91[\s-]?)?[6789]\d{9}$/)],
         ],
         email: [
           '',
-          [Validators.required, Validators.pattern(/^[a-z0-9._]+@[a-z0-9]*\.[a-z]{2,}$/i)],
+          [Validators.required, Validators.pattern(/^[a-z0-9._]+@[a-z0-9]+\.[a-z]{2,}$/i)],
         ],
         gender: ['', [Validators.required]],
         dob: ['', [Validators.required]],
         address: ['', [Validators.required]],
-        emergencyContact: ['', [Validators.maxLength(10), Validators.pattern('^[0-9]*$')]],
+        emergencyContact: ['', [Validators.pattern(/^(\+91[\s-]?)?[6789]\d{9}$/)]],
         status: ['Active', [Validators.required]],
       },
       {
@@ -81,8 +87,10 @@ export class PatientComponent implements OnInit {
 
   loadUiData() {
     this.patientUiData.patientCount = this.patientData?.length || 0;
+
     this.patientUiData.activeCount =
       this.patientData?.filter((patient) => patient.status === 'Active').length || 0;
+
     this.patientUiData.inActiveCount =
       this.patientData?.filter((patient) => patient.status === 'InActive').length || 0;
   }
@@ -92,7 +100,7 @@ export class PatientComponent implements OnInit {
       patientId: patientId,
     };
 
-    this.userService.deletePatientt(payload).subscribe({
+    this.userService.deletePatient(payload).subscribe({
       next: (res) => {
         this.toast.success('Patient deleted sucessfully');
         this.updateData();
@@ -106,7 +114,9 @@ export class PatientComponent implements OnInit {
   onSubmit() {
     if (!this.patientForm.valid) {
       this.toast.error('Invalid input. Please check your entries and try again.');
+      return;
     }
+
     const payload = {
       name: this.patientForm.get('name')?.value,
       phone: this.patientForm.get('phone')?.value,
@@ -117,15 +127,15 @@ export class PatientComponent implements OnInit {
       address: this.patientForm.get('address')?.value,
       emergencyContact: this.patientForm.get('emergencyContact')?.value,
     };
+
     this.userService.createPatient(payload).subscribe({
       next: (res) => {
         this.toast.success('Patient added sucessfully');
-        this.patientForm.reset();
+        this.patientForm.reset({ status: 'Active' });
         this.updateData();
       },
-      error: (error) => {
-        console.log(error);
-        this.toast.error(error.message);
+      error: (err) => {
+        this.toast.error(err?.error?.message || err?.message || 'Something went wrong!');
       },
     });
   }

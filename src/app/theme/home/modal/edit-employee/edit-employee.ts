@@ -14,6 +14,10 @@ import { CommonModule } from '@angular/common';
 import { DepartmentModel, RoleModel, SpecializationModel } from '../../../../models/ui.model';
 import { AuthService } from '../../../../services/auth.service';
 import { ToastrService } from 'ngx-toastr';
+import {
+  futureDateValidator,
+  timeRangeValidator,
+} from '../../../../validators/time-range-validator';
 
 @Component({
   selector: 'app-edit-employee',
@@ -27,6 +31,8 @@ export class EditEmployeeComponent implements OnInit {
   router: Router = inject(Router);
   toast: ToastrService = inject(ToastrService);
 
+  isLoading: boolean = false;
+
   cd: ChangeDetectorRef = inject(ChangeDetectorRef);
 
   updateForm: FormGroup;
@@ -39,29 +45,34 @@ export class EditEmployeeComponent implements OnInit {
   userData: UserEmployeeModel | null = null;
 
   public constructor(readonly fb: FormBuilder) {
-    this.updateForm = this.fb.group({
-      name: ['', [Validators.required, Validators.pattern(/^[a-z]+( [a-z]+)*$/i)]],
-      email: [
-        '',
-        [
-          Validators.email,
-          Validators.required,
-          Validators.pattern(/^[a-z0-9._]+@[a-z0-9]+\.[a-z]{2,}$/i),
+    this.updateForm = this.fb.group(
+      {
+        name: ['', [Validators.required, Validators.pattern(/^[a-z]+( [a-z]+)*$/i)]],
+        email: [
+          '',
+          [
+            Validators.email,
+            Validators.required,
+            Validators.pattern(/^[a-z0-9._]+@[a-z0-9]+\.[a-z]{2,}$/i),
+          ],
         ],
-      ],
-      role: ['', Validators.required],
-      department: ['', Validators.required],
-      designation: ['', Validators.required],
-      status: ['Active'],
-      joiningDate: ['', Validators.required],
-      medicalRegistrationNo: ['', Validators.pattern(/^[a-z0-9]*$/i)],
-      specialization: [''],
-      qualification: ['', [Validators.pattern(/^[a-z ]*$/i)]],
-      consultationFee: ['', [Validators.pattern(/^\d+$/)]],
-      startHour: ['', [Validators.min(0)]],
-      endHour: ['', [Validators.max(23)]],
-      availabilitySlots: this.fb.array([]),
-    });
+        role: ['', Validators.required],
+        department: ['', Validators.required],
+        designation: ['', Validators.required],
+        status: ['Active'],
+        joiningDate: ['', Validators.required],
+        medicalRegistrationNo: ['', Validators.pattern(/^[a-z0-9]*$/i)],
+        specialization: [''],
+        qualification: ['', [Validators.pattern(/^[a-z ]*$/i)]],
+        consultationFee: ['', [Validators.pattern(/^\d+$/)]],
+        startHour: ['', [Validators.min(0)]],
+        endHour: ['', [Validators.max(23)]],
+        availabilitySlots: this.fb.array([]),
+      },
+      {
+        validators: [timeRangeValidator, futureDateValidator],
+      },
+    );
   }
 
   ngOnInit(): void {
@@ -84,9 +95,11 @@ export class EditEmployeeComponent implements OnInit {
           qualification: this.userData?.qualification,
           consultationFee: this.userData?.consultationFee,
         });
+
         // availability slots patch
         const slotsArray = this.updateForm.get('availabilitySlots') as FormArray;
         slotsArray.clear();
+
         (this.userData?.availabilitySlots || []).forEach((slot) =>
           slotsArray.push(this.fb.control(slot)),
         );
@@ -95,19 +108,22 @@ export class EditEmployeeComponent implements OnInit {
       },
       error: (err) => {
         this.toast.error(err?.error?.message);
-        if(err.status === 403){
+        if (err.status === 403) {
           this.router.navigate(['/access-denied']);
         }
       },
     });
+
     this.authService.getUiData<RoleModel[]>('/ui/getRoles').subscribe((res) => {
       this.roles_data = res;
       this.cd.detectChanges();
     });
+
     this.authService.getUiData<DepartmentModel[]>('/ui/getDepartments').subscribe((res) => {
       this.departments_data = res;
       this.cd.detectChanges();
     });
+
     this.authService.getUiData<SpecializationModel[]>('/ui/getSpecializations').subscribe((res) => {
       this.specializations_data = res;
       this.cd.detectChanges();
@@ -120,10 +136,17 @@ export class EditEmployeeComponent implements OnInit {
   generatedSlots: any[] = [];
 
   generateTimeSlots() {
-    let startHour = Number(this.updateForm.get('startHour')?.value);
-    let endHour = Number(this.updateForm.get('endHour')?.value);
+    let startHour = this.updateForm.get('startHour')?.value;
+    let endHour = this.updateForm.get('endHour')?.value;
 
-    if (startHour == null || endHour == null || startHour >= endHour) {
+    if (!startHour || !endHour) {
+      return;
+    }
+
+    startHour = Number(startHour);
+    endHour = Number(endHour);
+
+    if (startHour >= endHour) {
       return;
     }
 
@@ -159,10 +182,19 @@ export class EditEmployeeComponent implements OnInit {
   }
 
   onSubmit() {
+    if (this.updateForm.invalid) {
+      this.toast.error('Please fill all required fields correctly');
+      return;
+    }
+
+    this.isLoading = true;
+
     const payload = {
       employeeId: this.userData?.employeeId,
       data: {
         name: this.updateForm.get('name')?.value,
+        email: this.updateForm.get('email')?.value,
+        designation: this.updateForm.get('designation')?.value,
         role: this.updateForm.get('role')?.value,
         department: this.updateForm.get('department')?.value,
         status: this.updateForm.get('status')?.value,
@@ -174,13 +206,16 @@ export class EditEmployeeComponent implements OnInit {
         consultationFee: this.updateForm.get('consultationFee')?.value,
       },
     };
+
     this.adminService.updateUserProfile(payload).subscribe({
       next: (res) => {
+        this.isLoading = false;
         this.toast.success(res.message);
         this.router.navigate(['/employee']);
       },
-      error: (error) => {
-        this.toast.error(error.message);
+      error: (err) => {
+        this.isLoading = false;
+        this.toast.error(err?.error?.message || err?.message || 'Something went wrong!');
       },
     });
   }

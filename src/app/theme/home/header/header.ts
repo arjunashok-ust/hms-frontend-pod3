@@ -8,13 +8,13 @@ import { Router, RouterModule } from '@angular/router';
   styleUrl: './header.css',
 })
 export class HeaderComponent implements OnInit {
-  router: Router = inject(Router);
+  readonly router: Router = inject(Router);
   name: string = '';
   role: string = '';
 
   ngOnInit(): void {
-    this.name = localStorage.getItem('name') || '';
-    this.role = localStorage.getItem('role') || '';
+    this.name = localStorage.getItem('name') ?? '';
+    this.role = localStorage.getItem('role') ?? '';
   }
 
   logout() {

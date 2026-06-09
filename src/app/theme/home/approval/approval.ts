@@ -3,7 +3,6 @@ import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AdminService } from '../../../services/admin.service';
-import { UserService } from '../../../services/user.service';
 import { ToastrService } from 'ngx-toastr';
 import { UserModel } from '../../../models/user.model';
 
@@ -15,8 +14,7 @@ import { UserModel } from '../../../models/user.model';
 })
 export class ApprovalComponent implements OnInit {
   adminService: AdminService = inject(AdminService);
-  userService: UserService = inject(UserService);
-  
+
   cd: ChangeDetectorRef = inject(ChangeDetectorRef);
   toast: ToastrService = inject(ToastrService);
   route: Router = inject(Router);
@@ -45,7 +43,7 @@ export class ApprovalComponent implements OnInit {
       },
       error: (error) => {
         this.toast.error(error?.error?.message);
-        if(error.status === 403){
+        if (error.status === 403) {
           this.route.navigate(['/access-denied']);
         }
       },
@@ -74,9 +72,9 @@ export class ApprovalComponent implements OnInit {
     this.filteredData = this.userData.filter(
       (user) =>
         !this.searchText ||
-        user.email.includes(this.searchText) ||
-        user.employeeId.includes(this.searchText) ||
-        user.role.includes(this.searchText),
+        user.email?.includes(this.searchText) ||
+        user.employeeId?.includes(this.searchText) ||
+        user.role?.includes(this.searchText),
     );
 
     this.cd.detectChanges();
@@ -93,10 +91,10 @@ export class ApprovalComponent implements OnInit {
         this.applyFilters();
 
         this.cd.detectChanges();
-        this.toast.success(res.message || "Account Activated.");
+        this.toast.success(res.message || 'Account Activated.');
       },
-      error: (error) => {
-        this.toast.error(error?.error?.message || "Something went wrong!");
+      error: (err) => {
+       this.toast.error(err?.error?.message || err?.message || 'Something went wrong!');
       },
     });
   }
@@ -113,10 +111,10 @@ export class ApprovalComponent implements OnInit {
 
         this.cd.detectChanges();
 
-        this.toast.success(res?.message || "Application Rejected!");
+        this.toast.success(res?.message || 'Application Rejected!');
       },
-      error: (error) => {
-         this.toast.error(error?.error?.message || "Something went wrong!");
+      error: (err) => {
+        this.toast.error(err?.error?.message || err?.message || 'Something went wrong!');
       },
     });
   }

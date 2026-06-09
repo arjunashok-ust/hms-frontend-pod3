@@ -8,30 +8,35 @@ import { ApiUrl } from '../environment/environment';
 export class AuthService {
   api: ApiUrl = new ApiUrl();
   http: HttpClient = inject(HttpClient);
+
   // signUp
   signUp(data: SignUpModel): Observable<any> {
     return this.http
       .post(`${this.api.backend_url}/auth/signUp`, data)
       .pipe(catchError((error) => this.handleError(error)));
   }
+
   // login
   login(data: any): Observable<any> {
     return this.http
       .post(`${this.api.backend_url}/auth/login`, data)
       .pipe(catchError((error) => this.handleError(error)));
   }
+
   // Role,Departments and Specialization
   getUiData<T>(url: string): Observable<T> {
     return this.http
       .get<T>(`${this.api.backend_url + url}`)
       .pipe(catchError((error) => this.handleError(error)));
   }
+
   // submit password for first login
   setPassword(data: any): Observable<any> {
     return this.http
       .post(`${this.api.backend_url}/auth/set-password`, data)
       .pipe(catchError((error) => this.handleError(error)));
   }
+  
   // error handling
   handleError(error: HttpErrorResponse) {
     return throwError(() => error);

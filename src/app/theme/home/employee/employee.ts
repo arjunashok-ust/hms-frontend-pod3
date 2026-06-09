@@ -28,7 +28,6 @@ export class EmployeeComponent implements OnInit {
 
   selectedText: string = '';
   selectedDepartment: string = '';
-  selectedStatus: string = '';
 
   ngOnInit(): void {
     this.adminService.getEmployees().subscribe({
@@ -39,25 +38,25 @@ export class EmployeeComponent implements OnInit {
         this.cd.detectChanges();
       },
       error: (err) => {
-        this.toast.error(err?.error?.message || "Error getting employees data");
+        this.toast.error(err?.error?.message || 'Error getting employees data');
         if (err.status === 403) {
           this.router.navigate(['/access-denied']);
         }
       },
     });
+
     this.authService.getUiData<DepartmentModel[]>('/ui/getDepartments').subscribe({
       next: (res) => {
         this.departmentsData = res;
       },
       error: (err) => {
-         this.toast.error(err?.error?.message || "Error getting departments data");
-      }
+        this.toast.error(err?.error?.message || 'Error getting departments data');
+      },
     });
   }
 
   applyFilters() {
     this.filteredEmployeeData = this.employeeData?.filter((employee) => {
-
       const searchMatch =
         employee.name.toLowerCase().includes(this.selectedText.toLowerCase()) ||
         employee.email.toLowerCase().includes(this.selectedText.toLowerCase()) ||
@@ -66,9 +65,7 @@ export class EmployeeComponent implements OnInit {
       const departmentMatch =
         !this.selectedDepartment || employee.department === this.selectedDepartment;
 
-      const statusMatch = !this.selectedStatus || employee.status === this.selectedStatus;
-
-      return searchMatch && departmentMatch && statusMatch;
+      return searchMatch && departmentMatch;
     });
   }
 
@@ -79,19 +76,26 @@ export class EmployeeComponent implements OnInit {
   }
 
   deleteUserProfile(employeeId: string) {
-    const payload = { employeeId: employeeId };
-    this.adminService.deleteUserProfile(payload).subscribe({
-      next: (res) => {
-        this.employeeData = this.employeeData.filter(
-          (employee) => employee.employeeCode !== employeeId,
-        );
-        this.applyFilters();
-        this.cd.detectChanges();
-        this.toast.success(res?.message || "Account deleted successfully");
-      },
-      error: (err) => {
-        this.toast.error(err?.error?.message || "Error deleting the account");
-      },
-    });
+    const isConfirmed = confirm(
+      `Are you sure you want to remove user ${employeeId}? This action cannot be undone.`,
+    );
+
+    if (isConfirmed) {
+      const payload = { employeeId: employeeId };
+
+      this.adminService.deleteUserProfile(payload).subscribe({
+        next: (res) => {
+          this.employeeData = this.employeeData.filter(
+            (employee) => employee.employeeCode !== employeeId,
+          );
+          this.applyFilters();
+          this.cd.detectChanges();
+          this.toast.success(res?.message || 'Account deleted successfully');
+        },
+        error: (err) => {
+          this.toast.error(err?.error?.message || err?.message || 'Something went wrong!');
+        },
+      });
+    }
   }
 }

@@ -48,7 +48,6 @@ export class AdminService {
 
   // approve user profile
   approveUser(data: any): Observable<any> {
-    console.log();
     return this.http
       .post(`${this.apiUrl.backend_url}/admin/approveUser`, data)
       .pipe(catchError((error) => this.handleError(error)));
@@ -56,7 +55,6 @@ export class AdminService {
 
   // reject user profile
   rejectUser(data: any): Observable<any> {
-    console.log(data);
     return this.http
       .post(`${this.apiUrl.backend_url}/admin/rejectUser`, data)
       .pipe(catchError((error) => this.handleError(error)));

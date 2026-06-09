@@ -14,6 +14,9 @@
           <span *ngIf="loginForm.get('email')?.errors?.['email']&&loginForm.get('email')?.touched"
             >email is invalid.</span
           >
+          <span *ngIf="loginForm.get('email')?.errors?.['pattern']&&loginForm.get('email')?.touched"
+            >invalid email format.</span
+          >
         </small>
         <label for="password">Password</label>
         <input type="password" formControlName="password" placeholder="password" id="password" />

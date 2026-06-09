@@ -20,7 +20,7 @@ export class UserService {
           email: email,
         },
       })
-      .pipe(catchError((error)=>this.handleError(error)));
+      .pipe(catchError((error) => this.handleError(error)));
   }
 
   // get nodes
@@ -29,28 +29,28 @@ export class UserService {
       .get<NodeModel[]>(`${this.api.backend_url}/node/getNodes`, {
         params: { role: role },
       })
-      .pipe(catchError((error)=>this.handleError(error)));
+      .pipe(catchError((error) => this.handleError(error)));
   }
 
   // create patient
   createPatient(data: any): Observable<any> {
     return this.http
       .post(`${this.api.backend_url}/user/createPatient`, data)
-      .pipe(catchError((error)=>this.handleError(error)));
+      .pipe(catchError((error) => this.handleError(error)));
   }
 
   // get all patients
   getPatients(): Observable<PatientModel[]> {
     return this.http
       .get<PatientModel[]>(`${this.api.backend_url}/user/getPatients`)
-      .pipe(catchError((error)=>this.handleError(error)));
+      .pipe(catchError((error) => this.handleError(error)));
   }
 
   // delete patient
-  deletePatientt(data: any): Observable<any> {
+  deletePatient(data: any): Observable<any> {
     return this.http
       .post(`${this.api.backend_url}/user/deletePatient`, data)
-      .pipe(catchError((error)=>this.handleError(error)));
+      .pipe(catchError((error) => this.handleError(error)));
   }
 
   // logout
