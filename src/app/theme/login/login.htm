@@ -11,9 +11,6 @@
             *ngIf="loginForm.get('email')?.errors?.['required']&&loginForm.get('email')?.touched"
             >email is required.</span
           >
-          <span *ngIf="loginForm.get('email')?.errors?.['email']&&loginForm.get('email')?.touched"
-            >email is invalid.</span
-          >
           <span *ngIf="loginForm.get('email')?.errors?.['pattern']&&loginForm.get('email')?.touched"
             >invalid email format.</span
           >

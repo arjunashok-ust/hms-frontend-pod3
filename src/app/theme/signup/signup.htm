@@ -12,7 +12,7 @@
         <input type="email" placeholder="Email" id="email" formControlName="email" />
         <small *ngIf="signUpForm.get('email')?.touched">
           <span *ngIf="signUpForm.get('email')?.errors?.['required']">Email is required.</span>
-          <span *ngIf="signUpForm.get('email')?.errors?.['email']">Email is invalid.</span>
+          <span *ngIf="signUpForm.get('email')?.errors?.['pattern']">Email is invalid.</span>
         </small>
         <select id="roles" formControlName="role">
           <option value="" disabled>Role</option>

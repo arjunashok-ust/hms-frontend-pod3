@@ -58,7 +58,7 @@
               <span *ngIf="signUpModalForm.get('email')?.errors?.['required']"
                 >Email is required.</span
               >
-              <span *ngIf="signUpModalForm.get('email')?.errors?.['email']">Email is invalid.</span>
+              <span *ngIf="signUpModalForm.get('email')?.errors?.['pattern']">Email is invalid.</span>
             </small>
           </div>
         </div>
