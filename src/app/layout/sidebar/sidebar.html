@@ -29,7 +29,7 @@
         </a>
 
         <!-- ADMIN ONLY -->
-        <a *ngIf="user?.role === 'admin'" routerLink="/employees" routerLinkActive="active">
+        <a *ngIf="user?.role === 'admin' || user?.role === 'receptionist'" routerLink="/employees" routerLinkActive="active">
             Employees
         </a>
 

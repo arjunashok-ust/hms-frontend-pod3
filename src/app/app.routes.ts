@@ -3,6 +3,7 @@ import { Routes } from '@angular/router';
 import { authGuard } from './guards/auth.guard';
 import { roleGuard } from './guards/role.guard';
 
+import { FirstLoginGuard } from './guards/first-login.guard';
 import { Approval } from './approval/approval';
 import { Login } from './login/login';
 import { Signup } from './signup/signup';
@@ -23,7 +24,7 @@ export const routes: Routes = [
   { path: 'signup', component: Signup },
 
   /* RESET PASSWORD */
-  { path: 'reset-password', component: ResetPassword },
+  {path: 'reset-password',component: ResetPassword,canActivate: [FirstLoginGuard]},
 
   /* PROTECTED ROUTES */
   {
@@ -59,7 +60,7 @@ export const routes: Routes = [
         component: Employee,
         canActivate: [roleGuard],
         data: {
-          roles: ['admin'],
+          roles: ['admin','receptionist'],
         },
       },
 

@@ -46,6 +46,7 @@ export class Login {
         // STORE TOKEN
         localStorage.setItem("token", response.token);
         localStorage.setItem("role", response.user.role);
+        localStorage.setItem("firstLogin",String(response.firstLogin));
 
         // FIRST LOGIN
         if (response.firstLogin) {
