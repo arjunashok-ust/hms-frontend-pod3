@@ -163,10 +163,6 @@
         </div>
         <div
           class="form-group"
-          *ngIf="
-            signUpModalForm.get('role')?.value == 'Doctor' ||
-            signUpModalForm.get('role')?.value == 'Nurse'
-          "
         >
           <label class="form-label" for="qualification">
             <i class="bi bi-mortarboard"></i>
@@ -323,6 +319,9 @@
           <span class="error-text" *ngIf="signUpModalForm.errors?.['invalidTimeRange']">
             Start hour must be less than end hour
           </span>
+           <small *ngIf="signUpModalForm.errors?.['sameTimeRange']"
+            >Start hour and end hour should not be same.</small
+          >
         </div>
 
         <div class="slot-section" *ngIf="generatedSlots.length">
