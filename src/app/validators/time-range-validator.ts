@@ -1,8 +1,8 @@
 import { AbstractControl, ValidationErrors } from '@angular/forms';
 
 export function timeRangeValidator(control: AbstractControl): ValidationErrors | null {
-  const start = control.get('startHour')?.value;
-  const end = control.get('endHour')?.value;
+  const start = Number(control.get('startHour')?.value);
+  const end = Number(control.get('endHour')?.value);
 
   if (!start || !end) {
     return null;
