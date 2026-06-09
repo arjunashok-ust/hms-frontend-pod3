@@ -17,11 +17,12 @@ import {
   getMaxDate
 } from '../../utils/joiningDateValidator';
 import { ToastrService } from 'ngx-toastr';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-employee',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterLink],
   templateUrl: './employee.html',
   styleUrls: ['./employee.css'],
 })
@@ -77,11 +78,25 @@ export class Employee implements OnInit {
     private readonly apiService: ApiService,
     private readonly cdr: ChangeDetectorRef,
     private readonly fb: FormBuilder,
+    private readonly route: ActivatedRoute,
   ) {
     this.initForm();
   }
 
   ngOnInit() {
+    this.route.data.subscribe(data => {
+      if (data['openApprovalsByDefault']) {
+        this.showPendingApprovals = true;
+        this.selectedStatus = '';
+      } else {
+        this.showPendingApprovals = false;
+        this.selectedStatus = '';
+      }
+      if (this.employees.length > 0) {
+        this.applyFilters();
+      }
+      this.cdr.detectChanges();
+    });
     this.fetchEmployees();
   }
 
@@ -94,6 +109,7 @@ export class Employee implements OnInit {
         if (!Array.isArray(data)) {
           console.error('Backend did not return an array. Data:', data);
           this.isLoading = false;
+          this.cdr.detectChanges();
           this.cdr.markForCheck();
           return;
         }
@@ -112,6 +128,7 @@ export class Employee implements OnInit {
         this.applyFilters();
         this.isLoading = false;
         this.cdr.markForCheck();
+        this.cdr.detectChanges();
       },
       error: (err) => {
         console.error('Error fetching employees', err);
@@ -119,6 +136,17 @@ export class Employee implements OnInit {
         this.cdr.markForCheck();
       },
     });
+  }
+
+  filterByCard(statusType: string) {
+    if (statusType === 'PENDING') {
+      this.showPendingApprovals = true;
+      this.selectedStatus = '';
+    } else {
+      this.showPendingApprovals = false;
+      this.selectedStatus = statusType;
+    }
+    this.applyFilters();
   }
 
   toggleApprovalsView() {
@@ -155,8 +183,7 @@ export class Employee implements OnInit {
 
       let matchesStatus = true;
       if (this.selectedStatus) {
-        const normalizedStatus = emp.status?.toUpperCase() === 'ACTIVE' ? 'ACTIVE' : 'INACTIVE';
-        matchesStatus = normalizedStatus === this.selectedStatus;
+        matchesStatus = emp.status?.toUpperCase() === this.selectedStatus;
       }
 
       return matchesSearch && matchesDept && matchesStatus;

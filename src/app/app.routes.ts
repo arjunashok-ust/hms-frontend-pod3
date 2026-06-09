@@ -14,7 +14,7 @@ import { AccessDenied } from './components/access-denied/access-denied';
 export const routes: Routes = [
   { path: 'login', component: Login },
   { path: 'signup', component: Signup },
-  {path: 'access-denied', component: AccessDenied },
+  { path: 'access-denied', component: AccessDenied },
   {
     path: '',
     component: LayoutComponent,
@@ -26,6 +26,11 @@ export const routes: Routes = [
       { path: 'employees', component: Employee, canActivate: [roleGuard] },
       { path: 'patients', component: Patient, canActivate: [roleGuard] },
       { path: '', redirectTo: 'profile', pathMatch: 'full' },
+      {
+        path: 'approvals',
+        component: Employee,
+        data: { openApprovalsByDefault: true }
+      },
     ],
   },
 ];
