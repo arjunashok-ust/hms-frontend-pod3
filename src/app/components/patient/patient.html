@@ -115,7 +115,7 @@
 
             <div class="input-group">
               <label for="dob">DOB *</label>
-              <input type="date" formControlName="dob" [max]="getMaxDate()" />
+              <input type="date" formControlName="dob"  [min]="getMinDate()" [max]="getMaxDate()" />
               @if (
                 newpatientForm.get('dob')?.touched &&
                 newpatientForm.get('dob')?.hasError('futureDate')
@@ -130,8 +130,12 @@
               style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px"
             >
               <div class="input-group col-span-2">
-                <label for="line1">ADDRESS *</label>
+                <label for="line1">ADDRESS-Line 1 *</label>
                 <input type="text" formControlName="line1" />
+              </div>
+              <div class="input-group col-span-2">
+                <label for="line2">ADDRESS- Line 2 *</label>
+                <input type="text" formControlName="line2" />
               </div>
               <div class="input-group">
                 <label for="state">STATE *</label>

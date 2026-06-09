@@ -18,7 +18,7 @@ export class Header implements OnInit {
     @Inject(PLATFORM_ID) private readonly platformId: Object,
     private readonly cdr: ChangeDetectorRef,
     private readonly router: Router,
-  ) {}
+  ) { }
 
   ngOnInit() {
     if (isPlatformBrowser(this.platformId)) {
@@ -42,7 +42,7 @@ export class Header implements OnInit {
     localStorage.removeItem('token');
 
     localStorage.removeItem('userRole');
-
+    localStorage.clear();
     this.router.navigate(['/login']);
   }
 }

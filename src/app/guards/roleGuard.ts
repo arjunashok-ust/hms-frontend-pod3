@@ -20,20 +20,15 @@ export const roleGuard = (route: ActivatedRouteSnapshot) => {
   return api.checkRoutePermission(path!).pipe(
     map((isAllowed) => {
       if (isAllowed) return true;
+      setTimeout(() => {
+        toast.warning('Access Denied: You lack permissions for this resource.');
+      }, 200);
 
-      if (!router.navigated || router.url === '/' || router.url === '/login') {
-        localStorage.clear();
-        setTimeout(() => {
-          toast.error('403 - Access Denied: You do not have permission to view this page.');
-        }, 200);
-        return router.parseUrl('/login');
-      }
-      toast.error('403 - Access Denied: You do not have permission to view this page.');
-      return false;
+      return router.parseUrl('/access-denied');
     }),
     catchError(() => {
       setTimeout(() => toast.error('Error verifying permissions.'), 200);
-      return router.navigated ? of(false) : of(router.parseUrl('/profile'));
-    }),
+      return of(router.parseUrl('/access-denied'));
+    })
   );
 };

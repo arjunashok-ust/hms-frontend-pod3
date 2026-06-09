@@ -12,6 +12,7 @@ import { CommonModule } from '@angular/common';
 import { RouterLink, Router } from '@angular/router';
 import { Auth } from '../../services/authService/auth-service';
 import { ApiService } from '../../services/apiService/api-service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-login',
@@ -33,6 +34,8 @@ export class Login {
   showFirstLoginModal = false;
   tempEmail = '';
   tempOldPassword = '';
+
+  toast: ToastrService = inject(ToastrService);
 
   constructor() {
     this.loginForm = this.fb.group({
@@ -120,7 +123,7 @@ export class Login {
       },
       error: (err) => {
         this.isLoading = false;
-        alert(err.error?.message || 'Failed to update password');
+        this.toast.success(err.error?.message || 'Failed to update password');
       },
     });
   }

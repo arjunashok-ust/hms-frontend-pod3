@@ -9,10 +9,12 @@ import { Employee } from './components/employee/employee';
 import { Patient } from './components/patient/patient';
 import { authGuard } from './guards/authGuard';
 import { roleGuard } from './guards/roleGuard';
+import { AccessDenied } from './components/access-denied/access-denied';
 
 export const routes: Routes = [
   { path: 'login', component: Login },
   { path: 'signup', component: Signup },
+  {path: 'access-denied', component: AccessDenied },
   {
     path: '',
     component: LayoutComponent,
@@ -23,7 +25,7 @@ export const routes: Routes = [
       { path: 'profile', component: Profile, canActivate: [roleGuard] },
       { path: 'employees', component: Employee, canActivate: [roleGuard] },
       { path: 'patients', component: Patient, canActivate: [roleGuard] },
-      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+      { path: '', redirectTo: 'profile', pathMatch: 'full' },
     ],
   },
 ];

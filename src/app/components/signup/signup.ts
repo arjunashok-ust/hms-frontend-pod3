@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectorRef } from '@angular/core'; // <-- Import added
 import {
   ReactiveFormsModule,
   FormBuilder,
@@ -13,6 +13,11 @@ import { CommonModule } from '@angular/common';
 import { RouterLink, Router } from '@angular/router';
 import { Auth } from '../../services/authService/auth-service';
 import { TimeSlotUtil, GeneratedSlot } from '../../utils/timeSlot';
+import {
+  joiningDateValidator,
+  getMinDate,
+  getMaxDate
+} from '../../utils/joiningDateValidator';
 
 @Component({
   selector: 'app-signup',
@@ -25,6 +30,7 @@ export class Signup {
   private readonly auth = inject(Auth);
   private readonly fb = inject(FormBuilder);
   private readonly router = inject(Router);
+  private readonly cdr = inject(ChangeDetectorRef);
   private readonly passwordPattern =
     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
   private readonly phonePattern = /^(\+91[\s-]?)?[6789]\d{9}$/;
@@ -32,7 +38,7 @@ export class Signup {
   signupForm: FormGroup;
   medicalRoles = ['doctor', 'nurse', 'lab_tech', 'pharmacist'];
   rowSubSlotsMap: { [uniqueId: string]: GeneratedSlot[] } = {};
-  departments = ["OPD", "IPD", "ADMIN", "LAB", "PHARMACY"]
+  departments = ["OPD", "IPD", "ADMIN", "LAB", "PHARMACY"];
 
   availableHours: string[] = Array.from({ length: 24 }, (_, i) => {
     const hour = i.toString().padStart(2, '0');
@@ -51,18 +57,19 @@ export class Signup {
         confirmPassword: ['', Validators.required],
         phone: ['', [Validators.required, Validators.pattern(this.phonePattern)]],
         role: ['', Validators.required],
-        status: [true],
+        status: ['ACTIVE', Validators.required],
         department: ['', Validators.required],
         designation: ['', Validators.required],
-        joiningDate: ['', [Validators.required, this.joiningDateValidator]],
+        joiningDate: ['', [Validators.required, joiningDateValidator]],
         medicalRegistrationNo: [''],
         specialization: [''],
-        qualification: [''],
+        qualification: ['', Validators.required],
         consultationFee: [null],
         availabilitySlots: this.fb.array([]),
       },
       {
-        validators: this.passwordMatchValidator,
+        validators: [this.passwordMatchValidator, this.doctorSlotValidator]
+        
       },
     );
 
@@ -71,41 +78,20 @@ export class Signup {
     });
   }
 
-  getMinDate(): string {
-    const d = new Date();
-    d.setMonth(d.getMonth() - 1);
-    return d.toISOString().split('T')[0];
-  }
+  doctorSlotValidator = (group: AbstractControl): ValidationErrors | null => {
+    const role = group.get('role')?.value?.toLowerCase();
+    const slots = group.get('availabilitySlots') as FormArray;
 
-  getMaxDate(): string {
-    const d = new Date();
-    d.setMonth(d.getMonth() + 1);
-    return d.toISOString().split('T')[0];
-  }
-
-  joiningDateValidator(control: AbstractControl): ValidationErrors | null {
-    if (!control.value) return null;
-
-    const selectedDate = new Date(control.value);
-    const today = new Date();
-
-    const oneMonthBefore = new Date();
-    oneMonthBefore.setMonth(today.getMonth() - 1);
-
-    const oneMonthAfter = new Date();
-    oneMonthAfter.setMonth(today.getMonth() + 1);
-
-    selectedDate.setHours(0, 0, 0, 0);
-    oneMonthBefore.setHours(0, 0, 0, 0);
-    oneMonthAfter.setHours(0, 0, 0, 0);
-
-    if (selectedDate < oneMonthBefore || selectedDate > oneMonthAfter) {
-      return { invalidDateRange: true };
+    if (role === 'doctor' && slots.length === 0) {
+      return { noSlots: true };
     }
     return null;
-  }
+  };
 
-  passwordMatchValidator(control: AbstractControl): ValidationErrors | null {
+  minDate = getMinDate();
+  maxDate = getMaxDate();
+
+  passwordMatchValidator = (control: AbstractControl): ValidationErrors | null => {
     const password = control.get('password');
     const confirmPassword = control.get('confirmPassword');
 
@@ -114,7 +100,7 @@ export class Signup {
       return { passwordMismatch: true };
     }
     return null;
-  }
+  };
 
   get isMedicalRole(): boolean {
     const role = this.signupForm.get('role')?.value;
@@ -138,6 +124,7 @@ export class Signup {
 
     const slotGroup = this.fb.group({
       id: [uniqueId],
+      dayOfWeek: ['', Validators.required], // <-- Added day of week
       startTime: ['', Validators.required],
       endTime: ['', Validators.required],
       checkedSlots: this.fb.array([]),
@@ -201,6 +188,8 @@ export class Signup {
     if (this.signupForm.valid) {
       this.isSubmitting = true;
       this.errorMessage = null;
+      this.cdr.markForCheck(); // <-- Tell UI we are submitting
+
       const rawValues = this.signupForm.value;
 
       const rawQual = rawValues.qualification;
@@ -212,16 +201,22 @@ export class Signup {
             .filter((q: string) => q !== '')
           : [];
 
-      const formattedAvailability: any[] = [];
+      const weeklyScheduleMap: { [day: string]: any[] } = {};
 
       (rawValues.availabilitySlots || []).forEach((slot: any) => {
+        if (!slot.dayOfWeek) return;
         const uniqueId = slot.id;
         const structuralMap = this.rowSubSlotsMap[uniqueId] || [];
         const checkedBools = slot.checkedSlots || [];
+        const day = slot.dayOfWeek;
+
+        if (!weeklyScheduleMap[day]) {
+          weeklyScheduleMap[day] = [];
+        }
 
         structuralMap.forEach((item, subIdx) => {
           if (checkedBools[subIdx] === true) {
-            formattedAvailability.push({
+            weeklyScheduleMap[day].push({
               startTime: item.startTime,
               endTime: item.endTime,
             });
@@ -229,18 +224,26 @@ export class Signup {
         });
       });
 
+      const formattedWeeklySchedule = Object.keys(weeklyScheduleMap).map(day => ({
+        dayOfWeek: day,
+        slots: weeklyScheduleMap[day]
+      }));
+
       const payload = {
         ...rawValues,
         role: rawValues.role.toUpperCase(),
         department: rawValues.department.toUpperCase(),
         qualification: parsedQualifications,
         consultationFee: this.isDoctor ? Number(rawValues.consultationFee) : undefined,
-        availabilitySlots: this.isDoctor ? formattedAvailability : [],
+        weeklySchedule: this.isDoctor ? formattedWeeklySchedule : [], // <-- Use weeklySchedule
       };
+
+      delete payload.availabilitySlots;
 
       this.auth.signup(payload).subscribe({
         next: () => {
           this.isSubmitting = false;
+          this.cdr.markForCheck(); 
           this.router.navigate(['/login']);
         },
         error: (error) => {
@@ -254,6 +257,7 @@ export class Signup {
           } else {
             this.errorMessage = error.error?.message || 'Server validation error occurred.';
           }
+          this.cdr.markForCheck();
         },
       });
     } else {

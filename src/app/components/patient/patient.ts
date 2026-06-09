@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   FormsModule,
@@ -10,6 +10,7 @@ import {
   ValidationErrors,
 } from '@angular/forms';
 import { ApiService } from '../../services/apiService/api-service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-patient',
@@ -29,7 +30,8 @@ export class Patient implements OnInit {
   modalError: string | null = null;
   isSubmittingModal = false;
   searchTerm: string = '';
-
+  toast: ToastrService = inject(ToastrService);
+  
   constructor(
     private readonly apiService: ApiService,
     private readonly cdr: ChangeDetectorRef,
@@ -62,6 +64,12 @@ export class Patient implements OnInit {
 
   getMaxDate(): string {
     const d = new Date();
+    return d.toISOString().split('T')[0];
+  }
+
+  getMinDate(): string {
+    const d = new Date();
+    d.setFullYear(d.getFullYear() - 100);
     return d.toISOString().split('T')[0];
   }
 
@@ -133,11 +141,13 @@ export class Patient implements OnInit {
 
     action$.subscribe({
       next: () => {
+        this.toast.success('Patient created successfully!');
         this.fetchPatients();
         this.closeModal();
         this.isSubmittingModal = false;
       },
       error: (err) => {
+        this.toast.error(err.error?.message);
         this.modalError = err.message;
         this.isSubmittingModal = false;
       },

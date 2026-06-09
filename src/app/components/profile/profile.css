@@ -1,11 +1,10 @@
-/* Base structural variables */
 :root {
   --bg-main: #f9fafb;
   --text-primary: #111827;
   --text-secondary: #6b7280;
   --border-color: #f3f4f6;
   --accent-blue: #4f46e5;
-  --dashed-border: #111827; /* Dark borders seen in screenshot */
+  --dashed-border: #111827; 
 }
 
 .page-wrapper {
@@ -15,7 +14,6 @@
   font-family: 'Inter', system-ui, sans-serif;
 }
 
-/* Top Banner */
 .profile-banner {
   background: linear-gradient(135deg, #e0e7ff 0%, #f3e8ff 100%);
   border-radius: 20px;
@@ -36,11 +34,6 @@
   align-items: center;
   justify-content: center;
   box-shadow: 0 4px 14px rgba(79, 70, 229, 0.3);
-}
-
-.avatar-app svg {
-  width: 40px;
-  height: 40px;
 }
 
 .eyebrow-text {
@@ -153,27 +146,27 @@
 }
 
 .stat-icon.blue {
-  background: #1256c5;
-  color: #d2e1f5;
+  background: #0080ffd4;
+  color: #000000;
 }
 .stat-icon.green {
-  background: green;
-  color: #e8fbed;
+  background: rgba(4, 240, 4, 0.858);
+  color: #000000;
 }
 .stat-icon.orange {
-  background: #ad500c;
-  color: #fff0df;
+  background: #faab00e9;
+  color: #000000;
 }
 .stat-icon.red {
-  background: #ae1717;
-  color: #f8d4d4;
+  background: #ff0000dc;
+  color: #000000;
 }
 
 .stat-text label {
   display: block;
   font-size: 0.65rem;
   font-weight: 700;
-  color: var(--text-secondary);
+  color: #374151;
   letter-spacing: 0.5px;
   margin-bottom: 0.25rem;
 }
@@ -181,7 +174,7 @@
 .stat-text span {
   font-weight: 600;
   font-size: 0.9rem;
-  color: var(--text-primary);
+  color: #111827;
 }
 
 .truncate {
@@ -219,28 +212,6 @@
   font-weight: 700;
   color: var(--text-primary);
   margin: 0;
-}
-
-.refresh-btn {
-  background: #f3f4f6;
-  border: none;
-  width: 36px;
-  height: 36px;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--text-secondary);
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.refresh-btn:hover {
-  background: #e5e7eb;
-}
-.refresh-btn svg {
-  width: 16px;
-  height: 16px;
 }
 
 .sub-header-center {
@@ -296,3 +267,18 @@
 .mt-4 {
   margin-top: 2rem;
 }
+
+#person-icon-main {
+  font-size: 60px; 
+}
+
+.stat-icon i {
+  font-size: 24px;   
+  color: white;     
+}
+
+.info-group i {  
+  color: rgb(20, 106, 245);
+  font-size:15px ;     
+}
+

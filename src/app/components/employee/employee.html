@@ -189,14 +189,29 @@
           <div class="form-grid-2-col">
             <div class="input-group">
               <label for="fullNAme">FULL NAME *</label><input type="text" formControlName="name" />
+              @if (newEmployeeForm.get('name')?.touched && newEmployeeForm.get('name')?.invalid) {
+                <span class="error-msg">Name is required</span>
+              }
             </div>
             <div class="input-group">
               <label for="emailAddress">EMAIL ADDRESS *</label
               ><input type="email" formControlName="email" />
+              @if (
+                newEmployeeForm.get('email')?.touched &&
+                newEmployeeForm.get('email')?.hasError('email')
+              ) {
+                <span class="error-msg">Invalid email format</span>
+              }
             </div>
             <div class="input-group">
               <label for="phoneNumber">PHONE NUMBER *</label
               ><input type="text" formControlName="phone" />
+              @if (
+                newEmployeeForm.get('phone')?.touched &&
+                newEmployeeForm.get('phone')?.invalid
+              ) {
+                <span class="error-msg">Valid phone no. with 10 digits required (optional +91 prefix)</span>
+              }
             </div>
 
             <div class="input-group">
@@ -205,6 +220,9 @@
                 <option value="" disabled>Select role</option>
                 @for (role of availableRoles; track role.value) {
                   <option [value]="role.value">{{ role.label }}</option>
+                }
+                @if (newEmployeeForm.get('role')?.touched && newEmployeeForm.get('role')?.invalid) {
+                  <span class="error-msg">Please select a role</span>
                 }
               </select>
             </div>
@@ -218,20 +236,53 @@
             </div>
             <div class="input-group">
               <label for="department">DEPARTMENT *</label>
-               <select formControlName="department">
+              <select formControlName="department">
                 <option value="" disabled selected>Select Department</option>
                 @for (dept of departments; track dept) {
                   <option [value]="dept">{{ dept }}</option>
                 }
               </select>
+              @if (
+                newEmployeeForm.get('department')?.touched &&
+                newEmployeeForm.get('department')?.invalid
+              ) {
+                <span class="error-msg">Please select a department</span>
+              }
             </div>
             <div class="input-group">
               <label for="designation">DESIGNATION *</label
               ><input type="text" formControlName="designation" />
+              @if (
+                newEmployeeForm.get('designation')?.touched &&
+                newEmployeeForm.get('designation')?.invalid
+              ) {
+                <span class="error-msg">Designation is required</span>
+              }
             </div>
             <div class="input-group col-span-2">
+                  <label for="qualification">QUALIFICATIONS *</label
+                  ><input formControlName="qualification" type="text" />
+                  @if (
+                    newEmployeeForm.get('qualification')?.touched &&
+                    newEmployeeForm.get('qualification')?.invalid
+                  ) {
+                    <span class="error-msg">Qualification is required</span>
+                  }
+                </div>
+            <div class="input-group col-span-2">
               <label for="joiningDate">JOINING DATE *</label
-              ><input type="date" formControlName="joiningDate" />
+              ><input
+                formControlName="joiningDate"
+                type="date"
+                [min]="minDate"
+                [max]="maxDate"
+              />
+              @if (
+                newEmployeeForm.get('joiningDate')?.touched &&
+                newEmployeeForm.get('joiningDate')?.hasError('invalidDateRange')
+              ) {
+                <span class="error-msg">Date must be within 1 month of today</span>
+              }
             </div>
           </div>
 
@@ -242,15 +293,24 @@
                 <div class="input-group">
                   <label for="specialization">SPECIALIZATION *</label
                   ><input formControlName="specialization" type="text" />
+                  @if (
+                    newEmployeeForm.get('specialization')?.touched &&
+                    newEmployeeForm.get('specialization')?.invalid
+                  ) {
+                    <span class="error-msg">Specialization is required</span>
+                  }
                 </div>
                 <div class="input-group">
                   <label for="medicalRegNo">MEDICAL REG NO. *</label
                   ><input formControlName="medicalRegistrationNo" type="text" />
+                  @if (
+                    newEmployeeForm.get('medicalRegistrationNo')?.touched &&
+                    newEmployeeForm.get('medicalRegistrationNo')?.invalid
+                  ) {
+                    <span class="error-msg">MedicalRegistrationNo is required</span>
+                  }
                 </div>
-                <div class="input-group col-span-2">
-                  <label for="qualification">QUALIFICATIONS *</label
-                  ><input formControlName="qualification" type="text" />
-                </div>
+                
               </div>
             </div>
           }
@@ -351,6 +411,11 @@
                         ✕
                       </button>
                     </div>
+                    @if (slot.hasError('timeRangeInvalid')) {
+                      <div style="color: #ef4444; font-size: 0.75rem; margin-top: 4px; width: 100%">
+                        Error: Start time must be earlier than End time.
+                      </div>
+                    }
 
                     @if (slot.get('id')?.value && rowSubSlotsMap[slot.get('id')?.value]?.length) {
                       <div class="sub-slots-container mt-2 pt-2 border-top border-dashed">

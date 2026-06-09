@@ -1,0 +1,37 @@
+<div class="access-denied-wrapper">
+  <div class="access-card">
+    
+    <div class="icon-section">
+      <div class="lock-icon-bg">
+        <i class="bi bi-lock text-white"></i>
+      </div>
+    </div>
+
+    <div class="badge-container">
+      <span class="error-badge">
+        <span class="dot"></span> ERROR 403
+      </span>
+    </div>
+
+    <h1 class="title">Access Denied</h1>
+    <p class="description">
+      You don't have the required permissions to view this resource. Please contact your system administrator if you believe this is an error.
+    </p>
+
+    <div class="divider-section">
+      <div class="divider-line"></div>
+      <span class="divider-text">WHAT YOU CAN DO</span>
+      <div class="divider-line"></div>
+    </div>
+
+    <div class="action-buttons">
+      <button class="btn-primary" routerLink="/profile">
+        <i class="bi bi-house-door"></i> Back to Profile
+      </button>
+      <button class="btn-secondary" (click)="logout()">
+        <i class="bi bi-box-arrow-in-right"></i> Log out
+      </button>
+    </div>
+
+  </div>
+</div>

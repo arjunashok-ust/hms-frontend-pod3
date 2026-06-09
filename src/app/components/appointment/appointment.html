@@ -44,15 +44,56 @@
           <div class="form-grid">
             <div class="form-group">
               <label for="patientID">
-                <i class="bi bi-person-badge text-blue"></i> PATIENT ID
+                <i class="bi bi-person-badge text-blue"></i> PATIENT
                 <span class="text-danger">*</span>
               </label>
-              <input
-                type="text"
-                formControlName="patientID"
-                placeholder="e.g. UHID-00123"
-                class="form-control"
-              />
+
+              <div class="searchable-dropdown-container position-relative">
+                <input
+                  type="text"
+                  class="form-control custom-select"
+                  placeholder="Search by Name or UHID..."
+                  [value]="selectedPatientDisplay"
+                  (input)="filterPatients($event)"
+                  (focus)="isPatientDropdownOpen = true; displayPatients = patients"
+                  (blur)="closePatientDropdown()"
+                  [class.is-invalid]="
+                    appointmentForm.get('patientID')?.invalid &&
+                    appointmentForm.get('patientID')?.touched
+                  "
+                />
+
+                @if (isPatientDropdownOpen) {
+                  <div class="dropdown-list shadow-sm">
+                    @for (pat of displayPatients; track pat.UHID) {
+                      <div
+                        class="dropdown-item"
+                        (click)="selectPatient(pat)"
+                        (keydown.enter)="selectPatient(pat)"
+                        (keydown.space)="selectPatient(pat)"
+                      >
+                        <div style="font-weight: bold; color: #111827; font-size: 0.9rem">
+                          {{ pat.name }}
+                        </div>
+                        <div style="color: #6b7280; font-size: 0.75rem">
+                          {{ pat.UHID }}
+                        </div>
+                      </div>
+                    } @empty {
+                      <div class="dropdown-item text-muted" style="padding: 10px 16px">
+                        No patients found
+                      </div>
+                    }
+                  </div>
+                }
+              </div>
+
+              @if (
+                appointmentForm.get('patientID')?.invalid &&
+                appointmentForm.get('patientID')?.touched
+              ) {
+                <small class="text-danger mt-1 d-block">Please select a patient.</small>
+              }
             </div>
 
             <div class="form-group">
@@ -60,14 +101,53 @@
                 <i class="bi bi-file-medical text-blue"></i> DOCTOR
                 <span class="text-danger">*</span>
               </label>
-              <select formControlName="doctorEmployeeID" class="form-control custom-select">
-                <option value="" disabled selected>Select Doctor</option>
-                @for (doc of doctors; track doc.employeeCode) {
-                  <option [value]="doc.employeeCode">
-                    {{ doc.name }}
-                  </option>
+
+              <div class="searchable-dropdown-container position-relative">
+                <input
+                  type="text"
+                  class="form-control custom-select"
+                  placeholder="Search by Name, ID, or Dept..."
+                  [value]="selectedDoctorDisplay"
+                  (input)="filterDoctors($event)"
+                  (focus)="isDoctorDropdownOpen = true; displayDoctors = doctors"
+                  (blur)="closeDoctorDropdown()"
+                  [class.is-invalid]="
+                    appointmentForm.get('doctorEmployeeID')?.invalid &&
+                    appointmentForm.get('doctorEmployeeID')?.touched
+                  "
+                />
+
+                @if (isDoctorDropdownOpen) {
+                  <div class="dropdown-list shadow-sm">
+                    @for (doc of displayDoctors; track doc.employeeCode) {
+                      <div
+                        class="dropdown-item"
+                        (click)="selectDoctor(doc)"
+                        (keydown.enter)="selectDoctor(doc)"
+                        (keydown.space)="selectDoctor(doc)"
+                      >
+                        <div style="font-weight: bold; color: #111827; font-size: 0.9rem">
+                          {{ doc.name }}
+                        </div>
+                        <div style="color: #6b7280; font-size: 0.75rem">
+                          {{ doc.employeeCode }} | {{ doc.department || 'General Medicine' }}
+                        </div>
+                      </div>
+                    } @empty {
+                      <div class="dropdown-item text-muted" style="padding: 10px 16px">
+                        No doctors found matching criteria
+                      </div>
+                    }
+                  </div>
                 }
-              </select>
+              </div>
+
+              @if (
+                appointmentForm.get('doctorEmployeeID')?.invalid &&
+                appointmentForm.get('doctorEmployeeID')?.touched
+              ) {
+                <small class="text-danger mt-1 d-block">Please select a doctor.</small>
+              }
             </div>
 
             <div class="form-group">
@@ -302,14 +382,13 @@
                     </button>
                   }
 
-                  @if (userRole === 'DOCTOR') {
+                  @if (['DOCTOR', 'ADMIN', 'RECEPTIONIST'].includes(userRole)) {
                     @if (apt.status === 'Scheduled') {
                       <button
-                        class="btn btn-sm btn-outline-success fw-bold"
-                        style="border-radius: 8px"
+                        class="btn-action complete"
                         (click)="markAsCompleted(apt)"
                       >
-                        <i class="bi bi-check2-circle"></i> Completed
+                        <i class="bi bi-check2-circle"></i>
                       </button>
                     }
                   }

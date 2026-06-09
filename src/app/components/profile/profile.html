@@ -2,33 +2,14 @@
   @if (!isLoading && user) {
     <div class="profile-banner">
       <div class="avatar-app">
-        <svg
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        >
-          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-          <circle cx="12" cy="7" r="4"></circle>
-        </svg>
+        <i id="person-icon-main" class="bi bi-person-circle"></i>
       </div>
 
       <div class="banner-info">
         <p class="eyebrow-text">MY PROFILE</p>
         <h2 class="user-name">{{ user.name }}</h2>
         <div class="designation-row">
-          <svg
-            class="icon-small"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-          >
-            <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
-            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
-          </svg>
+          <i class="bi bi-briefcase"></i>
           <span>{{ user.designation || 'Staff Member' }}</span>
         </div>
 
@@ -38,15 +19,7 @@
             {{ user.status === 'ACTIVE' ? 'Active' : 'Inactive' }}
           </span>
           <span class="role-badge">
-            <svg
-              class="icon-small"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-            >
-              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-            </svg>
+            <i class="bi bi-shield"></i>
             {{ user?.role | titlecase }}
           </span>
         </div>
@@ -56,12 +29,7 @@
     <div class="quick-stats-grid">
       <div class="stat-card">
         <div class="stat-icon blue">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path
-              d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"
-            ></path>
-            <polyline points="22,6 12,13 2,6"></polyline>
-          </svg>
+          <i class="bi bi-envelope"></i>
         </div>
         <div class="stat-text">
           <label for="email">EMAIL</label>
@@ -71,9 +39,7 @@
 
       <div class="stat-card">
         <div class="stat-icon green">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-          </svg>
+          <i class="bi bi-shield"></i>
         </div>
         <div class="stat-text">
           <label for="role">ROLE</label>
@@ -83,10 +49,7 @@
 
       <div class="stat-card">
         <div class="stat-icon orange">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
-            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
-          </svg>
+          <i class="bi bi-briefcase"></i>
         </div>
         <div class="stat-text">
           <label for="designation">DESIGNATION</label>
@@ -96,9 +59,7 @@
 
       <div class="stat-card">
         <div class="stat-icon red">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
-          </svg>
+          <i class="bi bi-check2-circle"></i>
         </div>
         <div class="stat-text">
           <label for="status">STATUS</label>
@@ -113,94 +74,56 @@
           <p class="account-details-subtitle">ACCOUNT DETAILS</p>
           <h3 class="section-title">Personal Information</h3>
         </div>
-        <button class="refresh-btn">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <polyline points="23 4 23 10 17 10"></polyline>
-            <polyline points="1 20 1 14 7 14"></polyline>
-            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
-          </svg>
-        </button>
       </div>
 
       <div class="sub-header-center">
-        <svg
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          class="icon-small"
-        >
-          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-          <circle cx="12" cy="7" r="4"></circle>
-        </svg>
         <span>BASIC INFO</span>
       </div>
 
       <div class="info-grid">
         <div class="info-group">
           <label for="fullName">
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              class="label-icon"
-            >
-              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-              <circle cx="12" cy="7" r="4"></circle>
-            </svg>
+            <i class="bi bi-person"></i>
             FULL NAME
           </label>
           <div class="info-box">{{ user.name || 'N/A' }}</div>
         </div>
         <div class="info-group">
           <label for="emailAddress">
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              class="label-icon"
-            >
-              <path
-                d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"
-              ></path>
-              <polyline points="22,6 12,13 2,6"></polyline>
-            </svg>
+            <i class="bi bi-envelope"></i>
             EMAIL ADDRESS
           </label>
           <div class="info-box">{{ user.email || 'N/A' }}</div>
         </div>
         <div class="info-group">
           <label for="role">
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              class="label-icon"
-            >
-              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-            </svg>
+            <i class="bi bi-shield"></i>
             ROLE
           </label>
           <div class="info-box">{{ user.role || 'N/A' }}</div>
         </div>
         <div class="info-group">
           <label for="designation">
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              class="label-icon"
-            >
-              <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
-              <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
-            </svg>
+            <i class="bi bi-briefcase"></i>
             DESIGNATION
           </label>
           <div class="info-box">{{ user.designation || 'N/A' }}</div>
+        </div>
+        <div class="info-group">          
+          <label for="qualification">
+            <i class="bi bi-award"></i>
+            QUALIFICATIONS</label>
+          <div class="info-box">
+            {{ user.qualification?.length ? user.qualification.join(', ') : 'N/A' }}
+          </div>
+        </div>
+        <div class="info-group">          
+          <label for="phone">
+            <i class="bi bi-telephone"></i>
+            PHONE</label>
+          <div class="info-box">
+            {{ user.phone }}
+          </div>
         </div>
       </div>
 
@@ -211,18 +134,12 @@
       <div class="info-grid single-col">
         <div class="info-group">
           <label for="currentStatus">
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              class="label-icon"
-            >
-              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
-            </svg>
+            <i class="bi bi-check2-circle"></i>
             CURRENT STATUS
           </label>
-          <div class="info-box"> {{ user.status?.toUpperCase() === 'ACTIVE' ? 'Active' : 'Inactive' }}</div>
+          <div class="info-box">
+            {{ user.status?.toUpperCase() === 'ACTIVE' ? 'Active' : 'Inactive' }}
+          </div>
         </div>
       </div>
 
@@ -232,21 +149,25 @@
         </div>
         <div class="info-grid">
           <div class="info-group">
-            <label for="medicalRegistrationNo">MEDICAL REGISTRATION NO.</label>
+            <label for="medicalRegistrationNo">
+              <i class="bi bi-clipboard-pulse"></i>
+              MEDICAL REGISTRATION NO.</label
+            >
             <div class="info-box">{{ user.medicalRegistrationNo || 'N/A' }}</div>
           </div>
           <div class="info-group">
-            <label for="specialization">SPECIALIZATION</label>
+            <label for="specialization">
+              <i class="bi bi-book"></i>
+              SPECIALIZATION</label
+            >
             <div class="info-box">{{ user.specialization || 'N/A' }}</div>
           </div>
+
           <div class="info-group">
-            <label for="qualification">QUALIFICATIONS</label>
-            <div class="info-box">
-              {{ user.qualification?.length ? user.qualification.join(', ') : 'N/A' }}
-            </div>
-          </div>
-          <div class="info-group">
-            <label for="consultationFee">CONSULTATION FEE</label>
+            <label for="consultationFee">
+              <i class="bi bi-currency-rupee"></i>
+              CONSULTATION FEE</label
+            >
             <div class="info-box">
               {{
                 user.consultationFee
@@ -258,15 +179,23 @@
         </div>
       }
 
-      @if (user.availabilitySlots && user.availabilitySlots.length > 0) {
+      @if (user.weeklySchedule && user.weeklySchedule.length > 0) {
         <div class="sub-header-center mt-4">
-          <span>CONSULTATION SCHEDULE</span>
+          <span> CONSULTATION SCHEDULE </span>
         </div>
+
         <div class="info-grid">
-          @for (slot of user.availabilitySlots; track slot._id) {
+          @for (day of user.weeklySchedule; track day.dayOfWeek) {
             <div class="info-group">
-              <label for="timeSlot">SLOT</label>
-              <div class="info-box">{{ slot.startTime }} - {{ slot.endTime }}</div>
+              <label for="dayOfWeek">
+                <i class="bi bi-calendar-event"></i>
+                {{ day.dayOfWeek }}</label
+              >
+              <div class="info-box">
+                @for (slot of day.slots; track slot.startTime) {
+                  <div>{{ slot.startTime }} - {{ slot.endTime }}</div>
+                }
+              </div>
             </div>
           }
         </div>

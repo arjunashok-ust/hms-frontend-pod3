@@ -23,8 +23,11 @@
           <div class="form-group">
             <label for="emailAddress">Email Address *</label>
             <input formControlName="email" type="email" placeholder="example@email.com" />
-            @if (signupForm.get('email')?.touched && signupForm.get('email')?.hasError('email')) {
-              <span class="error-msg">Invalid email format</span>
+            @if (
+              signupForm.get('email')?.touched &&
+              (signupForm.get('email')?.hasError('email') || signupForm.get('email')?.invalid)
+            ) {
+              <span class="error-msg">Valid email required</span>
             }
           </div>
 
@@ -32,7 +35,9 @@
             <label for="password">Password *</label>
             <input formControlName="password" type="password" placeholder="Min 8 characters" />
             @if (
-              signupForm.get('password')?.touched && signupForm.get('password')?.hasError('pattern')
+              signupForm.get('password')?.touched &&
+              (signupForm.get('password')?.hasError('pattern') ||
+                signupForm.get('password')?.invalid)
             ) {
               <span class="error-msg"
                 >Must have 8+ chars, uppercase, lowercase, number & special char</span
@@ -57,8 +62,10 @@
           <div class="form-group">
             <label for="phone">Phone Number *</label>
             <input formControlName="phone" type="text" placeholder="9876543210" />
-            @if (signupForm.get('phone')?.touched && signupForm.get('phone')?.hasError('pattern')) {
-              <span class="error-msg">Use 10 digits, optional +91 prefix</span>
+            @if (signupForm.get('phone')?.touched && signupForm.get('phone')?.invalid) {
+              <span class="error-msg"
+                >Valid phone no. with 10 digits required (optional +91 prefix)</span
+              >
             }
           </div>
 
@@ -70,6 +77,7 @@
                 <option value="doctor">Doctor</option>
                 <option value="nurse">Nurse</option>
                 <option value="receptionist">Receptionist</option>
+                <option value="cashier">Cashier</option>
                 <option value="admin">Admin</option>
                 <option value="pharmacist">Pharmacist</option>
                 <option value="lab_tech">Lab Tech</option>
@@ -106,6 +114,11 @@
           <div class="form-group">
             <label for="qualification">Qualifications</label>
             <input formControlName="qualification" type="text" placeholder="e.g. MBBS, MD" />
+            @if (
+              signupForm.get('qualification')?.touched && signupForm.get('qualification')?.invalid
+            ) {
+              <span class="error-msg">Qualification is required</span>
+            }
           </div>
 
           <div class="form-group">
@@ -113,8 +126,8 @@
             <input
               formControlName="joiningDate"
               type="date"
-              [min]="getMinDate()"
-              [max]="getMaxDate()"
+              [min]="minDate"
+              [max]="maxDate"
             />
             @if (
               signupForm.get('joiningDate')?.touched &&
@@ -134,6 +147,12 @@
               <div class="form-group">
                 <label for="specialization">Specialization</label>
                 <input formControlName="specialization" type="text" placeholder="e.g. Cardiology" />
+                @if (
+                  signupForm.get('specialization')?.touched &&
+                  signupForm.get('specialization')?.invalid
+                ) {
+                  <span class="error-msg">Specialization is required</span>
+                }
               </div>
               <div class="form-group">
                 <label for="medicalRegNo">Medical Reg No.</label>
@@ -142,6 +161,12 @@
                   type="text"
                   placeholder="Registration ID"
                 />
+                @if (
+                  signupForm.get('medicalRegistrationNo')?.touched &&
+                  signupForm.get('medicalRegistrationNo')?.invalid
+                ) {
+                  <span class="error-msg">MedicalRegistrationNo is required</span>
+                }
               </div>
             </div>
           </div>
@@ -156,6 +181,12 @@
             <div class="form-group m-b-4">
               <label for="consultationFee">Consultation Fee (₹)</label>
               <input formControlName="consultationFee" type="number" placeholder="0.00" />
+              @if (
+                signupForm.get('consultationFee')?.touched &&
+                signupForm.get('consultationFee')?.invalid
+              ) {
+                <span class="error-msg">Consultation Fee is required</span>
+              }
             </div>
 
             <div formArrayName="availabilitySlots" class="slots-section">
@@ -170,8 +201,24 @@
                 let i = $index
               ) {
                 <div [formGroupName]="i" class="slot-card">
-                  <div class="slot-row">
-                    <div class="time-inputs">
+                  <div
+                    class="slot-row"
+                    style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap"
+                  >
+                    <div class="time-inputs" style="display: flex; gap: 8px; align-items: center">
+                      <div class="select-wrapper">
+                        <select formControlName="dayOfWeek">
+                          <option value="" disabled selected>Day</option>
+                          <option value="MONDAY">Monday</option>
+                          <option value="TUESDAY">Tuesday</option>
+                          <option value="WEDNESDAY">Wednesday</option>
+                          <option value="THURSDAY">Thursday</option>
+                          <option value="FRIDAY">Friday</option>
+                          <option value="SATURDAY">Saturday</option>
+                          <option value="SUNDAY">Sunday</option>
+                        </select>
+                      </div>
+
                       <div class="select-wrapper">
                         <select formControlName="startTime">
                           <option value="" disabled selected>Start</option>
@@ -219,15 +266,18 @@
             </div>
           </div>
         }
-
-        <div class="form-actions">
-          <button type="submit" [disabled]="signupForm.invalid || isSubmitting" class="btn-submit">
-            {{ isSubmitting ? 'Submitting...' : 'Sign in' }}
-          </button>
-        </div>
+        <div class="separator"></div>
+        <button
+          type="submit"
+          [disabled]="isSubmitting || signupForm.invalid"
+          class="btn-submit"
+          [class.btn-disabled]="signupForm.invalid"
+        >
+          {{ isSubmitting ? 'Submitting...' : 'Sign up' }}
+        </button>
 
         <div class="form-footer">
-          <p>Already have an account? <a routerLink="/login" class="login-link">Sign In</a></p>
+          <p>Already have an account? <a routerLink="/login" class="login-link">Log in</a></p>
         </div>
       </form>
     </div>

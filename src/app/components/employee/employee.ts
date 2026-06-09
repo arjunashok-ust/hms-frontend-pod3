@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   FormsModule,
@@ -7,9 +7,16 @@ import {
   FormGroup,
   FormArray,
   Validators,
+  AbstractControl, ValidationErrors, ValidatorFn
 } from '@angular/forms';
 import { ApiService } from '../../services/apiService/api-service';
 import { TimeSlotUtil, GeneratedSlot } from '../../utils/timeSlot';
+import {
+  joiningDateValidator,
+  getMinDate,
+  getMaxDate
+} from '../../utils/joiningDateValidator';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-employee',
@@ -18,6 +25,7 @@ import { TimeSlotUtil, GeneratedSlot } from '../../utils/timeSlot';
   templateUrl: './employee.html',
   styleUrls: ['./employee.css'],
 })
+
 export class Employee implements OnInit {
   employees: any[] = [];
   filteredEmployees: any[] = [];
@@ -44,6 +52,7 @@ export class Employee implements OnInit {
     { value: 'LAB_TECH', label: 'Lab Technician' },
     { value: 'PHARMACIST', label: 'Pharmacist' },
     { value: 'RECEPTIONIST', label: 'Receptionist' },
+    { value: 'CASHIER', label: 'Cashier' },
   ];
   rowSubSlotsMap: { [uniqueId: string]: GeneratedSlot[] } = {};
   availableHours: string[] = Array.from(
@@ -53,6 +62,9 @@ export class Employee implements OnInit {
 
   isEditMode = false;
   editingEmployeeId: string | null = null;
+  toast: ToastrService = inject(ToastrService);
+
+  private readonly phonePattern = /^(\+91[\s-]?)?[6789]\d{9}$/;
 
   constructor(
     private readonly apiService: ApiService,
@@ -65,6 +77,9 @@ export class Employee implements OnInit {
   ngOnInit() {
     this.fetchEmployees();
   }
+
+  minDate = getMinDate();
+  maxDate = getMaxDate();
 
   fetchEmployees() {
     this.apiService.getAllEmployees().subscribe({
@@ -102,6 +117,15 @@ export class Employee implements OnInit {
     this.applyFilters();
   }
 
+  timeRangeValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
+    const start = control.get('startTime')?.value;
+    const end = control.get('endTime')?.value;
+    if (start && end && start >= end) {
+      return { timeRangeInvalid: true };
+    }
+    return null;
+  };
+
   applyFilters() {
     this.filteredEmployees = this.employees.filter((emp) => {
       if (this.showPendingApprovals) return emp.status === 'ADMIN_APPROVAL_PENDING';
@@ -117,7 +141,6 @@ export class Employee implements OnInit {
 
       let matchesStatus = true;
       if (this.selectedStatus) {
-        // FIX: Force to uppercase to prevent case-mismatch bugs
         const normalizedStatus = emp.status?.toUpperCase() === 'ACTIVE' ? 'ACTIVE' : 'INACTIVE';
         matchesStatus = normalizedStatus === this.selectedStatus;
       }
@@ -139,27 +162,28 @@ export class Employee implements OnInit {
     if (confirm(`Approve account for ${emp.name}?`)) {
       this.apiService.approveEmployee(emp.employeeCode).subscribe({
         next: (response) => {
-          alert('Employee approved successfully!');
+          this.toast.success('Employee approved successfully!');
 
           this.fetchEmployees();
         },
         error: (err) => {
-          alert('Error approving employee: ' + (err.error?.message || 'Unknown error'));
+          this.toast.error('Error approving employee: ' + (err.error?.message || 'Unknown error'));
         },
       });
     }
   }
+
   deleteEmployee(id: string) {
     if (
       confirm(`Are you absolutely sure you want to delete employee ${id}? This cannot be undone.`)
     ) {
       this.apiService.deleteEmployee(id).subscribe({
         next: () => {
-          alert('Employee deleted successfully.');
+          this.toast.success('Employee deleted successfully.');
           this.fetchEmployees();
         },
         error: (err) => {
-          alert('Error deleting employee: ' + (err.error?.message || 'Unknown error'));
+          this.toast.error('Error deleting employee: ' + (err.error?.message || 'Unknown error'));
         },
       });
     }
@@ -169,15 +193,15 @@ export class Employee implements OnInit {
     this.newEmployeeForm = this.fb.group({
       name: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
-      phone: ['', [Validators.required, Validators.minLength(9)]],
+      phone: ['', [Validators.required, Validators.pattern(this.phonePattern)]],
       role: ['', Validators.required],
       status: ['ACTIVE', Validators.required],
       department: ['', Validators.required],
       designation: ['', Validators.required],
-      joiningDate: ['', Validators.required],
+      joiningDate: ['', [Validators.required, joiningDateValidator]],
       medicalRegistrationNo: [''],
       specialization: [''],
-      qualification: [''],
+      qualification: ['', Validators.required],
       consultationFee: [null],
       availabilitySlots: this.fb.array([]),
     });
@@ -217,14 +241,22 @@ export class Employee implements OnInit {
     const uniqueId = 'slot_' + Date.now() + Math.random().toString(36).substring(2, 7);
     const slotGroup = this.fb.group({
       id: [uniqueId],
-      dayOfWeek: ['', Validators.required], // NEW: Require the day
+      dayOfWeek: ['', Validators.required],
       startTime: ['', Validators.required],
       endTime: ['', Validators.required],
       checkedSlots: this.fb.array([]),
+    }, {
+      validators: this.timeRangeValidator
     });
 
     slotGroup.valueChanges.subscribe((changes) => {
-      this.generateHourlySlots(uniqueId, slotGroup, changes.startTime ?? '', changes.endTime ?? '');
+      if (slotGroup.hasError('timeRangeInvalid')) {
+        this.rowSubSlotsMap[uniqueId] = []; // Clear invalid visual sub-slots
+        const checkedArray = slotGroup.get('checkedSlots') as FormArray;
+        while (checkedArray.length !== 0) checkedArray.removeAt(0);
+      } else if (changes.startTime && changes.endTime) {
+        this.generateHourlySlots(uniqueId, slotGroup, changes.startTime, changes.endTime);
+      }
     });
 
     this.availabilitySlots.push(slotGroup);
@@ -280,9 +312,9 @@ export class Employee implements OnInit {
 
     const parsedQualifications = rawValues.qualification
       ? rawValues.qualification
-          .split(',')
-          .map((q: string) => q.trim())
-          .filter(Boolean)
+        .split(',')
+        .map((q: string) => q.trim())
+        .filter(Boolean)
       : [];
 
     const weeklyScheduleMap: { [day: string]: any[] } = {};
@@ -324,7 +356,7 @@ export class Employee implements OnInit {
       this.apiService.updateEmployee(this.editingEmployeeId, payload).subscribe({
         next: () => {
           this.isSubmittingModal = false;
-          alert('Employee updated successfully!');
+          this.toast.success('Employee updated successfully!');
           this.fetchEmployees();
           this.closeModal();
           this.cdr.markForCheck();
@@ -339,7 +371,7 @@ export class Employee implements OnInit {
       this.apiService.createEmployeeByAdmin(payload).subscribe({
         next: () => {
           this.isSubmittingModal = false;
-          alert('Employee created successfully!');
+          this.toast.success('Employee created successfully!');
           this.fetchEmployees();
           this.closeModal();
           this.cdr.markForCheck();
