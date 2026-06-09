@@ -26,8 +26,8 @@ export function futureDateValidator(control: AbstractControl): ValidationErrors 
   let pastLimit = new Date();
   let futureLimit = new Date();
 
-  futureLimit.setMonth(today.getMonth() + 3);
-  pastLimit.setMonth(today.getMonth() - 3);
+  futureLimit.setMonth(today.getMonth() + 6);
+  pastLimit.setMonth(today.getMonth() - 6);
 
   if (inputDate > futureLimit || inputDate < pastLimit) {
     return { invalidJoiningDate: true };
