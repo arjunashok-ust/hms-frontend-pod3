@@ -20,7 +20,76 @@
     </div>
   </div>
 
+  @if (showPendingApprovals) {
+    <div class="dashboard-banner mb-4 p-4 rounded shadow-sm">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+          <p class="eyebrow text-primary fw-bold mb-1">USERS</p>
+          <h2 class="fw-bold mb-2">User Approval Center</h2>
+        </div>
+      </div>
+    </div>
+
+    <div class="stats-grid mb-4">
+      <div class="stat-card">
+        <div class="d-flex justify-content-between align-items-start mb-3">
+          <div class="icon-box text-white rounded" style="background-color: #f59e0b">
+            <i class="bi bi-hourglass-split"></i>
+          </div>
+          <span class="stat-label text-muted" style="font-size: 0.75rem; font-weight: 700"
+            >Queue</span
+          >
+        </div>
+        <h2 class="stat-number fw-bold mb-1">{{ stats.pending }}</h2>
+        <p class="stat-title text-muted mb-0" style="font-size: 0.85rem">Pending Approvals</p>
+      </div>
+      <div class="stat-card">
+        <div class="d-flex justify-content-between align-items-start mb-3">
+          <div class="icon-box text-white rounded" style="background-color: #10b981">
+            <i class="bi bi-patch-check-fill"></i>
+          </div>
+          <span class="stat-label text-muted" style="font-size: 0.75rem; font-weight: 700"
+            >Secure</span
+          >
+        </div>
+        <h2 class="stat-number fw-bold mb-1">{{ stats.verified }}</h2>
+        <p class="stat-title text-muted mb-0" style="font-size: 0.85rem">Verified Users</p>
+      </div>
+      <div class="stat-card">
+        <div class="d-flex justify-content-between align-items-start mb-3">
+          <div class="icon-box text-white rounded" style="background-color: #ef4444">
+            <i class="bi bi-person-x-fill"></i>
+          </div>
+          <span class="stat-label text-muted" style="font-size: 0.75rem; font-weight: 700"
+            >Review</span
+          >
+        </div>
+        <h2 class="stat-number fw-bold mb-1">{{ stats.inactive }}</h2>
+        <p class="stat-title text-muted mb-0" style="font-size: 0.85rem">Inactive Accounts</p>
+      </div>
+      <div class="stat-card">
+        <div class="d-flex justify-content-between align-items-start mb-3">
+          <div class="icon-box text-white rounded" style="background-color: #8b5cf6">
+            <i class="bi bi-box-arrow-in-right"></i>
+          </div>
+          <span class="stat-label text-muted" style="font-size: 0.75rem; font-weight: 700"
+            >Onboarding</span
+          >
+        </div>
+        <h2 class="stat-number fw-bold mb-1">{{ stats.firstLogin }}</h2>
+        <p class="stat-title text-muted mb-0" style="font-size: 0.85rem">First Login Pending</p>
+      </div>
+    </div>
+  }
+
   <div class="card-panel mt-4">
+    @if (showPendingApprovals) {
+      <div class="mb-4">
+        <p class="subtitle" style="color: #4f46e5; margin-bottom: 4px">ACCOUNTS</p>
+        <h3 class="fw-bold m-0">Pending User Approvals</h3>
+      </div>
+    }
+
     <div class="filter-bar">
       <div class="search-box">
         <input
@@ -92,11 +161,14 @@
                 <td>
                   <span
                     class="status-pill"
-                    [ngClass]="
-                      emp.status?.toUpperCase() === 'ACTIVE' ? 'pill-active' : 'pill-inactive'
-                    "
+                    [ngClass]="{
+                      'pill-active': emp.status === 'ACTIVE',
+                      'pill-inactive': emp.status === 'INACTIVE',
+                      'pill-pending': emp.status === 'ADMIN_APPROVAL_PENDING',
+                      'pill-onboarding': emp.status === 'PASSWORD_CHANGE_PENDING',
+                    }"
                   >
-                    {{ emp.status?.toUpperCase() === 'ACTIVE' ? 'Active' : 'Inactive' }}
+                    PASSWORD_CHANGE_PENDING
                   </span>
                 </td>
 
@@ -206,11 +278,10 @@
             <div class="input-group">
               <label for="phoneNumber">PHONE NUMBER *</label
               ><input type="text" formControlName="phone" />
-              @if (
-                newEmployeeForm.get('phone')?.touched &&
-                newEmployeeForm.get('phone')?.invalid
-              ) {
-                <span class="error-msg">Valid phone no. with 10 digits required (optional +91 prefix)</span>
+              @if (newEmployeeForm.get('phone')?.touched && newEmployeeForm.get('phone')?.invalid) {
+                <span class="error-msg"
+                  >Valid phone no. with 10 digits required (optional +91 prefix)</span
+                >
               }
             </div>
 
@@ -221,10 +292,10 @@
                 @for (role of availableRoles; track role.value) {
                   <option [value]="role.value">{{ role.label }}</option>
                 }
-                @if (newEmployeeForm.get('role')?.touched && newEmployeeForm.get('role')?.invalid) {
-                  <span class="error-msg">Please select a role</span>
-                }
               </select>
+              @if (newEmployeeForm.get('role')?.touched && newEmployeeForm.get('role')?.invalid) {
+                <span class="error-msg">Please select a role</span>
+              }
             </div>
 
             <div class="input-group">
@@ -260,23 +331,18 @@
               }
             </div>
             <div class="input-group col-span-2">
-                  <label for="qualification">QUALIFICATIONS *</label
-                  ><input formControlName="qualification" type="text" />
-                  @if (
-                    newEmployeeForm.get('qualification')?.touched &&
-                    newEmployeeForm.get('qualification')?.invalid
-                  ) {
-                    <span class="error-msg">Qualification is required</span>
-                  }
-                </div>
+              <label for="qualification">QUALIFICATIONS *</label
+              ><input formControlName="qualification" type="text" />
+              @if (
+                newEmployeeForm.get('qualification')?.touched &&
+                newEmployeeForm.get('qualification')?.invalid
+              ) {
+                <span class="error-msg">Qualification is required</span>
+              }
+            </div>
             <div class="input-group col-span-2">
               <label for="joiningDate">JOINING DATE *</label
-              ><input
-                formControlName="joiningDate"
-                type="date"
-                [min]="minDate"
-                [max]="maxDate"
-              />
+              ><input formControlName="joiningDate" type="date" [min]="minDate" [max]="maxDate" />
               @if (
                 newEmployeeForm.get('joiningDate')?.touched &&
                 newEmployeeForm.get('joiningDate')?.hasError('invalidDateRange')
@@ -310,7 +376,6 @@
                     <span class="error-msg">MedicalRegistrationNo is required</span>
                   }
                 </div>
-                
               </div>
             </div>
           }

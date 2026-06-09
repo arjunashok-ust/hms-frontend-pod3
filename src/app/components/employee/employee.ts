@@ -25,13 +25,20 @@ import { ToastrService } from 'ngx-toastr';
   templateUrl: './employee.html',
   styleUrls: ['./employee.css'],
 })
-
 export class Employee implements OnInit {
   employees: any[] = [];
   filteredEmployees: any[] = [];
   isLoading = true;
   showPendingApprovals = false;
   pendingCount = 0;
+
+  stats = {
+    pending: 0,
+    verified: 0,
+    inactive: 0,
+    firstLogin: 0,
+    total: 0
+  };
 
   searchTerm: string = '';
   selectedDepartment: string = '';
@@ -92,9 +99,16 @@ export class Employee implements OnInit {
         }
 
         this.employees = data;
-        this.pendingCount = data.filter(
-          (emp: any) => emp.status === 'ADMIN_APPROVAL_PENDING',
-        ).length;
+
+        this.stats = {
+          pending: data.filter((e: any) => e.status === 'ADMIN_APPROVAL_PENDING').length,
+          verified: data.filter((e: any) => e.status === 'ACTIVE').length,
+          inactive: data.filter((e: any) => e.status === 'INACTIVE').length,
+          firstLogin: data.filter((e: any) => e.status === 'PASSWORD_CHANGE_PENDING').length,
+          total: data.length
+        };
+        this.pendingCount = this.stats.pending;
+
         this.applyFilters();
         this.isLoading = false;
         this.cdr.markForCheck();
@@ -163,7 +177,6 @@ export class Employee implements OnInit {
       this.apiService.approveEmployee(emp.employeeCode).subscribe({
         next: (response) => {
           this.toast.success('Employee approved successfully!');
-
           this.fetchEmployees();
         },
         error: (err) => {
@@ -251,7 +264,7 @@ export class Employee implements OnInit {
 
     slotGroup.valueChanges.subscribe((changes) => {
       if (slotGroup.hasError('timeRangeInvalid')) {
-        this.rowSubSlotsMap[uniqueId] = []; // Clear invalid visual sub-slots
+        this.rowSubSlotsMap[uniqueId] = [];
         const checkedArray = slotGroup.get('checkedSlots') as FormArray;
         while (checkedArray.length !== 0) checkedArray.removeAt(0);
       } else if (changes.startTime && changes.endTime) {
@@ -384,6 +397,7 @@ export class Employee implements OnInit {
       });
     }
   }
+
   editEmployee(emp: any) {
     this.isEditMode = true;
     this.editingEmployeeId = emp.employeeCode;

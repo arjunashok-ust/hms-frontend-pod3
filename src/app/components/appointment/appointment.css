@@ -18,7 +18,6 @@ h1, h2, h3, h4, h5, h6 {
   letter-spacing: -0.5px;
 }
 
-/* CORRECTED: Responsive Padding */
 .page-wrapper {
   padding: 16px; 
   max-width: 1600px;
@@ -36,7 +35,7 @@ h1, h2, h3, h4, h5, h6 {
 .card-panel {
   background: white;
   border-radius: 24px;
-  padding: 24px; /* Reduced base padding for mobile */
+  padding: 24px; 
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
 }
 @media (min-width: 768px) {
@@ -69,7 +68,6 @@ h1, h2, h3, h4, h5, h6 {
 .mb-4 { margin-bottom: 24px; }
 .py-5 { padding-top: 3rem; padding-bottom: 3rem; }
 
-/* CORRECTED: Allow header to wrap on mobile */
 .panel-header {
   display: flex;
   flex-wrap: wrap;
@@ -79,7 +77,6 @@ h1, h2, h3, h4, h5, h6 {
   margin-bottom: 32px;
 }
 
-/* Auto-fit makes this natively responsive */
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -145,30 +142,27 @@ h1, h2, h3, h4, h5, h6 {
 .theme-red .icon-box { background: #ef4444; }
 .theme-red::after { background: #fef2f2; }
 
-/* CORRECTED: Mobile-First Layout Grid */
 .main-content-layout {
   display: grid;
-  grid-template-columns: 1fr; /* Stacked on mobile */
+  grid-template-columns: 1fr; 
   gap: 32px;
 }
 @media (min-width: 992px) {
   .main-content-layout {
-    grid-template-columns: 2fr 1fr; /* Side-by-side on desktop */
+    grid-template-columns: 2fr 1fr; 
   }
 }
 
-/* CORRECTED: Mobile-First Form Grid */
 .form-grid {
   display: grid;
-  grid-template-columns: 1fr; /* Stacked on mobile */
+  grid-template-columns: 1fr; 
   gap: 24px;
   margin-bottom: 32px;
 }
 @media (min-width: 768px) {
   .form-grid {
-    grid-template-columns: 1fr 1fr; /* 2 columns on tablet+ */
+    grid-template-columns: 1fr 1fr; 
   }
-  /* Force time slot area to span full width */
   .form-group:has(.time-slot-container) {
     grid-column: 1 / -1; 
   }
@@ -246,7 +240,6 @@ h1, h2, h3, h4, h5, h6 {
   margin-bottom: 16px;
 }
 
-/* CORRECTED: Allow wrapping for small screens */
 .radio-group {
   display: flex;
   flex-wrap: wrap; 
@@ -309,16 +302,15 @@ h1, h2, h3, h4, h5, h6 {
   gap: 8px;
 }
 
-/* CORRECTED: Action Buttons layout */
 .form-actions {
   display: flex;
-  flex-direction: column; /* Stacked on mobile */
+  flex-direction: column;
   gap: 16px;
   margin-top: 40px;
 }
 @media (min-width: 576px) {
   .form-actions {
-    flex-direction: row; /* Side-by-side on larger screens */
+    flex-direction: row; 
     justify-content: flex-end;
   }
 }
@@ -386,7 +378,6 @@ h1, h2, h3, h4, h5, h6 {
 .pill-completed { background: #f0fdf4; color: #166534; }
 .pill-cancelled { background: #fef2f2; color: #c23636; }
 
-/* CORRECTED: Table Responsiveness */
 .table-responsive {
   width: 100%;
   overflow-x: auto;
@@ -394,7 +385,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 .data-table {
   width: 100%;
-  min-width: 900px; /* Forces scroll bar instead of crushing layout */
+  min-width: 900px; 
   border-collapse: collapse;
 }
 .data-table th {
@@ -451,7 +442,6 @@ h1, h2, h3, h4, h5, h6 {
 .empty-slot-message { font-size: 0.85rem; color: #6b7280; text-align: center; padding: 10px; }
 .hidden-radio { position: absolute; opacity: 0; width: 0; height: 0; }
 
-/* CORRECTED: Removed invalid grid parameters from individual slot boxes */
 .slot-box {
   display: flex;
   align-items: center;
@@ -512,7 +502,6 @@ h1, h2, h3, h4, h5, h6 {
   gap: 10px;
 }
 
-/* Custom Searchable Dropdown */
 .searchable-dropdown-container {
   position: relative;
   width: 100%;
@@ -528,7 +517,7 @@ h1, h2, h3, h4, h5, h6 {
   border-radius: 8px;
   max-height: 220px;
   overflow-y: auto;
-  z-index: 1000; /* Ensures it sits above other inputs */
+  z-index: 1000; 
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
 }
 

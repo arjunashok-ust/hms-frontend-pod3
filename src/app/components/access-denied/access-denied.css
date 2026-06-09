@@ -4,7 +4,6 @@
   align-items: center;
   min-height: 100vh;
   width: 100vw;
-  /* Replicating the soft mesh gradient from the screenshot */
   background:
     radial-gradient(circle at 15% 30%, #fce7f3 0%, transparent 40%),
     radial-gradient(circle at 85% 70%, #e0e7ff 0%, transparent 40%), #f8fafc;
@@ -28,7 +27,6 @@
   margin: 20px;
 }
 
-/* Red Lock Icon Styling */
 .icon-section {
   display: flex;
   justify-content: center;
@@ -44,7 +42,6 @@
   justify-content: center;
   align-items: center;
   font-size: 2rem;
-  /* Creates the soft red glowing shadow under the icon */
   box-shadow: 0 16px 32px -8px rgba(244, 63, 94, 0.5);
   position: relative;
 }
@@ -58,7 +55,6 @@
   z-index: -1;
 }
 
-/* Error Badge */
 .badge-container {
   margin-bottom: 24px;
 }
@@ -84,7 +80,6 @@
   display: inline-block;
 }
 
-/* Typography */
 .title {
   color: #0f172a;
   font-size: 2.25rem;
@@ -101,7 +96,6 @@
   margin: 0 auto 40px auto;
 }
 
-/* Divider section */
 .divider-section {
   display: flex;
   align-items: center;
@@ -124,7 +118,6 @@
   letter-spacing: 1px;
 }
 
-/* Action Buttons */
 .action-buttons {
   display: flex;
   justify-content: center;

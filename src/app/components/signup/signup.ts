@@ -1,4 +1,4 @@
-import { Component, inject, ChangeDetectorRef } from '@angular/core'; // <-- Import added
+import { Component, inject, ChangeDetectorRef } from '@angular/core';
 import {
   ReactiveFormsModule,
   FormBuilder,
@@ -124,7 +124,7 @@ export class Signup {
 
     const slotGroup = this.fb.group({
       id: [uniqueId],
-      dayOfWeek: ['', Validators.required], // <-- Added day of week
+      dayOfWeek: ['', Validators.required], 
       startTime: ['', Validators.required],
       endTime: ['', Validators.required],
       checkedSlots: this.fb.array([]),
@@ -188,7 +188,7 @@ export class Signup {
     if (this.signupForm.valid) {
       this.isSubmitting = true;
       this.errorMessage = null;
-      this.cdr.markForCheck(); // <-- Tell UI we are submitting
+      this.cdr.markForCheck(); 
 
       const rawValues = this.signupForm.value;
 
@@ -235,7 +235,7 @@ export class Signup {
         department: rawValues.department.toUpperCase(),
         qualification: parsedQualifications,
         consultationFee: this.isDoctor ? Number(rawValues.consultationFee) : undefined,
-        weeklySchedule: this.isDoctor ? formattedWeeklySchedule : [], // <-- Use weeklySchedule
+        weeklySchedule: this.isDoctor ? formattedWeeklySchedule : [], 
       };
 
       delete payload.availabilitySlots;

@@ -277,6 +277,18 @@ h6 {
   color: rgb(198, 0, 0);
 }
 
+
+.pill-pending {
+  background-color: #fee2e2;
+  color: rgb(198, 0, 0);
+}
+
+
+.pill-onboarding {
+  background-color: #fee2e2;
+  color: rgb(198, 0, 0);
+}
+
 .action-links {
   display: flex;
   gap: 12px;
@@ -595,4 +607,119 @@ h6 {
   background-color: #cbd5e1 !important;
   cursor: not-allowed;
   opacity: 0.7;
+}
+
+
+.dashboard-banner {
+  background: white;
+  border-radius: 24px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+  border: 1px solid #f3f4f6;
+}
+
+.eyebrow {
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: #4a90e2 !important;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px;
+  margin-bottom: 40px;
+}
+
+.stat-card {
+  background: white;
+  border-radius: 20px;
+  padding: 24px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  transition: 0.35s ease;
+  border: none;
+  cursor: pointer;
+}
+
+.stat-card::after {
+  content: '';
+  position: absolute;
+  top: -40px;
+  right: -40px;
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  opacity: 0.12;
+  z-index: 0;
+  transition: transform 0.4s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.05);
+}
+
+.stat-card:hover::after {
+  transform: scale(1.2);
+}
+
+.stat-card:nth-child(1)::after { background-color: #f59e0b; }
+.stat-card:nth-child(2)::after { background-color: #10b981; }
+.stat-card:nth-child(3)::after { background-color: #ef4444; }
+.stat-card:nth-child(4)::after { background-color: #8b5cf6; }
+
+.icon-box {
+  color: white;
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  z-index: 1;
+}
+
+.stat-label {
+  z-index: 1;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.stat-number {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: #111827;
+  margin: 0 0 4px 0;
+  line-height: 1;
+  z-index: 1;
+}
+
+.stat-title {
+  font-size: 0.9rem;
+  color: #4b5563;
+  margin: 0;
+  font-weight: 500;
+  z-index: 1;
+}
+
+.data-table tbody tr {
+  transition: 0.3s ease;
+}
+
+.data-table tbody tr:hover {
+  transform: scale(1.01);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+.data-table tbody tr:hover td {
+  background-color: #ffffff;
+  border-bottom-color: transparent;
 }
