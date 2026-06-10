@@ -54,6 +54,12 @@ export class Appointment implements OnInit {
     return d.toISOString().split('T')[0];
   }
 
+  getMaxDate(): string {
+    const d = new Date();
+    d.setMonth(d.getMonth() + 6);
+    return d.toISOString().split('T')[0];
+  }
+
   pastDateValidator = (control: AbstractControl): ValidationErrors | null => {
     if (!control.value) return null;
 

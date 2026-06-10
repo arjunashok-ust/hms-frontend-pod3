@@ -155,7 +155,7 @@
                 <i class="bi bi-calendar3 text-blue"></i> APPOINTMENT DATE
                 <span class="text-danger">*</span>
               </label>
-              <input type="date" formControlName="date" class="form-control" [min]="getMinDate()" />
+              <input type="date" formControlName="date" class="form-control" [min]="getMinDate()" [max]="getMaxDate()" />
 
               @if (appointmentForm.get('date')?.touched) {
                 @if (appointmentForm.get('date')?.hasError('pastDate')) {
