@@ -150,13 +150,34 @@ export class AppointmentComponent implements OnInit {
     }
   }
 
+  editAppointmentStatus(appointmentId: string,status: string) {
+    const payload = {
+      status,
+      appointmentId,
+    };
+    try {
+      this.appointmentService.editAppointmentStatus(payload).subscribe({
+      next: (res) => {
+        this.loadUiData();
+        this.cd.detectChanges();
+        this.toast.success(res.message);
+      },
+      error: (err) => {
+        this.toast.error(err?.error?.message || err?.message || 'Something went wrong!');
+      },
+    });
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
   onSubmit() {
     const payload = {
       patientId: this.appointmentForm.value.patientId,
       doctorEmployeeId: this.appointmentForm.value.doctorEmployeeId,
       date: this.appointmentForm.value.date,
       timeSlot: this.appointmentForm.value.timeSlot,
-      status: '',
+      status: 'Booked',
       createdByEmployeeId: this.appointmentForm.value.createdByEmployeeId,
     };
 

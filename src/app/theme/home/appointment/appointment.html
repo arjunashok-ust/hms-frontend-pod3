@@ -1,5 +1,5 @@
 <div class="appointment-wrapper">
-  <div class="stats-grid" *ngIf="role!='Doctor'">
+  <div class="stats-grid" *ngIf="role != 'Doctor'">
     <div class="stat-card blue">
       <div class="stat-top">
         <div class="stat-icon">
@@ -46,7 +46,7 @@
     </div>
   </div>
 
-  <div class="content-grid" *ngIf="role!='Doctor'">
+  <div class="content-grid" *ngIf="role != 'Doctor'">
     <div class="glass-panel">
       <div class="panel-header">
         <div>
@@ -222,11 +222,7 @@
           <span class="panel-subtitle">Today's Overview</span>
           <h2>Quick Info</h2>
         </div>
-        <div class="panel-actions">
-          <button type="button" title="Refresh">
-            <i class="bi bi-arrow-clockwise"></i>
-          </button>
-        </div>
+        <div class="panel-actions"></div>
       </div>
       <div class="section-divider">
         <div class="divider-line"></div>
@@ -253,7 +249,7 @@
     </div>
   </div>
 
-  <div class="glass-panel full-width recent-appointments" *ngIf="role!='Doctor'">
+  <div class="glass-panel full-width recent-appointments" *ngIf="role != 'Doctor'">
     <div class="panel-header">
       <div>
         <span class="panel-subtitle">Records</span>
@@ -305,6 +301,7 @@
                 [class.status-booked]="appointment.status === 'Booked'"
                 [class.status-cancelled]="appointment.status === 'Cancelled'"
                 [class.status-completed]="appointment.status === 'Completed'"
+                [class.status-pending]="appointment.status === 'Pending'"
               >
                 {{ appointment.status }}
               </span>
@@ -315,9 +312,34 @@
             <td>
               <div class="action-btns">
                 <button
+                  class="action-btn approve"
+                  title="Approve"
+                  (click)="editAppointmentStatus(appointment.appointmentId ?? '', 'Booked')"
+                  *ngIf="appointment.status !== 'Booked' && appointment.status != 'Completed'"
+                >
+                  <i class="bi bi-check"></i>
+                </button>
+                <button
+                  class="action-btn cancel"
+                  title="Cancel"
+                  (click)="editAppointmentStatus(appointment.appointmentId ?? '', 'Cancelled')"
+                  *ngIf="appointment.status !== 'Cancelled' && appointment.status != 'Completed'"
+                >
+                  <i class="bi bi-x"></i>
+                </button>
+                <button
+                  class="action-btn complete"
+                  title="Complete"
+                  (click)="editAppointmentStatus(appointment.appointmentId ?? '', 'Completed')"
+                  *ngIf="appointment.status !== 'Completed'"
+                >
+                  <i class="bi bi-patch-check"></i>
+                </button>
+                <button
                   class="action-btn delete"
                   title="Delete"
                   (click)="deleteAppointment(appointment.appointmentId ?? '')"
+                  *ngIf="role === 'Admin'"
                 >
                   <i class="bi bi-trash"></i>
                 </button>
@@ -329,7 +351,7 @@
     </div>
   </div>
 
-  <div class="glass-panel full-width recent-appointments" *ngIf="role==='Doctor'">
+  <div class="glass-panel full-width recent-appointments" *ngIf="role === 'Doctor'">
     <div class="panel-header">
       <div>
         <span class="panel-subtitle">Records</span>
@@ -350,7 +372,9 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngIf="doctorAppointments.length === 0"><td>No appointments scheduled for you</td></tr>
+          <tr *ngIf="doctorAppointments.length === 0">
+            <td>No appointments scheduled for you</td>
+          </tr>
           <tr *ngFor="let appointment of doctorAppointments">
             <td>
               <span class="apt-id">{{ appointment.appointmentId }}</span>
@@ -388,6 +412,26 @@
             <td class="muted-text">
               {{ appointment.createdByEmployeeId }}
             </td>
+            <td>
+            <div class="action-btns">
+                <button
+                  class="action-btn cancel"
+                  title="Cancel"
+                  (click)="editAppointmentStatus(appointment.appointmentId ?? '', 'Cancelled')"
+                  *ngIf="appointment.status !== 'Cancelled' && appointment.status != 'Completed'"
+                >
+                  <i class="bi bi-x"></i>
+                </button>
+                <button
+                  class="action-btn complete"
+                  title="Complete"
+                  (click)="editAppointmentStatus(appointment.appointmentId ?? '', 'Completed')"
+                  *ngIf="appointment.status !== 'Completed'"
+                >
+                  <i class="bi bi-patch-check"></i>
+                </button>
+              </div>
+              </td>              
           </tr>
         </tbody>
       </table>

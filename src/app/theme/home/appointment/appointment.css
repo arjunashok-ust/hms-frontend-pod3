@@ -385,6 +385,15 @@
   box-shadow: 0 0 0 3px rgba(244, 63, 94, 0.2);
 }
 
+#status-pendingchecked + .status-label {
+  border-color: #f4dc3f;
+  background: #fff1f2;
+}
+#status-pending:checked + .status-label .status-dot {
+  background: #f4c13f;
+  box-shadow: 0 0 0 3px rgba(244, 63, 94, 0.2);
+}
+
 #status-completed:checked + .status-label {
   border-color: #22c55e;
   background: #f0fdf4;
@@ -651,11 +660,15 @@
   font-weight: 700;
   display: inline-block;
   white-space: nowrap;
+  background: #dbeafe;
 }
 
 .status-booked {
   background: #dbeafe;
   color: #1d4ed8;
+}
+.status-pending {
+  color: #e3bc0e;
 }
 .status-completed {
   background: #dcfce7;
@@ -707,6 +720,33 @@
 }
 .action-btn.delete:hover {
   background: #ef4444;
+  color: rgb(12, 12, 12);
+}
+
+.action-btn.approve {
+  background: #fee2e2;
+  color: rgb(12, 12, 12);
+}
+.action-btn.approve:hover {
+  background: #4ef013;
+  color: rgb(12, 12, 12);
+}
+
+.action-btn.cancel {
+  background: #fee2e2;
+  color: rgb(12, 12, 12);
+}
+.action-btn.cancel:hover {
+  background: #f0a613;
+  color: rgb(12, 12, 12);
+}
+
+.action-btn.complete {
+  background: #fee2e2;
+  color: rgb(12, 12, 12);
+}
+.action-btn.complete:hover {
+  background: #13bcf0;
   color: rgb(12, 12, 12);
 }
 

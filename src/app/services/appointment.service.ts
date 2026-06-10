@@ -38,6 +38,13 @@ export class AppointmentService {
       .pipe(catchError((error) => this.handleError(error)));
   }
 
+  // edit appointment status
+  editAppointmentStatus(payload: any): Observable<any> {
+    return this.http
+      .post(`${this.api.backend_url}/appointment/editAppointmentStatus`,payload)
+      .pipe(catchError((error) => this.handleError(error)));
+  }
+
   // delete appointment
   deleteAppointment(appointmentId: string): Observable<any> {
     return this.http
