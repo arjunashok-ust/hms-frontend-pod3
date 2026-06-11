@@ -48,9 +48,7 @@ export class Appointment implements OnInit {
 
   getMinDate(): string {
     const d = new Date();
-    if (this.userRole === 'ADMIN') {
-      d.setDate(d.getDate());
-    }
+    d.setDate(d.getDate());
     return d.toISOString().split('T')[0];
   }
 
@@ -69,15 +67,7 @@ export class Appointment implements OnInit {
     today.setHours(0, 0, 0, 0);
     selectedDate.setHours(0, 0, 0, 0);
 
-    if (this.userRole === 'ADMIN') {
-      const twoDaysAgo = new Date();
-      twoDaysAgo.setDate(today.getDate() - 2);
-      twoDaysAgo.setHours(0, 0, 0, 0);
-
-      if (selectedDate < twoDaysAgo) {
-        return { pastDateTooFar: true };
-      }
-    } else if (selectedDate < today) {
+    if (selectedDate < today) {
       return { pastDate: true };
     }
     return null;

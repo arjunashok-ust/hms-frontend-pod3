@@ -51,11 +51,22 @@
                   <span class="badge outline-badge">{{ emp.designation }}</span>
                 </td>
                 <td>
-                  <span
-                    class="badge"
-                    [ngClass]="emp.status ? 'badge-active' : 'badge-inactive-text'"
+                <span
+                    class="status-icon"
+                    [ngClass]="{
+                      'icon-active': emp.status === 'ACTIVE',
+                      'icon-inactive': emp.status === 'INACTIVE',
+                      'icon-pending': emp.status === 'ADMIN_APPROVAL_PENDING',
+                      'icon-onboarding': emp.status === 'PASSWORD_CHANGE_PENDING',
+                    }"
                   >
-                    {{ emp.status ? 'Active' : 'Inactive' }}
+                    {{
+                      emp.status === 'PASSWORD_CHANGE_PENDING'
+                        ? 'Onboarding'
+                        : emp.status === 'ADMIN_APPROVAL_PENDING'
+                          ? 'Pending'
+                          : (emp.status | titlecase)
+                    }}
                   </span>
                 </td>
               </tr>
