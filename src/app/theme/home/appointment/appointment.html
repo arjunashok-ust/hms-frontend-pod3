@@ -315,7 +315,7 @@
                   class="action-btn approve"
                   title="Approve"
                   (click)="editAppointmentStatus(appointment.appointmentId ?? '', 'Booked')"
-                  *ngIf="appointment.status !== 'Booked' && appointment.status != 'Completed'"
+                  *ngIf="appointment.status === 'Pending'"
                 >
                   <i class="bi bi-check"></i>
                 </button>
@@ -323,7 +323,7 @@
                   class="action-btn cancel"
                   title="Cancel"
                   (click)="editAppointmentStatus(appointment.appointmentId ?? '', 'Cancelled')"
-                  *ngIf="appointment.status !== 'Cancelled' && appointment.status != 'Completed'"
+                  *ngIf="appointment.status === 'Pending'"
                 >
                   <i class="bi bi-x"></i>
                 </button>
@@ -331,7 +331,7 @@
                   class="action-btn complete"
                   title="Complete"
                   (click)="editAppointmentStatus(appointment.appointmentId ?? '', 'Completed')"
-                  *ngIf="appointment.status !== 'Completed'"
+                  *ngIf="appointment.status === 'Booked'"
                 >
                   <i class="bi bi-patch-check"></i>
                 </button>
@@ -413,12 +413,20 @@
               {{ appointment.createdByEmployeeId }}
             </td>
             <td>
-            <div class="action-btns">
+              <div class="action-btns">
+                <button
+                  class="action-btn approve"
+                  title="Approve"
+                  (click)="editAppointmentStatus(appointment.appointmentId ?? '', 'Booked')"
+                  *ngIf="appointment.status === 'Pending'"
+                >
+                  <i class="bi bi-check"></i>
+                </button>
                 <button
                   class="action-btn cancel"
                   title="Cancel"
                   (click)="editAppointmentStatus(appointment.appointmentId ?? '', 'Cancelled')"
-                  *ngIf="appointment.status !== 'Cancelled' && appointment.status != 'Completed'"
+                  *ngIf="appointment.status === 'Pending'"
                 >
                   <i class="bi bi-x"></i>
                 </button>
@@ -426,12 +434,12 @@
                   class="action-btn complete"
                   title="Complete"
                   (click)="editAppointmentStatus(appointment.appointmentId ?? '', 'Completed')"
-                  *ngIf="appointment.status !== 'Completed'"
+                  *ngIf="appointment.status === 'Booked'"
                 >
                   <i class="bi bi-patch-check"></i>
                 </button>
               </div>
-              </td>              
+            </td>
           </tr>
         </tbody>
       </table>

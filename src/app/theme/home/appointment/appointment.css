@@ -26,7 +26,6 @@
   font-weight: 700;
 }
 
-
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -403,7 +402,6 @@
   box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.2);
 }
 
-
 .info-box {
   display: flex;
   align-items: center;
@@ -421,7 +419,6 @@
   font-size: 1rem;
   flex-shrink: 0;
 }
-
 
 .section-divider {
   display: flex;
@@ -447,7 +444,6 @@
   gap: 8px;
   white-space: nowrap;
 }
-
 
 .form-footer {
   display: flex;
@@ -508,12 +504,11 @@
   transform: translateY(0);
 }
 
-.btn-disabled{
+.btn-disabled {
   background: linear-gradient(135deg, #50535a, #454c60);
   color: white;
   box-shadow: 0 4px 20px rgba(37, 99, 235, 0.3);
 }
-
 
 .doctor-list {
   display: flex;
@@ -550,7 +545,6 @@
   background: linear-gradient(135deg, #2563eb, #3b82f6) !important;
 }
 
-
 .table-wrapper {
   overflow-x: hidden;
   width: 100%;
@@ -558,10 +552,10 @@
 
 .modern-table {
   width: 100%;
-  overflow-x:hidden;
+  overflow-x: hidden;
   border-collapse: separate;
   border-spacing: 0 12px;
-  min-width: 900px; 
+  min-width: 900px;
 }
 
 .modern-table thead th {
@@ -605,7 +599,6 @@
   font-weight: 700;
   color: #2563eb;
 }
-
 
 .patient-info {
   display: flex;
@@ -706,26 +699,26 @@
 }
 
 .action-btn.edit {
-  background: #fef3c7;
+  background: #f0c515;
   color: rgb(12, 12, 12);
 }
 .action-btn.edit:hover {
-  background: #f59e0b;
-  color: rgb(12, 12, 12);
+  background: #5a3c0a;
+  color: rgb(225, 225, 225);
 }
 
 .action-btn.delete {
-  background: #fee2e2;
-  color: rgb(12, 12, 12);
+  background: #400808;
+  color: rgb(225, 225, 225);
 }
 .action-btn.delete:hover {
-  background: #ef4444;
+  background: #ef1f1f;
   color: rgb(12, 12, 12);
 }
 
 .action-btn.approve {
-  background: #fee2e2;
-  color: rgb(12, 12, 12);
+  background: #164907;
+  color: rgb(225, 225, 225);
 }
 .action-btn.approve:hover {
   background: #4ef013;
@@ -733,8 +726,8 @@
 }
 
 .action-btn.cancel {
-  background: #fee2e2;
-  color: rgb(12, 12, 12);
+  background: #4b3a07;
+  color: rgb(225, 225, 225);
 }
 .action-btn.cancel:hover {
   background: #f0a613;
@@ -742,8 +735,8 @@
 }
 
 .action-btn.complete {
-  background: #fee2e2;
-  color: rgb(12, 12, 12);
+  background: #0a1e50;
+  color: rgb(225, 225, 225);
 }
 .action-btn.complete:hover {
   background: #13bcf0;
@@ -754,7 +747,7 @@ small {
   color: #ff6b6b;
   font-size: 11px;
   margin-top: -8px;
-  padding:5px;
+  padding: 5px;
 }
 
 @media (max-width: 1200px) {
