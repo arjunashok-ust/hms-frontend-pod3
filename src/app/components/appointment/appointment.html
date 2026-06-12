@@ -1,5 +1,12 @@
 <div class="page-wrapper">
   <div class="stats-grid">
+    <div class="stat-card theme-purple" [class.pulse-card]="stats.pending > 0">
+      <div class="icon-box"><i class="bi bi-hourglass-split"></i></div>
+      <div class="stat-details">
+        <div class="stat-value">{{ stats.pending || 0 }}</div>
+        <div class="stat-label">Pending Approvals</div>
+      </div>
+    </div>
     <div class="stat-card theme-blue">
       <div class="icon-box"><i class="bi bi-calendar-check"></i></div>
       <div class="stat-details">
@@ -318,7 +325,7 @@
     </div>
   }
 
-  <div class="table-panel card-panel">
+  <div class="table-panel card-panel mt-4">
     <p class="subtitle">RECORDS</p>
     <h2 class="panel-title mb-4">Recent Appointments</h2>
 
@@ -344,15 +351,14 @@
                 <div class="patient-cell">
                   <div class="avatar bg-green-solid">{{ getInitials(apt.patientID) || 'AB' }}</div>
                   <div>
-                    <div class="font-weight-bold">Patient Name</div>
-                    <div class="text-muted text-small">{{ apt.patientID }}</div>
+                    <div class="font-weight-bold">{{apt.patientID}}</div>
                   </div>
                 </div>
               </td>
               <td>{{ apt.doctorName }}</td>
               <td>
                 <div class="date-cell">
-                  <span class="fw-bold">{{ apt.date | date: 'dd MMM' }}</span>
+                  <span class="fw-bold">{{ apt.date | date: 'dd MMM yyyy' }}</span>
                 </div>
               </td>
               <td>
@@ -365,18 +371,25 @@
               </td>
               <td>
                 <div class="creator-cell">
-                  <span class="fw-bold">{{ apt.creatorName || 'System' }}</span>
+                  <span class="fw-bold">{{ apt.creatorName || apt.patientID}}</span>
                 </div>
               </td>
               <td>
                 <div class="action-buttons">
+                  
                   @if (userRole === 'ADMIN' || userRole === 'RECEPTIONIST') {
-                    <button class="btn-action edit" (click)="editAppointment(apt)">
+                    @if (apt.status?.toUpperCase() === 'PENDING') {
+                      <button class="btn-action approve" (click)="approveAppointment(apt)" title="Approve & Schedule">
+                        <i class="bi bi-check-lg"></i>
+                      </button>
+                    }
+                    <button class="btn-action edit" (click)="editAppointment(apt)" title="Edit">
                       <i class="bi bi-pencil"></i>
                     </button>
                     <button
                       class="btn-action delete"
                       (click)="deleteAppointment(apt.appointmentCode)"
+                      title="Delete"
                     >
                       <i class="bi bi-trash"></i>
                     </button>
@@ -384,7 +397,7 @@
 
                   @if (['DOCTOR', 'ADMIN', 'RECEPTIONIST'].includes(userRole)) {
                     @if (apt.status === 'Scheduled') {
-                      <button class="btn-action complete" (click)="markAsCompleted(apt)">
+                      <button class="btn-action complete" (click)="markAsCompleted(apt)" title="Mark Completed">
                         <i class="bi bi-check2-circle"></i>
                       </button>
                     }

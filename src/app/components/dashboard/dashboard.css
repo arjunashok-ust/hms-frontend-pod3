@@ -229,7 +229,6 @@ h6 {
   font-weight: 800;
 }
 
-
 .status-icon {
   padding: 6px 14px;
   border-radius: 20px;
@@ -238,8 +237,8 @@ h6 {
 }
 
 .icon-active {
-  background-color: #d1e7d9;
-  color: #177128;
+  background-color: #d0f0dc;
+  color: #027718;
 }
 
 .icon-inactive {
@@ -248,11 +247,11 @@ h6 {
 }
 
 .icon-pending {
-  background-color: #fee2e2;
-  color: rgb(198, 0, 0);
+  background-color: #faebdc;
+  color: rgb(148, 89, 0);
 }
 
 .icon-onboarding {
-  background-color: #fee2e2;
-  color: rgb(198, 0, 0);
+  background-color: #faccf0;
+  color: rgb(165, 0, 85);
 }

@@ -4,9 +4,13 @@
       @for (menu of menus; track menu.path) {
         @if (menu.isActive !== false) {
           <li class="menu-item">
-            <a [routerLink]="menu.path" routerLinkActive="active-link">
+            <a [routerLink]="menu.path" routerLinkActive="active-link" class="menu-link">
               <i class="bi bi-{{ menu.icon || 'circle' }} menu-icon"></i>
               <span class="menu-text">{{ menu.name }}</span>
+
+              @if (menu.path.toLowerCase().includes('appointment') && pendingAppointmentsCount > 0) {
+                <span class="badge-pulse">{{ pendingAppointmentsCount }}</span>
+              }
             </a>
           </li>
         }
