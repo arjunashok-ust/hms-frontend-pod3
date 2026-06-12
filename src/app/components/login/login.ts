@@ -63,7 +63,6 @@ export class Login {
     if (this.loginForm.valid) {
       this.isLoading = true;
 
-      // 🟢 Create a new payload object combining form values and clientType
       const payload = {
         ...this.loginForm.value,
         clientType: 'web'
@@ -71,7 +70,6 @@ export class Login {
 
       console.log(payload);
 
-      // 🟢 Pass the new payload to the auth service
       this.auth.login(payload).subscribe({
         next: (response) => {
           this.isLoading = false;

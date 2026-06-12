@@ -14,7 +14,6 @@ import { ToastrService } from 'ngx-toastr';
 })
 export class Appointment implements OnInit {
   appointmentForm!: FormGroup;
-  // Initialize pending in stats
   stats: any = { total: 0, completed: 0, booked: 0, cancelled: 0, pending: 0 };
   doctors: any[] = [];
   patients: any[] = [];
@@ -99,7 +98,6 @@ export class Appointment implements OnInit {
   loadData() {
     if (this.userRole !== 'DOCTOR') {
       this.appointmentService.getStats().subscribe(data => {
-        // Merge backend stats while preserving locally calculated ones
         this.stats = { ...this.stats, ...data };
         this.cdr.markForCheck();
       });
@@ -141,7 +139,6 @@ export class Appointment implements OnInit {
         };
       } else {
         this.recentAppointments = data;
-        // Calculate pending directly from recent appointments for Admins/Receptionists
         this.stats.pending = this.recentAppointments.filter((a: any) => a.status?.toUpperCase() === 'PENDING').length;
       }
       this.cdr.detectChanges();

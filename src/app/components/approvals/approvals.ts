@@ -10,7 +10,7 @@ import { RouterLink } from '@angular/router';
   standalone: true,
   imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './approvals.html',
-  styleUrls: ['../employee/employee.css'], // Uses identical styling as requested
+  styleUrls: ['../employee/employee.css'],
 })
 export class Approvals implements OnInit {
   employees: any[] = [];
@@ -41,7 +41,6 @@ export class Approvals implements OnInit {
           return;
         }
 
-        // Filter ONLY pending approvals natively
         this.employees = data.filter((e: any) => e.status === 'ADMIN_APPROVAL_PENDING');
         this.applyFilters();
 

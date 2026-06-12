@@ -52,7 +52,6 @@ export class Sidebar implements OnInit {
   fetchPendingAppointments() {
     this.appointmentService.getRecentAppointments().subscribe({
       next: (data: any[]) => {
-        // Filter and count only the 'Pending' appointments
         this.pendingAppointmentsCount = data.filter(
           (apt) => apt.status?.toUpperCase() === 'PENDING'
         ).length;
