@@ -249,13 +249,16 @@
     </div>
   </div>
 
-  <div class="glass-panel full-width recent-appointments" *ngIf="role != 'Doctor'">
+  <div class="glass-panel full-width recent-appointments">
     <div class="panel-header">
       <div>
         <span class="panel-subtitle">Records</span>
-        <h2>Recent Appointments</h2>
+        <h2>
+          {{ role === 'Doctor' ? 'Recent Appointments For You' : 'Recent Appointments' }}
+        </h2>
       </div>
     </div>
+
     <div class="table-wrapper">
       <table class="modern-table">
         <thead>
@@ -270,11 +273,18 @@
             <th>Actions</th>
           </tr>
         </thead>
+
         <tbody>
-          <tr *ngFor="let appointment of appointments">
+
+          <tr *ngIf="(role === 'Doctor' ? doctorAppointments : appointments).length === 0">
+            <td colspan="8">No appointments available</td>
+          </tr>
+
+          <tr *ngFor="let appointment of role === 'Doctor' ? doctorAppointments : appointments">
             <td>
               <span class="apt-id">{{ appointment.appointmentId }}</span>
             </td>
+
             <td>
               <div class="patient-info">
                 <div class="patient-avatar">P</div>
@@ -284,17 +294,21 @@
                 </div>
               </div>
             </td>
+
             <td>
               <span class="designation-badge">
                 {{ appointment.doctorEmployeeId }}
               </span>
             </td>
+
             <td class="muted-text">
               {{ appointment.date | date: 'dd, MMM' }}
             </td>
+
             <td>
               <span class="designation-badge">{{ appointment.timeSlot }}</span>
             </td>
+
             <td>
               <span
                 class="status-badge"
@@ -306,137 +320,43 @@
                 {{ appointment.status }}
               </span>
             </td>
+
             <td class="muted-text">
               {{ appointment.createdByEmployeeId }}
             </td>
+
             <td>
               <div class="action-btns">
                 <button
                   class="action-btn approve"
-                  title="Approve"
-                  (click)="editAppointmentStatus(appointment.appointmentId ?? '', 'Booked')"
                   *ngIf="appointment.status === 'Pending'"
+                  (click)="editAppointmentStatus(appointment.appointmentId ?? '', 'Booked')"
                 >
                   <i class="bi bi-check"></i>
                 </button>
+
                 <button
                   class="action-btn cancel"
-                  title="Cancel"
-                  (click)="editAppointmentStatus(appointment.appointmentId ?? '', 'Cancelled')"
                   *ngIf="appointment.status === 'Pending'"
+                  (click)="editAppointmentStatus(appointment.appointmentId ?? '', 'Cancelled')"
                 >
                   <i class="bi bi-x"></i>
                 </button>
+
                 <button
                   class="action-btn complete"
-                  title="Complete"
-                  (click)="editAppointmentStatus(appointment.appointmentId ?? '', 'Completed')"
                   *ngIf="appointment.status === 'Booked'"
+                  (click)="editAppointmentStatus(appointment.appointmentId ?? '', 'Completed')"
                 >
                   <i class="bi bi-patch-check"></i>
                 </button>
+
                 <button
                   class="action-btn delete"
-                  title="Delete"
-                  (click)="deleteAppointment(appointment.appointmentId ?? '')"
                   *ngIf="role === 'Admin'"
+                  (click)="deleteAppointment(appointment.appointmentId ?? '')"
                 >
                   <i class="bi bi-trash"></i>
-                </button>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-
-  <div class="glass-panel full-width recent-appointments" *ngIf="role === 'Doctor'">
-    <div class="panel-header">
-      <div>
-        <span class="panel-subtitle">Records</span>
-        <h2>Recent Appointments For You</h2>
-      </div>
-    </div>
-    <div class="table-wrapper">
-      <table class="modern-table">
-        <thead>
-          <tr>
-            <th>Appointment ID</th>
-            <th>Patient</th>
-            <th>Doctor</th>
-            <th>Date</th>
-            <th>Time Slot</th>
-            <th>Status</th>
-            <th>Created By</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngIf="doctorAppointments.length === 0">
-            <td>No appointments scheduled for you</td>
-          </tr>
-          <tr *ngFor="let appointment of doctorAppointments">
-            <td>
-              <span class="apt-id">{{ appointment.appointmentId }}</span>
-            </td>
-            <td>
-              <div class="patient-info">
-                <div class="patient-avatar">P</div>
-                <div>
-                  <h4>{{ appointment.patientId }}</h4>
-                  <span>Patient ID</span>
-                </div>
-              </div>
-            </td>
-            <td>
-              <span class="designation-badge">
-                {{ appointment.doctorEmployeeId }}
-              </span>
-            </td>
-            <td class="muted-text">
-              {{ appointment.date | date: 'dd, MMM' }}
-            </td>
-            <td>
-              <span class="designation-badge">{{ appointment.timeSlot }}</span>
-            </td>
-            <td>
-              <span
-                class="status-badge"
-                [class.status-booked]="appointment.status === 'Booked'"
-                [class.status-cancelled]="appointment.status === 'Cancelled'"
-                [class.status-completed]="appointment.status === 'Completed'"
-              >
-                {{ appointment.status }}
-              </span>
-            </td>
-            <td class="muted-text">
-              {{ appointment.createdByEmployeeId }}
-            </td>
-            <td>
-              <div class="action-btns">
-                <button
-                  class="action-btn approve"
-                  title="Approve"
-                  (click)="editAppointmentStatus(appointment.appointmentId ?? '', 'Booked')"
-                  *ngIf="appointment.status === 'Pending'"
-                >
-                  <i class="bi bi-check"></i>
-                </button>
-                <button
-                  class="action-btn cancel"
-                  title="Cancel"
-                  (click)="editAppointmentStatus(appointment.appointmentId ?? '', 'Cancelled')"
-                  *ngIf="appointment.status === 'Pending'"
-                >
-                  <i class="bi bi-x"></i>
-                </button>
-                <button
-                  class="action-btn complete"
-                  title="Complete"
-                  (click)="editAppointmentStatus(appointment.appointmentId ?? '', 'Completed')"
-                  *ngIf="appointment.status === 'Booked'"
-                >
-                  <i class="bi bi-patch-check"></i>
                 </button>
               </div>
             </td>

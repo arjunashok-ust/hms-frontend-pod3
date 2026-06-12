@@ -748,7 +748,7 @@
 }
 
 .action-btn.approve:hover {
-  background: #22c55e;
+  background: #15803d;
   color: #fff;
 }
 
@@ -758,7 +758,7 @@
 }
 
 .action-btn.cancel:hover {
-  background: #f59e0b;
+  background: #b45309;
   color: #fff;
 }
 
@@ -768,7 +768,7 @@
 }
 
 .action-btn.complete:hover {
-  background: #3b82f6;
+  background: #1e40af;
   color: #fff;
 }
 
