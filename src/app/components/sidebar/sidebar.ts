@@ -14,10 +14,10 @@ import { AppointmentService } from '../../services/appointmentService/appointmen
 export class Sidebar implements OnInit {
   menus: MenuNode[] = [];
   pendingAppointmentsCount: number = 0;
-
+  isAdmin: boolean = false;
   constructor(
     private readonly api: ApiService,
-    private readonly appointmentService :AppointmentService,
+    private readonly appointmentService: AppointmentService,
     @Inject(PLATFORM_ID) private readonly platformId: Object,
     private readonly cdr: ChangeDetectorRef,
   ) { }
@@ -25,9 +25,9 @@ export class Sidebar implements OnInit {
   ngOnInit(): void {
     if (isPlatformBrowser(this.platformId)) {
       const userRole = this.getUserRoleFromToken();
-
+      this.isAdmin = (userRole?.toUpperCase() == "ADMIN");
       this.fetchPendingAppointments();
-      
+
       this.api.getMenus().subscribe({
         next: (response: any) => {
           let rawMenus = Array.isArray(response)

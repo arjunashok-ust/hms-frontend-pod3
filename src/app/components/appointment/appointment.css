@@ -556,14 +556,13 @@ h6 {
   transition: 0.2s;
 }
 
-/* --- Approve Button --- */
 .btn-action.approve {
   background: #fbff00;
-  color: #000000;
+  color: #6c7229;
 }
 .btn-action.approve:hover {
-  background: #166534;
-  color: #dcfce7;
+  background: #6c7229;
+  color: #fbff00;
 }
 
 .btn-action.edit {
@@ -579,7 +578,8 @@ h6 {
   color: #c23636;
 }
 .btn-action.delete:hover {
-  background: #fecaca;
+  background: #c23636;
+  color:#fce7e7
 }
 .btn-action.complete {
   background: #c9f5bf;

@@ -1,0 +1,117 @@
+<div class="dashboard-wrapper">
+  <div class="page-header">
+    <div>
+      <h2>Pending Approvals</h2>
+    </div>
+    <div class="header-actions">
+      <button class="btn-secondary position-relative bg-light-blue" routerLink="/employees">
+        Back to Directory
+      </button>
+    </div>
+  </div>
+
+  <div class="dashboard-banner mb-4 p-4 rounded shadow-sm">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <div>
+        <h2 class="fw-bold mb-2">User Approval Center</h2>
+      </div>
+    </div>
+  </div>
+
+  <div class="table-container mt-4">
+    <div class="table-header">
+      <div>
+        <p class="table-subtitle">ACCOUNTS</p>
+        <h3 class="table-title">Pending User Approvals</h3>
+      </div>
+    </div>
+
+    <div class="filter-bar">
+      <div class="search-box">
+        <input
+          type="text"
+          placeholder="Search Employee"
+          [(ngModel)]="searchTerm"
+          (input)="applyFilters()"
+          class="form-control"
+        />
+      </div>
+
+      <div class="dropdown-group">
+        <select class="form-control" [(ngModel)]="selectedDepartment" (change)="applyFilters()">
+          <option value="">All Departments</option>
+          @for (dept of departments; track dept) {
+            <option [value]="dept">{{ dept }}</option>
+          }
+        </select>
+      </div>
+    </div>
+
+    @if (!isLoading) {
+      <div class="table-responsive">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>EMPLOYEE NAME</th>
+              <th>EMAIL ADDRESS</th>
+              <th>DEPARTMENT</th>
+              <th>ROLE</th>
+              <th>STATUS</th>
+              <th>ACTION</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (emp of filteredEmployees; track emp.employeeCode) {
+              <tr class="employee-row">
+                <td class="text-blue font-weight-bold font-mono">
+                  <div class="id-text">{{ emp.employeeCode }}</div>
+                </td>
+                <td>
+                  <div class="employee-cell">
+                    <div class="avatar bg-purple">{{ getInitials(emp.name) }}</div>
+                    <div>
+                      <div class="emp-name">{{ emp.name }}</div>
+                    </div>
+                  </div>
+                </td>
+                <td class="text-muted">{{ emp.email }}</td>
+                <td class="font-weight-bold">{{ emp.department || 'N/A' }}</td>
+                <td>
+                  @if (emp.role) {
+                    <span class="role-pill">{{ getRoleString(emp.role) | titlecase }}</span>
+                  } @else {
+                    <span class="role-pill text-muted">Unassigned</span>
+                  }
+                </td>
+                <td>
+                  <span class="status-pill pill-pending">Pending</span>
+                </td>
+                <td>
+                  <div class="action-links">
+                    <button id="btn-approve" class="btn-approve" (click)="approveEmployee(emp)">
+                      <i class="bi bi-check-lg"></i> Approve
+                    </button>
+                    <button id="btn-reject" class="btn-reject" (click)="rejectEmployee(emp.employeeCode)">
+                      <i class="bi bi-x-lg"></i> Reject
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="7" class="empty-state text-center py-5 text-muted">
+                  No pending approvals at this time.
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+
+    @if (isLoading) {
+      <div class="loading-state text-center py-5">Loading queue...</div>
+    }
+  </div>
+</div>

@@ -63,8 +63,16 @@ export class Login {
     if (this.loginForm.valid) {
       this.isLoading = true;
 
-      console.log(this.loginForm.value);
-      this.auth.login(this.loginForm.value).subscribe({
+      // 🟢 Create a new payload object combining form values and clientType
+      const payload = {
+        ...this.loginForm.value,
+        clientType: 'web'
+      };
+
+      console.log(payload);
+
+      // 🟢 Pass the new payload to the auth service
+      this.auth.login(payload).subscribe({
         next: (response) => {
           this.isLoading = false;
           console.log('Backend Login Success:', response);

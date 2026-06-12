@@ -8,7 +8,7 @@
               <i class="bi bi-{{ menu.icon || 'circle' }} menu-icon"></i>
               <span class="menu-text">{{ menu.name }}</span>
 
-              @if (menu.path.toLowerCase().includes('appointment') && pendingAppointmentsCount > 0) {
+              @if (menu.path.toLowerCase().includes('appointment') && (pendingAppointmentsCount > 0) && (isAdmin)) {
                 <span class="badge-pulse">{{ pendingAppointmentsCount }}</span>
               }
             </a>

@@ -39,7 +39,7 @@
                 <td class="text-blue font-weight-bold">{{ emp.employeeCode }}</td>
                 <td>
                   <div class="employee-cell">
-                    <div class="avatar bg-purple">{{ getInitials(emp.name) }}</div>
+                    <div class="avatar bg-initial">{{ getInitials(emp.name) }}</div>
                     <div>
                       <div class="emp-name">{{ emp.name }}</div>
                       <div class="emp-role">{{ emp['role'] || emp['designation'] || 'Staff' }}</div>
@@ -51,7 +51,7 @@
                   <span class="badge outline-badge">{{ emp.designation }}</span>
                 </td>
                 <td>
-                <span
+                  <span
                     class="status-icon"
                     [ngClass]="{
                       'icon-active': emp.status === 'ACTIVE',

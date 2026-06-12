@@ -199,19 +199,7 @@ export class Employee implements OnInit {
     return name ? name.substring(0, 2).toUpperCase() : 'NA';
   }
 
-  approveEmployee(emp: any) {
-    if (confirm(`Approve account for ${emp.name}?`)) {
-      this.apiService.approveEmployee(emp.employeeCode).subscribe({
-        next: (response) => {
-          this.toast.success('Employee approved successfully!');
-          this.fetchEmployees();
-        },
-        error: (err) => {
-          this.toast.error('Error approving employee: ' + (err.error?.message || 'Unknown error'));
-        },
-      });
-    }
-  }
+
 
   deleteEmployee(id: string) {
     if (

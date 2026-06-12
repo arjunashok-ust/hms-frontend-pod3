@@ -1,96 +1,77 @@
 <div class="dashboard-wrapper">
   <div class="page-header">
     <div>
-      <h2>{{ showPendingApprovals ? 'Pending Approvals' : 'Employee Management' }}</h2>
+      <h2>Employee Management</h2>
     </div>
     <div class="header-actions">
-      <button
-        class="btn-secondary position-relative"
-        [routerLink]="showPendingApprovals ? '/employees' : '/approvals'"
-        [ngClass]="{ 'bg-light-blue': showPendingApprovals }"
-      >
-        {{ showPendingApprovals ? 'Back to Directory' : 'Approvals' }}
-        @if (!showPendingApprovals) {
-          <span class="notification-badge">{{ stats.pending }}</span>
-        }
+      <button class="btn-secondary position-relative" routerLink="/approvals">
+        Approvals
+        @if(stats.pending > 0){
+        <span class="notification-badge">{{ stats.pending }}</span>}
       </button>
-      @if (!showPendingApprovals) {
-        <button class="btn-primary" (click)="openModal()">Add Employee</button>
-      }
+      <button class="btn-primary" (click)="openModal()">Add Employee</button>
     </div>
   </div>
 
-  @if (showPendingApprovals) {
-    <div class="dashboard-banner mb-4 p-4 rounded shadow-sm">
-      <div class="d-flex justify-content-between align-items-center mb-3">
-        <div>
-          <h2 class="fw-bold mb-2">User Approval Center</h2>
+  <div class="stats-grid mb-4">
+    <div class="stat-card">
+      <div class="d-flex justify-content-between align-items-start mb-3">
+        <div class="icon-box text-white rounded" style="background-color: #f59e0b">
+          <i class="bi bi-hourglass-split"></i>
         </div>
+        <span class="stat-label text-muted">Queue</span>
+      </div>
+      <div class="stat-details">
+        <h2 class="stat-value">{{ stats.pending }}</h2>
+        <p class="stat-title text-muted mb-0">Pending Approvals</p>
       </div>
     </div>
 
-    <div class="stats-grid mb-4">
-      <div class="stat-card">
-        <div class="d-flex justify-content-between align-items-start mb-3">
-          <div class="icon-box text-white rounded" style="background-color: #f59e0b">
-            <i class="bi bi-hourglass-split"></i>
-          </div>
-          <span class="stat-label text-muted">Queue</span>
+    <div class="stat-card">
+      <div class="d-flex justify-content-between align-items-start mb-3">
+        <div class="icon-box text-white rounded" style="background-color: #10b981">
+          <i class="bi bi-patch-check-fill"></i>
         </div>
-        <div class="stat-details">
-          <h2 class="stat-value">{{ stats.pending }}</h2>
-          <p class="stat-title text-muted mb-0">Pending Approvals</p>
-        </div>
+        <span class="stat-label text-muted">Verified</span>
       </div>
-
-      <div class="stat-card">
-        <div class="d-flex justify-content-between align-items-start mb-3">
-          <div class="icon-box text-white rounded" style="background-color: #10b981">
-            <i class="bi bi-patch-check-fill"></i>
-          </div>
-          <span class="stat-label text-muted">Secure</span>
-        </div>
-        <div class="stat-details">
-          <h2 class="stat-value">{{ stats.verified }}</h2>
-          <p class="stat-title text-muted mb-0">Verified Users</p>
-        </div>
-      </div>
-
-      <div class="stat-card">
-        <div class="d-flex justify-content-between align-items-start mb-3">
-          <div class="icon-box text-white rounded" style="background-color: #ef4444">
-            <i class="bi bi-person-x-fill"></i>
-          </div>
-          <span class="stat-label text-muted">Review</span>
-        </div>
-        <div class="stat-details">
-          <h2 class="stat-value">{{ stats.inactive }}</h2>
-          <p class="stat-title text-muted mb-0">Inactive Accounts</p>
-        </div>
-      </div>
-
-      <div class="stat-card">
-        <div class="d-flex justify-content-between align-items-start mb-3">
-          <div class="icon-box text-white rounded" style="background-color: #8b5cf6">
-            <i class="bi bi-box-arrow-in-right"></i>
-          </div>
-          <span class="stat-label text-muted">Onboarding</span>
-        </div>
-        <div class="stat-details">
-          <h2 class="stat-value">{{ stats.firstLogin }}</h2>
-          <p class="stat-title text-muted mb-0">First Login Pending</p>
-        </div>
+      <div class="stat-details">
+        <h2 class="stat-value">{{ stats.verified }}</h2>
+        <p class="stat-title text-muted mb-0">Verified Users</p>
       </div>
     </div>
-  }
+
+    <div class="stat-card">
+      <div class="d-flex justify-content-between align-items-start mb-3">
+        <div class="icon-box text-white rounded" style="background-color: #ef4444">
+          <i class="bi bi-person-x-fill"></i>
+        </div>
+        <span class="stat-label text-muted">Review</span>
+      </div>
+      <div class="stat-details">
+        <h2 class="stat-value">{{ stats.inactive }}</h2>
+        <p class="stat-title text-muted mb-0">Inactive Accounts</p>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="d-flex justify-content-between align-items-start mb-3">
+        <div class="icon-box text-white rounded" style="background-color: #8b5cf6">
+          <i class="bi bi-box-arrow-in-right"></i>
+        </div>
+        <span class="stat-label text-muted">Onboarding</span>
+      </div>
+      <div class="stat-details">
+        <h2 class="stat-value">{{ stats.firstLogin }}</h2>
+        <p class="stat-title text-muted mb-0">First Login Pending</p>
+      </div>
+    </div>
+  </div>
 
   <div class="table-container mt-4">
     <div class="table-header">
       <div>
         <p class="table-subtitle">ACCOUNTS</p>
-        <h3 class="table-title">
-          {{ showPendingApprovals ? 'Pending User Approvals' : 'Employee Directory' }}
-        </h3>
+        <h3 class="table-title">Employee Directory</h3>
       </div>
     </div>
 
@@ -123,7 +104,7 @@
     </div>
 
     @if (!isLoading) {
-      <div class="table-responsive">
+      <div class="table-employee">
         <table class="data-table">
           <thead>
             <tr>
@@ -139,88 +120,57 @@
           <tbody>
             @for (emp of filteredEmployees; track emp.employeeCode) {
               <tr class="employee-row">
-                <td class="text-blue font-weight-bold font-mono">
+                <td class="text-empcode font-dept font-mono">
                   <div class="id-text">{{ emp.employeeCode }}</div>
                 </td>
-
                 <td>
                   <div class="employee-cell">
-                    <div class="avatar bg-purple">{{ getInitials(emp.name) }}</div>
+                    <div class="avatar bg-initial">{{ getInitials(emp.name) }}</div>
                     <div>
                       <div class="emp-name">{{ emp.name }}</div>
                     </div>
                   </div>
                 </td>
-
                 <td class="text-muted">{{ emp.email }}</td>
-                <td class="font-weight-bold">{{ emp.department || 'N/A' }}</td>
-
+                <td class="font-dept">{{ emp.department || 'N/A' }}</td>
                 <td>
                   @if (emp.role) {
-                    <span class="role-pill">{{ getRoleString(emp.role) | titlecase }}</span>
+                    <span class="role-icon">{{ getRoleString(emp.role) | titlecase }}</span>
                   } @else {
-                    <span class="role-pill text-muted">Unassigned</span>
+                    <span class="role-icon text-muted">Unassigned</span>
                   }
                 </td>
-
                 <td>
                   <span
-                    class="status-pill"
+                    class="status-pill-icon"
                     [ngClass]="{
-                      'pill-active': emp.status === 'ACTIVE',
-                      'pill-inactive': emp.status === 'INACTIVE',
-                      'pill-pending': emp.status === 'ADMIN_APPROVAL_PENDING',
-                      'pill-onboarding': emp.status === 'PASSWORD_CHANGE_PENDING',
+                      'pill-icon-active': emp.status === 'ACTIVE',
+                      'pill-icon-inactive': emp.status === 'INACTIVE',
+                      'pill-icon-onboarding': emp.status === 'PASSWORD_CHANGE_PENDING',
                     }"
                   >
                     {{
                       emp.status === 'PASSWORD_CHANGE_PENDING'
                         ? 'Onboarding'
-                        : emp.status === 'ADMIN_APPROVAL_PENDING'
-                          ? 'Pending'
-                          : (emp.status | titlecase)
+                        : (emp.status | titlecase)
                     }}
                   </span>
                 </td>
-
                 <td>
                   <div class="action-links">
-                    @if (!showPendingApprovals) {
-                      <button class="icon-btn edit" (click)="editEmployee(emp)">
-                        <i class="bi bi-pencil"></i>
-                      </button>
-                      <button class="icon-btn delete" (click)="deleteEmployee(emp.employeeCode)">
-                        <i class="bi bi-trash"></i>
-                      </button>
-                    }
-
-                    @if (showPendingApprovals) {
-                      <button
-                        id="btn-approve"
-                        class="btn btn-sm btn-success fw-bold text-white rounded"
-                        (click)="approveEmployee(emp)"
-                      >
-                        <i class="bi bi-check-lg"></i> Approve
-                      </button>
-                      <button
-                        id="btn-reject"
-                        class="btn btn-sm btn-danger fw-bold text-white rounded"
-                        (click)="deleteEmployee(emp.employeeCode)"
-                      >
-                        <i class="bi bi-x-lg"></i> Reject
-                      </button>
-                    }
+                    <button class="icon-btn edit" (click)="editEmployee(emp)">
+                      <i class="bi bi-pencil"></i>
+                    </button>
+                    <button class="icon-btn delete" (click)="deleteEmployee(emp.employeeCode)">
+                      <i class="bi bi-trash"></i>
+                    </button>
                   </div>
                 </td>
               </tr>
             } @empty {
               <tr>
                 <td colspan="7" class="empty-state text-center py-5 text-muted">
-                  {{
-                    showPendingApprovals
-                      ? 'No pending approvals at this time.'
-                      : 'No employees found matching your criteria.'
-                  }}
+                  No employees found matching your criteria.
                 </td>
               </tr>
             }
@@ -255,7 +205,6 @@
               : 'Fill in the details below to create a new employee account.'
           }}
         </p>
-
         @if (modalError) {
           <div class="error-banner mb-3 text-danger fw-bold text-center">
             {{ modalError }}
@@ -267,305 +216,7 @@
         class="modal-form-layout"
         [formGroup]="newEmployeeForm"
         (ngSubmit)="onSubmitNewEmployee()"
-      >
-        <div class="modal-body-scroll">
-          <div class="form-grid-2-col">
-            <div class="input-group">
-              <label for="fullName">FULL NAME *</label>
-              <input id="fullName" type="text" formControlName="name" />
-              @if (newEmployeeForm.get('name')?.touched && newEmployeeForm.get('name')?.invalid) {
-                <span class="error-msg">Name is required</span>
-              }
-            </div>
-            <div class="input-group">
-              <label for="emailAddress">EMAIL ADDRESS *</label>
-              <input id="emailAddress" type="email" formControlName="email" />
-              @if (newEmployeeForm.get('email')?.touched && newEmployeeForm.get('email')?.invalid) {
-                <span class="error-msg">Invalid email format</span>
-              }
-            </div>
-            <div class="input-group">
-              <label for="phoneNumber">PHONE NUMBER *</label>
-              <input id="phoneNumber" type="text" formControlName="phone" />
-              @if (newEmployeeForm.get('phone')?.touched && newEmployeeForm.get('phone')?.invalid) {
-                <span class="error-msg">Valid phone number required</span>
-              }
-            </div>
-
-            <div class="input-group">
-              <label for="role">ROLE *</label>
-              <select id="role" formControlName="role">
-                <option value="" disabled>Select role</option>
-                @for (role of availableRoles; track role.value) {
-                  <option [value]="role.value">{{ role.label }}</option>
-                }
-              </select>
-              @if (newEmployeeForm.get('role')?.touched && newEmployeeForm.get('role')?.invalid) {
-                <span class="error-msg">Please select a role</span>
-              }
-            </div>
-
-            <div class="input-group">
-              <label for="status">STATUS *</label>
-              <select id="status" formControlName="status">
-                <option value="ACTIVE">Active</option>
-                <option value="INACTIVE">Inactive</option>
-              </select>
-            </div>
-            <div class="input-group">
-              <label for="department">DEPARTMENT *</label>
-              <select id="department" formControlName="department">
-                <option value="" disabled selected>Select Department</option>
-                @for (dept of departments; track dept) {
-                  <option [value]="dept">{{ dept }}</option>
-                }
-              </select>
-              @if (
-                newEmployeeForm.get('department')?.touched &&
-                newEmployeeForm.get('department')?.invalid
-              ) {
-                <span class="error-msg">Please select a department</span>
-              }
-            </div>
-            <div class="input-group">
-              <label for="designation">DESIGNATION *</label>
-              <input id="designation" type="text" formControlName="designation" />
-              @if (
-                newEmployeeForm.get('designation')?.touched &&
-                newEmployeeForm.get('designation')?.invalid
-              ) {
-                <span class="error-msg">Designation is required</span>
-              }
-            </div>
-            <div class="input-group col-span-2">
-              <label for="qualification">QUALIFICATIONS *</label>
-              <input id="qualification" formControlName="qualification" type="text" />
-              @if (
-                newEmployeeForm.get('qualification')?.touched &&
-                newEmployeeForm.get('qualification')?.invalid
-              ) {
-                <span class="error-msg">Qualification is required</span>
-              }
-            </div>
-            <div class="input-group col-span-2">
-              <label for="joiningDate">JOINING DATE *</label>
-              <input
-                id="joiningDate"
-                formControlName="joiningDate"
-                type="date"
-                [min]="minDate"
-                [max]="maxDate"
-              />
-              @if (
-                newEmployeeForm.get('joiningDate')?.touched &&
-                newEmployeeForm.get('joiningDate')?.hasError('invalidDateRange')
-              ) {
-                <span class="error-msg">Date must be within 1 month of today</span>
-              }
-            </div>
-          </div>
-
-          @if (isMedicalRole) {
-            <div class="conditional-section mt-4">
-              <div class="section-divider"><span>Medical Credentials</span></div>
-              <div class="form-grid-2-col">
-                <div class="input-group">
-                  <label for="specialization">SPECIALIZATION *</label>
-                  <input id="specialization" formControlName="specialization" type="text" />
-                  @if (
-                    newEmployeeForm.get('specialization')?.touched &&
-                    newEmployeeForm.get('specialization')?.invalid
-                  ) {
-                    <span class="error-msg">Specialization is required</span>
-                  }
-                </div>
-                <div class="input-group">
-                  <label for="medicalRegNo">MEDICAL REG NO. *</label>
-                  <input id="medicalRegNo" formControlName="medicalRegistrationNo" type="text" />
-                  @if (
-                    newEmployeeForm.get('medicalRegistrationNo')?.touched &&
-                    newEmployeeForm.get('medicalRegistrationNo')?.invalid
-                  ) {
-                    <span class="error-msg">Medical Registration No is required</span>
-                  }
-                </div>
-              </div>
-            </div>
-          }
-
-          @if (isDoctor) {
-            <div class="conditional-section mt-4">
-              <div class="section-divider"><span>Availability & Fees</span></div>
-              <div class="input-group mb-3">
-                <label for="consultationFee">CONSULTATION FEE (₹) *</label>
-                <input
-                  id="consultationFee"
-                  formControlName="consultationFee"
-                  type="number"
-                  placeholder="0.00"
-                />
-              </div>
-
-              <div formArrayName="availabilitySlots" class="slots-section">
-                <div
-                  class="slots-header"
-                  style="display: flex; justify-content: space-between; margin-bottom: 10px"
-                >
-                  <span style="font-weight: bold; color: #374151; font-size: 0.75rem"
-                    >WORKING HOURS</span
-                  >
-                  <button
-                    type="button"
-                    class="btn-add text-blue fw-bold border-0 bg-transparent"
-                    style="cursor: pointer"
-                    (click)="addSlot()"
-                  >
-                    + Add Slot
-                  </button>
-                </div>
-
-                @for (
-                  slot of availabilitySlots.controls;
-                  track slot.get('id')?.value;
-                  let i = $index
-                ) {
-                  <div
-                    [formGroupName]="i"
-                    class="slot-card"
-                    style="
-                      background: #f9fafb;
-                      padding: 12px;
-                      border: 1px solid #e5e7eb;
-                      border-radius: 8px;
-                      margin-bottom: 12px;
-                    "
-                  >
-                    <div
-                      class="d-flex align-items-center gap-2 mb-2"
-                      style="display: flex; gap: 10px; align-items: center"
-                    >
-                      <select
-                        aria-label="Day"
-                        formControlName="dayOfWeek"
-                        class="form-control"
-                        style="min-width: 120px"
-                      >
-                        <option value="" disabled selected>Day</option>
-                        <option value="MONDAY">Monday</option>
-                        <option value="TUESDAY">Tuesday</option>
-                        <option value="WEDNESDAY">Wednesday</option>
-                        <option value="THURSDAY">Thursday</option>
-                        <option value="FRIDAY">Friday</option>
-                        <option value="SATURDAY">Saturday</option>
-                        <option value="SUNDAY">Sunday</option>
-                      </select>
-                      <label
-                        for="endTime"
-                        style="
-                          font-size: 0.8rem;
-                          color: #374151;
-                          margin-bottom: 4px;
-                          display: block;
-                        "
-                        >Start Time</label
-                      >
-                      <select id="startTime" formControlName="startTime" class="form-control">
-                        <option value="" disabled selected>Start</option>
-                        @for (hour of availableHours; track hour) {
-                          <option [value]="hour">{{ hour }}</option>
-                        }
-                      </select>
-                      <span style="font-size: 0.8rem; color: #6b7280">to</span>
-                      <label
-                        for="endTime"
-                        style="
-                          font-size: 0.8rem;
-                          color: #374151;
-                          margin-bottom: 4px;
-                          display: block;
-                        "
-                        >End Time</label
-                      >
-                      <select id="endTime" formControlName="endTime" class="form-control">
-                        <option value="" disabled selected>End</option>
-                        @for (hour of availableHours; track hour) {
-                          <option [value]="hour">{{ hour }}</option>
-                        }
-                      </select>
-                      <button
-                        type="button"
-                        class="btn btn-sm btn-outline-danger"
-                        style="
-                          background: transparent;
-                          border: none;
-                          color: #ef4444;
-                          font-weight: bold;
-                          cursor: pointer;
-                        "
-                        (click)="removeSlot(i)"
-                      >
-                        ✕
-                      </button>
-                    </div>
-
-                    @if (slot.hasError('timeRangeInvalid')) {
-                      <div style="color: #ef4444; font-size: 0.75rem; margin-top: 4px; width: 100%">
-                        Error: Start time must be earlier than End time.
-                      </div>
-                    }
-
-                    @if (slot.get('id')?.value; as slotId) {
-                      @if (rowSubSlotsMap[slotId] && rowSubSlotsMap[slotId].length) {
-                        <div class="sub-slots-container mt-2 pt-2 border-top border-dashed">
-                          <p class="text-muted small mb-2" style="font-size: 0.75rem">
-                            Select active intervals:
-                          </p>
-                          <div class="sub-slots-grid" formArrayName="checkedSlots">
-                            <div class="interval-container">
-                              @for (
-                                subSlot of rowSubSlotsMap[slotId];
-                                track subSlot.label;
-                                let subIdx = $index
-                              ) {
-                                <label class="interval-chip">
-                                  <input type="checkbox" [formControlName]="subIdx" />
-                                  <span>{{ subSlot.label }}</span>
-                                </label>
-                              }
-                            </div>
-                          </div>
-                        </div>
-                      }
-                    }
-                  </div>
-                }
-              </div>
-            </div>
-          }
-        </div>
-
-        <div class="modal-footer-fixed">
-          <div class="info-banner">
-            <i class="bi bi-info-circle"></i> <span>All fields marked with * are mandatory</span>
-          </div>
-          <div class="modal-actions-full" style="width: auto; display: flex; gap: 12px">
-            <button type="button" class="btn-cancel" (click)="closeModal()">Cancel</button>
-            <button
-              type="submit"
-              class="btn-primary"
-              [disabled]="newEmployeeForm.invalid || isSubmittingModal"
-            >
-              {{
-                isSubmittingModal
-                  ? 'Processing...'
-                  : isEditMode
-                    ? 'Update Employee'
-                    : 'Create Employee'
-              }}
-            </button>
-          </div>
-        </div>
-      </form>
+      ></form>
     </div>
   </div>
 }
