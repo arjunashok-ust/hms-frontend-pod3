@@ -13,12 +13,14 @@ export class RouteGuard implements CanActivate {
 
   canActivate(route: ActivatedRouteSnapshot): boolean {
     const requiredPermissions = route.data['permissions'];
-    console.log('Checking route:', route.routeConfig?.path);
-    console.log('Required:', requiredPermissions);
-    console.log('User perms:', this.permissionService.getPermission());
+
+    console.log("user permissions : ",this.permissionService.getPermission());
+    console.log("required permission : ",requiredPermissions);
+
     if (this.permissionService.hasAnyPermission(requiredPermissions)) {
       return true;
     }
+
     this.toast.error('You are not authorized to visit this page.');
     this.router.navigate(['/access-denied']);
     return false;

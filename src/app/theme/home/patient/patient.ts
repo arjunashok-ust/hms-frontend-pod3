@@ -12,10 +12,11 @@ import { CommonModule } from '@angular/common';
 import { PatientModel } from '../../../models/user.model';
 import { ToastrService } from 'ngx-toastr';
 import { DobValidator } from '../../../validators/time-range-validator';
+import { HasPermissionDirective } from "../../../directive/has-permission.directive";
 
 @Component({
   selector: 'app-patient',
-  imports: [RouterModule, FormsModule, ReactiveFormsModule, CommonModule],
+  imports: [RouterModule, FormsModule, ReactiveFormsModule, CommonModule, HasPermissionDirective],
   templateUrl: './patient.html',
   styleUrl: './patient.css',
 })
@@ -48,9 +49,6 @@ export class PatientComponent implements OnInit {
       },
       error: (err) => {
         this.toast.error(err?.error?.message);
-        if (err.status === 403) {
-          this.route.navigate(['/access-denied']);
-        }
       },
     });
   }
@@ -111,6 +109,11 @@ export class PatientComponent implements OnInit {
     });
   }
 
+  editPatientProfile(email: string){
+    localStorage.setItem("updatePatientEmail",email);
+    this.route.navigate(['edit-patient']);
+  }
+
   onSubmit() {
     if (!this.patientForm.valid) {
       this.toast.error('Invalid input. Please check your entries and try again.');
@@ -119,10 +122,10 @@ export class PatientComponent implements OnInit {
 
     const payload = {
       name: this.patientForm.get('name')?.value,
+      role: 'Patient',
       phone: this.patientForm.get('phone')?.value,
       email: this.patientForm.get('email')?.value,
       gender: this.patientForm.get('gender')?.value,
-      status: this.patientForm.get('status')?.value,
       dob: this.patientForm.get('dob')?.value,
       address: this.patientForm.get('address')?.value,
       emergencyContact: this.patientForm.get('emergencyContact')?.value,

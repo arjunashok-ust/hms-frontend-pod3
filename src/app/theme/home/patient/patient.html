@@ -15,7 +15,7 @@
     </div>
   </div>
 
-  <div class="patient-metrics">
+  <div class="patient-metrics" *hasPermission="['view:patient-stat']">
     <div class="metric-card blue">
       <div class="metric-top">
         <div class="metric-icon">
@@ -55,7 +55,7 @@
   </div>
 
   <div class="content-grid">
-    <div class="glass-panel">
+    <div class="glass-panel" *hasPermission="['create:patient']">
       <div class="panel-header">
         <div>
           <span class="panel-subtitle">New Entry</span>
@@ -284,6 +284,13 @@
               <td><span class="status-badge status-active">Active</span></td>
               <td>
                 <div class="action-btns">
+                  <button
+                    class="action-btn edit"
+                    title="Edit"
+                    (click)="editPatientProfile(patient.email)"
+                  >
+                    <i class="bi bi-pencil"></i>
+                  </button>
                   <button
                     class="action-btn delete"
                     title="Delete"

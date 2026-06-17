@@ -61,6 +61,13 @@ export class LoginComponent implements OnInit {
         this.auth.getPermissions(role).subscribe({
           next: (res) => {
             this.permission.setPermission(res.role_permissions);
+
+            if (loginRes.role === 'Patient') {
+              this.toast.error('Patients are allowed to log in only through the mobile app.');
+              this.router.navigate(['/access-denied']);
+              return;
+            }
+
             if (loginRes.firstLogin) {
               this.toast.info('Set your password');
               this.router.navigate(['/password-modal']);
@@ -71,7 +78,7 @@ export class LoginComponent implements OnInit {
           },
           error: (err) => {
             this.toast.error('Error fetching user permissions');
-          }
+          },
         });
       },
       error: (error) => {

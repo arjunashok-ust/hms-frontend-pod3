@@ -22,7 +22,7 @@ export interface EmployeeModel {
 }
 
 export interface UserEmployeeModel {
-  name: string,
+  name: string;
   email: string;
   status: string;
   role: string;
@@ -40,6 +40,7 @@ export interface UserEmployeeModel {
 }
 
 export interface PatientModel {
+  uhid: string;
   name: string;
   phone: string;
   email: string;
@@ -48,5 +49,4 @@ export interface PatientModel {
   address: string;
   emergencyContact: string;
   status: string;
-  uhid: string;
 }

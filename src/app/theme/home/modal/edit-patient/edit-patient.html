@@ -1,0 +1,217 @@
+<div class="modal-overlay">
+  <div class="modal-content">
+    <button type="button" class="modal-close">
+      <a routerLink="/patient">
+        <i class="bi bi-x-lg"></i>
+      </a>
+    </button>
+
+    <div class="modal-header">
+      <div class="modal-icon-wrap">
+        <i class="bi bi-person-lines-fill"></i>
+      </div>
+      <span class="modal-kicker">Patient Profile</span>
+      <h2>Update Patient</h2>
+      <p class="modal-description">Modify the patient details below and save your changes.</p>
+    </div>
+
+    <form [formGroup]="updateForm" *ngIf="updateForm" (ngSubmit)="onSubmit()">
+      <div class="modal-form">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="name">
+              <i class="bi bi-person-fill"></i>
+              Full Name
+              <span class="required">*</span>
+            </label>
+            <div class="input-wrapper">
+              <input
+                type="text"
+                id="name"
+                class="form-input"
+                placeholder="e.g. John Doe"
+                formControlName="name"
+              />
+            </div>
+            <small *ngIf="updateForm.get('name')?.touched">
+              <span *ngIf="updateForm.get('name')?.errors?.['required']">Name is required.</span>
+              <span *ngIf="updateForm.get('name')?.errors?.['pattern']"
+                >Only letters are allowed.</span
+              >
+            </small>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="email">
+              <i class="bi bi-envelope-fill"></i>
+              Email Address
+              <span class="required">*</span>
+            </label>
+            <div class="input-wrapper">
+              <input
+                type="email"
+                id="email"
+                class="form-input"
+                placeholder="e.g. john@email.com"
+                formControlName="email"
+              />
+            </div>
+            <small *ngIf="updateForm.get('email')?.touched">
+              <span *ngIf="updateForm.get('email')?.errors?.['required']">Email is required.</span>
+              <span *ngIf="updateForm.get('email')?.errors?.['pattern']">Email is invalid.</span>
+            </small>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="phone">
+              <i class="bi bi-telephone-fill"></i>
+              Phone Number
+              <span class="required">*</span>
+            </label>
+            <div class="input-wrapper">
+              <input
+                type="text"
+                id="phone"
+                class="form-input"
+                placeholder="e.g. 9988776655"
+                formControlName="phone"
+              />
+            </div>
+            <small *ngIf="updateForm.get('phone')?.touched">
+              <span *ngIf="updateForm.get('phone')?.errors?.['required']">Phone is required.</span>
+              <span *ngIf="updateForm.get('phone')?.errors?.['pattern']"
+                >Invalid phone number.</span
+              >
+            </small>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="emergencyContact">
+              <i class="bi bi-exclamation-triangle-fill"></i>
+              Emergency Contact
+              <span class="required">*</span>
+            </label>
+            <div class="input-wrapper">
+              <input
+                type="text"
+                id="emergencyContact"
+                class="form-input"
+                placeholder="e.g. 9988776655"
+                formControlName="emergencyContact"
+              />
+            </div>
+            <small *ngIf="updateForm.get('emergencyContact')?.touched">
+              <span *ngIf="updateForm.get('emergencyContact')?.errors?.['pattern']"
+                >Invalid number.</span
+              >
+            </small>
+          </div>
+        </div>
+
+        <div class="section-divider">
+          <span class="section-divider-text">
+            <i class="bi bi-person-vcard"></i>
+            Personal Details
+          </span>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="gender">
+              <i class="bi bi-gender-ambiguous"></i>
+              Gender
+              <span class="required">*</span>
+            </label>
+            <div class="input-wrapper">
+              <select id="gender" class="form-input form-select" formControlName="gender">
+                <option value="" disabled>Select Gender</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+              </select>
+              <span class="input-icon select-icon">
+                <i class="bi bi-chevron-down"></i>
+              </span>
+            </div>
+            <small
+              *ngIf="
+                updateForm.get('gender')?.touched && updateForm.get('gender')?.errors?.['required']
+              "
+            >
+              Gender is required.
+            </small>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="dob">
+              <i class="bi bi-calendar-date"></i>
+              Date of Birth
+              <span class="required">*</span>
+            </label>
+            <div class="input-wrapper">
+              <input
+                type="date"
+                id="dob"
+                class="form-input"
+                formControlName="dob"
+                [min]="minDate"
+                [max]="maxDate"
+              />
+            </div>
+            <small *ngIf="updateForm.get('dob')?.touched">
+              <span *ngIf="updateForm.get('dob')?.errors?.['required']"
+                >Date of birth is required.</span
+              >
+              <span *ngIf="updateForm.errors?.['invalidDob']">Future dates are not allowed.</span>
+            </small>
+          </div>
+        </div>
+
+        <div class="form-row span-full">
+          <div class="form-group">
+            <label class="form-label" for="address">
+              <i class="bi bi-geo-alt-fill"></i>
+              Address
+              <span class="required">*</span>
+            </label>
+            <div class="input-wrapper">
+              <textarea
+                id="address"
+                class="form-textarea"
+                rows="3"
+                placeholder="Enter full address including city, state, and zip code"
+                formControlName="address"
+              ></textarea>
+            </div>
+            <small *ngIf="updateForm.get('address')?.touched">
+              <span *ngIf="updateForm.get('address')?.errors?.['required']"
+                >Address is required.</span
+              >
+            </small>
+          </div>
+        </div>
+
+        <div class="info-box">
+          <i class="bi bi-info-circle"></i>
+          All fields marked with <span class="required">&nbsp;*&nbsp;</span> are mandatory.
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-ghost" routerLink="/patient">
+            <i class="bi bi-x-lg"></i> Cancel
+          </button>
+          <button
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="updateForm.invalid"
+            [class.disabled]="updateForm.invalid"
+          >
+            <i class="bi bi-check2-circle"></i>
+            {{ isLoading ? 'Processing...' : 'Save Changes' }}
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

@@ -33,6 +33,12 @@ export class UserProfileComponent implements OnInit {
     });
   }
 
+  // saving email to use it in the update profile
+  updateProfile(email: string) {
+    localStorage.setItem('updateEmail', email);
+    this.route.navigate(['/edit-employee']);
+  }
+
   logout() {
     this.userService.logout();
   }

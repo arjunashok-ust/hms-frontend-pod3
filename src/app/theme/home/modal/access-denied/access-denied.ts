@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
@@ -5,6 +6,8 @@ import { RouterLink } from '@angular/router';
   selector: 'app-access-denied',
   templateUrl: 'access-denied.htm',
   styleUrl: 'access-denied.css',
-  imports: [RouterLink]
+  imports: [RouterLink,CommonModule]
 })
-export class AccessDeniedComponent {}
+export class AccessDeniedComponent {
+  role = localStorage.getItem("role");
+}

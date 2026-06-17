@@ -1,5 +1,5 @@
 <div class="appointment-wrapper">
-  <div class="stats-grid" *ngIf="role != 'Doctor'">
+  <div class="stats-grid" *hasPermission="['view:appointment-stat']">
     <div class="stat-card blue">
       <div class="stat-top">
         <div class="stat-icon">
@@ -46,7 +46,7 @@
     </div>
   </div>
 
-  <div class="content-grid" *ngIf="role != 'Doctor'">
+  <div class="content-grid" *hasPermission="['create:appointment']">
     <div class="glass-panel">
       <div class="panel-header">
         <div>
@@ -54,9 +54,6 @@
           <h2>Book Appointment</h2>
         </div>
         <div class="panel-actions">
-          <button type="button" title="Reset" (click)="appointmentForm.reset()">
-            <i class="bi bi-arrow-clockwise"></i>
-          </button>
         </div>
       </div>
       <form [formGroup]="appointmentForm" id="appointmentForm" (submit)="onSubmit()">
@@ -259,7 +256,7 @@
       </div>
     </div>
 
-    <div class="table-wrapper">
+    <div class="table-wrapper" *hasPermission="['view:appointment']">
       <table class="modern-table">
         <thead>
           <tr>
@@ -275,12 +272,11 @@
         </thead>
 
         <tbody>
-
-          <tr *ngIf="(role === 'Doctor' ? doctorAppointments : appointments).length === 0">
+          <tr *ngIf="displayedAppointments.length === 0">
             <td colspan="8">No appointments available</td>
           </tr>
 
-          <tr *ngFor="let appointment of role === 'Doctor' ? doctorAppointments : appointments">
+          <tr *ngFor="let appointment of displayedAppointments">
             <td>
               <span class="apt-id">{{ appointment.appointmentId }}</span>
             </td>
@@ -327,37 +323,41 @@
 
             <td>
               <div class="action-btns">
-                <button
-                  class="action-btn approve"
-                  *ngIf="appointment.status === 'Pending'"
-                  (click)="editAppointmentStatus(appointment.appointmentId ?? '', 'Booked')"
-                >
-                  <i class="bi bi-check"></i>
-                </button>
-
-                <button
-                  class="action-btn cancel"
-                  *ngIf="appointment.status === 'Pending'"
-                  (click)="editAppointmentStatus(appointment.appointmentId ?? '', 'Cancelled')"
-                >
-                  <i class="bi bi-x"></i>
-                </button>
-
-                <button
-                  class="action-btn complete"
-                  *ngIf="appointment.status === 'Booked'"
-                  (click)="editAppointmentStatus(appointment.appointmentId ?? '', 'Completed')"
-                >
-                  <i class="bi bi-patch-check"></i>
-                </button>
-
-                <button
-                  class="action-btn delete"
-                  *ngIf="role === 'Admin'"
-                  (click)="deleteAppointment(appointment.appointmentId ?? '')"
-                >
-                  <i class="bi bi-trash"></i>
-                </button>
+                <ng-container *hasPermission="['approve:appointment']">
+                  <button
+                    class="action-btn approve"
+                    *ngIf="appointment.status === 'Pending'"
+                    (click)="editAppointmentStatus(appointment.appointmentId ?? '', 'Booked')"
+                  >
+                    <i class="bi bi-check"></i>
+                  </button>
+                </ng-container>
+                <ng-container *hasPermission="['reject:appointment']">
+                  <button
+                    class="action-btn cancel"
+                    *ngIf="appointment.status === 'Pending'"
+                    (click)="editAppointmentStatus(appointment.appointmentId ?? '', 'Cancelled')"
+                  >
+                    <i class="bi bi-x"></i>
+                  </button>
+                </ng-container>
+                <ng-container *hasPermission="['complete:appointment']">
+                  <button
+                    class="action-btn complete"
+                    *ngIf="appointment.status === 'Booked'"
+                    (click)="editAppointmentStatus(appointment.appointmentId ?? '', 'Completed')"
+                  >
+                    <i class="bi bi-patch-check"></i>
+                  </button>
+                </ng-container>
+                <ng-container *hasPermission="['delete:appointment']">
+                  <button
+                    class="action-btn delete"
+                    (click)="deleteAppointment(appointment.appointmentId ?? '')"
+                  >
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </ng-container>
               </div>
             </td>
           </tr>

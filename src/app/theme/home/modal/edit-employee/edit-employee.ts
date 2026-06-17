@@ -108,9 +108,6 @@ export class EditEmployeeComponent implements OnInit {
       },
       error: (err) => {
         this.toast.error(err?.error?.message);
-        if (err.status === 403) {
-          this.router.navigate(['/access-denied']);
-        }
       },
     });
 
@@ -211,7 +208,7 @@ export class EditEmployeeComponent implements OnInit {
       next: (res) => {
         this.isLoading = false;
         this.toast.success(res.message);
-        this.router.navigate(['/employee']);
+        this.router.navigate(['/profile']);
       },
       error: (err) => {
         this.isLoading = false;

@@ -14,6 +14,7 @@ import { EditEmployeeComponent } from './theme/home/modal/edit-employee/edit-emp
 import { AccessDeniedComponent } from './theme/home/modal/access-denied/access-denied';
 import { NotFoundComponent } from './theme/home/modal/not-found/not-found';
 import { RouteGuard } from './services/guard/route.guard';
+import { EditPatientComponent } from './theme/home/modal/edit-patient/edit-patient';
 
 export const routes: Routes = [
   {
@@ -62,7 +63,13 @@ export const routes: Routes = [
         path: 'edit-employee',
         component: EditEmployeeComponent,
         canActivate: [RouteGuard],
-        data: { permissions: ['view:employee'] },
+        data: { permissions: ['edit:employee', 'edit:profile'] },
+      },
+      {
+        path: 'edit-patient',
+        component: EditPatientComponent,
+        canActivate: [RouteGuard],
+        data: { permissions: ['view:patient'] },
       },
     ],
   },

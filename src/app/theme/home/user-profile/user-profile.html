@@ -13,14 +13,13 @@
           {{ userData?.designation }}
         </p>
         <div class="hero-badges">
-          <span class="status-badge status-active"> <span class="status-dot"></span> Active </span>
+          <span class="status-badge status-active"><span class="status-dot"></span> Active</span>
           <span class="designation-badge">
             <i class="bi bi-shield-check"></i> {{ userData?.role }}
           </span>
         </div>
       </div>
-      <div class="hero-actions">
-      </div>
+      <div class="hero-actions"></div>
     </div>
   </div>
 
@@ -54,6 +53,38 @@
       <div class="stat-body">
         <span class="stat-label">Status</span>
         <h4>Active</h4>
+      </div>
+    </div>
+
+    <div class="stat-card violet">
+      <div class="stat-icon"><i class="bi bi-building"></i></div>
+      <div class="stat-body">
+        <span class="stat-label">Department</span>
+        <h4>{{ userData?.department }}</h4>
+      </div>
+    </div>
+
+    <div class="stat-card teal">
+      <div class="stat-icon"><i class="bi bi-hash"></i></div>
+      <div class="stat-body">
+        <span class="stat-label">Employee ID</span>
+        <h4>{{ userData?.employeeId }}</h4>
+      </div>
+    </div>
+
+    <div class="stat-card indigo">
+      <div class="stat-icon"><i class="bi bi-calendar-check"></i></div>
+      <div class="stat-body">
+        <span class="stat-label">Joining Date</span>
+        <h4>{{ userData?.joiningDate | date: 'dd/MM/yyyy'}}</h4>
+      </div>
+    </div>
+
+    <div class="stat-card cyan">
+      <div class="stat-icon"><i class="bi bi-mortarboard"></i></div>
+      <div class="stat-body">
+        <span class="stat-label">Qualification</span>
+        <h4>{{ userData?.qualification || '—' }}</h4>
       </div>
     </div>
   </div>
@@ -110,15 +141,95 @@
           <i class="bi bi-briefcase"></i>
           Designation
         </label>
-        <input
-          type="text"
-          id="designation"
-          class="form-input"
-          [value]="userData?.designation"
-          readonly
-        />
+        <input type="text" id="designation" class="form-input" [value]="userData?.designation" readonly />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="department">
+          <i class="bi bi-building"></i>
+          Department
+        </label>
+        <input type="text" id="department" class="form-input" [value]="userData?.department" readonly />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="employeeCode">
+          <i class="bi bi-hash"></i>
+          Employee ID
+        </label>
+        <input type="text" id="employeeCode" class="form-input" [value]="userData?.employeeId" readonly />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="joiningDate">
+          <i class="bi bi-calendar-event"></i>
+          Joining Date
+        </label>
+        <input type="text" id="joiningDate" class="form-input" [value]="userData?.joiningDate | date: 'dd/MM/yyyy'" readonly />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="qualification">
+          <i class="bi bi-mortarboard"></i>
+          Qualification
+        </label>
+        <input type="text" id="qualification" class="form-input" [value]="userData?.qualification || '—'" readonly />
       </div>
     </div>
+
+    <ng-container *ngIf="userData?.role === 'Doctor' || userData?.role === 'Nurse'">
+      <div class="section-divider">
+        <div class="divider-line"></div>
+        <span class="divider-label">
+          <i class="bi bi-clipboard2-pulse"></i>
+          Medical Info
+        </span>
+        <div class="divider-line"></div>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label" for="medicalReg">
+            <i class="bi bi-clipboard2-pulse"></i>
+            Medical Registration No.
+          </label>
+          <input type="text" id="medicalReg" class="form-input" [value]="userData?.medicalRegistrationNo" readonly />
+        </div>
+
+        <div class="form-group" *ngIf="userData?.role === 'Doctor'">
+          <label class="form-label" for="specialization">
+            <i class="bi bi-award"></i>
+            Specialization
+          </label>
+          <input type="text" id="specialization" class="form-input" [value]="userData?.specialization" readonly />
+        </div>
+
+        <div class="form-group" *ngIf="userData?.role === 'Doctor'">
+          <label class="form-label" for="consultFee">
+            <i class="bi bi-currency-rupee"></i>
+            Consultation Fee
+          </label>
+          <input type="text" id="consultFee" class="form-input" [value]="userData?.consultationFee || '—'" readonly />
+        </div>
+      </div>
+    </ng-container>
+
+    <ng-container *ngIf="userData?.role === 'Doctor' && userData?.availabilitySlots?.length">
+      <div class="section-divider">
+        <div class="divider-line"></div>
+        <span class="divider-label">
+          <i class="bi bi-clock-history"></i>
+          Availability Slots
+        </span>
+        <div class="divider-line"></div>
+      </div>
+
+      <div class="slot-chips">
+        <span class="slot-chip active" *ngFor="let slot of userData?.availabilitySlots">
+          {{ slot }}
+        </span>
+      </div>
+    </ng-container>
 
     <div class="section-divider">
       <div class="divider-line"></div>
@@ -137,11 +248,14 @@
       <input type="text" id="status" class="form-input" value="Active" readonly />
       <div class="info-box" *ngIf="userData?.role !== 'Admin'">
         <i class="bi bi-info-circle"></i>
-        Your account is in good standing. Contact admin to update any information.
+        Email and role changes are restricted. Please reach out to the administrator for any updates.
       </div>
     </div>
 
     <div class="form-footer">
+      <button type="button" class="btn btn-primary" (click)="updateProfile(userData?.email??'')">
+        <i class="bi bi-pencil-square"></i> Edit Profile
+      </button>
       <button type="button" class="btn btn-danger-outline" (click)="logout()">
         <i class="bi bi-box-arrow-right"></i> Logout
       </button>

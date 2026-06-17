@@ -35,7 +35,7 @@ export class UserService {
   // create patient
   createPatient(data: any): Observable<any> {
     return this.http
-      .post(`${this.api.backend_url}/user/createPatient`, data)
+      .post(`${this.api.backend_url}/auth/patientSignUp`, data)
       .pipe(catchError((error) => this.handleError(error)));
   }
 
@@ -50,6 +50,24 @@ export class UserService {
   deletePatient(data: any): Observable<any> {
     return this.http
       .post(`${this.api.backend_url}/user/deletePatient`, data)
+      .pipe(catchError((error) => this.handleError(error)));
+  }
+
+  // get user profile
+  getPatientProfile(email: string): Observable<PatientModel> {
+    return this.http
+      .get<PatientModel>(`${this.api.backend_url}/user/getPatientProfile`, {
+        params: {
+          email: email,
+        },
+      })
+      .pipe(catchError((error) => this.handleError(error)));
+  }
+
+  // update patient profile
+  updatePatientProfile(data: any): Observable<any> {
+    return this.http
+      .post(`${this.api.backend_url}/user/updatePatientProfile`, data)
       .pipe(catchError((error) => this.handleError(error)));
   }
 

@@ -120,28 +120,6 @@
   gap: 10px;
 }
 
-.icon-btn {
-  width: 46px;
-  height: 46px;
-  border-radius: 14px;
-  background: rgba(255, 255, 255, 0.8);
-  color: #2563eb;
-  font-size: 1.1rem;
-  cursor: pointer;
-  transition: 0.3s ease;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid var(--border);
-}
-
-.icon-btn:hover {
-  transform: translateY(-3px);
-  background: #2563eb;
-  color: white;
-  border-color: #2563eb;
-}
-
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -180,18 +158,14 @@
   opacity: 0.08;
 }
 
-.stat-card.blue::before {
-  background: #2563eb;
-}
-.stat-card.green::before {
-  background: #22c55e;
-}
-.stat-card.amber::before {
-  background: #f59e0b;
-}
-.stat-card.rose::before {
-  background: #f43f5e;
-}
+.stat-card.blue::before   { background: #2563eb; }
+.stat-card.green::before  { background: #22c55e; }
+.stat-card.amber::before  { background: #f59e0b; }
+.stat-card.rose::before   { background: #f43f5e; }
+.stat-card.violet::before { background: #7c3aed; }
+.stat-card.teal::before   { background: #0d9488; }
+.stat-card.indigo::before { background: #4f46e5; }
+.stat-card.cyan::before   { background: #0891b2; }
 
 .stat-icon {
   width: 54px;
@@ -205,18 +179,14 @@
   flex-shrink: 0;
 }
 
-.blue .stat-icon {
-  background: linear-gradient(135deg, #2563eb, #3b82f6);
-}
-.green .stat-icon {
-  background: linear-gradient(135deg, #16a34a, #22c55e);
-}
-.amber .stat-icon {
-  background: linear-gradient(135deg, #d97706, #f59e0b);
-}
-.rose .stat-icon {
-  background: linear-gradient(135deg, #e11d48, #f43f5e);
-}
+.blue .stat-icon   { background: linear-gradient(135deg, #2563eb, #3b82f6); }
+.green .stat-icon  { background: linear-gradient(135deg, #16a34a, #22c55e); }
+.amber .stat-icon  { background: linear-gradient(135deg, #d97706, #f59e0b); }
+.rose .stat-icon   { background: linear-gradient(135deg, #e11d48, #f43f5e); }
+.violet .stat-icon { background: linear-gradient(135deg, #6d28d9, #7c3aed); }
+.teal .stat-icon   { background: linear-gradient(135deg, #0f766e, #0d9488); }
+.indigo .stat-icon { background: linear-gradient(135deg, #4338ca, #4f46e5); }
+.cyan .stat-icon   { background: linear-gradient(135deg, #0e7490, #0891b2); }
 
 .stat-body {
   min-width: 0;
@@ -224,7 +194,7 @@
 }
 
 .stat-label {
-  font-size: 0.75rem;
+  font-size: 0.65rem;
   font-weight: 600;
   color: var(--muted);
   text-transform: uppercase;
@@ -232,7 +202,7 @@
 }
 
 .stat-body h4 {
-  font-size: 1rem;
+  font-size: 0.9rem;
   color: var(--text);
   margin-top: 4px;
   white-space: nowrap;
@@ -385,6 +355,31 @@
 .info-box i {
   font-size: 1rem;
   flex-shrink: 0;
+}
+
+.slot-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.slot-chip {
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  background: #eff6ff;
+  color: #1d4ed8;
+  border: 1px solid #bfdbfe;
+  white-space: nowrap;
+}
+
+.slot-chip.active {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: white;
+  border-color: transparent;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
 }
 
 .designation-badge {

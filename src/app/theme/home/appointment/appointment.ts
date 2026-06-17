@@ -7,10 +7,11 @@ import { CommonModule } from '@angular/common';
 import { EmployeeModel } from '../../../models/user.model';
 import { ToastrService } from 'ngx-toastr';
 import { appointmentDateValidator } from '../../../validators/time-range-validator';
+import { HasPermissionDirective } from '../../../directive/has-permission.directive';
 
 @Component({
   selector: 'app-appointment',
-  imports: [RouterModule, CommonModule, ReactiveFormsModule],
+  imports: [RouterModule, CommonModule, ReactiveFormsModule, HasPermissionDirective],
   templateUrl: './appointment.html',
   styleUrl: './appointment.css',
 })
@@ -25,6 +26,7 @@ export class AppointmentComponent implements OnInit {
   appointmentUiData: AppointmentResponseModel | null = null;
   appointments: AppointmentModel[] = [];
   doctorAppointments: AppointmentModel[] = [];
+  displayedAppointments: AppointmentModel[] = [];
 
   // for setting doctor time slots
   doctorTimeSlots: string[] = [];
@@ -76,9 +78,12 @@ export class AppointmentComponent implements OnInit {
 
     this.appointmentService.getAllAppointment().subscribe({
       next: (res) => {
-        this.appointments = res;
         if (this.role === 'Doctor') {
           this.fetchDoctorAppointments(res);
+          this.displayedAppointments = this.doctorAppointments;
+        } else {
+          this.appointments = res;
+          this.displayedAppointments = this.appointments;
         }
         this.cd.detectChanges();
       },

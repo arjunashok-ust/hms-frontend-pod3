@@ -42,7 +42,7 @@
     </div>
 
     <div class="denied-actions">
-      <a routerLink="/profile">
+      <a routerLink="/profile" *ngIf="role != 'Patient'">
         <button class="denied-btn-primary">
           <svg
             width="18"
