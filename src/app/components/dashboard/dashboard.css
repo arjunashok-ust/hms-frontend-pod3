@@ -186,10 +186,10 @@ h6 {
   align-items: center;
   gap: 16px;
 }
-.avatar.bg-purple {
+.avatar {
   width: 42px;
   height: 42px;
-  background: #3267a3;
+  background: #3384e0;
   color: white;
   border-radius: 12px;
   display: flex;

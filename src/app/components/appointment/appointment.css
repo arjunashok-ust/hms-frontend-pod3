@@ -565,6 +565,16 @@ h6 {
   color: #fbff00;
 }
 
+.btn-action.reject {
+  background: #cf0d0d;
+  color: #f3c6c6;
+}
+
+.btn-action.reject:hover {
+  background: #f3c6c6;
+  color: #d30000;
+}
+
 .btn-action.edit {
   background: #c7d0fe;
   color: #2c45ac;

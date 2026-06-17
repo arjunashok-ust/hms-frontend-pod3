@@ -60,6 +60,9 @@ export class ApiService {
     return this.http.patch(`${this.backendUrl}/api/employees/approve/${employeeCode}`, {});
   }
 
+  rejectEmployee(employeeCode: string): Observable<any> {
+    return this.http.patch(`${this.backendUrl}/api/employees/reject/${employeeCode}`, {});
+  }
   getAllPatients() {
     return this.http.get(`${this.backendUrl}/api/patients/all`);
   }

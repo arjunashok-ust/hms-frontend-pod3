@@ -179,10 +179,10 @@ h6 {
   gap: 16px;
 }
 
-.avatar.bg-purple {
+.avatar{
   width: 42px;
   height: 42px;
-  background: rgb(0, 68, 255);
+  background: rgb(0, 68, 255) !important;
   color: white;
   border-radius: 12px;
   display: flex;
@@ -241,7 +241,7 @@ h6 {
 .btn-approve:hover {
   color: #cdf4db !important;
   background-color: #027718 !important;
-  border-color: #027718 !important; 
+  border-color: #027718 !important;
 }
 
 .btn-reject {
@@ -256,12 +256,10 @@ h6 {
 }
 
 .btn-reject:hover {
-  color: #efb7b7 !important; 
-  background-color: rgb(144, 0, 0) !important; 
-  border: 3px solid rgb(0, 144, 70) !important;
+  color: #efb7b7 !important;
+  background-color: rgb(144, 0, 0) !important;
+  border-color: rgb(144, 0, 0) !important;
 }
-
-
 
 .ng-touched.ng-invalid:not(form) {
   border: 2px solid #ef4444 !important;

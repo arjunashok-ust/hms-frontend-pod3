@@ -449,4 +449,22 @@ export class Appointment implements OnInit {
       });
     }
   }
+
+  rejectAppointment(apt: any) {
+    const isConfirmed = confirm(`Reject appointment ${apt.appointmentCode}?`);
+
+    if (isConfirmed) {
+      const payload = { ...apt, status: 'Cancelled' };
+
+      this.appointmentService.updateAppointment(apt.appointmentCode, payload).subscribe({
+        next: () => {
+          this.toast.success('Appointment rejected!');
+          this.loadData();
+        },
+        error: (err) => {
+          this.toast.error('Error rejecting appointment: ' + (err.error?.message || 'Unknown error'));
+        }
+      });
+    }
+  }
 }

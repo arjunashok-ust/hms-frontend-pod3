@@ -11,7 +11,7 @@ import { HasPermissionDirective } from '../../directives/has-permission.directiv
   standalone: true,
   imports: [CommonModule, FormsModule, RouterLink, HasPermissionDirective],
   templateUrl: './approvals.html',
-  styleUrls: ['../employee/employee.css'],
+  styleUrls: ['./approvals.css'],
 })
 export class Approvals implements OnInit {
   employees: any[] = [];
@@ -92,15 +92,15 @@ export class Approvals implements OnInit {
     }
   }
 
-  rejectEmployee(id: string) {
-    if (confirm(`Are you sure you want to reject and delete this application?`)) {
-      this.apiService.deleteEmployee(id).subscribe({
+  rejectEmployee(emp: any) {
+    if (confirm(`Reject account for ${emp.name}?`)) {
+      this.apiService.rejectEmployee(emp.employeeCode).subscribe({
         next: () => {
-          this.toast.success('Application rejected successfully.');
+          this.toast.success('Employee rejected successfully!');
           this.fetchPendingEmployees();
         },
         error: (err) => {
-          this.toast.error('Error rejecting application: ' + (err.error?.message || 'Unknown error'));
+          this.toast.error('Error rejecting employee: ' + (err.error?.message || 'Unknown error'));
         },
       });
     }

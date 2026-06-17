@@ -69,7 +69,23 @@
                 </td>
                 <td>
                   <div class="employee-cell">
-                    <div class="avatar bg-purple">{{ getInitials(emp.name) }}</div>
+                    <div
+                      class="avatar"
+                      style="
+                        width: 42px;
+                        height: 42px;
+                        background: rgb(0, 68, 255) !important;
+                        color: white;
+                        border-radius: 12px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        font-weight: 700;
+                        font-size: 1.1rem;
+                      "
+                    >
+                      {{ getInitials(emp.name) }}
+                    </div>
                     <div>
                       <div class="emp-name">{{ emp.name }}</div>
                     </div>
@@ -89,10 +105,20 @@
                 </td>
                 <td>
                   <div class="action-links">
-                    <button id="btn-approve" class="btn-approve" (click)="approveEmployee(emp)">
+                    <button
+                      *hasPermission="'APPROVE_EMPLOYEE'"
+                      id="btn-approve"
+                      class="btn-approve"
+                      (click)="approveEmployee(emp)"
+                    >
                       <i class="bi bi-check-lg"></i> Approve
                     </button>
-                    <button id="btn-reject" class="btn-reject" (click)="rejectEmployee(emp.employeeCode)">
+                    <button
+                      *hasPermission="'REJECT_EMPLOYEE'"
+                      id="btn-reject"
+                      class="btn-reject"
+                      (click)="rejectEmployee(emp.employeeCode)"
+                    >
                       <i class="bi bi-x-lg"></i> Reject
                     </button>
                   </div>

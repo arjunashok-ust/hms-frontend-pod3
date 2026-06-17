@@ -403,6 +403,14 @@
                     >
                       <i class="bi bi-check-lg"></i>
                     </button>
+                    <button
+                      *hasPermission="['DELETE_APPOINTMENT', 'APPROVE_APPOINTMENT']"
+                      class="btn-action reject"
+                      (click)="rejectAppointment(apt)"
+                      title="Reject Appointment"
+                    >
+                      <i class="bi bi-x-lg"></i>
+                    </button>
                   }
                   <button
                     *hasPermission="'UPDATE_APPOINTMENT'"
@@ -413,7 +421,7 @@
                     <i class="bi bi-pencil"></i>
                   </button>
                   <button
-                  *hasPermission="'DELETE_APPOINTMENNT'"
+                    *hasPermission="'DELETE_APPOINTMENT'"
                     class="btn-action delete"
                     (click)="deleteAppointment(apt.appointmentCode)"
                     title="Delete"
