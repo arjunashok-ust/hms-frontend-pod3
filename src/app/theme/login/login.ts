@@ -4,6 +4,7 @@ import { FormGroup, Validators, ReactiveFormsModule, FormBuilder } from '@angula
 import { AuthService } from '../../services/auth.service';
 import { Router, RouterLink, RouterModule } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
+import { PermissionService } from '../../services/permission.service';
 
 @Component({
   selector: 'app-login',
@@ -16,18 +17,13 @@ export class LoginComponent implements OnInit {
   loginForm: FormGroup;
 
   auth: AuthService = inject(AuthService);
+  permission: PermissionService = inject(PermissionService);
   router: Router = inject(Router);
   toast: ToastrService = inject(ToastrService);
 
   constructor(readonly fb: FormBuilder) {
     this.loginForm = this.fb.group({
-      email: [
-        '',
-        [
-          Validators.required,
-          Validators.pattern(/^[a-z0-9._]+@[a-z0-9]*\.[a-z]{2,}$/i),
-        ],
-      ],
+      email: ['', [Validators.required, Validators.pattern(/^[a-z0-9._]+@[a-z0-9]*\.[a-z]{2,}$/i)]],
       password: ['', [Validators.required]],
     });
   }
@@ -49,25 +45,34 @@ export class LoginComponent implements OnInit {
     };
 
     this.auth.login(payload).subscribe({
-      next: (res) => {
-        if (res.status !== 'Active') {
+      next: (loginRes) => {
+        if (loginRes.status !== 'Active') {
           this.toast.info('Your account is not activated yet,Please contact the admin');
           this.router.navigate(['/login']);
           return;
         }
 
         // saving token to local
-        localStorage.setItem('token', res.token);
-        localStorage.setItem('email', res.email);
-        localStorage.setItem('role', res.role);
-        console.log(res.firstLogin);
-        if (res.firstLogin) {
-          this.toast.info('Set your password');
-          this.router.navigate(['/password-modal']);
-        } else {
-          this.toast.success('Login Sucessfull');
-          this.router.navigate(['/profile']);
-        }
+        localStorage.setItem('token', loginRes.token);
+        localStorage.setItem('email', loginRes.email);
+        localStorage.setItem('role', loginRes.role);
+
+        const role: string = loginRes.role;
+        this.auth.getPermissions(role).subscribe({
+          next: (res) => {
+            this.permission.setPermission(res.role_permissions);
+            if (loginRes.firstLogin) {
+              this.toast.info('Set your password');
+              this.router.navigate(['/password-modal']);
+            } else {
+              this.toast.success('Login Sucessfull');
+              this.router.navigate(['/profile']);
+            }
+          },
+          error: (err) => {
+            this.toast.error('Error fetching user permissions');
+          }
+        });
       },
       error: (error) => {
         if (error.status === 401) {

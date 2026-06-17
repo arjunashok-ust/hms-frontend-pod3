@@ -36,7 +36,18 @@ export class AuthService {
       .post(`${this.api.backend_url}/auth/set-password`, data)
       .pipe(catchError((error) => this.handleError(error)));
   }
-  
+
+  // get user permissions
+  getPermissions(role: string): Observable<any> {
+    return this.http
+      .get(`${this.api.backend_url}/auth/getPermissions`,{
+        params: {
+          role: role
+        }
+      })
+      .pipe(catchError((error) => this.handleError(error)));
+  }
+
   // error handling
   handleError(error: HttpErrorResponse) {
     return throwError(() => error);

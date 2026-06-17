@@ -29,9 +29,6 @@ export class UserProfileComponent implements OnInit {
       },
       error: (err) => {
         this.toast.error(err?.error?.message);
-        if (err.status === 403) {
-          this.route.navigate(['/access-denied']);
-        }
       },
     });
   }
