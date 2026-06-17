@@ -1,11 +1,12 @@
 import { Component, OnInit, ChangeDetectorRef, Inject, PLATFORM_ID } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { ApiService } from '../../services/apiService/api-service';
+import { HasPermissionDirective } from "../../directives/has-permission.directive";
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, HasPermissionDirective],
   templateUrl: './profile.html',
   styleUrls: ['./profile.css'],
 })

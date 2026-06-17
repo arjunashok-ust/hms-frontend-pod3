@@ -1,4 +1,4 @@
-<div class="page-wrapper">
+<div *hasPermission="'VIEW_SELF'" class="page-wrapper">
   @if (!isLoading && user) {
     <div class="profile-banner">
       <div class="avatar-app">
@@ -33,7 +33,7 @@
         </div>
         <div class="stat-text">
           <label for="email">EMAIL</label>
-          <span class="truncate">{{ user.email || 'N/A' }}</span>
+          <span class="profileCardValues">{{ user.email || 'N/A' }}</span>
         </div>
       </div>
 
@@ -43,7 +43,7 @@
         </div>
         <div class="stat-text">
           <label for="role">ROLE</label>
-          <span class="truncate">{{ user.role | titlecase }}</span>
+          <span class="profileCardValues">{{ user.role | titlecase }}</span>
         </div>
       </div>
 
@@ -53,7 +53,7 @@
         </div>
         <div class="stat-text">
           <label for="designation">DESIGNATION</label>
-          <span class="truncate">{{ user.designation || 'N/A' }}</span>
+          <span class="profileCardValues">{{ user.designation || 'N/A' }}</span>
         </div>
       </div>
 
@@ -63,7 +63,9 @@
         </div>
         <div class="stat-text">
           <label for="status">STATUS</label>
-          <span class="truncate">{{ user.status === 'ACTIVE' ? 'Active' : 'Inactive' }}</span>
+          <span class="profileCardValues">{{
+            user.status === 'ACTIVE' ? 'Active' : 'Inactive'
+          }}</span>
         </div>
       </div>
     </div>
