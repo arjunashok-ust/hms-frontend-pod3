@@ -1,4 +1,4 @@
-<div class="dashboard-wrapper">
+<div *hasPermission="'VIEW_EMPLOYEE_DASHBOARD'" class="dashboard-wrapper">
   <div class="page-header">
     <div>
       <h2>Employee Management</h2>
@@ -185,15 +185,16 @@
   </div>
 </div>
 
+
 @if (showAddModal) {
-  <div class="modal-overlay">
+  <div *hasPermission="'CREATE_EMPLOYEE'" class="modal-overlay">
     <div class="hms-modal wide-modal">
       <button class="close-btn" (click)="closeModal()">
         <i class="bi bi-x-lg"></i>
       </button>
 
       <div class="modal-header-centered">
-        <div class="modal-icon text-white">
+        <div class="modal-icon text-white bg-blue-solid">
           <i class="bi bi-person-plus-fill"></i>
         </div>
         <p class="modal-eyebrow">USER ONBOARDING</p>
@@ -216,7 +217,180 @@
         class="modal-form-layout"
         [formGroup]="newEmployeeForm"
         (ngSubmit)="onSubmitNewEmployee()"
-      ></form>
+      >
+        <div class="modal-body-scroll">
+          <div class="form-grid-2-col">
+            <div class="input-group">
+              <label for="fullName">FULL NAME *</label>
+              <input id="fullName" type="text" formControlName="name" />
+              @if (newEmployeeForm.get('name')?.touched && newEmployeeForm.get('name')?.invalid) {
+                <span class="error-msg">Name is required</span>
+              }
+            </div>
+            <div class="input-group">
+              <label for="emailAddress">EMAIL ADDRESS *</label>
+              <input id="emailAddress" type="email" formControlName="email" />
+              @if (newEmployeeForm.get('email')?.touched && newEmployeeForm.get('email')?.invalid) {
+                <span class="error-msg">Invalid email format</span>
+              }
+            </div>
+            <div class="input-group">
+              <label for="phoneNumber">PHONE NUMBER *</label>
+              <input id="phoneNumber" type="text" formControlName="phone" />
+              @if (newEmployeeForm.get('phone')?.touched && newEmployeeForm.get('phone')?.invalid) {
+                <span class="error-msg">Valid phone number required</span>
+              }
+            </div>
+
+            <div class="input-group">
+              <label for="role">ROLE *</label>
+              <select id="role" formControlName="role">
+                <option value="" disabled>Select role</option>
+                @for (role of availableRoles; track role.value) {
+                  <option [value]="role.value">{{ role.label }}</option>
+                }
+              </select>
+              @if (newEmployeeForm.get('role')?.touched && newEmployeeForm.get('role')?.invalid) {
+                <span class="error-msg">Please select a role</span>
+              }
+            </div>
+
+            <div class="input-group">
+              <label for="status">STATUS *</label>
+              <select id="status" formControlName="status">
+                <option value="ACTIVE">Active</option>
+                <option value="INACTIVE">Inactive</option>
+              </select>
+            </div>
+            <div class="input-group">
+              <label for="department">DEPARTMENT *</label>
+              <select id="department" formControlName="department">
+                <option value="" disabled selected>Select Department</option>
+                @for (dept of departments; track dept) {
+                  <option [value]="dept">{{ dept }}</option>
+                }
+              </select>
+              @if (newEmployeeForm.get('department')?.touched && newEmployeeForm.get('department')?.invalid) {
+                <span class="error-msg">Please select a department</span>
+              }
+            </div>
+            <div class="input-group">
+              <label for="designation">DESIGNATION *</label>
+              <input id="designation" type="text" formControlName="designation" />
+              @if (newEmployeeForm.get('designation')?.touched && newEmployeeForm.get('designation')?.invalid) {
+                <span class="error-msg">Designation is required</span>
+              }
+            </div>
+            <div class="input-group col-span-2">
+              <label for="qualification">QUALIFICATIONS *</label>
+              <input id="qualification" formControlName="qualification" type="text" />
+              @if (newEmployeeForm.get('qualification')?.touched && newEmployeeForm.get('qualification')?.invalid) {
+                <span class="error-msg">Qualification is required</span>
+              }
+            </div>
+            <div class="input-group col-span-2">
+              <label for="joiningDate">JOINING DATE *</label>
+              <input id="joiningDate" formControlName="joiningDate" type="date" [min]="minDate" [max]="maxDate" />
+              @if (newEmployeeForm.get('joiningDate')?.touched && newEmployeeForm.get('joiningDate')?.hasError('invalidDateRange')) {
+                <span class="error-msg">Date must be within 1 month of today</span>
+              }
+            </div>
+          </div>
+
+          @if (isMedicalRole) {
+            <div class="conditional-section mt-4 bg-light p-3 rounded border">
+              <div class="section-divider"><span>Medical Credentials</span></div>
+              <div class="form-grid-2-col">
+                <div class="input-group">
+                  <label for="specialization">SPECIALIZATION *</label>
+                  <input id="specialization" formControlName="specialization" type="text" />
+                  @if (newEmployeeForm.get('specialization')?.touched && newEmployeeForm.get('specialization')?.invalid) {
+                    <span class="error-msg">Specialization is required</span>
+                  }
+                </div>
+                <div class="input-group">
+                  <label for="medicalRegNo">MEDICAL REG NO. *</label>
+                  <input id="medicalRegNo" formControlName="medicalRegistrationNo" type="text" />
+                  @if (newEmployeeForm.get('medicalRegistrationNo')?.touched && newEmployeeForm.get('medicalRegistrationNo')?.invalid) {
+                    <span class="error-msg">Medical Registration No is required</span>
+                  }
+                </div>
+              </div>
+            </div>
+          }
+
+          @if (isDoctor) {
+            <div class="conditional-section mt-4 bg-light p-3 rounded border">
+              <div class="section-divider"><span>Availability & Fees</span></div>
+              <div class="input-group mb-3">
+                <label for="consultationFee">CONSULTATION FEE (₹) *</label>
+                <input id="consultationFee" formControlName="consultationFee" type="number" placeholder="0.00" />
+              </div>
+
+              <div formArrayName="availabilitySlots" class="slots-section">
+                <div class="slots-header" style="display: flex; justify-content: space-between; margin-bottom: 10px">
+                  <span style="font-weight: bold; color: #374151; font-size: 0.75rem">WORKING HOURS</span>
+                  <button type="button" class="btn-add text-blue fw-bold border-0 bg-transparent" style="cursor: pointer" (click)="addSlot()">+ Add Slot</button>
+                </div>
+
+                @for (slot of availabilitySlots.controls; track slot.get('id')?.value; let i = $index) {
+                  <div [formGroupName]="i" class="slot-card" style="background: #f9fafb; padding: 12px; border: 1px solid #e5e7eb; border-radius: 8px; margin-bottom: 12px;">
+                    <div class="d-flex align-items-center gap-2 mb-2" style="display: flex; gap: 10px; align-items: center">
+                      <select aria-label="Day" formControlName="dayOfWeek" class="form-control" style="min-width: 120px">
+                        <option value="" disabled selected>Day</option>
+                        <option value="MONDAY">Monday</option><option value="TUESDAY">Tuesday</option><option value="WEDNESDAY">Wednesday</option>
+                        <option value="THURSDAY">Thursday</option><option value="FRIDAY">Friday</option><option value="SATURDAY">Saturday</option><option value="SUNDAY">Sunday</option>
+                      </select>
+                      <select formControlName="startTime" class="form-control">
+                        <option value="" disabled selected>Start</option>
+                        @for (hour of availableHours; track hour) { <option [value]="hour">{{ hour }}</option> }
+                      </select>
+                      <span style="font-size: 0.8rem; color: #6b7280">to</span>
+                      <select formControlName="endTime" class="form-control">
+                        <option value="" disabled selected>End</option>
+                        @for (hour of availableHours; track hour) { <option [value]="hour">{{ hour }}</option> }
+                      </select>
+                      <button type="button" class="btn btn-sm btn-outline-danger" style="background: transparent; border: none; color: #ef4444; font-weight: bold; cursor: pointer;" (click)="removeSlot(i)">✕</button>
+                    </div>
+
+                    @if (slot.hasError('timeRangeInvalid')) {
+                      <div style="color: #ef4444; font-size: 0.75rem; margin-top: 4px; width: 100%">Error: Start time must be earlier than End time.</div>
+                    }
+
+                    @if (slot.get('id')?.value; as slotId) {
+                      @if (rowSubSlotsMap[slotId] && rowSubSlotsMap[slotId].length) {
+                        <div class="sub-slots-container mt-2 pt-2 border-top border-dashed">
+                          <p class="text-muted small mb-2" style="font-size: 0.75rem;">Select active intervals:</p>
+                          <div class="sub-slots-grid" formArrayName="checkedSlots">
+                            @for (subSlot of rowSubSlotsMap[slotId]; track subSlot.label; let subIdx = $index) {
+                              <label class="d-flex align-items-center gap-2 p-1 bg-white border rounded" style="cursor: pointer;">
+                                <input type="checkbox" [formControlName]="subIdx" />
+                                <span class="small" style="font-size: 0.75rem; color: #374151">{{ subSlot.label }}</span>
+                              </label>
+                            }
+                          </div>
+                        </div>
+                      }
+                    }
+                  </div>
+                }
+              </div>
+            </div>
+          }
+        </div>
+
+        <div class="modal-footer-fixed">
+          <div class="info-banner">
+            <i class="bi bi-info-circle"></i> <span>All fields marked with * are mandatory</span>
+          </div>
+          <div class="modal-actions-full" style="width: auto; display: flex; gap: 12px;">
+            <button type="button" class="btn-cancel" (click)="closeModal()">Cancel</button>
+            <button type="submit" class="btn-primary" [disabled]="newEmployeeForm.invalid || isSubmittingModal">
+              {{ isSubmittingModal ? 'Processing...' : (isEditMode ? 'Update Employee' : 'Create Employee') }}
+            </button>
+          </div>
+        </div>
+      </form>
     </div>
   </div>
 }

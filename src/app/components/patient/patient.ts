@@ -11,11 +11,12 @@ import {
 } from '@angular/forms';
 import { ApiService } from '../../services/apiService/api-service';
 import { ToastrService } from 'ngx-toastr';
+import { HasPermissionDirective } from '../../directives/has-permission.directive';
 
 @Component({
   selector: 'app-patient',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, HasPermissionDirective],
   templateUrl: './patient.html',
   styleUrls: ['./patient.css'],
 })

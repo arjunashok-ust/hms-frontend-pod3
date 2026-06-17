@@ -1,5 +1,16 @@
-<div class="page-wrapper">
-  <div class="stats-grid">
+<div
+  *hasPermission="[
+    'CREATE_APPOINTMENT_FOR_ANY_DOCTOR',
+    'CREATE_APPOINTMENT_FOR_SELF',
+    'VIEW_ALL_APPOINTMENTS',
+    'VIEW_MY_APPOINTMENTS',
+    'UPDATE_APPOINTMENT',
+    'DELETE_APPOINTMENT',
+    'APPROVE_APPOINTMENT',
+  ]"
+  class="page-wrapper"
+>
+  <div *hasPermission="'VIEW_ALL_APPOINTMENTS'" class="stats-grid">
     <div class="stat-card theme-purple" [class.pulse-card]="stats.pending > 0">
       <div class="icon-box"><i class="bi bi-hourglass-split"></i></div>
       <div class="stat-details">
@@ -37,190 +48,194 @@
     </div>
   </div>
 
-  @if (userRole !== 'DOCTOR') {
-    <div class="main-content-layout">
-      <div class="form-panel card-panel">
-        <div class="panel-header">
-          <div>
-            <p class="subtitle">NEW ENTRY</p>
-            <h2 class="panel-title">Book Appointment</h2>
-          </div>
+  <div
+    *hasPermission="['CREATE_APPOINTMENT_FOR_ANY_DOCTOR', 'CREATE_APPOINTMENT_FOR_SELF']"
+    class="main-content-layout"
+  >
+    <div class="form-panel card-panel">
+      <div class="panel-header">
+        <div>
+          <p class="subtitle">NEW ENTRY</p>
+          <h2 class="panel-title">Book Appointment</h2>
         </div>
+      </div>
 
-        <form [formGroup]="appointmentForm" (ngSubmit)="onSubmit()">
-          <div class="form-grid">
-            <div class="form-group">
-              <label for="patientID">
-                <i class="bi bi-person-badge text-blue"></i> PATIENT
-                <span class="text-danger">*</span>
-              </label>
+      <form [formGroup]="appointmentForm" (ngSubmit)="onSubmit()">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="patientID">
+              <i class="bi bi-person-badge text-blue"></i> PATIENT
+              <span class="text-danger">*</span>
+            </label>
 
-              <div class="searchable-dropdown-container position-relative">
-                <input
-                  type="text"
-                  class="form-control custom-select"
-                  placeholder="Search by Name or UHID..."
-                  [value]="selectedPatientDisplay"
-                  (input)="filterPatients($event)"
-                  (focus)="isPatientDropdownOpen = true; displayPatients = patients"
-                  (blur)="closePatientDropdown()"
-                  [class.is-invalid]="
-                    appointmentForm.get('patientID')?.invalid &&
-                    appointmentForm.get('patientID')?.touched
-                  "
-                />
-
-                @if (isPatientDropdownOpen) {
-                  <div class="dropdown-list shadow-sm">
-                    @for (pat of displayPatients; track pat.UHID) {
-                      <div
-                        class="dropdown-item"
-                        (click)="selectPatient(pat)"
-                        (keydown.enter)="selectPatient(pat)"
-                        (keydown.space)="selectPatient(pat)"
-                      >
-                        <div style="font-weight: bold; color: #111827; font-size: 0.9rem">
-                          {{ pat.name }}
-                        </div>
-                        <div style="color: #6b7280; font-size: 0.75rem">
-                          {{ pat.UHID }}
-                        </div>
-                      </div>
-                    } @empty {
-                      <div class="dropdown-item text-muted" style="padding: 10px 16px">
-                        No patients found
-                      </div>
-                    }
-                  </div>
-                }
-              </div>
-
-              @if (
-                appointmentForm.get('patientID')?.invalid &&
-                appointmentForm.get('patientID')?.touched
-              ) {
-                <small class="text-danger mt-1 d-block">Please select a patient.</small>
-              }
-            </div>
-
-            <div class="form-group">
-              <label for="doctorEmployeeID">
-                <i class="bi bi-file-medical text-blue"></i> DOCTOR
-                <span class="text-danger">*</span>
-              </label>
-
-              <div class="searchable-dropdown-container position-relative">
-                <input
-                  type="text"
-                  class="form-control custom-select"
-                  placeholder="Search by Name, ID, or Dept..."
-                  [value]="selectedDoctorDisplay"
-                  (input)="filterDoctors($event)"
-                  (focus)="isDoctorDropdownOpen = true; displayDoctors = doctors"
-                  (blur)="closeDoctorDropdown()"
-                  [class.is-invalid]="
-                    appointmentForm.get('doctorEmployeeID')?.invalid &&
-                    appointmentForm.get('doctorEmployeeID')?.touched
-                  "
-                />
-
-                @if (isDoctorDropdownOpen) {
-                  <div class="dropdown-list shadow-sm">
-                    @for (doc of displayDoctors; track doc.employeeCode) {
-                      <div
-                        class="dropdown-item"
-                        (click)="selectDoctor(doc)"
-                        (keydown.enter)="selectDoctor(doc)"
-                        (keydown.space)="selectDoctor(doc)"
-                      >
-                        <div style="font-weight: bold; color: #111827; font-size: 0.9rem">
-                          {{ doc.name }}
-                        </div>
-                        <div style="color: #6b7280; font-size: 0.75rem">
-                          {{ doc.employeeCode }} | {{ doc.department || 'General Medicine' }}
-                        </div>
-                      </div>
-                    } @empty {
-                      <div class="dropdown-item text-muted" style="padding: 10px 16px">
-                        No doctors found matching criteria
-                      </div>
-                    }
-                  </div>
-                }
-              </div>
-
-              @if (
-                appointmentForm.get('doctorEmployeeID')?.invalid &&
-                appointmentForm.get('doctorEmployeeID')?.touched
-              ) {
-                <small class="text-danger mt-1 d-block">Please select a doctor.</small>
-              }
-            </div>
-
-            <div class="form-group">
-              <label for="appointmentDate">
-                <i class="bi bi-calendar3 text-blue"></i> APPOINTMENT DATE
-                <span class="text-danger">*</span>
-              </label>
-              <input type="date" formControlName="date" class="form-control" [min]="getMinDate()" [max]="getMaxDate()" />
-
-              @if (appointmentForm.get('date')?.touched) {
-                @if (appointmentForm.get('date')?.hasError('pastDate')) {
-                  <small class="text-danger">Appointments cannot be booked in the past.</small>
-                }
-                @if (appointmentForm.get('date')?.hasError('pastDateTooFar')) {
-                  <small class="text-danger">Admin limit: Cannot backdate too far.</small>
-                }
-              }
-            </div>
-
-            <div class="form-group">
-              <label for="timeSlot">
-                <i class="bi bi-clock text-blue"></i> TIME SLOT
-                <span class="text-danger">*</span>
-              </label>
-              <div
-                class="time-slot-container"
-                [ngClass]="
-                  !appointmentForm.value.doctorEmployeeID ||
-                  !appointmentForm.value.date ||
-                  timeSlots.length === 0
-                    ? 'empty-state-box'
-                    : 'grid-state-box'
+            <div class="searchable-dropdown-container position-relative">
+              <input
+                type="text"
+                class="form-control custom-select"
+                placeholder="Search by Name or UHID..."
+                [value]="selectedPatientDisplay"
+                (input)="filterPatients($event)"
+                (focus)="isPatientDropdownOpen = true; displayPatients = patients"
+                (blur)="closePatientDropdown()"
+                [class.is-invalid]="
+                  appointmentForm.get('patientID')?.invalid &&
+                  appointmentForm.get('patientID')?.touched
                 "
-              >
-                @if (!appointmentForm.value.doctorEmployeeID || !appointmentForm.value.date) {
-                  <div class="empty-slot-message-timeslot">
-                    <i class="bi bi-info-circle"></i> Select doctor and date
-                  </div>
-                } @else if (timeSlots.length === 0) {
-                  <div class="empty-slot-message text-danger">
-                    <i class="bi bi-calendar-x"></i> No slots available
-                  </div>
-                } @else {
-                  <div class="time-slot-grid">
-                    @for (slot of timeSlots; track slot) {
-                      <label
-                        class="slot-box"
-                        [class.selected-slot]="appointmentForm.get('timeSlot')?.value === slot"
-                      >
-                        <input
-                          type="radio"
-                          formControlName="timeSlot"
-                          [value]="slot"
-                          class="hidden-radio"
-                        />
-                        {{ slot }}
-                      </label>
-                    }
-                  </div>
-                }
-              </div>
+              />
 
-              @if (
-                appointmentForm.get('timeSlot')?.invalid && appointmentForm.get('timeSlot')?.touched
-              ) {
-                <small class="text-danger mt-1 d-block">Please select a time slot.</small>
+              @if (isPatientDropdownOpen) {
+                <div class="dropdown-list shadow-sm">
+                  @for (pat of displayPatients; track pat.UHID) {
+                    <div
+                      class="dropdown-item"
+                      (click)="selectPatient(pat)"
+                      (keydown.enter)="selectPatient(pat)"
+                      (keydown.space)="selectPatient(pat)"
+                    >
+                      <div style="font-weight: bold; color: #111827; font-size: 0.9rem">
+                        {{ pat.name }}
+                      </div>
+                      <div style="color: #6b7280; font-size: 0.75rem">
+                        {{ pat.UHID }}
+                      </div>
+                    </div>
+                  } @empty {
+                    <div class="dropdown-item text-muted" style="padding: 10px 16px">
+                      No patients found
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+
+            @if (
+              appointmentForm.get('patientID')?.invalid && appointmentForm.get('patientID')?.touched
+            ) {
+              <small class="text-danger mt-1 d-block">Please select a patient.</small>
+            }
+          </div>
+
+          <div class="form-group">
+            <label for="doctorEmployeeID">
+              <i class="bi bi-file-medical text-blue"></i> DOCTOR
+              <span class="text-danger">*</span>
+            </label>
+
+            <div class="searchable-dropdown-container position-relative">
+              <input
+                type="text"
+                class="form-control custom-select"
+                placeholder="Search by Name, ID, or Dept..."
+                [value]="selectedDoctorDisplay"
+                (input)="filterDoctors($event)"
+                (focus)="
+                  userRole !== 'DOCTOR' ? (isDoctorDropdownOpen = true) : null;
+                  displayDoctors = doctors
+                "
+                (blur)="closeDoctorDropdown()"
+                [readonly]="userRole === 'DOCTOR'"
+                [class.is-invalid]="
+                  appointmentForm.get('doctorEmployeeID')?.invalid &&
+                  appointmentForm.get('doctorEmployeeID')?.touched
+                "
+              />
+
+              @if (isDoctorDropdownOpen) {
+                <div *hasPermission="'CREATE_APPOINTMENT'" class="dropdown-list shadow-sm">
+                  @for (doc of displayDoctors; track doc.employeeCode) {
+                    <div
+                      class="dropdown-item"
+                      (click)="selectDoctor(doc)"
+                      (keydown.enter)="selectDoctor(doc)"
+                      (keydown.space)="selectDoctor(doc)"
+                    >
+                      <div style="font-weight: bold; color: #111827; font-size: 0.9rem">
+                        {{ doc.name }}
+                      </div>
+                      <div style="color: #6b7280; font-size: 0.75rem">
+                        {{ doc.employeeCode }} | {{ doc.department || 'General Medicine' }}
+                      </div>
+                    </div>
+                  } @empty {
+                    <div class="dropdown-item text-muted" style="padding: 10px 16px">
+                      No doctors found matching criteria
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+
+            @if (
+              appointmentForm.get('doctorEmployeeID')?.invalid &&
+              appointmentForm.get('doctorEmployeeID')?.touched
+            ) {
+              <small class="text-danger mt-1 d-block">Please select a doctor.</small>
+            }
+          </div>
+
+          <div class="form-group">
+            <label for="appointmentDate">
+              <i class="bi bi-calendar3 text-blue"></i> APPOINTMENT DATE
+              <span class="text-danger">*</span>
+            </label>
+            <input
+              type="date"
+              formControlName="date"
+              class="form-control"
+              [min]="getMinDate()"
+              [max]="getMaxDate()"
+            />
+
+            @if (appointmentForm.get('date')?.touched) {
+              @if (appointmentForm.get('date')?.hasError('pastDate')) {
+                <small class="text-danger">Appointments cannot be booked in the past.</small>
+              }
+              @if (appointmentForm.get('date')?.hasError('pastDateTooFar')) {
+                <small class="text-danger">Admin limit: Cannot backdate too far.</small>
+              }
+            }
+          </div>
+
+          <div class="form-group">
+            <label for="timeSlot">
+              <i class="bi bi-clock text-blue"></i> TIME SLOT
+              <span class="text-danger">*</span>
+            </label>
+            <div
+              class="time-slot-container"
+              [ngClass]="
+                !appointmentForm.value.doctorEmployeeID ||
+                !appointmentForm.value.date ||
+                timeSlots.length === 0
+                  ? 'empty-state-box'
+                  : 'grid-state-box'
+              "
+            >
+              @if (!appointmentForm.value.doctorEmployeeID || !appointmentForm.value.date) {
+                <div class="empty-slot-message-timeslot">
+                  <i class="bi bi-info-circle"></i> Select doctor and date
+                </div>
+              } @else if (timeSlots.length === 0) {
+                <div class="empty-slot-message text-danger">
+                  <i class="bi bi-calendar-x"></i> No slots available
+                </div>
+              } @else {
+                <div class="time-slot-grid">
+                  @for (slot of timeSlots; track slot) {
+                    <label
+                      class="slot-box"
+                      [class.selected-slot]="appointmentForm.get('timeSlot')?.value === slot"
+                    >
+                      <input
+                        type="radio"
+                        formControlName="timeSlot"
+                        [value]="slot"
+                        class="hidden-radio"
+                      />
+                      {{ slot }}
+                    </label>
+                  }
+                </div>
               }
             </div>
 
@@ -231,99 +246,102 @@
             }
           </div>
 
-          <div class="status-section">
-            <div class="section-divider">
-              <span class="divider-text"><i class="bi bi-flag"></i> STATUS</span>
-            </div>
-            <label for="appointmentStatus" class="section-label">
-              <i class="bi bi-toggle-on text-blue"></i> APPOINTMENT STATUS
-              <span class="text-danger">*</span>
-            </label>
-            <div class="radio-group">
-              <label class="radio-label">
-                <input type="radio" formControlName="status" value="Scheduled" />
-                <span class="custom-radio"></span> Booked
-              </label>
-              <label class="radio-label">
-                <input type="radio" formControlName="status" value="Cancelled" />
-                <span class="custom-radio"></span> Cancelled
-              </label>
-              <label class="radio-label">
-                <input type="radio" formControlName="status" value="Completed" />
-                <span class="custom-radio"></span> Completed
-              </label>
-            </div>
-          </div>
-
-          <div class="staff-info-section">
-            <div class="section-divider">
-              <span class="divider-text"><i class="bi bi-shield-check"></i> STAFF INFO</span>
-            </div>
-            <label for="createdByEmployee" class="section-label">
-              <i class="bi bi-person-workspace text-blue"></i> CREATED BY (EMPLOYEE ID)
-              <span class="text-danger">*</span>
-            </label>
-            <div class="dashed-box">
-              {{ currentUser?.employeeCode || 'Loading session...' }}
-            </div>
-            <div class="info-alert">
-              <i class="bi bi-info-circle"></i> Auto-filled from your logged-in session
-            </div>
-          </div>
-          <div class="form-actions">
-            <button
-              type="button"
-              class="btn btn-ghost"
-              (click)="isEditMode ? cancelEdit() : resetForm()"
-            >
-              <i
-                class="bi"
-                [ngClass]="isEditMode ? 'bi-x-circle' : 'bi-arrow-counterclockwise'"
-              ></i>
-              {{ isEditMode ? 'Cancel Edit' : 'Reset' }}
-            </button>
-
-            <button type="submit" class="btn btn-primary" [disabled]="isSubmitting">
-              <i class="bi" [ngClass]="isEditMode ? 'bi-check2-square' : 'bi-calendar-plus'"></i>
-              {{ isEditMode ? 'Update Appointment' : 'Book Appointment' }}
-            </button>
-          </div>
-        </form>
-      </div>
-
-      <div class="quick-info-panel card-panel">
-        <div class="panel-header">
-          <div>
-            <p class="subtitle">TODAY'S OVERVIEW</p>
-            <h2 class="panel-title">Quick Info</h2>
-          </div>
-        </div>
-
-        <div class="availability-list">
-          <div class="section-divider mb-4">
-            <span class="divider-text"><i class="bi bi-heart-pulse"></i> DOCTOR AVAILABILITY</span>
-          </div>
-
-          @for (doc of doctors; track doc.employeeCode) {
-            <div class="doctor-card">
-              <div class="doc-profile">
-                <div class="avatar bg-blue-solid">{{ getInitials(doc.name) }}</div>
-                <div>
-                  <div class="doc-name">{{ doc.name }}</div>
-                  <div class="doc-spec">{{ doc.department || 'General Medicine' }}</div>
-                </div>
-              </div>
-              <span class="status-pill" [ngClass]="doc.status ? 'pill-active' : 'pill-inactive'">
-                {{ doc.status ? 'Active' : 'Inactive' }}
-              </span>
-            </div>
-          } @empty {
-            <div class="empty-state">No doctors found.</div>
+          @if (
+            appointmentForm.get('timeSlot')?.invalid && appointmentForm.get('timeSlot')?.touched
+          ) {
+            <small class="text-danger mt-1 d-block">Please select a time slot.</small>
           }
         </div>
+
+        <div class="status-section">
+          <div class="section-divider">
+            <span class="divider-text"><i class="bi bi-flag"></i> STATUS</span>
+          </div>
+          <label for="appointmentStatus" class="section-label">
+            <i class="bi bi-toggle-on text-blue"></i> APPOINTMENT STATUS
+            <span class="text-danger">*</span>
+          </label>
+          <div class="radio-group">
+            <label class="radio-label">
+              <input type="radio" formControlName="status" value="Scheduled" />
+              <span class="custom-radio"></span> Booked
+            </label>
+            <label class="radio-label">
+              <input type="radio" formControlName="status" value="Cancelled" />
+              <span class="custom-radio"></span> Cancelled
+            </label>
+            <label class="radio-label">
+              <input type="radio" formControlName="status" value="Completed" />
+              <span class="custom-radio"></span> Completed
+            </label>
+          </div>
+        </div>
+
+        <div class="staff-info-section">
+          <div class="section-divider">
+            <span class="divider-text"><i class="bi bi-shield-check"></i> STAFF INFO</span>
+          </div>
+          <label for="createdByEmployee" class="section-label">
+            <i class="bi bi-person-workspace text-blue"></i> CREATED BY (EMPLOYEE ID)
+            <span class="text-danger">*</span>
+          </label>
+          <div class="dashed-box">
+            {{ currentUser?.employeeCode || 'Loading session...' }}
+          </div>
+          <div class="info-alert">
+            <i class="bi bi-info-circle"></i> Auto-filled from your logged-in session
+          </div>
+        </div>
+        <div class="form-actions">
+          <button
+            type="button"
+            class="btn btn-ghost"
+            (click)="isEditMode ? cancelEdit() : resetForm()"
+          >
+            <i class="bi" [ngClass]="isEditMode ? 'bi-x-circle' : 'bi-arrow-counterclockwise'"></i>
+            {{ isEditMode ? 'Cancel Edit' : 'Reset' }}
+          </button>
+
+          <button type="submit" class="btn btn-primary" [disabled]="isSubmitting">
+            <i class="bi" [ngClass]="isEditMode ? 'bi-check2-square' : 'bi-calendar-plus'"></i>
+            {{ isEditMode ? 'Update Appointment' : 'Book Appointment' }}
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <div class="quick-info-panel card-panel">
+      <div class="panel-header">
+        <div>
+          <p class="subtitle">TODAY'S OVERVIEW</p>
+          <h2 class="panel-title">Quick Info</h2>
+        </div>
+      </div>
+
+      <div class="availability-list">
+        <div class="section-divider mb-4">
+          <span class="divider-text"><i class="bi bi-heart-pulse"></i> DOCTOR AVAILABILITY</span>
+        </div>
+
+        @for (doc of doctors; track doc.employeeCode) {
+          <div class="doctor-card">
+            <div class="doc-profile">
+              <div class="avatar bg-blue-solid">{{ getInitials(doc.name) }}</div>
+              <div>
+                <div class="doc-name">{{ doc.name }}</div>
+                <div class="doc-spec">{{ doc.department || 'General Medicine' }}</div>
+              </div>
+            </div>
+            <span class="status-pill" [ngClass]="doc.status ? 'pill-active' : 'pill-inactive'">
+              {{ doc.status ? 'Active' : 'Inactive' }}
+            </span>
+          </div>
+        } @empty {
+          <div class="empty-state">No doctors found.</div>
+        }
       </div>
     </div>
-  }
+  </div>
 
   <div class="table-panel card-panel mt-4">
     <p class="subtitle">RECORDS</p>
@@ -351,7 +369,7 @@
                 <div class="patient-cell">
                   <div class="avatar bg-green-solid">{{ getInitials(apt.patientID) || 'AB' }}</div>
                   <div>
-                    <div class="font-weight-bold">{{apt.patientID}}</div>
+                    <div class="font-weight-bold">{{ apt.patientID }}</div>
                   </div>
                 </div>
               </td>
@@ -371,36 +389,47 @@
               </td>
               <td>
                 <div class="creator-cell">
-                  <span class="fw-bold">{{ apt.creatorName || apt.patientID}}</span>
+                  <span class="fw-bold">{{ apt.creatorName || apt.patientID }}</span>
                 </div>
               </td>
               <td>
                 <div class="action-buttons">
-                  
-                  @if (userRole === 'ADMIN' || userRole === 'RECEPTIONIST') {
-                    @if (apt.status?.toUpperCase() === 'PENDING') {
-                      <button class="btn-action approve" (click)="approveAppointment(apt)" title="Approve & Schedule">
-                        <i class="bi bi-check-lg"></i>
-                      </button>
-                    }
-                    <button class="btn-action edit" (click)="editAppointment(apt)" title="Edit">
-                      <i class="bi bi-pencil"></i>
-                    </button>
+                  @if (apt.status?.toUpperCase() === 'PENDING') {
                     <button
-                      class="btn-action delete"
-                      (click)="deleteAppointment(apt.appointmentCode)"
-                      title="Delete"
+                      *hasPermission="['DELETE_APPOINTMENT', 'APPROVE_APPOINTMENT']"
+                      class="btn-action approve"
+                      (click)="approveAppointment(apt)"
+                      title="Approve & Schedule"
                     >
-                      <i class="bi bi-trash"></i>
+                      <i class="bi bi-check-lg"></i>
                     </button>
                   }
+                  <button
+                    *hasPermission="'UPDATE_APPOINTMENT'"
+                    class="btn-action edit"
+                    (click)="editAppointment(apt)"
+                    title="Edit"
+                  >
+                    <i class="bi bi-pencil"></i>
+                  </button>
+                  <button
+                  *hasPermission="'DELETE_APPOINTMENNT'"
+                    class="btn-action delete"
+                    (click)="deleteAppointment(apt.appointmentCode)"
+                    title="Delete"
+                  >
+                    <i class="bi bi-trash"></i>
+                  </button>
 
-                  @if (['DOCTOR', 'ADMIN', 'RECEPTIONIST'].includes(userRole)) {
-                    @if (apt.status === 'Scheduled') {
-                      <button class="btn-action complete" (click)="markAsCompleted(apt)" title="Mark Completed">
-                        <i class="bi bi-check2-circle"></i>
-                      </button>
-                    }
+                  @if (apt.status === 'Scheduled') {
+                    <button
+                      *hasPermission="'COMPLETE_APPOINTMENT'"
+                      class="btn-action complete"
+                      (click)="markAsCompleted(apt)"
+                      title="Mark Completed"
+                    >
+                      <i class="bi bi-check2-circle"></i>
+                    </button>
                   }
                 </div>
               </td>

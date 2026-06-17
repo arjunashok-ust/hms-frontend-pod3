@@ -4,11 +4,12 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, AbstractContro
 import { AppointmentService } from '../../services/appointmentService/appointment-service';
 import { ApiService } from '../../services/apiService/api-service';
 import { ToastrService } from 'ngx-toastr';
+import { HasPermissionDirective } from '../../directives/has-permission.directive';
 
 @Component({
   selector: 'app-appointment',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, HasPermissionDirective],
   templateUrl: './appointment.html',
   styleUrls: ['./appointment.css']
 })
@@ -74,6 +75,8 @@ export class Appointment implements OnInit {
   ngOnInit() {
     if (isPlatformBrowser(this.platformId)) {
       this.fetchCurrentUser();
+
+      
 
       this.appointmentForm.get('doctorEmployeeID')?.valueChanges.subscribe(() => {
         this.updateDynamicTimeSlots();
@@ -150,6 +153,15 @@ export class Appointment implements OnInit {
       next: (response: any) => {
         this.currentUser = response.user?.profile || response.user || response;
         this.userRole = this.getRoleFromToken().toUpperCase();
+
+        if (this.userRole === 'DOCTOR') {
+          this.appointmentForm.patchValue({
+            doctorEmployeeID: this.currentUser.employeeCode
+          }, { emitEvent: true });
+
+          this.selectedDoctorDisplay = `${this.currentUser.name} (${this.currentUser.department || 'General Medicine'})`;
+        }
+        
         this.loadData();
         this.cdr.markForCheck();
       },

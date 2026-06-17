@@ -1,11 +1,12 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DashboardService } from '../../services/dashboardService/dashboard-service';
+import { HasPermissionDirective } from '../../directives/has-permission.directive';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, HasPermissionDirective],
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.css'],
 })

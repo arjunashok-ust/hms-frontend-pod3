@@ -1,4 +1,4 @@
-<div class="dashboard-wrapper">
+<div *hasPermission="'VIEW_DASHBOARD'" class="dashboard-wrapper">
   <div class="stats-grid">
     @for (stat of statsCards; track $index) {
       <div class="stat-card" [style.--blob-color]="stat.bg">

@@ -18,11 +18,12 @@ import {
 } from '../../utils/joiningDateValidator';
 import { ToastrService } from 'ngx-toastr';
 import { ActivatedRoute, RouterLink } from '@angular/router';
+import { HasPermissionDirective } from '../../directives/has-permission.directive';
 
 @Component({
   selector: 'app-employee',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterLink, HasPermissionDirective],
   templateUrl: './employee.html',
   styleUrls: ['./employee.css'],
 })

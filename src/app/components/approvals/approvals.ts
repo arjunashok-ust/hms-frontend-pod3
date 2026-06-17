@@ -4,11 +4,12 @@ import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../services/apiService/api-service';
 import { ToastrService } from 'ngx-toastr';
 import { RouterLink } from '@angular/router';
+import { HasPermissionDirective } from '../../directives/has-permission.directive';
 
 @Component({
   selector: 'app-approvals',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, HasPermissionDirective],
   templateUrl: './approvals.html',
   styleUrls: ['../employee/employee.css'],
 })

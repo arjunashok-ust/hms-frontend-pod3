@@ -1,4 +1,4 @@
-<div class="page-wrapper">
+<div *hasPermission="['CREATE_PATIENT','UPDATE_PATIENT','DELETE_PATIENT','VIEW_PATIENTS']" class="page-wrapper">
   <div class="page-header">
     <div>
       <p class="subtitle">DIRECTORY</p>
@@ -50,10 +50,10 @@
                 <td>{{ pat.gender }}</td>
                 <td>
                   <div class="action-links">
-                    <button class="btn-action edit" (click)="editPatient(pat)">
+                    <button *hasPermission="'UPDATE_PATIENT'" class="btn-action edit" (click)="editPatient(pat)">
                       <i class="bi bi-pencil"></i>
                     </button>
-                    <button class="btn-action delete" (click)="deletePatient(pat.UHID)">
+                    <button *hasPermission="'DELETE_PATIENT'" class="btn-action delete" (click)="deletePatient(pat.UHID)">
                       <i class="bi bi-trash"></i>
                     </button>
                   </div>

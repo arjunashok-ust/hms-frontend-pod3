@@ -3,11 +3,12 @@ import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ApiService, MenuNode } from '../../services/apiService/api-service';
 import { AppointmentService } from '../../services/appointmentService/appointment-service';
+import { HasPermissionDirective } from '../../directives/has-permission.directive';
 
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, HasPermissionDirective],
   templateUrl: './sidebar.html',
   styleUrls: ['./sidebar.css'],
 })
