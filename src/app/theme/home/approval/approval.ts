@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AdminService } from '../../../services/admin.service';
 import { ToastrService } from 'ngx-toastr';
-import { UserModel } from '../../../models/user.model';
+import { UserEmployeeModel } from '../../../models/user.model';
 
 @Component({
   selector: 'app-approval',
@@ -19,8 +19,8 @@ export class ApprovalComponent implements OnInit {
   toast: ToastrService = inject(ToastrService);
   route: Router = inject(Router);
 
-  userData: UserModel[] = [];
-  filteredData: UserModel[] = [];
+  userData: UserEmployeeModel[] = [];
+  filteredData: UserEmployeeModel[] = [];
 
   approvalUiData = {
     pendingCount: 0,
@@ -32,7 +32,7 @@ export class ApprovalComponent implements OnInit {
   searchText = '';
 
   ngOnInit(): void {
-    this.adminService.getUsersData().subscribe({
+    this.adminService.getUserEmployee().subscribe({
       next: (res) => {
         this.userData = res;
 
@@ -43,9 +43,6 @@ export class ApprovalComponent implements OnInit {
       },
       error: (error) => {
         this.toast.error(error?.error?.message);
-        if (error.status === 403) {
-          this.route.navigate(['/access-denied']);
-        }
       },
     });
   }
@@ -69,15 +66,21 @@ export class ApprovalComponent implements OnInit {
   }
 
   applyFilters() {
+    const search = this.normalize(this.searchText);
     this.filteredData = this.userData.filter(
       (user) =>
-        !this.searchText ||
-        user.email?.includes(this.searchText) ||
-        user.employeeId?.includes(this.searchText) ||
-        user.role?.includes(this.searchText),
+        !search ||
+        this.normalize(user.name).includes(search) ||
+        this.normalize(user.email).includes(search) ||
+        this.normalize(user.employeeId).includes(search) ||
+        this.normalize(user.role).includes(search),
     );
 
     this.cd.detectChanges();
+  }
+
+  normalize(text: string) {
+    return (text || '').trim().toLowerCase();
   }
 
   approveUser(id: string) {
@@ -94,7 +97,7 @@ export class ApprovalComponent implements OnInit {
         this.toast.success(res.message || 'Account Activated.');
       },
       error: (err) => {
-       this.toast.error(err?.error?.message || err?.message || 'Something went wrong!');
+        this.toast.error(err?.error?.message || err?.message || 'Something went wrong!');
       },
     });
   }

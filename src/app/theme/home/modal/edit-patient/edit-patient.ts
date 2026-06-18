@@ -28,8 +28,8 @@ export class EditPatientComponent implements OnInit {
   updateForm: FormGroup;
 
   patientData: PatientModel | null = null;
-  minDate: string = "";
-  maxDate: string = "";
+  minDate: string = '';
+  maxDate: string = '';
 
   public constructor(readonly fb: FormBuilder) {
     this.updateForm = this.fb.group(
@@ -50,6 +50,8 @@ export class EditPatientComponent implements OnInit {
         gender: ['', Validators.required],
         dob: ['', Validators.required],
         address: ['', Validators.required],
+        bloodGroup: ['', Validators.required],
+        allergies: [''],
         emergencyContact: ['', [Validators.pattern(/^(\+91[\s-]?)?[6789]\d{9}$/)]],
       },
       {
@@ -63,6 +65,7 @@ export class EditPatientComponent implements OnInit {
 
     this.userService.getPatientProfile(userEmail).subscribe({
       next: (res) => {
+        console.log(res);
         this.patientData = res;
         this.updateForm.patchValue({
           name: this.patientData?.name,
@@ -71,6 +74,8 @@ export class EditPatientComponent implements OnInit {
           gender: this.patientData?.gender,
           dob: new Date(this.patientData?.dob).toISOString().slice(0, 10),
           address: this.patientData?.address,
+          bloodGroup: this.patientData?.bloodGroup,
+          allergies: this.patientData?.allergies,
           emergencyContact: this.patientData.emergencyContact,
         });
         this.cd.detectChanges();
@@ -85,9 +90,8 @@ export class EditPatientComponent implements OnInit {
 
     min.setFullYear(min.getFullYear() - 120);
 
-    this.minDate = min.toISOString().slice(0,10);
-    this.maxDate = max.toISOString().slice(0,10);
-
+    this.minDate = min.toISOString().slice(0, 10);
+    this.maxDate = max.toISOString().slice(0, 10);
   }
 
   onSubmit() {
@@ -104,6 +108,8 @@ export class EditPatientComponent implements OnInit {
       gender: this.updateForm.get('gender')?.value,
       dob: this.updateForm.get('dob')?.value,
       address: this.updateForm.get('address')?.value,
+      bloodGroup: this.updateForm.get('bloodGroup')?.value,
+      allergies: this.updateForm.get('allergies')?.value,
       emergencyContact: this.updateForm.get('emergencyContact')?.value,
     };
 

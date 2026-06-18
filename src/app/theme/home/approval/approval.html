@@ -84,7 +84,7 @@
           <i class="bi bi-search"></i>
           <input
             type="text"
-            placeholder="Search by email, employee ID, or role..."
+            placeholder="Search by name, email, employee ID, or role..."
             [(ngModel)]="searchText"
             (input)="applyFilters()"
           />
@@ -112,11 +112,11 @@
             <td>
               <div class="employee-block">
                 <div class="avatar">
-                  {{ user.email.charAt(0) | uppercase }}
+                  {{ user.name.charAt(0) | uppercase }}
                 </div>
                 <div class="employee-copy">
-                  <h4>{{ user.employeeId }}</h4>
-                  <span>User Account</span>
+                  <h4>{{ user.name }}</h4>
+                  <span>{{ user.employeeId }}</span>
                 </div>
               </div>
             </td>

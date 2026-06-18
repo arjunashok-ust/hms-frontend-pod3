@@ -15,6 +15,7 @@ import { AccessDeniedComponent } from './theme/home/modal/access-denied/access-d
 import { NotFoundComponent } from './theme/home/modal/not-found/not-found';
 import { RouteGuard } from './services/guard/route.guard';
 import { EditPatientComponent } from './theme/home/modal/edit-patient/edit-patient';
+import { MedicalRecordComponent } from './theme/home/medical-record/medical-record';
 
 export const routes: Routes = [
   {
@@ -70,6 +71,10 @@ export const routes: Routes = [
         component: EditPatientComponent,
         canActivate: [RouteGuard],
         data: { permissions: ['view:patient'] },
+      },
+      {
+        path: 'medical-record',
+        component: MedicalRecordComponent,
       },
     ],
   },

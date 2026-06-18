@@ -12,7 +12,7 @@ import { CommonModule } from '@angular/common';
 import { PatientModel } from '../../../models/user.model';
 import { ToastrService } from 'ngx-toastr';
 import { DobValidator } from '../../../validators/time-range-validator';
-import { HasPermissionDirective } from "../../../directive/has-permission.directive";
+import { HasPermissionDirective } from '../../../directive/has-permission.directive';
 
 @Component({
   selector: 'app-patient',
@@ -56,17 +56,14 @@ export class PatientComponent implements OnInit {
   minDate() {
     const d = new Date();
     d.setFullYear(d.getFullYear() - 100);
-    return d.toISOString().split("T")[0];
+    return d.toISOString().split('T')[0];
   }
 
   public constructor(readonly fb: FormBuilder) {
     this.patientForm = this.fb.group(
       {
         name: ['', [Validators.required, Validators.pattern(/^[a-z]+( [a-z]+)*$/i)]],
-        phone: [
-          '',
-          [Validators.required, Validators.pattern(/^(\+91[\s-]?)?[6789]\d{9}$/)],
-        ],
+        phone: ['', [Validators.required, Validators.pattern(/^(\+91[\s-]?)?[6789]\d{9}$/)]],
         email: [
           '',
           [Validators.required, Validators.pattern(/^[a-z0-9._]+@[a-z0-9]+\.[a-z]{2,}$/i)],
@@ -74,6 +71,8 @@ export class PatientComponent implements OnInit {
         gender: ['', [Validators.required]],
         dob: ['', [Validators.required]],
         address: ['', [Validators.required]],
+        bloodGroup: ['', [Validators.required]],
+        allergies: [''],
         emergencyContact: ['', [Validators.pattern(/^(\+91[\s-]?)?[6789]\d{9}$/)]],
         status: ['Active', [Validators.required]],
       },
@@ -109,9 +108,10 @@ export class PatientComponent implements OnInit {
     });
   }
 
-  editPatientProfile(email: string){
-    localStorage.setItem("updatePatientEmail",email);
+  editPatientProfile(email: string) {
+    localStorage.setItem('updatePatientEmail', email);
     this.route.navigate(['edit-patient']);
+    console.log(this.patientForm.errors);
   }
 
   onSubmit() {
@@ -128,6 +128,8 @@ export class PatientComponent implements OnInit {
       gender: this.patientForm.get('gender')?.value,
       dob: this.patientForm.get('dob')?.value,
       address: this.patientForm.get('address')?.value,
+      bloodGroup: this.patientForm.get('bloodGroup')?.value,
+      allergies: this.patientForm.get('allergies')?.value,
       emergencyContact: this.patientForm.get('emergencyContact')?.value,
     };
 

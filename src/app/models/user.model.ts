@@ -46,6 +46,8 @@ export interface PatientModel {
   email: string;
   gender: string;
   dob: Date;
+  bloodGroup: string,
+  allergies: string,
   address: string;
   emergencyContact: string;
   status: string;

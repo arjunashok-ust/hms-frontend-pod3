@@ -119,12 +119,6 @@
               Phone Number
               <span class="required">*</span>
             </label>
-            <small *ngIf="patientForm.get('phone')?.touched">
-              <span *ngIf="patientForm.get('phone')?.errors?.['required']">Phone is required.</span>
-              <span *ngIf="patientForm.get('phone')?.errors?.['pattern']"
-                >Invalid phone number.</span
-              >
-            </small>
             <input
               type="text"
               class="form-input"
@@ -132,20 +126,25 @@
               placeholder="e.g. 9988776655"
               formControlName="phone"
             />
-            
+            <small *ngIf="patientForm.get('phone')?.touched">
+              <span *ngIf="patientForm.get('phone')?.errors?.['required']">Phone is required.</span>
+              <span *ngIf="patientForm.get('phone')?.errors?.['pattern']"
+                >Invalid phone number.</span
+              >
+            </small>
           </div>
 
           <div class="form-group">
             <label class="form-label" for="emergencyContact">
               <i class="bi bi-exclamation-triangle-fill"></i>
               Emergency Contact
-              <span class="required">*</span>
+              <span class="required"></span>
             </label>
             <small *ngIf="patientForm.get('emergencyContact')?.touched">
-            <span *ngIf="patientForm.get('emergencyContact')?.errors?.['pattern']"
-              >Invalid Number.</span
-            >
-          </small>
+              <span *ngIf="patientForm.get('emergencyContact')?.errors?.['pattern']"
+                >Invalid Number.</span
+              >
+            </small>
             <input
               type="text"
               class="form-input"
@@ -193,11 +192,59 @@
               Date of Birth
               <span class="required">*</span>
             </label>
-            <input type="date" class="form-input" id="patientDob" formControlName="dob" [min]="minDate()"/>
+            <input
+              type="date"
+              class="form-input"
+              id="patientDob"
+              formControlName="dob"
+              [min]="minDate()"
+            />
             <small *ngIf="patientForm.get('dob')?.touched">
               <span *ngIf="patientForm.get('dob')?.errors?.['required']">DOB is required.</span>
               <span *ngIf="patientForm.errors?.['invalidDob']">Future dates are not allowed.</span>
             </small>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="patientBloodGroup">
+              <i class="bi bi-droplet"></i>
+              Blood Group
+              <span class="required">*</span>
+            </label>
+            <select class="form-select" id="patientBloodGroup" formControlName="bloodGroup">
+              <option value="" disabled selected>Blood Group</option>
+              <option value="A+">A+</option>
+              <option value="A-">A-</option>
+              <option value="B+">B+</option>
+              <option value="B-">B-</option>
+              <option value="AB+">AB+</option>
+              <option value="AB-">AB-</option>
+              <option value="O+">O+</option>
+              <option value="O-">O-</option>
+            </select>
+            <span
+              class="error-text"
+              *ngIf="
+                this.patientForm.get('bloodGroup')?.touched &&
+                this.patientForm.get('bloodGroup')?.errors?.['required']
+              "
+              >Blood group is required</span
+            >
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="allergies">
+              <i class="bi bi-bug"></i>
+              Allergies
+              <span class="required"></span>
+            </label>
+            <input
+              type="text"
+              class="form-input"
+              id="allergies"
+              placeholder="Allergies"
+              formControlName="allergies"
+            />
           </div>
 
           <div class="form-group span-2">
@@ -214,7 +261,9 @@
               formControlName="address"
             ></textarea>
             <small *ngIf="patientForm.get('address')?.touched">
-              <span *ngIf="patientForm.get('address')?.errors?.['required']">Address is required.</span>
+              <span *ngIf="patientForm.get('address')?.errors?.['required']"
+                >Address is required.</span
+              >
             </small>
           </div>
         </div>
@@ -273,7 +322,7 @@
                   <div class="patient-avatar pa-gradient-1">JD</div>
                   <div>
                     <h4>{{ patient.name }}</h4>
-                    <span>Emergency: {{ patient.emergencyContact }}</span>
+                    <span *ngIf="patient.emergencyContact">Emergency: {{ patient.emergencyContact }}</span>
                   </div>
                 </div>
               </td>
