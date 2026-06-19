@@ -2,7 +2,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { ApiUrl } from '../environment/environment';
 import { catchError, Observable, throwError } from 'rxjs';
-import { PatientModel, UserEmployeeModel } from '../models/user.model';
+import { EmployeeModel, PatientModel, UserEmployeeModel } from '../models/user.model';
 import { NodeModel } from '../models/ui.model';
 import { Router } from '@angular/router';
 
@@ -59,6 +59,28 @@ export class UserService {
       .get<PatientModel>(`${this.api.backend_url}/user/getPatientProfile`, {
         params: {
           email: email,
+        },
+      })
+      .pipe(catchError((error) => this.handleError(error)));
+  }
+
+  // get patients by search
+  getPatientsBySearch(searchText: string): Observable<PatientModel[]> {
+    return this.http
+      .get<PatientModel[]>(`${this.api.backend_url}/user/getPatientsBySearch`, {
+        params: {
+          searchText: searchText,
+        },
+      })
+      .pipe(catchError((error) => this.handleError(error)));
+  }
+
+  // get doctors by search
+  getDoctorsBySearch(searchText: string): Observable<EmployeeModel[]> {
+    return this.http
+      .get<EmployeeModel[]>(`${this.api.backend_url}/user/getDoctorsBySearch`, {
+        params: {
+          searchText: searchText,
         },
       })
       .pipe(catchError((error) => this.handleError(error)));

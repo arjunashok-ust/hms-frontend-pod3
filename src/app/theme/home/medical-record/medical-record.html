@@ -23,21 +23,7 @@
           <line x1="12" y1="11" x2="12" y2="17" />
           <line x1="9" y1="14" x2="15" y2="14" />
         </svg>
-        <span>247 Records</span>
-      </div>
-      <div class="hero-chip chip-blue">
-        <svg
-          width="16"
-          height="16"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2.5"
-        >
-          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-          <circle cx="12" cy="7" r="4" />
-        </svg>
-        <span>89 Patients</span>
+        <span>{{ medicalRecordCount }} Records</span>
       </div>
     </div>
   </div>
@@ -62,7 +48,7 @@
         <span class="metric-tag">Total</span>
       </div>
       <div class="metric-body">
-        <h2>247</h2>
+        <h2>{{ medicalRecordCount }}</h2>
         <p>Total Records</p>
       </div>
     </div>
@@ -81,11 +67,11 @@
             <polyline points="22 4 12 14.01 9 11.01" />
           </svg>
         </div>
-        <span class="metric-tag">Active</span>
+        <span class="metric-tag">Completed</span>
       </div>
       <div class="metric-body">
-        <h2>184</h2>
-        <p>Active Records</p>
+        <h2>{{ completedCount }}</h2>
+        <p>Completed Records</p>
       </div>
     </div>
     <div class="metric-card m-blue">
@@ -106,8 +92,8 @@
         <span class="metric-tag">Review</span>
       </div>
       <div class="metric-body">
-        <h2>38</h2>
-        <p>Under Review</p>
+        <h2>{{ draftCount }}</h2>
+        <p>Draft</p>
       </div>
     </div>
     <div class="metric-card m-rose">
@@ -125,11 +111,11 @@
             <path d="M9 9h6M9 12h6M9 15h4" />
           </svg>
         </div>
-        <span class="metric-tag">Closed</span>
+        <span class="metric-tag">Deleted</span>
       </div>
       <div class="metric-body">
-        <h2>25</h2>
-        <p>Closed Records</p>
+        <h2>{{ deletedCount }}</h2>
+        <p>Deleted Records</p>
       </div>
     </div>
   </div>
@@ -176,16 +162,69 @@
                   <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
                   <circle cx="12" cy="7" r="4" />
                 </svg>
-                Patient ID <span class="required">*</span>
+                Patient ID<span class="required">*</span>
               </label>
               <input
                 type="text"
+                matInput
                 class="form-input"
                 id="patientId"
-                placeholder="e.g. PAT-00274"
+                placeholder="Search patient"
                 formControlName="patientId"
+                [matAutocomplete]="auto"
+                (input)="getPatients()"
               />
+              <mat-autocomplete #auto="matAutocomplete" panelClass="custom-autocomplete-panel">
+                <mat-option *ngFor="let patient of filteredPatients" [value]="patient.uhid">
+                  <span class="option-title">{{ patient.name }}</span><br>
+                  <span class="option-value">{{ patient.uhid }}</span>
+                </mat-option>
+              </mat-autocomplete>
+              <small *ngIf="medicalForm.get('patientId')?.touched">
+                <span *ngIf="medicalForm.get('patientId')?.errors?.['required']"
+                  >Patient ID is required.</span
+                >
+              </small>
             </div>
+
+            <div>
+              <label class="form-label" for="doctorId">
+                <svg
+                  width="13"
+                  height="13"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="#7c3aed"
+                  stroke-width="2.5"
+                >
+                  <circle cx="12" cy="8" r="4" />
+                  <path d="M20 21a8 8 0 1 0-16 0" />
+                </svg>
+                Doctor ID <span class="required">*</span>
+              </label>
+
+              <input
+                type="text"
+                class="form-input"
+                id="doctorId"
+                placeholder="Search doctor"
+                [matAutocomplete]="autoDoctor"
+                formControlName="doctorId"
+                (input)="getDoctors()"
+              />
+              <mat-autocomplete #autoDoctor="matAutocomplete">
+                <mat-option *ngFor="let doctor of filteredDoctors" [value]="doctor.employeeCode">
+                  <span class="option-title">{{ doctor.name }}</span><br> 
+                  <span class="option-value">{{ doctor.employeeCode }}</span>
+                </mat-option>
+              </mat-autocomplete>
+              <small *ngIf="medicalForm.get('doctorId')?.touched">
+                <span *ngIf="medicalForm.get('doctorId')?.errors?.['required']"
+                  >Doctor ID is required.</span
+                >
+              </small>
+            </div>
+
             <div>
               <label class="form-label" for="appointmentId">
                 <svg
@@ -207,24 +246,24 @@
                 id="appointmentId"
                 placeholder="e.g. APT-000001"
                 formControlName="appointmentId"
+                [matAutocomplete]="autoAppointment"
+                (input)="getAppointments()"
+                (click)="getAppointments()"
               />
-            </div>
-            <div>
-              <label class="form-label" for="doctorId">
-                <svg
-                  width="13"
-                  height="13"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="#7c3aed"
-                  stroke-width="2.5"
+              <mat-autocomplete #autoAppointment="matAutocomplete">
+                <mat-option
+                  *ngFor="let appointment of filteredAppointments"
+                  [value]="appointment.appointmentId"
                 >
-                  <circle cx="12" cy="8" r="4" />
-                  <path d="M20 21a8 8 0 1 0-16 0" />
-                </svg>
-                Doctor ID <span class="required">*</span>
-              </label>
-              <input type="text" class="form-input" id="doctorId" placeholder="e.g. DOC-00142" />
+                  <span class="option-title">{{ appointment.appointmentId }}</span><br>
+                  <span class="option-value"> {{ appointment.date | date: 'dd/MM/yyyy' }}</span>
+                </mat-option>
+              </mat-autocomplete>
+              <small *ngIf="medicalForm.get('appointmentId')?.touched">
+                <span *ngIf="medicalForm.get('appointmentId')?.errors?.['required']"
+                  >Appointment ID is required.</span
+                >
+              </small>
             </div>
           </div>
         </div>
@@ -308,6 +347,11 @@
                 placeholder="Describe the patient's primary complaint..."
                 formControlName="complaint"
               ></textarea>
+              <small *ngIf="medicalForm.get('complaint')?.touched">
+                <span *ngIf="medicalForm.get('complaint')?.errors?.['required']"
+                  >Complaint is required.</span
+                >
+              </small>
             </div>
             <div>
               <label class="form-label" for="symptoms">
@@ -330,6 +374,11 @@
                 placeholder="List all observed symptoms..."
                 formControlName="symptoms"
               ></textarea>
+              <small *ngIf="medicalForm.get('symptoms')?.touched">
+                <span *ngIf="medicalForm.get('symptoms')?.errors?.['required']"
+                  >Symptoms is required.</span
+                >
+              </small>
             </div>
             <div>
               <label class="form-label" for="diagnosis">
@@ -433,11 +482,11 @@
       <div class="meta-bar">
         <div class="meta-item">
           <span class="meta-label">Created By</span>
-          <span class="meta-value">System</span>
+          <span class="meta-value">You</span>
         </div>
         <div class="meta-item">
           <span class="meta-label">Created At</span>
-          <span class="meta-value" id="created-at"></span>
+          <span class="meta-value" id="created-at">Today</span>
         </div>
         <div class="meta-item">
           <span class="meta-label">Updated By</span>
@@ -492,7 +541,23 @@
             <line x1="12" y1="11" x2="12" y2="17" />
             <line x1="9" y1="14" x2="15" y2="14" />
           </svg>
-          Save Encounter
+          Draft
+        </button>
+        <button type="submit" class="btn btn-primary" (click)="onSubmit()">
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+          >
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+            <polyline points="14 2 14 8 20 8" />
+            <line x1="12" y1="11" x2="12" y2="17" />
+            <line x1="9" y1="14" x2="15" y2="14" />
+          </svg>
+          {{ isLoading ? 'Creating...' : 'Create' }}
         </button>
       </div>
     </form>

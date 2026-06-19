@@ -41,7 +41,7 @@ export class AppointmentService {
   // edit appointment status
   editAppointmentStatus(payload: any): Observable<any> {
     return this.http
-      .post(`${this.api.backend_url}/appointment/editAppointmentStatus`,payload)
+      .post(`${this.api.backend_url}/appointment/editAppointmentStatus`, payload)
       .pipe(catchError((error) => this.handleError(error)));
   }
 
@@ -51,6 +51,22 @@ export class AppointmentService {
       .get(`${this.api.backend_url}/appointment/deleteAppointment`, {
         params: { appointmentId: appointmentId },
       })
+      .pipe(catchError((error) => this.handleError(error)));
+  }
+
+  // get appointment by doctorId or patientId
+  getAppointmentByDoctorIdOrPatientId(
+    doctorId: string,
+    patientId: string,
+    appointmentId: string,
+  ): Observable<AppointmentModel[]> {
+    return this.http
+      .get<AppointmentModel[]>(
+        `${this.api.backend_url}/appointment/getAppointmentByDoctorIdOrPatientId`,
+        {
+          params: { doctorId: doctorId, patientId: patientId, appointmentId },
+        },
+      )
       .pipe(catchError((error) => this.handleError(error)));
   }
 
