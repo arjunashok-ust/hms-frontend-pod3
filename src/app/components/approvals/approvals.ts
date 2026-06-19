@@ -1,5 +1,5 @@
-import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, inject, OnInit, ChangeDetectorRef, Inject, PLATFORM_ID } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../services/apiService/api-service';
 import { ToastrService } from 'ngx-toastr';
@@ -26,11 +26,14 @@ export class Approvals implements OnInit {
 
   constructor(
     private readonly apiService: ApiService,
-    private readonly cdr: ChangeDetectorRef
+    private readonly cdr: ChangeDetectorRef,
+    @Inject(PLATFORM_ID) private readonly platformId: Object
   ) { }
 
   ngOnInit() {
-    this.fetchPendingEmployees();
+    if (isPlatformBrowser(this.platformId)) {
+      this.fetchPendingEmployees();
+    }
   }
 
   fetchPendingEmployees() {
@@ -38,7 +41,7 @@ export class Approvals implements OnInit {
       next: (data: any) => {
         if (!Array.isArray(data)) {
           this.isLoading = false;
-          this.cdr.detectChanges();
+          this.cdr.markForCheck();
           return;
         }
 
@@ -46,12 +49,12 @@ export class Approvals implements OnInit {
         this.applyFilters();
 
         this.isLoading = false;
-        this.cdr.detectChanges();
+        this.cdr.markForCheck();
       },
       error: (err) => {
         console.error('Error fetching queue', err);
         this.isLoading = false;
-        this.cdr.detectChanges();
+        this.cdr.markForCheck();
       },
     });
   }

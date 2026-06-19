@@ -1,4 +1,5 @@
-import { Directive, Input, TemplateRef, ViewContainerRef } from '@angular/core';
+import { Directive, Input, TemplateRef, ViewContainerRef, inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 
 @Directive({
     selector: '[hasPermission]',
@@ -8,18 +9,15 @@ export class HasPermissionDirective {
     private requiredPermissions: string[] = [];
     private requireAllLogic = false;
 
-    constructor(
-        private templateRef: TemplateRef<any>,
-        private viewContainer: ViewContainerRef
-    ) { }
+    private templateRef = inject(TemplateRef<any>);
+    private viewContainer = inject(ViewContainerRef);
+    private platformId = inject(PLATFORM_ID);
 
-    // 1. Accept either a single string or an array of strings
     @Input() set hasPermission(val: string | string[]) {
         this.requiredPermissions = Array.isArray(val) ? val : [val];
         this.updateView();
     }
 
-    // 2. Optional flag to enforce AND logic instead of OR logic
     @Input() set hasPermissionRequireAll(val: boolean) {
         this.requireAllLogic = val;
         this.updateView();
@@ -33,12 +31,10 @@ export class HasPermissionDirective {
 
         const userPermissions = this.getUserPermissions();
 
-        // 3. Evaluate permissions based on the chosen logic
         const hasAccess = this.requireAllLogic
-            ? this.requiredPermissions.every(p => userPermissions.includes(p)) // AND Logic (Must have all)
-            : this.requiredPermissions.some(p => userPermissions.includes(p)); // OR Logic (Must have at least one)
+            ? this.requiredPermissions.every(p => userPermissions.includes(p))
+            : this.requiredPermissions.some(p => userPermissions.includes(p));
 
-        // 4. Render or destroy the element
         if (hasAccess) {
             if (this.viewContainer.length === 0) {
                 this.viewContainer.createEmbeddedView(this.templateRef);
@@ -48,16 +44,15 @@ export class HasPermissionDirective {
         }
     }
 
-    // Self-contained logic: Reads permissions directly from the JWT in localStorage
     private getUserPermissions(): string[] {
-        try {
-            // Safety check for Server-Side Rendering (SSR)
-            if (typeof window === 'undefined' || !localStorage) return [];
+        if (!isPlatformBrowser(this.platformId)) {
+            return [];
+        }
 
+        try {
             const token = localStorage.getItem('token');
             if (!token) return [];
 
-            // Decode the JWT payload
             const payloadBase64 = token.split('.')[1];
             const decodedJson = atob(payloadBase64.replaceAll('-', '+').replaceAll('_', '/'));
             const decodedPayload = JSON.parse(decodedJson);
