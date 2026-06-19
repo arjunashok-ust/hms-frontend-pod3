@@ -1,0 +1,364 @@
+<div class="modal-overlay">
+  <div class="vmr-modal">
+    <button class="vmr-close" type="button">
+      <svg
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2.5"
+      >
+        <line x1="18" y1="6" x2="6" y2="18" />
+        <line x1="6" y1="6" x2="18" y2="18" />
+      </svg>
+    </button>
+
+    <div class="vmr-header">
+      <div class="vmr-icon">
+        <svg
+          width="28"
+          height="28"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+          <polyline points="14 2 14 8 20 8" />
+          <line x1="12" y1="11" x2="12" y2="17" />
+          <line x1="9" y1="14" x2="15" y2="14" />
+        </svg>
+      </div>
+      <span class="vmr-kicker">Medical Record</span>
+      <h2>Record Details</h2>
+      <p>Full clinical summary for this encounter including medications and observations.</p>
+    </div>
+
+    <div class="vmr-body">
+      <div class="vmr-meta">
+        <div class="vmr-meta-item">
+          <span class="vmr-meta-label">Record ID</span>
+          <span class="vmr-meta-value vmr-record-id">{{ record?.medicalRecordId }}</span>
+        </div>
+        <div class="vmr-meta-item">
+          <span class="vmr-meta-label">Appointment</span>
+          <span class="vmr-meta-value">{{ record?.appointmentId }}</span>
+        </div>
+        <div class="vmr-meta-item">
+          <span class="vmr-meta-label">Created</span>
+          <span class="vmr-meta-value">{{ record?.created_at | date: 'dd MMM, yyyy' }}</span>
+        </div>
+        <div class="vmr-meta-item">
+          <span class="vmr-meta-label">Status</span>
+          <span class="vmr-meta-value">
+            <span
+              class="vmr-status"
+              [ngClass]="{
+                'vmr-status-completed': record?.status === 'Completed',
+                'vmr-status-draft': record?.status === 'Draft',
+                'vmr-status-deleted': record?.status === 'Deleted',
+              }"
+            >
+              <svg
+                width="12"
+                height="12"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+              >
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                <polyline points="22 4 12 14.01 9 11.01" />
+              </svg>
+              {{ record?.status }}
+            </span>
+          </span>
+        </div>
+      </div>
+
+      <div class="vmr-section">
+        <div class="vmr-section-header">
+          <svg
+            width="15"
+            height="15"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="#7c3aed"
+            stroke-width="2.5"
+          >
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+            <circle cx="12" cy="7" r="4" />
+          </svg>
+          <span class="vmr-section-title">Patient &amp; Doctor</span>
+        </div>
+        <div class="vmr-section-body">
+          <div class="vmr-people-grid">
+            <div>
+              <div class="vmr-person-label">Patient</div>
+              <div class="vmr-person-row">
+                <div class="vmr-avatar vmr-avatar-purple">
+                  {{ patientName || 'NA' | slice: 0 : 2 | uppercase }}
+                </div>
+                <div class="vmr-person-info">
+                  <h4>{{ patientName || record?.patientId }}</h4>
+                  <span>{{ record?.patientId }}</span>
+                </div>
+              </div>
+            </div>
+            <div>
+              <div class="vmr-person-label">Doctor</div>
+              <div class="vmr-person-row">
+                <div class="vmr-avatar vmr-avatar-cyan">
+                  {{ doctorName || 'NA' | slice: 0 : 2 | uppercase }}
+                </div>
+                <div class="vmr-person-info">
+                  <h4>{{ doctorName || record?.doctorId }}</h4>
+                  <span>{{ record?.doctorId }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="vmr-section">
+        <div class="vmr-section-header">
+          <svg
+            width="15"
+            height="15"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="#7c3aed"
+            stroke-width="2.5"
+          >
+            <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
+          </svg>
+          <span class="vmr-section-title">Clinical Summary</span>
+        </div>
+        <div class="vmr-section-body">
+          <div class="vmr-clinical-grid">
+            <div class="vmr-clinical-card">
+              <label for="complaint">
+                <svg
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                >
+                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                </svg>
+                Complaint
+              </label>
+              <p>{{ record?.complaint }}</p>
+            </div>
+            <div class="vmr-clinical-card">
+              <label for="symptoms">
+                <svg
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                >
+                  <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
+                </svg>
+                Symptoms
+              </label>
+              <p>{{ record?.symptoms }}</p>
+            </div>
+            <div class="vmr-clinical-card">
+              <label for="diagnosis">
+                <svg
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                >
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                  <polyline points="14 2 14 8 20 8" />
+                </svg>
+                Diagnosis
+              </label>
+              <p>{{ record?.diagnosis }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="vmr-section">
+        <div class="vmr-section-header">
+          <svg
+            width="15"
+            height="15"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="#7c3aed"
+            stroke-width="2.5"
+          >
+            <path
+              d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2v-4M9 21H5a2 2 0 0 1-2-2v-4m0 0h18"
+            />
+          </svg>
+          <span class="vmr-section-title">Medications</span>
+          <span class="vmr-count-badge">{{ record?.medications?.length }} meds</span>
+        </div>
+        <div class="vmr-section-body vmr-section-body-flush">
+          <table class="vmr-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Dosage</th>
+                <th>Frequency</th>
+                <th>Duration</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let med of record?.medications">
+                <td>
+                  <span class="vmr-pill vmr-pill-purple">{{ med.name }}</span>
+                </td>
+                <td>{{ med.dosage }}</td>
+                <td>{{ med.frequency }}</td>
+                <td>{{ med.duration }}</td>
+              </tr>
+              <tr *ngIf="record?.medications?.length === 0">
+                <td colspan="4" class="vmr-empty-row">No medications recorded.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="vmr-section">
+        <div class="vmr-section-header">
+          <svg
+            width="15"
+            height="15"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="#7c3aed"
+            stroke-width="2.5"
+          >
+            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+          </svg>
+          <span class="vmr-section-title">Medical Observations</span>
+          <span class="vmr-count-badge">{{ record?.medicalObservations?.length || 0 }} entries</span>
+        </div>
+        <div class="vmr-section-body vmr-section-body-flush">
+          <table class="vmr-table">
+            <thead>
+              <tr>
+                <th>Metric</th>
+                <th>Value</th>
+                <th>Recorded At</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let obs of record?.medicalObservations">
+                <td>{{ obs.metricName }}</td>
+                <td>
+                  <span class="vmr-pill vmr-pill-blue">{{ obs.metricValue }}</span>
+                </td>
+                <td>{{ obs.recordedAt | date: 'dd MMM yyyy, hh:mm a' }}</td>
+              </tr>
+              <tr *ngIf="record?.medicalObservations?.length === 0">
+                <td colspan="3" class="vmr-empty-row">No observations recorded.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="vmr-section">
+        <div class="vmr-section-header">
+          <svg
+            width="15"
+            height="15"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="#7c3aed"
+            stroke-width="2.5"
+          >
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+            <polyline points="14 2 14 8 20 8" />
+            <line x1="16" y1="13" x2="8" y2="13" />
+            <line x1="16" y1="17" x2="8" y2="17" />
+            <polyline points="10 9 9 9 8 9" />
+          </svg>
+          <span class="vmr-section-title">Additional Notes</span>
+        </div>
+        <div class="vmr-section-body">
+          <div class="vmr-notes-box">{{ record?.notes || 'No notes found' }}</div>
+        </div>
+      </div>
+
+      <div class="vmr-created-bar">
+        <svg
+          width="14"
+          height="14"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="#7c3aed"
+          stroke-width="2"
+        >
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+          <circle cx="12" cy="7" r="4" />
+        </svg>
+        Created by &nbsp;<strong>{{ record?.createdBy }}</strong>
+      </div>
+    </div>
+
+    <div class="vmr-footer">
+      <button type="button" class="vmr-btn vmr-btn-danger">
+        <svg
+          width="14"
+          height="14"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.5"
+        >
+          <polyline points="3 6 5 6 21 6" />
+          <path d="M19 6l-1 14H6L5 6" />
+          <path d="M10 11v6M14 11v6" />
+          <path d="M9 6V4h6v2" />
+        </svg>
+        Delete
+      </button>
+      <button type="button" class="vmr-btn vmr-btn-ghost">
+        <svg
+          width="14"
+          height="14"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.5"
+        >
+          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+        </svg>
+        Edit
+      </button>
+      <button type="button" class="vmr-btn vmr-btn-primary">
+        <svg
+          width="14"
+          height="14"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.5"
+        >
+          <line x1="18" y1="6" x2="6" y2="18" />
+          <line x1="6" y1="6" x2="18" y2="18" />
+        </svg>
+        Close
+      </button>
+    </div>
+  </div>
+</div>

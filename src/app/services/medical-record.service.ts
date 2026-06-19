@@ -23,6 +23,29 @@ export class MedicalRecordService {
       .pipe(catchError((error) => this.handleError(error)));
   }
 
+  // Medical Record Stats
+  getMedicalRecords(page: number, limit: number): Observable<any> {
+    return this.http
+      .get(`${this.api.backend_url}/medicalRecord/getMedicalRecords`, {
+        params: {
+          page,
+          limit,
+        },
+      })
+      .pipe(catchError((error) => this.handleError(error)));
+  }
+
+  // Medical Record Stats
+  getMedicalRecordById(medicalRecordId: string): Observable<MedicalRecordModel> {
+    return this.http
+      .get<MedicalRecordModel>(`${this.api.backend_url}/medicalRecord/getMedicalRecordById`, {
+        params: {
+          medicalRecordId,
+        },
+      })
+      .pipe(catchError((error) => this.handleError(error)));
+  }
+
   handleError(error: HttpErrorResponse) {
     let message = 'Unexpected Error Occured.';
     if (error?.error?.message) {

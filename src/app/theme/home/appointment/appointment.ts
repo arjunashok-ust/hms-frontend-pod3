@@ -8,10 +8,12 @@ import { EmployeeModel } from '../../../models/user.model';
 import { ToastrService } from 'ngx-toastr';
 import { appointmentDateValidator } from '../../../validators/time-range-validator';
 import { HasPermissionDirective } from '../../../directive/has-permission.directive';
+import { UserService } from '../../../services/user.service';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 
 @Component({
   selector: 'app-appointment',
-  imports: [RouterModule, CommonModule, ReactiveFormsModule, HasPermissionDirective],
+  imports: [RouterModule, CommonModule, ReactiveFormsModule, HasPermissionDirective,MatAutocompleteModule],
   templateUrl: './appointment.html',
   styleUrl: './appointment.css',
 })
@@ -19,6 +21,7 @@ export class AppointmentComponent implements OnInit {
   appointmentForm: FormGroup;
 
   appointmentService: AppointmentService = inject(AppointmentService);
+  userService: UserService = inject(UserService);
   cd: ChangeDetectorRef = inject(ChangeDetectorRef);
   toast: ToastrService = inject(ToastrService);
 
@@ -33,6 +36,9 @@ export class AppointmentComponent implements OnInit {
 
   employeeId = localStorage.getItem('employeeId');
   role = localStorage.getItem('role');
+
+  doctorNameMap: { [key: string]: any } = {};
+  patientNameMap: { [key: string]: any } = {};
 
   public constructor(readonly fb: FormBuilder) {
     this.appointmentForm = this.fb.group(
@@ -85,6 +91,7 @@ export class AppointmentComponent implements OnInit {
           this.appointments = res;
           this.displayedAppointments = this.appointments;
         }
+        this.mapDoctorAndPatients(res);
         this.cd.detectChanges();
       },
       error: (err) => {
@@ -184,6 +191,25 @@ export class AppointmentComponent implements OnInit {
     } catch (err) {
       console.error(err);
     }
+  }
+
+  mapDoctorAndPatients(appoinments: AppointmentModel[]) {
+    this.appointments.forEach((appointment) => {
+      // patient name map
+      if (appointment.patientId && !this.patientNameMap[appointment.patientId]) {
+        this.userService.getPatientById(appointment.patientId).subscribe((res) => {
+          this.patientNameMap[appointment.patientId] = res.name;
+          this.cd.detectChanges();
+        });
+      }
+      // doctor name map
+      if (appointment.doctorEmployeeId && !this.doctorNameMap[appointment.doctorEmployeeId]) {
+        this.userService.getDoctorById(appointment.doctorEmployeeId).subscribe((res) => {
+          this.doctorNameMap[appointment.doctorEmployeeId] = res.name;
+          this.cd.detectChanges();
+        });
+      }
+    });
   }
 
   onSubmit() {

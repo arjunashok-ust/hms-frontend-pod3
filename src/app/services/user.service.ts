@@ -93,6 +93,28 @@ export class UserService {
       .pipe(catchError((error) => this.handleError(error)));
   }
 
+  // get doctor by id
+  getDoctorById(doctorId: string): Observable<EmployeeModel> {
+    return this.http
+      .get<EmployeeModel>(`${this.api.backend_url}/user/getDoctorById`, {
+        params: {
+          doctorId,
+        },
+      })
+      .pipe(catchError((error) => this.handleError(error)));
+  }
+
+  // get patient by id
+  getPatientById(patientId: string): Observable<PatientModel> {
+    return this.http
+      .get<PatientModel>(`${this.api.backend_url}/user/getPatientById`, {
+        params: {
+          patientId,
+        },
+      })
+      .pipe(catchError((error) => this.handleError(error)));
+  }
+
   // logout
   logout() {
     localStorage.clear();

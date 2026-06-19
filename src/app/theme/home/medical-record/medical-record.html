@@ -127,19 +127,6 @@
         <h2>Medical Record</h2>
       </div>
       <div class="panel-actions">
-        <button type="button" title="Reset">
-          <svg
-            width="10"
-            height="10"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-          >
-            <polyline points="23 4 23 10 17 10" />
-            <path d="M20.49 15a9 9 0 1 0-2.12-9.36L23 10" />
-          </svg>
-        </button>
       </div>
     </div>
 
@@ -176,7 +163,8 @@
               />
               <mat-autocomplete #auto="matAutocomplete" panelClass="custom-autocomplete-panel">
                 <mat-option *ngFor="let patient of filteredPatients" [value]="patient.uhid">
-                  <span class="option-title">{{ patient.name }}</span><br>
+                  <span class="option-title">{{ patient.name }}</span
+                  ><br />
                   <span class="option-value">{{ patient.uhid }}</span>
                 </mat-option>
               </mat-autocomplete>
@@ -214,7 +202,8 @@
               />
               <mat-autocomplete #autoDoctor="matAutocomplete">
                 <mat-option *ngFor="let doctor of filteredDoctors" [value]="doctor.employeeCode">
-                  <span class="option-title">{{ doctor.name }}</span><br> 
+                  <span class="option-title">{{ doctor.name }}</span
+                  ><br />
                   <span class="option-value">{{ doctor.employeeCode }}</span>
                 </mat-option>
               </mat-autocomplete>
@@ -255,7 +244,8 @@
                   *ngFor="let appointment of filteredAppointments"
                   [value]="appointment.appointmentId"
                 >
-                  <span class="option-title">{{ appointment.appointmentId }}</span><br>
+                  <span class="option-title">{{ appointment.appointmentId }}</span
+                  ><br />
                   <span class="option-value"> {{ appointment.date | date: 'dd/MM/yyyy' }}</span>
                 </mat-option>
               </mat-autocomplete>
@@ -468,7 +458,7 @@
 
         <div class="card-block card-notes">
           <div class="card-block-title">Additional Notes</div>
-          <div class="card-block-sub">Encounter Notes</div>
+          <div class="card-block-sub">Notes for patients</div>
           <textarea
             class="form-textarea"
             id="notes"
@@ -482,19 +472,7 @@
       <div class="meta-bar">
         <div class="meta-item">
           <span class="meta-label">Created By</span>
-          <span class="meta-value">You</span>
-        </div>
-        <div class="meta-item">
-          <span class="meta-label">Created At</span>
-          <span class="meta-value" id="created-at">Today</span>
-        </div>
-        <div class="meta-item">
-          <span class="meta-label">Updated By</span>
-          <span class="meta-value">N/A</span>
-        </div>
-        <div class="meta-item">
-          <span class="meta-label">Updated At</span>
-          <span class="meta-value">N/A</span>
+          <span class="meta-value"> {{ employeeId }}</span>
         </div>
       </div>
 
@@ -527,7 +505,7 @@
           </svg>
           Cancel
         </button>
-        <button type="submit" class="btn btn-primary">
+        <button type="submit" class="btn btn-primary" (click)="onSubmit('Draft')">
           <svg
             width="14"
             height="14"
@@ -543,7 +521,7 @@
           </svg>
           Draft
         </button>
-        <button type="submit" class="btn btn-primary" (click)="onSubmit()">
+        <button type="submit" class="btn btn-primary" (click)="onSubmit('Completed')">
           <svg
             width="14"
             height="14"
@@ -585,211 +563,33 @@
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td><span class="record-id">MR-00001</span></td>
+          <tr *ngFor="let record of medicalRecords">
+            <td>
+              <span class="record-id">{{ record.medicalRecordId }}</span>
+            </td>
             <td>
               <div class="patient-cell">
                 <div class="patient-avatar pa-1">JD</div>
                 <div>
-                  <h4>John Doe</h4>
-                  <span>PAT-00274</span>
+                  <h4>{{ patientMap[record.patientId] || 'Loading...' }}</h4>
+                  <span>{{ record.patientId }}</span>
                 </div>
               </div>
             </td>
-            <td class="muted-text">DOC-00142</td>
-            <td><span class="diagnosis-text">Type 2 Diabetes Mellitus</span></td>
-            <td><span class="med-count-badge">3 meds</span></td>
-            <td class="muted-text">12 Jun, 2025</td>
-            <td><span class="status-badge status-active">Active</span></td>
+            <td class="muted-text">{{ doctorMap[record.doctorId] || 'Loading...' }}</td>
+            <td>
+              <span class="diagnosis-text">{{ record.diagnosis }}</span>
+            </td>
+            <td>
+              <span class="med-count-badge">{{ record.medications.length }} meds</span>
+            </td>
+            <td class="muted-text">{{ record.created_at | date: 'dd MMM, yyyy' }}</td>
+            <td>
+              <span class="status-badge status-active">{{ record.status }}</span>
+            </td>
             <td>
               <div class="action-btns">
-                <button class="action-btn view" title="View">
-                  <svg
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                  >
-                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-                    <circle cx="12" cy="12" r="3" />
-                  </svg>
-                </button>
-                <button class="action-btn edit" title="Edit">
-                  <svg
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                  >
-                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-                  </svg>
-                </button>
-                <button class="action-btn delete" title="Delete">
-                  <svg
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                  >
-                    <polyline points="3 6 5 6 21 6" />
-                    <path d="M19 6l-1 14H6L5 6" />
-                    <path d="M10 11v6M14 11v6" />
-                    <path d="M9 6V4h6v2" />
-                  </svg>
-                </button>
-              </div>
-            </td>
-          </tr>
-          <tr>
-            <td><span class="record-id">MR-00002</span></td>
-            <td>
-              <div class="patient-cell">
-                <div class="patient-avatar pa-2">SR</div>
-                <div>
-                  <h4>Sara Rajan</h4>
-                  <span>PAT-00091</span>
-                </div>
-              </div>
-            </td>
-            <td class="muted-text">DOC-00089</td>
-            <td><span class="diagnosis-text">Acute Bronchitis</span></td>
-            <td><span class="med-count-badge">2 meds</span></td>
-            <td class="muted-text">10 Jun, 2025</td>
-            <td><span class="status-badge status-review">Review</span></td>
-            <td>
-              <div class="action-btns">
-                <button class="action-btn view" title="View">
-                  <svg
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                  >
-                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-                    <circle cx="12" cy="12" r="3" />
-                  </svg>
-                </button>
-                <button class="action-btn edit" title="Edit">
-                  <svg
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                  >
-                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-                  </svg>
-                </button>
-                <button class="action-btn delete" title="Delete">
-                  <svg
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                  >
-                    <polyline points="3 6 5 6 21 6" />
-                    <path d="M19 6l-1 14H6L5 6" />
-                    <path d="M10 11v6M14 11v6" />
-                    <path d="M9 6V4h6v2" />
-                  </svg>
-                </button>
-              </div>
-            </td>
-          </tr>
-          <tr>
-            <td><span class="record-id">MR-00003</span></td>
-            <td>
-              <div class="patient-cell">
-                <div class="patient-avatar pa-3">AK</div>
-                <div>
-                  <h4>Arjun Kumar</h4>
-                  <span>PAT-00312</span>
-                </div>
-              </div>
-            </td>
-            <td class="muted-text">DOC-00142</td>
-            <td><span class="diagnosis-text">Hypertension Stage 1</span></td>
-            <td><span class="med-count-badge">4 meds</span></td>
-            <td class="muted-text">08 Jun, 2025</td>
-            <td><span class="status-badge status-closed">Closed</span></td>
-            <td>
-              <div class="action-btns">
-                <button class="action-btn view" title="View">
-                  <svg
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                  >
-                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-                    <circle cx="12" cy="12" r="3" />
-                  </svg>
-                </button>
-                <button class="action-btn edit" title="Edit">
-                  <svg
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                  >
-                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-                  </svg>
-                </button>
-                <button class="action-btn delete" title="Delete">
-                  <svg
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                  >
-                    <polyline points="3 6 5 6 21 6" />
-                    <path d="M19 6l-1 14H6L5 6" />
-                    <path d="M10 11v6M14 11v6" />
-                    <path d="M9 6V4h6v2" />
-                  </svg>
-                </button>
-              </div>
-            </td>
-          </tr>
-          <tr>
-            <td><span class="record-id">MR-00004</span></td>
-            <td>
-              <div class="patient-cell">
-                <div class="patient-avatar pa-4">MP</div>
-                <div>
-                  <h4>Meera Pillai</h4>
-                  <span>PAT-00187</span>
-                </div>
-              </div>
-            </td>
-            <td class="muted-text">DOC-00203</td>
-            <td><span class="diagnosis-text">Iron Deficiency Anaemia</span></td>
-            <td><span class="med-count-badge">2 meds</span></td>
-            <td class="muted-text">05 Jun, 2025</td>
-            <td><span class="status-badge status-active">Active</span></td>
-            <td>
-              <div class="action-btns">
-                <button class="action-btn view" title="View">
+                <button class="action-btn view" title="View" (click)="viewMedicalRecord(record.medicalRecordId,patientMap[record.patientId],doctorMap[record.doctorId])">
                   <svg
                     width="14"
                     height="14"
@@ -835,6 +635,23 @@
           </tr>
         </tbody>
       </table>
+      <div class="pagination-bar">
+        <button class="page-btn" (click)="prevPage()" [disabled]="page === 1">Prev</button>
+
+        <div class="page-numbers">
+          <button
+            *ngFor="let p of [].constructor(totalPages); let i = index"
+            class="page-number"
+            [class.active]="page === i + 1"
+            (click)="goToPage(i + 1)"
+          >
+            {{ i + 1 }}
+          </button>
+        </div>
+
+        <!-- Next -->
+        <button class="page-btn" (click)="nextPage()" [disabled]="page === totalPages">Next</button>
+      </div>
     </div>
   </div>
 </div>

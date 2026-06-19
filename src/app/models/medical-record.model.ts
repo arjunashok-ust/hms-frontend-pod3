@@ -1,4 +1,5 @@
 export interface MedicalRecordModel {
+  medicalRecordId: string,
   patientId: string;
   appointmentId: string;
   doctorId: string;
@@ -8,8 +9,9 @@ export interface MedicalRecordModel {
   medications: Medications[];
   medicalObservations: Observations[];
   notes: string;
+  status: string,
   createdBy: string;
-  createdAt: Date;
+  created_at: Date;
 }
 
 export interface Medications {

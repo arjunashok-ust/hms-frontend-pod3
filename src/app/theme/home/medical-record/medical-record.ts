@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { UserService } from '../../../services/user.service';
 import { EmployeeModel, PatientModel } from '../../../models/user.model';
@@ -10,6 +10,7 @@ import { AppointmentService } from '../../../services/appointment.service';
 import { AppointmentModel } from '../../../models/appointment.model';
 import { MedicalRecordModel } from '../../../models/medical-record.model';
 import { MedicalRecordService } from '../../../services/medical-record.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-medical-record',
@@ -23,7 +24,9 @@ export class MedicalRecordComponent implements OnInit {
   userService: UserService = inject(UserService);
   appointmentService: AppointmentService = inject(AppointmentService);
   medicalRecordService: MedicalRecordService = inject(MedicalRecordService);
+  router: Router = inject(Router);
   toast: ToastrService = inject(ToastrService);
+  cd: ChangeDetectorRef = inject(ChangeDetectorRef);
 
   filteredDoctors: EmployeeModel[] | [] = [];
   filteredPatients: PatientModel[] | [] = [];
@@ -31,15 +34,22 @@ export class MedicalRecordComponent implements OnInit {
 
   employeeId = localStorage.getItem('employeeId');
 
-  searchDoctorText = '';
-  searchPatientText = '';
-
   medicalRecordCount = 0;
   completedCount = 0;
   draftCount = 0;
   deletedCount = 0;
 
   isLoading = false;
+
+  totalPages = 0;
+  page = 1;
+  limit = 5;
+  total = 0;
+
+  medicalRecords: MedicalRecordModel[] | [] = [];
+
+  patientMap: { [key: string]: any } = {};
+  doctorMap: { [key: string]: any } = {};
 
   constructor(readonly fb: FormBuilder) {
     this.medicalForm = fb.group({
@@ -59,6 +69,7 @@ export class MedicalRecordComponent implements OnInit {
 
   ngOnInit(): void {
     this.fetchMedicalRecordStats();
+    // attaching an event listener to appointment form control
     this.medicalForm.get('appointmentID')?.valueChanges.subscribe((value) => {
       let appointment = this.filteredAppointments.find((apt) => {
         return apt.appointmentId === value;
@@ -69,6 +80,8 @@ export class MedicalRecordComponent implements OnInit {
         doctorId: appointment?.doctorEmployeeId,
       });
     });
+
+    this.fetchMedicalRecordPageDetails();
   }
 
   get medications() {
@@ -112,6 +125,37 @@ export class MedicalRecordComponent implements OnInit {
     this.observations.removeAt(index);
   }
 
+  prevPage() {
+    if (this.page > 1) {
+      this.page--;
+    }
+  }
+
+  nextPage() {
+    if (this.page < this.totalPages) {
+      this.page++;
+    }
+  }
+
+  goToPage(index: number) {
+    this.page = index;
+  }
+
+  fetchMedicalRecordPageDetails() {
+    this.medicalRecordService.getMedicalRecords(this.page, this.limit).subscribe({
+      next: (res) => {
+        console.log(res);
+        this.totalPages = res.totalPages;
+        this.medicalRecords = res.data;
+        this.mapPatientAndDoctors(this.medicalRecords);
+        this.cd.detectChanges();
+      },
+      error: (err) => {
+        this.toast.error(err?.error?.message || 'Error getting appointment stats');
+      },
+    });
+  }
+
   fetchMedicalRecordStats() {
     this.medicalRecordService.getMedicalStats().subscribe({
       next: (res) => {
@@ -128,13 +172,15 @@ export class MedicalRecordComponent implements OnInit {
 
   getDoctors() {
     const searchDoctorText = this.medicalForm.get('doctorId')?.value;
-    if (!this.searchDoctorText.trim()) return;
+    if (!searchDoctorText.trim()) return;
     this.userService
-      .getDoctorsBySearch(this.searchDoctorText)
+      .getDoctorsBySearch(searchDoctorText)
       .pipe(debounceTime(300))
       .subscribe({
         next: (res) => {
           this.filteredDoctors = res;
+          this.medicalForm.get('appointmentId')?.setValue('');
+          this.getAppointments();
         },
         error: (err) => {
           this.toast.error(err?.error?.message || 'Error getting doctors');
@@ -144,13 +190,15 @@ export class MedicalRecordComponent implements OnInit {
 
   getPatients() {
     const searchPatientText = this.medicalForm.get('patientId')?.value;
-    if (!this.searchPatientText.trim()) return;
+    if (!searchPatientText.trim()) return;
     this.userService
-      .getPatientsBySearch(this.searchPatientText)
+      .getPatientsBySearch(searchPatientText)
       .pipe(debounceTime(300))
       .subscribe({
         next: (res) => {
           this.filteredPatients = res;
+          this.medicalForm.get('appointmentId')?.setValue('');
+          this.getAppointments();
         },
         error: (err) => {
           this.toast.error(err?.error?.message || 'Error getting patients');
@@ -159,9 +207,9 @@ export class MedicalRecordComponent implements OnInit {
   }
 
   getAppointments() {
-    const patientId = this.medicalForm.get('patientId')?.value;
-    const doctorId = this.medicalForm.get('doctorId')?.value;
-    const appointmentId = this.medicalForm.get('appointmentId')?.value;
+    const patientId = this.medicalForm.get('patientId')?.value ?? '';
+    const doctorId = this.medicalForm.get('doctorId')?.value ?? '';
+    const appointmentId = this.medicalForm.get('appointmentId')?.value ?? '';
 
     this.appointmentService
       .getAppointmentByDoctorIdOrPatientId(doctorId, patientId, appointmentId)
@@ -176,10 +224,39 @@ export class MedicalRecordComponent implements OnInit {
       });
   }
 
-  onSubmit() {
+  mapPatientAndDoctors(records: MedicalRecordModel[]) {
+    records.forEach((record) => {
+      // for patient name map
+      if (!this.patientMap[record.patientId] && record.patientId) {
+        this.userService.getPatientById(record.patientId).subscribe((res) => {
+          this.patientMap[record.patientId] = res.name;
+          this.cd.detectChanges();
+        });
+      }
+      // for doctor name map
+      if (!this.doctorMap[record.doctorId] && record.doctorId) {
+        this.userService.getDoctorById(record.doctorId).subscribe((res) => {
+          this.doctorMap[record.doctorId] = res.name;
+          this.cd.detectChanges();
+        });
+      }
+    });
+  }
+
+  viewMedicalRecord(medicalRecordId: string, patientName: string, doctorName: string) {
+    this.router.navigate(['view-medical-record', medicalRecordId], {
+      state: {
+        patientName: patientName,
+        doctorName: doctorName,
+      },
+    });
+  }
+
+  onSubmit(recordStatus: string) {
     if (!this.medicalForm.valid) return this.toast.info('Validation Failed');
     this.isLoading = true;
     const payload: MedicalRecordModel = {
+      medicalRecordId: '',
       patientId: this.medicalForm.get('patientId')?.value,
       doctorId: this.medicalForm.get('doctorId')?.value,
       appointmentId: this.medicalForm.get('appointmentId')?.value,
@@ -191,9 +268,9 @@ export class MedicalRecordComponent implements OnInit {
 
       notes: this.medicalForm.get('notes')?.value,
       complaint: this.medicalForm.get('complaint')?.value,
-
+      status: recordStatus,
       createdBy: this.medicalForm.get('createdBy')?.value,
-      createdAt: new Date(),
+      created_at: new Date(),
     };
 
     this.medicalRecordService.createMedicalRecord(payload).subscribe({

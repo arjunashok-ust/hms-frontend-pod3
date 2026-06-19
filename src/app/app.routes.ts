@@ -16,6 +16,7 @@ import { NotFoundComponent } from './theme/home/modal/not-found/not-found';
 import { RouteGuard } from './services/guard/route.guard';
 import { EditPatientComponent } from './theme/home/modal/edit-patient/edit-patient';
 import { MedicalRecordComponent } from './theme/home/medical-record/medical-record';
+import { ViewMedicalRecordComponent } from './theme/home/modal/view-medical-record/view-medical-record';
 
 export const routes: Routes = [
   {
@@ -75,6 +76,10 @@ export const routes: Routes = [
       {
         path: 'medical-record',
         component: MedicalRecordComponent,
+      },
+      {
+        path: 'view-medical-record/:medicalRecordId',
+        component: ViewMedicalRecordComponent,
       },
     ],
   },

@@ -92,12 +92,12 @@
 
 .chip-purple {
   background: rgba(233, 221, 255, 0.1);
-  color: #4c1d95; 
+  color: #4c1d95;
 }
 
 .chip-blue {
   background: rgba(197, 214, 252, 0.1);
-  color: #1e3a8a; 
+  color: #1e3a8a;
 }
 
 .records-metrics {
@@ -302,7 +302,7 @@
 }
 .card-block {
   background: rgba(255, 255, 255, 0.9);
-  border: 1px solid rgba(0,0,0,0.1);
+  border: 1px solid rgba(0, 0, 0, 0.1);
   border-radius: 20px;
   padding: 24px;
 }
@@ -707,7 +707,7 @@
 }
 
 .custom-autocomplete-panel {
-  background-color: #f5f5f5; 
+  background-color: #f5f5f5;
 }
 
 .custom-autocomplete-panel .mat-mdc-option {
@@ -718,17 +718,73 @@ small {
   color: #ff6b6b;
   font-size: 11px;
   margin-top: -8px;
-  padding:5px;
+  padding: 5px;
 }
 
-.option-title{
+.option-title {
   font-size: 14px;
   color: #141414;
 }
 
-.option-value{
+.option-value {
   font-size: 10px;
   color: #c4c4c4;
+}
+
+.pagination-bar {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.page-btn {
+  padding: 8px 16px;
+  border-radius: 10px;
+  border: none;
+  background: #7c3aed;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.page-btn:disabled {
+  background: #e2e8f0;
+  color: #3f454e;
+  cursor: not-allowed;
+}
+
+.page-btn:hover:not(:disabled) {
+  background: #6d28d9;
+}
+
+.page-numbers {
+  display: flex;
+  gap: 8px;
+}
+
+.page-number {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  border: none;
+  background: #f5f3ff;
+  color: #5b21b6;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.page-number:hover {
+  background: #ddd6fe;
+}
+
+.page-number.active {
+  background: #7c3aed;
+  color: white;
 }
 
 @media (max-width: 992px) {
