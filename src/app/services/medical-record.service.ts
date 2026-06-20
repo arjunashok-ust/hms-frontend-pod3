@@ -30,7 +30,7 @@ export class MedicalRecordService {
       .pipe(catchError((error) => this.handleError(error)));
   }
 
-  // Medical Record Stats
+  // Get Medical Records
   getMedicalRecords(page: number, limit: number): Observable<any> {
     return this.http
       .get(`${this.api.backend_url}/medicalRecord/getMedicalRecords`, {
@@ -42,13 +42,22 @@ export class MedicalRecordService {
       .pipe(catchError((error) => this.handleError(error)));
   }
 
-  // Medical Record Stats
+  // Get Records By Id
   getMedicalRecordById(medicalRecordId: string): Observable<MedicalRecordModel> {
     return this.http
       .get<MedicalRecordModel>(`${this.api.backend_url}/medicalRecord/getMedicalRecordById`, {
         params: {
           medicalRecordId,
         },
+      })
+      .pipe(catchError((error) => this.handleError(error)));
+  }
+
+  // Delete Medical Record
+  deleteMedicalRecord(medicalRecordId: string): Observable<any> {
+    return this.http
+      .post(`${this.api.backend_url}/medicalRecord/deleteMedicalRecord`, {
+        medicalRecordId,
       })
       .pipe(catchError((error) => this.handleError(error)));
   }
