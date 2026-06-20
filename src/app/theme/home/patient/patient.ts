@@ -13,10 +13,11 @@ import { PatientModel } from '../../../models/user.model';
 import { ToastrService } from 'ngx-toastr';
 import { DobValidator } from '../../../validators/time-range-validator';
 import { HasPermissionDirective } from '../../../directive/has-permission.directive';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 
 @Component({
   selector: 'app-patient',
-  imports: [RouterModule, FormsModule, ReactiveFormsModule, CommonModule, HasPermissionDirective],
+  imports: [RouterModule, FormsModule, ReactiveFormsModule, CommonModule, HasPermissionDirective, MatAutocompleteModule],
   templateUrl: './patient.html',
   styleUrl: './patient.css',
 })

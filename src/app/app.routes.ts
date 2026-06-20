@@ -78,6 +78,10 @@ export const routes: Routes = [
         component: MedicalRecordComponent,
       },
       {
+        path: 'medical-record/:medRecordId',
+        component: MedicalRecordComponent,
+      },
+      {
         path: 'view-medical-record/:medicalRecordId',
         component: ViewMedicalRecordComponent,
       },

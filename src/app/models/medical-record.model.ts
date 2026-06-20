@@ -12,6 +12,8 @@ export interface MedicalRecordModel {
   status: string,
   createdBy: string;
   created_at: Date;
+  updatedBy: string,
+  updateddAt: Date,
 }
 
 export interface Medications {

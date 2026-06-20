@@ -10,11 +10,12 @@ import { AppointmentService } from '../../../services/appointment.service';
 import { AppointmentModel } from '../../../models/appointment.model';
 import { MedicalRecordModel } from '../../../models/medical-record.model';
 import { MedicalRecordService } from '../../../services/medical-record.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { HasPermissionDirective } from "../../../directive/has-permission.directive";
 
 @Component({
   selector: 'app-medical-record',
-  imports: [ReactiveFormsModule, CommonModule, MatAutocompleteModule],
+  imports: [ReactiveFormsModule, CommonModule, MatAutocompleteModule, HasPermissionDirective],
   templateUrl: './medical-record.html',
   styleUrl: './medical-record.css',
 })
@@ -25,6 +26,7 @@ export class MedicalRecordComponent implements OnInit {
   appointmentService: AppointmentService = inject(AppointmentService);
   medicalRecordService: MedicalRecordService = inject(MedicalRecordService);
   router: Router = inject(Router);
+  editRoute: ActivatedRoute = inject(ActivatedRoute);
   toast: ToastrService = inject(ToastrService);
   cd: ChangeDetectorRef = inject(ChangeDetectorRef);
 
@@ -39,7 +41,9 @@ export class MedicalRecordComponent implements OnInit {
   draftCount = 0;
   deletedCount = 0;
 
-  isLoading = false;
+  isCreateLoading = false;
+  isDraftLoading = false;
+  isEditable = false;
 
   totalPages = 0;
   page = 1;
@@ -47,6 +51,8 @@ export class MedicalRecordComponent implements OnInit {
   total = 0;
 
   medicalRecords: MedicalRecordModel[] | [] = [];
+  medicalRecord: MedicalRecordModel | null = null;
+  medicalRecordId = '';
 
   patientMap: { [key: string]: any } = {};
   doctorMap: { [key: string]: any } = {};
@@ -69,8 +75,25 @@ export class MedicalRecordComponent implements OnInit {
 
   ngOnInit(): void {
     this.fetchMedicalRecordStats();
+
+    this.editRoute.paramMap.subscribe((params) => {
+      this.medicalRecordId = params.get('medRecordId') || '';
+
+      this.isEditable = false;
+      this.medicalRecord = null;
+      this.resetForm();
+
+      if (this.medicalRecordId) {
+        this.isEditable = true;
+        this.fetchMedicalRecord(this.medicalRecordId);
+      }
+
+      this.fetchMedicalRecordPageDetails();
+    });
+
     // attaching an event listener to appointment form control
-    this.medicalForm.get('appointmentID')?.valueChanges.subscribe((value) => {
+    this.medicalForm.get('appointmentId')?.valueChanges.subscribe((value) => {
+      if (this.isEditable) return;
       let appointment = this.filteredAppointments.find((apt) => {
         return apt.appointmentId === value;
       });
@@ -80,8 +103,6 @@ export class MedicalRecordComponent implements OnInit {
         doctorId: appointment?.doctorEmployeeId,
       });
     });
-
-    this.fetchMedicalRecordPageDetails();
   }
 
   get medications() {
@@ -90,6 +111,28 @@ export class MedicalRecordComponent implements OnInit {
 
   get observations() {
     return this.medicalForm.get('observations') as FormArray;
+  }
+
+  resetForm() {
+    this.medications.clear();
+    this.observations.clear();
+
+    this.medications.push(this.createMedRow());
+    this.observations.push(this.createObsRow());
+    if (this.isEditable) {
+      this.medicalForm.reset({
+        createdBy: this.employeeId,
+        status: 'Completed',
+        doctorId: this.medicalForm.get('doctorId')?.value,
+        patientId: this.medicalForm.get('patientId')?.value,
+        appointmentId: this.medicalForm.get('appointmentId')?.value,
+      });
+    } else {
+      this.medicalForm.reset({
+        createdBy: this.employeeId,
+        status: 'Completed',
+      });
+    }
   }
 
   createMedRow(): FormGroup {
@@ -129,12 +172,14 @@ export class MedicalRecordComponent implements OnInit {
     if (this.page > 1) {
       this.page--;
     }
+    this.fetchMedicalRecordPageDetails();
   }
 
   nextPage() {
     if (this.page < this.totalPages) {
       this.page++;
     }
+    this.fetchMedicalRecordPageDetails();
   }
 
   goToPage(index: number) {
@@ -179,8 +224,8 @@ export class MedicalRecordComponent implements OnInit {
       .subscribe({
         next: (res) => {
           this.filteredDoctors = res;
-          this.medicalForm.get('appointmentId')?.setValue('');
           this.getAppointments();
+          this.cd.detectChanges();
         },
         error: (err) => {
           this.toast.error(err?.error?.message || 'Error getting doctors');
@@ -197,8 +242,8 @@ export class MedicalRecordComponent implements OnInit {
       .subscribe({
         next: (res) => {
           this.filteredPatients = res;
-          this.medicalForm.get('appointmentId')?.setValue('');
           this.getAppointments();
+          this.cd.detectChanges();
         },
         error: (err) => {
           this.toast.error(err?.error?.message || 'Error getting patients');
@@ -252,38 +297,153 @@ export class MedicalRecordComponent implements OnInit {
     });
   }
 
+  fetchMedicalRecord(medicalRecordId: string) {
+    this.medicalRecordService.getMedicalRecordById(medicalRecordId).subscribe({
+      next: (res) => {
+        this.medicalRecord = res;
+        this.patchForm(res);
+        this.cd.detectChanges();
+      },
+      error: (err) => {
+        this.toast.error(err?.error?.message || 'Error getting medical record');
+        this.router.navigate(['/medical-record']);
+      },
+    });
+  }
+
+  patchForm(medicalRecord: MedicalRecordModel) {
+    this.medicalForm.patchValue({
+      medicalRecordId: medicalRecord.medicalRecordId,
+      patientId: medicalRecord.patientId,
+      doctorId: medicalRecord.doctorId,
+      appointmentId: medicalRecord.appointmentId,
+      symptoms: medicalRecord.symptoms,
+      diagnosis: medicalRecord.diagnosis,
+      notes: medicalRecord.notes,
+      complaint: medicalRecord.complaint,
+      status: medicalRecord.status,
+      createdBy: medicalRecord.createdBy,
+    });
+
+    this.setMedications(medicalRecord.medications);
+    this.setObservations(medicalRecord.medicalObservations);
+  }
+
+  setMedications(meds: any[]) {
+    this.medications.clear();
+
+    if (!meds || meds.length == 0) {
+      this.medications.push(
+        this.fb.group({
+          name: '',
+          dosage: '',
+          frequency: '',
+          duration: '',
+        }),
+      );
+    }
+
+    meds.forEach((m) => {
+      this.medications.push(
+        this.fb.group({
+          name: m.name,
+          dosage: m.dosage,
+          frequency: m.frequency,
+          duration: m.duration,
+        }),
+      );
+    });
+  }
+
+  setObservations(obs: any[]) {
+    this.observations.clear();
+
+    if (!obs || obs.length == 0) {
+      this.observations.push(
+        this.fb.group({
+          metricName: '',
+          metricValue: '',
+          recordedAt: '',
+        }),
+      );
+    }
+
+    obs.forEach((o) => {
+      this.observations.push(
+        this.fb.group({
+          metricName: o.metricName,
+          metricValue: o.metricValue,
+          recordedAt: o.recordedAt,
+        }),
+      );
+    });
+  }
+
+  editProfile(medRecordId: any) {
+    this.router.navigate(['medical-record', medRecordId]);
+  }
+
+  cancelEdit() {
+    this.isEditable = false;
+    this.router.navigate(['medical-record']);
+  }
+
   onSubmit(recordStatus: string) {
     if (!this.medicalForm.valid) return this.toast.info('Validation Failed');
-    this.isLoading = true;
-    const payload: MedicalRecordModel = {
-      medicalRecordId: '',
+
+
+    const payload: any = {
+      medicalRecordId: this.isEditable ? this.medicalRecordId : '',
       patientId: this.medicalForm.get('patientId')?.value,
       doctorId: this.medicalForm.get('doctorId')?.value,
       appointmentId: this.medicalForm.get('appointmentId')?.value,
       symptoms: this.medicalForm.get('symptoms')?.value,
       diagnosis: this.medicalForm.get('diagnosis')?.value,
-
       medications: this.medicalForm.get('medications')?.value,
       medicalObservations: this.medicalForm.get('observations')?.value,
-
       notes: this.medicalForm.get('notes')?.value,
       complaint: this.medicalForm.get('complaint')?.value,
       status: recordStatus,
       createdBy: this.medicalForm.get('createdBy')?.value,
-      created_at: new Date(),
     };
 
-    this.medicalRecordService.createMedicalRecord(payload).subscribe({
-      next: (res) => {
-        this.toast.success('Medical Record Created Sucessfully.');
-        this.isLoading = false;
-      },
-      error: (err) => {
-        this.toast.error(err?.error?.message || err?.message || 'Something went wrong!');
-        this.isLoading = false;
-      },
-    });
-    this.medicalForm.reset({ createdBy: this.employeeId });
-    return true;
+    if (this.isEditable) {
+      this.isDraftLoading=true;
+      payload.updatedBy = this.employeeId;
+      payload.updatedAt = new Date();
+
+      this.medicalRecordService.updateMedicalRecord(payload).subscribe({
+        next: (res) => {
+          this.toast.success('Medical Record Updated Sucessfully.');
+          this.isDraftLoading = false;
+          this.cd.detectChanges();
+        },
+        error: (err) => {
+          this.toast.error(err?.error?.message || err?.message || 'Something went wrong!');
+          this.isDraftLoading = false;
+          this.cd.detectChanges();
+        },
+      });
+      this.medicalForm.reset({
+        createdBy: this.employeeId,
+      });
+      return true;
+    } else {
+      this.isCreateLoading=true;
+      payload.created_at = new Date();
+
+      this.medicalRecordService.createMedicalRecord(payload).subscribe({
+        next: (res) => {
+          this.toast.success('Medical Record Created Sucessfully.');
+          this.isCreateLoading = false;
+        },
+        error: (err) => {
+          this.toast.error(err?.error?.message || err?.message || 'Something went wrong!');
+          this.isCreateLoading = false;
+        },
+      });
+      this.medicalForm.reset({ createdBy: this.employeeId });
+      return true;
+    }
   }
 }

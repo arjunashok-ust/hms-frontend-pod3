@@ -16,6 +16,13 @@ export class MedicalRecordService {
       .pipe(catchError((error) => this.handleError(error)));
   }
 
+  // Medical Record Creation
+  updateMedicalRecord(data: MedicalRecordModel): Observable<any> {
+    return this.http
+      .post(`${this.api.backend_url}/medicalRecord/updateMedicalRecord`, data)
+      .pipe(catchError((error) => this.handleError(error)));
+  }
+
   // Medical Record Stats
   getMedicalStats(): Observable<any> {
     return this.http

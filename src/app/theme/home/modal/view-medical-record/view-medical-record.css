@@ -49,14 +49,14 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #64748b;
+  color: #363b43;
   z-index: 10;
   transition: 0.2s ease;
 }
 
 .vmr-close:hover {
   background: #fee2e2;
-  color: #e11d48;
+  color: #ae1536;
 }
 
 .vmr-header {

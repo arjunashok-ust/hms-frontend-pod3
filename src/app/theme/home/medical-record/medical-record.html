@@ -126,8 +126,7 @@
         <span class="panel-subtitle">New Entry</span>
         <h2>Medical Record</h2>
       </div>
-      <div class="panel-actions">
-      </div>
+      <div class="panel-actions"></div>
     </div>
 
     <form [formGroup]="medicalForm">
@@ -161,7 +160,7 @@
                 [matAutocomplete]="auto"
                 (input)="getPatients()"
               />
-              <mat-autocomplete #auto="matAutocomplete" panelClass="custom-autocomplete-panel">
+              <mat-autocomplete #auto="matAutocomplete">
                 <mat-option *ngFor="let patient of filteredPatients" [value]="patient.uhid">
                   <span class="option-title">{{ patient.name }}</span
                   ><br />
@@ -477,7 +476,7 @@
       </div>
 
       <div class="form-footer">
-        <button type="button" class="btn btn-ghost">
+        <button type="button" class="btn btn-ghost" (click)="resetForm()">
           <svg
             width="14"
             height="14"
@@ -491,7 +490,12 @@
           </svg>
           Reset
         </button>
-        <button type="button" class="btn btn-danger-outline">
+        <button
+          type="button"
+          class="btn btn-danger-outline"
+          (click)="cancelEdit()"
+          *ngIf="isEditable"
+        >
           <svg
             width="14"
             height="14"
@@ -519,7 +523,7 @@
             <line x1="12" y1="11" x2="12" y2="17" />
             <line x1="9" y1="14" x2="15" y2="14" />
           </svg>
-          Draft
+          {{ isDraftLoading? 'Drafting...':'Draft'}}
         </button>
         <button type="submit" class="btn btn-primary" (click)="onSubmit('Completed')">
           <svg
@@ -535,7 +539,7 @@
             <line x1="12" y1="11" x2="12" y2="17" />
             <line x1="9" y1="14" x2="15" y2="14" />
           </svg>
-          {{ isLoading ? 'Creating...' : 'Create' }}
+          {{ isCreateLoading ? 'Creating...' : 'Create' }}
         </button>
       </div>
     </form>
@@ -589,7 +593,17 @@
             </td>
             <td>
               <div class="action-btns">
-                <button class="action-btn view" title="View" (click)="viewMedicalRecord(record.medicalRecordId,patientMap[record.patientId],doctorMap[record.doctorId])">
+                <button
+                  class="action-btn view"
+                  title="View"
+                  (click)="
+                    viewMedicalRecord(
+                      record.medicalRecordId,
+                      patientMap[record.patientId],
+                      doctorMap[record.doctorId]
+                    )
+                  "
+                >
                   <svg
                     width="14"
                     height="14"
@@ -602,20 +616,31 @@
                     <circle cx="12" cy="12" r="3" />
                   </svg>
                 </button>
-                <button class="action-btn edit" title="Edit">
-                  <svg
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
+                <ng-container *hasPermission="['edit:medical-record']">
+                  <button
+                    class="action-btn edit"
+                    title="Edit"
+                    (click)="editProfile(record.medicalRecordId)"
+                    *ngIf="record.status != 'Completed'"
                   >
-                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-                  </svg>
-                </button>
-                <button class="action-btn delete" title="Delete">
+                    <svg
+                      width="14"
+                      height="14"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                    </svg>
+                  </button>
+                </ng-container>
+                <button
+                  class="action-btn delete"
+                  title="Delete"
+                  *hasPermission="['delete:medical-record']"
+                >
                   <svg
                     width="14"
                     height="14"
@@ -649,7 +674,6 @@
           </button>
         </div>
 
-        <!-- Next -->
         <button class="page-btn" (click)="nextPage()" [disabled]="page === totalPages">Next</button>
       </div>
     </div>

@@ -9,11 +9,10 @@ import { ToastrService } from 'ngx-toastr';
 import { appointmentDateValidator } from '../../../validators/time-range-validator';
 import { HasPermissionDirective } from '../../../directive/has-permission.directive';
 import { UserService } from '../../../services/user.service';
-import { MatAutocompleteModule } from '@angular/material/autocomplete';
 
 @Component({
   selector: 'app-appointment',
-  imports: [RouterModule, CommonModule, ReactiveFormsModule, HasPermissionDirective,MatAutocompleteModule],
+  imports: [RouterModule, CommonModule, ReactiveFormsModule, HasPermissionDirective],
   templateUrl: './appointment.html',
   styleUrl: './appointment.css',
 })
