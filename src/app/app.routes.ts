@@ -11,6 +11,7 @@ import { Patient } from './components/patient/patient';
 import { authGuard } from './guards/authGuard';
 import { roleGuard } from './guards/roleGuard';
 import { AccessDenied } from './components/access-denied/access-denied';
+import { MedicalRecordComponent } from './components/medical-record/medical-record';
 
 export const routes: Routes = [
   { path: 'login', component: Login },
@@ -49,6 +50,11 @@ export const routes: Routes = [
       {
         path: 'patients', component: Patient, canActivate: [roleGuard], data: {
           permissions: ['CREATE_PATIENT', 'VIEW_PATIENT', 'UPDATE_PATIENT', 'DELETE_PATIENT']
+        }
+      },
+      {
+        path: 'records', component: MedicalRecordComponent, canActivate: [roleGuard], data: {
+          permissions: ['VIEW_ALL_RECORDS', 'CREATE_MY_RECORD', 'CREATE_RECORD_FOR_ANYONE']
         }
       },
       { path: '', redirectTo: 'profile', pathMatch: 'full' }

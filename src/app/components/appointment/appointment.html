@@ -394,9 +394,20 @@
               </td>
               <td>
                 <div class="action-buttons">
+                  @if (apt.status === 'Scheduled' || apt.status === 'Completed') {
+                    <button
+                      *hasPermission="['CREATE_RECORD_FOR_ANYONE', 'CREATE_MY_RECORD']"
+                      class="btn-action start-encounter"
+                      
+                      (click)="startEncounter(apt)"
+                      title="Start Medical Encounter"
+                    >
+                      <i class="bi bi-arrow-right-square"></i>
+                    </button>
+                  }
                   @if (apt.status?.toUpperCase() === 'PENDING') {
                     <button
-                      *hasPermission="['DELETE_APPOINTMENT', 'APPROVE_APPOINTMENT']"
+                      *hasPermission="['APPROVE_APPOINTMENT']"
                       class="btn-action approve"
                       (click)="approveAppointment(apt)"
                       title="Approve & Schedule"
@@ -404,7 +415,7 @@
                       <i class="bi bi-check-lg"></i>
                     </button>
                     <button
-                      *hasPermission="['DELETE_APPOINTMENT', 'APPROVE_APPOINTMENT']"
+                      *hasPermission="['DELETE_APPOINTMENT']"
                       class="btn-action reject"
                       (click)="rejectAppointment(apt)"
                       title="Reject Appointment"

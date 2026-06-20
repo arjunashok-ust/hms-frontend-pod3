@@ -4,6 +4,7 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, AbstractContro
 import { AppointmentService } from '../../services/appointmentService/appointment-service';
 import { ApiService } from '../../services/apiService/api-service';
 import { ToastrService } from 'ngx-toastr';
+import { Router } from '@angular/router';
 import { HasPermissionDirective } from '../../directives/has-permission.directive';
 
 @Component({
@@ -40,6 +41,7 @@ export class Appointment implements OnInit {
     private readonly appointmentService: AppointmentService,
     private readonly apiService: ApiService,
     private readonly cdr: ChangeDetectorRef,
+    private readonly router: Router,
     @Inject(PLATFORM_ID) private readonly platformId: Object
   ) {
     this.initForm();
@@ -128,11 +130,9 @@ export class Appointment implements OnInit {
 
   fetchRecentAppointments() {
     this.appointmentService.getRecentAppointments().subscribe(data => {
-      if (this.userRole === 'DOCTOR') {
-        this.recentAppointments = data.filter((apt: any) =>
-          apt.doctorEmployeeID === this.currentUser?.employeeCode
-        );
+      this.recentAppointments = data; // Backend already filtered this!
 
+      if (this.userRole === 'DOCTOR') {
         this.stats = {
           total: this.recentAppointments.length,
           completed: this.recentAppointments.filter((a: any) => a.status === 'Completed').length,
@@ -141,7 +141,6 @@ export class Appointment implements OnInit {
           pending: this.recentAppointments.filter((a: any) => a.status?.toUpperCase() === 'PENDING').length
         };
       } else {
-        this.recentAppointments = data;
         this.stats.pending = this.recentAppointments.filter((a: any) => a.status?.toUpperCase() === 'PENDING').length;
       }
       this.cdr.detectChanges();
@@ -466,5 +465,19 @@ export class Appointment implements OnInit {
         }
       });
     }
+  }
+
+  startEncounter(apt: any) {
+    // Only allow starting an encounter if the appointment is Scheduled/Completed
+    // (You can adjust this logic based on your business rules)
+    if (apt.status === 'Cancelled' || apt.status.toUpperCase() === 'PENDING') {
+      this.toast.error('Cannot start encounter for this appointment status.');
+      return;
+    }
+
+    // Redirect to the records page and pass the appointment ID in the query string
+    this.router.navigate(['/records'], {
+      queryParams: { appointmentId: apt.appointmentCode }
+    });
   }
 }

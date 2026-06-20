@@ -55,4 +55,6 @@ export class AppointmentService {
       { headers },
     );
   }
+  getAllAppointments(): Observable<any> { return this.http.get(`${this.apiUrl}/api/appointment/all`); }
+
 }

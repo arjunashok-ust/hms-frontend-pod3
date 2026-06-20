@@ -1,0 +1,435 @@
+<div class="page-wrapper">
+  <div *hasPermission="['VIEW_ALL_RECORDS', 'CREATE_RECORD_FOR_ANYONE']" class="dashboard-header">
+    <div class="title-section">
+      <p class="subtitle">MEDICAL RECORDS</p>
+      <h1 class="page-title">Medical Records</h1>
+      <p class="desc">Create, manage, and review patient medical records.</p>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-card purple">
+        <div class="icon-box"><i class="bi bi-file-earmark-medical"></i></div>
+        <div class="stat-info">
+          <h2>{{ stats.total }}</h2>
+          <p>Total</p>
+        </div>
+      </div>
+      <div class="stat-card green">
+        <div class="icon-box"><i class="bi bi-check-circle"></i></div>
+        <div class="stat-info">
+          <h2>{{ stats.active }}</h2>
+          <p>Finalized</p>
+        </div>
+      </div>
+      <div class="stat-card blue">
+        <div class="icon-box"><i class="bi bi-clock-history"></i></div>
+        <div class="stat-info">
+          <h2>{{ stats.review }}</h2>
+          <p>Drafts</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *hasPermission="['CREATE_RECORD_FOR_ANYONE', 'CREATE_MY_RECORD']" class="form-container">
+    <p class="subtitle">NEW ENTRY</p>
+    <h2 class="section-title">Medical Record</h2>
+
+    <form [formGroup]="recordForm">
+      <div class="form-layout-grid">
+        <div class="left-col">
+          <div class="form-card">
+            <h3>Patient & Appointment Details</h3>
+            <p class="card-desc">BASIC INFORMATION</p>
+            <div class="input-row">
+              <div class="input-group">
+                <label for="appointment"><i class="bi bi-calendar"></i> APPOINTMENT ID *</label>
+                <div class="searchable-dropdown-container">
+                  <input
+                    type="text"
+                    class="form-control custom-select"
+                    placeholder="Search APT ID..."
+                    [value]="selectedFormAppointment"
+                    (input)="onAppointmentInput($event)"
+                    (focus)="isFormAppointmentOpen = true; displayFormAppointments = appointments"
+                    (blur)="closeDropdowns('formAppointment')"
+                    [class.is-invalid]="
+                      recordForm.get('appointmentId')?.invalid &&
+                      recordForm.get('appointmentId')?.touched
+                    "
+                  />
+                  @if (isFormAppointmentOpen) {
+                    <div class="dropdown-list shadow-sm">
+                      @for (apt of displayFormAppointments; track apt.appointmentCode) {
+                        <div
+                          class="dropdown-item"
+                          (mousedown)="$event.preventDefault(); selectAppointment(apt)"
+                        >
+                          <div style="font-weight: bold; color: #111827; font-size: 0.9rem">
+                            {{ apt.appointmentCode }}
+                          </div>
+                        </div>
+                      } @empty {
+                        <div class="dropdown-item text-muted" style="padding: 10px 16px">
+                          No match
+                        </div>
+                      }
+                    </div>
+                  }
+                </div>
+              </div>
+
+              <div class="input-group">
+                <label for="patient"><i class="bi bi-person"></i> PATIENT *</label>
+                <div class="searchable-dropdown-container">
+                  <input
+                    type="text"
+                    class="form-control custom-select"
+                    placeholder="Search Name or ID..."
+                    [value]="selectedFormPatient"
+                    (input)="onPatientInput($event, 'form')"
+                    (focus)="isFormPatientOpen = true; displayFormPatients = patients"
+                    (blur)="closeDropdowns('formPatient')"
+                    [class.is-invalid]="
+                      recordForm.get('patientId')?.invalid && recordForm.get('patientId')?.touched
+                    "
+                  />
+                  @if (isFormPatientOpen) {
+                    <div class="dropdown-list shadow-sm">
+                      @for (pat of displayFormPatients; track pat.UHID) {
+                        <div
+                          class="dropdown-item"
+                          (mousedown)="$event.preventDefault(); selectPatient(pat, 'form')"
+                        >
+                          <div style="font-weight: bold; color: #111827; font-size: 0.9rem">
+                            {{ pat.name }}
+                          </div>
+                          <div style="color: #6b7280; font-size: 0.75rem">{{ pat.UHID }}</div>
+                        </div>
+                      } @empty {
+                        <div class="dropdown-item text-muted" style="padding: 10px 16px">
+                          No match
+                        </div>
+                      }
+                    </div>
+                  }
+                </div>
+              </div>
+
+              <div class="input-group">
+                <label for="doctor"><i class="bi bi-person-badge"></i> DOCTOR *</label>
+                <div class="searchable-dropdown-container">
+                  <input
+                    type="text"
+                    class="form-control custom-select"
+                    placeholder="Search Name or ID..."
+                    [value]="selectedFormDoctor"
+                    (input)="onDoctorInput($event, 'form')"
+                    (focus)="openFormDoctorDropdown()"
+                    (blur)="closeDropdowns('formDoctor')"
+                    [readonly]="!userPermissions.includes('CREATE_RECORD_FOR_ANYONE')"
+                    [class.is-invalid]="
+                      recordForm.get('doctorEmployeeId')?.invalid &&
+                      recordForm.get('doctorEmployeeId')?.touched
+                    "
+                  />
+                  @if (isFormDoctorOpen) {
+                    <div class="dropdown-list shadow-sm">
+                      @for (doc of displayFormDoctors; track doc.employeeCode) {
+                        <div
+                          class="dropdown-item"
+                          (mousedown)="$event.preventDefault(); selectDoctor(doc, 'form')"
+                        >
+                          <div style="font-weight: bold; color: #111827; font-size: 0.9rem">
+                            {{ doc.name }}
+                          </div>
+                          <div style="color: #6b7280; font-size: 0.75rem">
+                            {{ doc.employeeCode }}
+                          </div>
+                        </div>
+                      } @empty {
+                        <div class="dropdown-item text-muted" style="padding: 10px 16px">
+                          No match
+                        </div>
+                      }
+                    </div>
+                  }
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-card summary">
+            <h3>Clinical Summary</h3>
+            <p class="card-desc">COMPLAINT, SYMPTOMS & DIAGNOSIS</p>
+            <div class="input-group complaint full-width">
+              <label for="complaint">COMPLAINT</label>
+              <textarea
+                class="scrollable-textarea-complaint"
+                formControlName="complaint"
+              ></textarea>
+            </div>
+            <div class="input-group symptoms full-width mt-3">
+              <label for="syptoms">SYMPTOMS</label>
+              <textarea class="scrollable-textarea-symptoms" formControlName="symptoms"></textarea>
+            </div>
+            <div class="input-group diagnosis mt-3">
+              <label for="diagnosis">DIAGNOSIS</label>
+              <textarea
+                class="scrollable-textarea-diagnosis"
+                formControlName="diagnosis"
+              ></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="right-col">
+          <div class="form-card">
+            <h3>Medications</h3>
+            <p class="card-desc">CURRENT & PRESCRIBED</p>
+            <div class="array-scroll-container" formArrayName="medications">
+              @if (medications.length > 0) {
+                <table class="array-table">
+                  <thead>
+                    <tr>
+                      <th>NAME</th>
+                      <th>DOSAGE</th>
+                      <th>FREQ</th>
+                      <th>DUR</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (med of medications.controls; track $index; let i = $index) {
+                      <tr [formGroupName]="i">
+                        <td><input type="text" formControlName="name" placeholder="Name" /></td>
+                        <td><input type="text" formControlName="dosage" placeholder="50mg" /></td>
+                        <td>
+                          <input type="text" formControlName="frequency" placeholder="Twice" />
+                        </td>
+                        <td>
+                          <input type="text" formControlName="duration" placeholder="5 days" />
+                        </td>
+                        <td>
+                          <button type="button" class="btn-delete medication" (click)="removeMedication(i)">
+                            <i class="bi bi-x"></i>
+                          </button>
+                        </td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              }
+            </div>
+            <button type="button" class="btn-add-array mt-2" (click)="addMedication()">
+              + Add Medication
+            </button>
+          </div>
+
+          <div class="form-card mt-4">
+            <h3>Medical Observations</h3>
+            <div class="array-scroll-container" formArrayName="medicalObservations">
+              @if (medicalObservations.length > 0) {
+                <table class="array-table">
+                  <thead>
+                    <tr>
+                      <th>METRIC</th>
+                      <th>VALUE</th>
+                      <th>TIME</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (obs of medicalObservations.controls; track $index; let i = $index) {
+                      <tr [formGroupName]="i">
+                        <td>
+                          <input type="text" formControlName="metricName" placeholder="metric" />
+                        </td>
+                        <td>
+                          <input type="text" formControlName="metricValue" placeholder="value" />
+                        </td>
+                        <td>
+                          <input
+                            type="datetime-local"
+                            formControlName="recordedTime"
+                            placeholder="datetime"
+                          />
+                        </td>
+                        <td>
+                          <button type="button" class="btn-delete" (click)="removeObservation(i)">
+                            <i class="bi bi-x"></i>
+                          </button>
+                        </td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              }
+            </div>
+            <button type="button" class="btn-add-array mt-2" (click)="addObservation()">
+              + Add Observation
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-card mt-4 full-width">
+        <h3>Additional Notes</h3>
+        <div class="input-group full-width">
+          <textarea class="scrollable-textarea" formControlName="notes" rows="2"></textarea>
+        </div>
+      </div>
+      <div class="form-actions mt-4">
+        <button type="button" class="btn-reset" (click)="resetForm()">
+          <i class="bi bi-arrow-clockwise"></i>Reset
+        </button>
+        <div class="action-right">
+          <button type="button" class="btn-draft" (click)="onSubmit('DRAFT')">Save Draft</button>
+          <button type="button" class="btn-save" (click)="onSubmit('FINAL')">Save Final</button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div class="table-container mt-5">
+    <div class="table-header-flex">
+      <div>
+        <p class="subtitle">RECORDS</p>
+        <h2 class="section-title">All Medical Records</h2>
+      </div>
+
+      <div class="filter-group">
+        <div class="searchable-dropdown-container">
+          <input
+            type="text"
+            class="form-control custom-select"
+            placeholder="Filter Patient Name/ID"
+            [value]="selectedFilterPatient"
+            (input)="onPatientInput($event, 'filter')"
+            (focus)="isFilterPatientOpen = true; displayFilterPatients = patients"
+            (blur)="closeDropdowns('filterPatient')"
+          />
+          @if (isFilterPatientOpen) {
+            <div class="dropdown-list filter-list shadow-sm">
+              @for (pat of displayFilterPatients; track pat.UHID) {
+                <div
+                  class="dropdown-item"
+                  (mousedown)="$event.preventDefault(); selectPatient(pat, 'filter')"
+                >
+                  <div style="font-weight: bold; color: #111827; font-size: 0.9rem">
+                    {{ pat.name }}
+                  </div>
+                  <div style="color: #6b7280; font-size: 0.75rem">{{ pat.UHID }}</div>
+                </div>
+              } @empty {
+                <div class="dropdown-item text-muted" style="padding: 10px 16px">No match</div>
+              }
+            </div>
+          }
+        </div>
+
+        <input
+          type="date"
+          [value]="filterDate"
+          (change)="onFilterDateChange($event)"
+          class="form-control"
+          style="width: auto"
+        />
+
+        <div class="searchable-dropdown-container" *hasPermission="'VIEW_ALL_RECORDS'">
+          <input
+            type="text"
+            class="form-control custom-select"
+            placeholder="Filter Doctor Name/ID"
+            [value]="selectedFilterDoctor"
+            (input)="onDoctorInput($event, 'filter')"
+            (focus)="openFilterDoctorDropdown()"
+            (blur)="closeDropdowns('filterDoctor')"
+          />
+          @if (isFilterDoctorOpen) {
+            <div class="dropdown-list filter-list shadow-sm">
+              @for (doc of displayFilterDoctors; track doc.employeeCode) {
+                <div
+                  class="dropdown-item"
+                  (mousedown)="$event.preventDefault(); selectDoctor(doc, 'filter')"
+                >
+                  <div style="font-weight: bold; color: #111827; font-size: 0.9rem">
+                    {{ doc.name }}
+                  </div>
+                  <div style="color: #6b7280; font-size: 0.75rem">{{ doc.employeeCode }}</div>
+                </div>
+              } @empty {
+                <div class="dropdown-item text-muted" style="padding: 10px 16px">No match</div>
+              }
+            </div>
+          }
+        </div>
+
+        @if (!hasPermission('VIEW_ALL_RECORDS')) {
+          <input
+            type="text"
+            [value]="selectedFilterDoctor"
+            disabled
+            class="form-control"
+            style="width: 230px"
+          />
+        }
+      </div>
+    </div>
+
+    <table class="data-table mt-3">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>PATIENT</th>
+          <th>DOCTOR</th>
+          <th>DIAGNOSIS</th>
+          <th>STATUS</th>
+          <th>ACTIONS</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (rec of filteredRecords; track rec._id) {
+          <tr>
+            <td class="text-purple">{{ rec.recordCode }}</td>
+            <td>
+              <div class="user-cell">
+                <div class="avatar bg-purple">{{ getInitials(rec.patientId) }}</div>
+                <div class="fw-bold">{{ rec.patientId }}</div>
+              </div>
+            </td>
+            <td>{{ rec.doctorEmployeeId }}</td>
+            <td>
+              <span class="truncate-text">{{ rec.diagnosis || 'Pending' }}</span>
+            </td>
+            <td>
+              <span
+                class="status-badge"
+                [ngClass]="rec.status === 'FINAL' ? 'badge-active' : 'badge-review'"
+                >{{ rec.status }}</span
+              >
+            </td>
+            <td class="action-cell">
+              <button class="btn-icon view"><i class="bi bi-eye"></i></button>
+              @if (canEdit(rec)) {
+                <button class="btn-icon edit" (click)="editRecord(rec)">
+                  <i class="bi bi-pencil-square"></i>
+                </button>
+              }
+              <button
+                *hasPermission="'DELETE_HEALTH_RECORD'"
+                class="btn-icon delete"
+                (click)="deleteRecord(rec._id)"
+              >
+                <i class="bi bi-trash"></i>
+              </button>
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="8" class="text-center text-muted py-4">No records found.</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
