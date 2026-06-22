@@ -4,7 +4,7 @@
 <div class="dashboard-container" *ngIf="!isLoading">
   <!-- ADMIN ONLY -->
   <div class="card blue" *ngIf="stats.totalEmployees !== undefined">
-    <div class="icon"> 👥 </div>
+    <div class="icon"><i class="fa-solid fa-users"></i></div>
     <h2> Total Employees </h2>
     <p>
       {{ stats.totalEmployees }}
@@ -12,7 +12,7 @@
   </div>
   <!-- ADMIN ONLY -->
   <div class="card green" *ngIf="stats.activeEmployees !== undefined">
-    <div class="icon"> ✅ </div>
+    <div class="icon"><i class="fa-solid fa-user-check"></i></div>
     <h2> Active Employees </h2>
     <p>
       {{ stats.activeEmployees }}
@@ -20,7 +20,7 @@
   </div>
   <!-- ADMIN ONLY -->
   <div class="card orange" *ngIf="stats.pendingApprovals !== undefined">
-    <div class="icon"> ⏳ </div>
+    <div class="icon"><i class="fa-solid fa-hourglass-half"></i></div>
     <h2> Pending Approvals </h2>
     <p>
       {{ stats.pendingApprovals }}
@@ -28,7 +28,7 @@
   </div>
   <!-- ADMIN ONLY -->
   <div class="card purple" *ngIf="stats.pendingVerifications !== undefined">
-    <div class="icon"> 🛡️ </div>
+    <div class="icon"><i class="fa-solid fa-shield-halved"></i></div>
     <h2> Pending Verifications </h2>
     <p>
       {{ stats.pendingVerifications }}
@@ -36,7 +36,7 @@
   </div>
   <!-- COMMON -->
   <div class="card cyan" *ngIf="stats.totalPatients !== undefined">
-    <div class="icon"> ❤️ </div>
+    <div class="icon"><i class="fa-solid fa-heart-pulse"></i></div>
     <h2> Total Patients </h2>
     <p>
       {{ stats.totalPatients }}
@@ -44,7 +44,7 @@
   </div>
   <!-- ADMIN ONLY -->
   <div class="card dark" *ngIf="stats.totalDepartments !== undefined">
-    <div class="icon"> 🏥 </div>
+    <div class="icon"><i class="fa-solid fa-hospital"></i></div>
     <h2> Departments </h2>
     <p>
       {{ stats.totalDepartments }}
@@ -52,7 +52,7 @@
   </div>
   <!-- COMMON -->
   <div class="card pink" *ngIf="stats.totalAppointments !== undefined">
-    <div class="icon"> 📅 </div>
+    <div class="icon"><i class="fa-solid fa-calendar-days"></i></div>
     <h2> Appointments </h2>
     <p>
       {{ stats.totalAppointments }}

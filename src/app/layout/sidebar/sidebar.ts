@@ -19,7 +19,8 @@ import { Auth } from "../../services/auth";
 })
 export class Sidebar implements OnInit {
   user: any;
-  isAdmin = false;
+  nodes: any[] = [];
+
   constructor(
     readonly auth: Auth,
 
@@ -41,13 +42,27 @@ export class Sidebar implements OnInit {
       next: (response: any) => {
         console.log(response);
 
-        setTimeout(() => {
-          this.user = response;
+        this.user = response.data;
 
-          this.isAdmin = response.role === "admin";
+        this.loadNodes();
+      },
 
-          this.cd.detectChanges();
-        });
+      error: (err: any) => {
+        console.log(err);
+      },
+    });
+  }
+
+  loadNodes() {
+    this.auth.getNodes().subscribe({
+      next: (response: any) => {
+        console.log(response);
+
+        this.nodes = (response.data || [])
+          .filter((node: any) => node.role.includes(this.user?.role))
+          .sort((a: any, b: any) => a.node_id - b.node_id);
+
+        this.cd.detectChanges();
       },
 
       error: (err: any) => {

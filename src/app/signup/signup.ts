@@ -31,6 +31,7 @@ export class Signup {
   specialization = '';
   qualification = '';
   consultationFee: any = '';
+
   /* SLOT DATA */
 
   hours: number[] = Array.from({ length: 24 }, (_, i) => i);
@@ -41,6 +42,8 @@ export class Signup {
 
   endHour = '';
 
+  minJoiningDate = '';
+  maxJoiningDate = '';
   // MESSAGES
 
   errorMessage = '';
@@ -50,7 +53,18 @@ export class Signup {
   constructor(
     readonly auth: Auth,
     readonly router: Router,
-  ) {}
+  ) {
+    const today = new Date();
+
+    const minDate = new Date(today);
+    minDate.setMonth(today.getMonth() - 6);
+
+    const maxDate = new Date(today);
+    maxDate.setMonth(today.getMonth() + 6);
+
+    this.minJoiningDate = minDate.toISOString().split('T')[0];
+    this.maxJoiningDate = maxDate.toISOString().split('T')[0];
+  }
   generateTimeSlots() {
     const startHour = Number(this.startHour);
 

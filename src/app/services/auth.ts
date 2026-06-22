@@ -1,6 +1,18 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { BehaviorSubject } from 'rxjs';
+
+function buildParams(params?: Record<string, any>): HttpParams {
+  let httpParams = new HttpParams();
+  if (params) {
+    Object.entries(params).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && value !== '') {
+        httpParams = httpParams.set(key, String(value));
+      }
+    });
+  }
+  return httpParams;
+}
 
 @Injectable({
   providedIn: 'root',
@@ -9,28 +21,14 @@ export class Auth {
   readonly apiUrl = 'http://localhost:5000/api/emp';
   readonly patientUrl = 'http://localhost:5000/api/patient';
   readonly appointmentUrl = 'http://localhost:5000/api/appointment';
+  readonly nodeUrl = 'http://localhost:5000/api/node';
+  readonly medicalRecordUrl = 'http://localhost:5000/api/medical-record';
+  readonly roleUrl = 'http://localhost:5000/api/role';
 
   readonly userSubject = new BehaviorSubject<any>(null);
   user$ = this.userSubject.asObservable();
 
   constructor(readonly http: HttpClient) {}
-
-  /* TOKEN */
-  private getToken() {
-    if (globalThis.window) {
-      return localStorage.getItem('token') || '';
-    }
-    return '';
-  }
-
-  /* HEADERS */
-  private getHeaders() {
-    return {
-      headers: new HttpHeaders({
-        Authorization: `Bearer ${this.getToken()}`,
-      }),
-    };
-  }
 
   /* LOGIN */
   login(data: any) {
@@ -44,22 +42,22 @@ export class Auth {
 
   /* ADMIN SIGNUP */
   adminSignup(data: any) {
-    return this.http.post(`${this.apiUrl}/signup`, data, this.getHeaders());
+    return this.http.post(`${this.apiUrl}/signup`, data);
   }
 
   /* CURRENT USER */
   getCurrentUser() {
-    return this.http.get(`${this.apiUrl}/currentUser`, this.getHeaders());
+    return this.http.get(`${this.apiUrl}/currentUser`);
   }
 
   /* DASHBOARD */
   getDashboardStats() {
-    return this.http.get(`${this.apiUrl}/dashboard-stats`, this.getHeaders());
+    return this.http.get(`${this.apiUrl}/dashboard-stats`);
   }
 
   /* LOAD USER */
   loadUser() {
-     if (globalThis.window) {
+    if (globalThis.window) {
       const token = localStorage.getItem('token');
 
       if (token) {
@@ -84,77 +82,162 @@ export class Auth {
   }
 
   /* EMPLOYEES */
-  getEmployees() {
-    return this.http.get(`${this.apiUrl}/employees`, this.getHeaders());
+  getEmployees(params?: { page?: number; limit?: number }) {
+    return this.http.get(`${this.apiUrl}/employees`, { params: buildParams(params) });
   }
 
   deleteEmployee(employeeId: string) {
-    return this.http.delete(`${this.apiUrl}/deleteEmployee/${employeeId}`, this.getHeaders());
+    return this.http.delete(`${this.apiUrl}/deleteEmployee/${employeeId}`);
   }
 
   /* RESET PASSWORD */
   resetPassword(data: any) {
-    return this.http.put(`${this.apiUrl}/reset-password`, data, this.getHeaders());
+    return this.http.put(`${this.apiUrl}/reset-password`, data);
   }
 
   /* PATIENT */
   createPatient(data: any) {
-    return this.http.post(`${this.patientUrl}/createPatient`, data, this.getHeaders());
+    return this.http.post(`${this.patientUrl}/createPatient`, data);
   }
 
-  getAllPatients() {
-    return this.http.get(`${this.patientUrl}/getAllPatients`, this.getHeaders());
+  getAllPatients(params?: { page?: number; limit?: number; status?: string; search?: string }) {
+    return this.http.get(`${this.patientUrl}/getAllPatients`, { params: buildParams(params) });
   }
 
   getSinglePatient(patientId: string) {
-    return this.http.get(`${this.patientUrl}/getSinglePatient/${patientId}`, this.getHeaders());
+    return this.http.get(`${this.patientUrl}/getSinglePatient/${patientId}`);
   }
 
   updatePatient(patientId: string, data: any) {
-    return this.http.put(`${this.patientUrl}/updatePatient/${patientId}`, data, this.getHeaders());
+    return this.http.put(`${this.patientUrl}/updatePatient/${patientId}`, data);
   }
 
   deletePatient(patientId: string) {
-    return this.http.delete(`${this.patientUrl}/deletePatient/${patientId}`, this.getHeaders());
+    return this.http.delete(`${this.patientUrl}/deletePatient/${patientId}`);
   }
 
   getPatientUI() {
-    return this.http.get(`${this.patientUrl}/getPatientUI`, this.getHeaders());
+    return this.http.get(`${this.patientUrl}/getPatientUI`);
   }
 
   /* APPOINTMENT */
   createAppointment(data: any) {
-    return this.http.post(`${this.appointmentUrl}/createAppointment`, data, this.getHeaders());
+    return this.http.post(`${this.appointmentUrl}/createAppointment`, data);
   }
 
-  getAllAppointments() {
-    return this.http.get(`${this.appointmentUrl}/getAllAppointments`, this.getHeaders());
+  getAllAppointments(params?: { page?: number; limit?: number; status?: string }) {
+    return this.http.get(`${this.appointmentUrl}/getAllAppointments`, { params: buildParams(params) });
   }
 
-  getDoctors() {
-    return this.http.get(`${this.appointmentUrl}/getDoctors`, this.getHeaders());
+  getDoctors(params?: { page?: number; limit?: number }) {
+    return this.http.get(`${this.appointmentUrl}/getDoctors`, { params: buildParams(params) });
   }
 
   deleteAppointment(appointmentId: string) {
-    return this.http.delete(
-      `${this.appointmentUrl}/deleteAppointment/${appointmentId}`,
-      this.getHeaders(),
-    );
+    return this.http.delete(`${this.appointmentUrl}/deleteAppointment/${appointmentId}`);
+  }
+  approveAppointment(appointmentId: string) {
+    return this.http.put(`${this.appointmentUrl}/approveAppointment/${appointmentId}`, {});
+  }
+
+  rejectAppointment(appointmentId: string) {
+    return this.http.put(`${this.appointmentUrl}/rejectAppointment/${appointmentId}`, {});
   }
 
   getAppointmentUI() {
-    return this.http.get(`${this.appointmentUrl}/getAppointmentUI`, this.getHeaders());
+    return this.http.get(`${this.appointmentUrl}/getAppointmentUI`);
   }
 
-  getPendingApprovals() {
-    return this.http.get(`${this.apiUrl}/pendingApprovals`, this.getHeaders());
+  getPendingApprovals(params?: { page?: number; limit?: number }) {
+    return this.http.get(`${this.apiUrl}/pendingApprovals`, { params: buildParams(params) });
   }
 
   approveEmployee(employeeId: string) {
-    return this.http.put(`${this.apiUrl}/approveEmployee/${employeeId}`, {}, this.getHeaders());
+    return this.http.put(`${this.apiUrl}/approveEmployee/${employeeId}`, {});
   }
 
   getApprovalStats() {
-    return this.http.get(`${this.apiUrl}/approvalStats`, this.getHeaders());
+    return this.http.get(`${this.apiUrl}/approvalStats`);
+  }
+
+  updateEmployee(employeeId: string, data: any) {
+    return this.http.put(`${this.apiUrl}/updateEmployee/${employeeId}`, data);
+  }
+
+  /* SELF-SERVICE PROFILE UPDATE */
+  updateProfile(employeeId: string, data: any) {
+    return this.http.put(`${this.apiUrl}/updateProfile/${employeeId}`, data);
+  }
+
+  /* APPOINTMENT EDIT */
+  updateAppointment(appointmentId: string, data: any) {
+    return this.http.put(`${this.appointmentUrl}/updateAppointment/${appointmentId}`, data);
+  }
+
+  /* NODES (sidebar) */
+  getNodes() {
+    return this.http.get(`${this.nodeUrl}`);
+  }
+
+  /* MEDICAL RECORDS */
+  createMedicalRecord(data: any) {
+    return this.http.post(`${this.medicalRecordUrl}/createMedicalRecord`, data);
+  }
+
+  getMedicalRecords(params?: {
+    page?: number;
+    limit?: number;
+    patientId?: string;
+    doctorEmployeeId?: string;
+    appointmentId?: string;
+    status?: string;
+  }) {
+    return this.http.get(`${this.medicalRecordUrl}/getMedicalRecords`, { params: buildParams(params) });
+  }
+
+  updateMedicalRecord(recordId: string, data: any) {
+    return this.http.put(`${this.medicalRecordUrl}/updateMedicalRecord/${recordId}`, data);
+  }
+
+  deleteMedicalRecord(recordId: string) {
+    return this.http.delete(`${this.medicalRecordUrl}/deleteMedicalRecord/${recordId}`);
+  }
+
+  /* ROLE MANAGEMENT */
+  getRoles() {
+    return this.http.get(`${this.roleUrl}`);
+  }
+
+  getRole(roleId: string) {
+    return this.http.get(`${this.roleUrl}/${roleId}`);
+  }
+
+  createRole(data: any) {
+    return this.http.post(`${this.roleUrl}`, data);
+  }
+
+  updateRole(roleId: string, data: any) {
+    return this.http.put(`${this.roleUrl}/${roleId}`, data);
+  }
+
+  deleteRole(roleId: string) {
+    return this.http.delete(`${this.roleUrl}/${roleId}`);
+  }
+
+  /* NODE MANAGEMENT */
+  getNode(nodeId: string) {
+    return this.http.get(`${this.nodeUrl}/${nodeId}`);
+  }
+
+  createNode(data: any) {
+    return this.http.post(`${this.nodeUrl}`, data);
+  }
+
+  updateNode(nodeId: string, data: any) {
+    return this.http.put(`${this.nodeUrl}/${nodeId}`, data);
+  }
+
+  deleteNode(nodeId: string) {
+    return this.http.delete(`${this.nodeUrl}/${nodeId}`);
   }
 }

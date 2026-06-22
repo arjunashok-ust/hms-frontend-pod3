@@ -18,11 +18,11 @@
 
         <div class="header-actions">
 
-            <button class="btn-secondary" routerLink="/approval">
+            <button *hasPermission="PERMISSIONS.VIEW_APPROVAL" class="btn-secondary" routerLink="/approval">
                 Pending Approvals
             </button>
 
-            <button class="btn-primary" (click)="openModal()">
+            <button *hasPermission="PERMISSIONS.CREATE_EMPLOYEE" class="btn-primary" (click)="openModal()">
                 Add Employee
             </button>
 
@@ -207,17 +207,23 @@
 
                             <div class="action-buttons">
 
-                                <button class="icon-btn edit-btn">
+                               <button
+  *hasPermission="PERMISSIONS.EDIT_EMPLOYEE"
+  class="icon-btn edit-btn"
+  (click)="editEmployee(employee)">
 
-                                    Edit
+  Edit
 
-                                </button>
+</button>
 
-                                <button class="icon-btn delete-btn" (click)="deleteEmployee(employee.employeeId)">
+                               <button
+  *hasPermission="PERMISSIONS.DELETE_EMPLOYEE"
+  class="icon-btn delete-btn"
+  (click)="deleteEmployee(employee.employeeId)">
 
-                                    Delete
+  Delete
 
-                                </button>
+</button>
 
                             </div>
 
@@ -228,6 +234,14 @@
                 </tbody>
 
             </table>
+
+            <app-pagination-controls
+                [page]="currentPage"
+                [totalPages]="totalPages"
+                [hasNextPage]="hasNextPage"
+                [hasPrevPage]="hasPrevPage"
+                (pageChange)="onPageChange($event)">
+            </app-pagination-controls>
 
         </div>
 
@@ -246,11 +260,13 @@
         <div class="modal-header">
 
             <h2>
-                Add Employee
+
+                {{ isEditMode ? 'Edit Employee' : 'Add Employee' }}
+
             </h2>
 
             <button class="close-btn" (click)="closeModal()">
-                ✕
+                <i class="fa-solid fa-xmark"></i>
             </button>
 
         </div>
@@ -279,49 +295,67 @@
 
                 <!-- NAME -->
 
-                <div class="input-group">
+                <div class="input-group" [class.invalid]="nameField.invalid && nameField.touched">
 
                     <label for="full name">
                         Full Name
                     </label>
 
-                    <input type="text" [(ngModel)]="employeeForm.name" name="name" required>
+                    <input type="text" [(ngModel)]="employeeForm.name" name="name" #nameField="ngModel" required
+                        pattern="^[A-Za-z ]+$">
+
+                    <div class="validation-error" *ngIf="nameField.invalid && nameField.touched">
+                        <span *ngIf="nameField.errors?.['required']">Name is required</span>
+                        <span *ngIf="nameField.errors?.['pattern']">Only alphabets and spaces allowed</span>
+                    </div>
 
                 </div>
 
                 <!-- EMAIL -->
 
-                <div class="input-group">
+                <div class="input-group" [class.invalid]="emailField.invalid && emailField.touched">
 
                     <label for="email">
                         Email
                     </label>
 
-                    <input type="email" [(ngModel)]="employeeForm.email" name="email" required email>
+                    <input type="email" [(ngModel)]="employeeForm.email" name="email" #emailField="ngModel" required
+                        email>
+
+                    <div class="validation-error" *ngIf="emailField.invalid && emailField.touched">
+                        <span *ngIf="emailField.errors?.['required']">Email is required</span>
+                        <span *ngIf="emailField.errors?.['email']">Enter a valid email</span>
+                    </div>
 
                 </div>
 
                 <!-- PHONE -->
 
-                <div class="input-group">
+                <div class="input-group" [class.invalid]="phoneField.invalid && phoneField.touched">
 
                     <label for="phone">
                         Phone
                     </label>
 
-                    <input type="text" [(ngModel)]="employeeForm.phone" name="phone" required>
+                    <input type="text" [(ngModel)]="employeeForm.phone" name="phone" #phoneField="ngModel" required
+                        pattern="^[0-9]{10}$" maxlength="10">
+
+                    <div class="validation-error" *ngIf="phoneField.invalid && phoneField.touched">
+                        <span *ngIf="phoneField.errors?.['required']">Phone number is required</span>
+                        <span *ngIf="phoneField.errors?.['pattern']">Phone number must be exactly 10 digits</span>
+                    </div>
 
                 </div>
 
                 <!-- ROLE -->
 
-                <div class="input-group">
+                <div class="input-group" [class.invalid]="roleField.invalid && roleField.touched">
 
                     <label for="role">
                         Role
                     </label>
 
-                    <select [(ngModel)]="employeeForm.role" name="role" required>
+                    <select [(ngModel)]="employeeForm.role" name="role" #roleField="ngModel" required>
 
                         <option value="">
                             Select Role
@@ -349,17 +383,21 @@
 
                     </select>
 
+                    <div class="validation-error" *ngIf="roleField.invalid && roleField.touched">
+                        Role is required
+                    </div>
+
                 </div>
 
                 <!-- DEPARTMENT -->
 
-                <div class="input-group">
+                <div class="input-group" [class.invalid]="departmentField.invalid && departmentField.touched">
 
                     <label for="department">
                         Department
                     </label>
 
-                    <select [(ngModel)]="employeeForm.department" name="department" required>
+                    <select [(ngModel)]="employeeForm.department" name="department" #departmentField="ngModel" required>
                         <option value="">
                             Select Department
                         </option>
@@ -369,20 +407,30 @@
                         <option value="Lab">Lab</option>
                         <option value="Pharmacy">Pharmacy</option>
                         <option value="Administration">Administration</option>
+                        <option value="ICU">ICU</option>
                         <option value="Front Office">Front Office</option>
                     </select>
+
+                    <div class="validation-error" *ngIf="departmentField.invalid && departmentField.touched">
+                        Department is required
+                    </div>
 
                 </div>
 
                 <!-- DESIGNATION -->
 
-                <div class="input-group">
+                <div class="input-group" [class.invalid]="designationField.invalid && designationField.touched">
 
                     <label for="designation">
                         Designation
                     </label>
 
-                    <input type="text" [(ngModel)]="employeeForm.designation" name="designation" required>
+                    <input type="text" [(ngModel)]="employeeForm.designation" name="designation"
+                        #designationField="ngModel" required>
+
+                    <div class="validation-error" *ngIf="designationField.invalid && designationField.touched">
+                        Designation is required
+                    </div>
 
                 </div>
 
@@ -412,14 +460,19 @@
 
                 <!-- DOCTOR ONLY -->
 
-                <div class="input-group" *ngIf="employeeForm.role === 'doctor'">
+                <div class="input-group" *ngIf="employeeForm.role === 'doctor'"
+                    [class.invalid]="medicalRegField.invalid && medicalRegField.touched">
 
                     <label for="medical registration no">
                         Medical Registration No
                     </label>
 
                     <input type="text" [(ngModel)]="employeeForm.medicalRegistrationNo" name="medicalRegistrationNo"
-                        required>
+                        #medicalRegField="ngModel" required>
+
+                    <div class="validation-error" *ngIf="medicalRegField.invalid && medicalRegField.touched">
+                        Medical Registration Number is required
+                    </div>
 
                 </div>
 
@@ -437,13 +490,20 @@
 
                 <!-- CONSULTATION FEE -->
 
-                <div class="input-group" *ngIf="employeeForm.role === 'doctor'">
+                <div class="input-group" *ngIf="employeeForm.role === 'doctor'"
+                    [class.invalid]="consultationFeeField.invalid && consultationFeeField.touched">
 
                     <label for="consultation fee">
                         Consultation Fee
                     </label>
 
-                    <input type="number" [(ngModel)]="employeeForm.consultationFee" name="consultationFee">
+                    <input type="number" [(ngModel)]="employeeForm.consultationFee" name="consultationFee"
+                        #consultationFeeField="ngModel" required min="0">
+
+                    <div class="validation-error" *ngIf="consultationFeeField.invalid && consultationFeeField.touched">
+                        <span *ngIf="consultationFeeField.errors?.['required']">Consultation Fee is required</span>
+                        <span *ngIf="consultationFeeField.errors?.['min']">Consultation Fee cannot be negative</span>
+                    </div>
 
                 </div>
 
@@ -547,7 +607,9 @@
 
             <button type="submit" class="submit-btn">
 
-                Create Employee
+                {{ isEditMode
+                ? 'Update Employee'
+                : 'Create Employee' }}
 
             </button>
 

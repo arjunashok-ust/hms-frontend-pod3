@@ -1,0 +1,18 @@
+<div class="pagination">
+
+    <button class="page-btn nav-btn" [disabled]="!hasPrevPage" (click)="prev()">
+        <i class="fa-solid fa-chevron-left"></i>
+    </button>
+
+    <ng-container *ngFor="let p of visiblePages">
+        <span class="ellipsis" *ngIf="p === -1">…</span>
+        <button *ngIf="p !== -1" class="page-btn" [class.active]="p === page" (click)="goTo(p)">
+            {{ p }}
+        </button>
+    </ng-container>
+
+    <button class="page-btn nav-btn" [disabled]="!hasNextPage" (click)="next()">
+        <i class="fa-solid fa-chevron-right"></i>
+    </button>
+
+</div>

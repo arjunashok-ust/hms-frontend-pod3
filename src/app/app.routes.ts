@@ -14,16 +14,14 @@ import { Employee } from './employee/employee';
 import { ResetPassword } from './reset-password/reset-password';
 import { Patients } from './patients/patients';
 import { Appointment } from './appointment/appointment';
+import { NodeMenu } from './node-menu/node-menu';
+import { MedicalRecord } from './medical-record/medical-record';
+import { RoleMenu } from './role-menu/role-menu';
 
 export const routes: Routes = [
-  /* DEFAULT */
   { path: '', redirectTo: 'login', pathMatch: 'full' },
-
-  /* AUTH */
   { path: 'login', component: Login },
   { path: 'signup', component: Signup },
-
-  /* RESET PASSWORD */
   {path: 'reset-password',component: ResetPassword,canActivate: [FirstLoginGuard]},
 
   /* PROTECTED ROUTES */
@@ -38,7 +36,7 @@ export const routes: Routes = [
         component: Dashboard,
         canActivate: [roleGuard],
         data: {
-          roles: ['admin'],
+          roles: ['admin', 'super_admin'],
         },
       },
 
@@ -51,7 +49,7 @@ export const routes: Routes = [
         component: Approval,
         canActivate: [roleGuard],
         data: {
-          roles: ['admin'],
+          roles: ['admin', 'super_admin'],
         },
       },
 
@@ -60,7 +58,7 @@ export const routes: Routes = [
         component: Employee,
         canActivate: [roleGuard],
         data: {
-          roles: ['admin','receptionist'],
+          roles: ['admin', 'super_admin', 'receptionist'],
         },
       },
 
@@ -69,7 +67,7 @@ export const routes: Routes = [
         component: Patients,
         canActivate: [roleGuard],
         data: {
-          roles: ['admin', 'receptionist'],
+          roles: ['admin', 'super_admin', 'receptionist'],
         },
       },
 
@@ -78,7 +76,34 @@ export const routes: Routes = [
         component: Appointment,
         canActivate: [roleGuard],
         data: {
-          roles: ['admin', 'receptionist', 'doctor'],
+          roles: ['admin', 'super_admin', 'receptionist', 'doctor'],
+        },
+      },
+
+      {
+        path: 'node-menu',
+        component: NodeMenu,
+        canActivate: [roleGuard],
+        data: {
+          roles: ['admin', 'super_admin'],
+        },
+      },
+
+      {
+        path: 'medical-records',
+        component: MedicalRecord,
+        canActivate: [roleGuard],
+        data: {
+          roles: ['admin', 'super_admin', 'doctor', 'receptionist'],
+        },
+      },
+
+      {
+        path: 'role-menu',
+        component: RoleMenu,
+        canActivate: [roleGuard],
+        data: {
+          roles: ['admin', 'super_admin'],
         },
       },
     ],

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
 import {
 
@@ -12,6 +12,8 @@ import { CommonModule } from '@angular/common';
 import { Navbar } from '../navbar/navbar';
 
 import { Sidebar } from '../sidebar/sidebar';
+import { Auth } from '../../services/auth';
+import { PermissionService } from '../../services/permission';
 
 @Component({
 
@@ -32,12 +34,26 @@ import { Sidebar } from '../sidebar/sidebar';
 
 })
 
-export class DashboardLayout {
+export class DashboardLayout implements OnInit {
 
   constructor(
 
-    public router:Router
+    public router:Router,
+    readonly auth: Auth,
+    readonly permissionService: PermissionService
 
   ){}
+
+  ngOnInit(): void {
+    /* PERMISSIONS ARE NEVER IN THE JWT — FETCH FRESH ON EVERY PROTECTED-LAYOUT LOAD */
+    this.auth.getCurrentUser().subscribe({
+      next: (response: any) => {
+        this.permissionService.setPermissions(response.data.permissions || []);
+      },
+      error: (err: any) => {
+        console.log(err);
+      },
+    });
+  }
 
 }

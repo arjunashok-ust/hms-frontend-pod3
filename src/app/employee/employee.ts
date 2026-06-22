@@ -1,21 +1,30 @@
-import { Component, OnInit,ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Auth } from '../services/auth';
 import { RouterLink } from '@angular/router';
+import { HasPermissionDirective } from '../directives/has-permission.directive';
+import { PermissionService } from '../services/permission';
+import { PERMISSIONS } from '../constants/permissions';
+import { PaginationControls } from '../shared/pagination-controls/pagination-controls';
 @Component({
   selector: 'app-employee',
 
   standalone: true,
 
-  imports: [CommonModule, RouterLink, FormsModule],
+  imports: [CommonModule, RouterLink, FormsModule, HasPermissionDirective, PaginationControls],
 
   templateUrl: './employee.html',
 
   styleUrl: './employee.css',
 })
 export class Employee implements OnInit {
+  /* EXPOSED FOR TEMPLATE *hasPermission CHECKS */
+  readonly PERMISSIONS = PERMISSIONS;
+
+  isEditMode = false;
+  selectedEmployeeId = '';
   /* EMPLOYEE TABLE */
 
   employeeData: any[] = [];
@@ -23,6 +32,14 @@ export class Employee implements OnInit {
   filteredEmployeeData: any[] = [];
 
   departments: string[] = [];
+
+  /* PAGINATION — note: the text/department/status filters below only filter
+     the CURRENTLY LOADED page, not the whole dataset, since the backend has
+     no search filter for employees. Real cross-page search is a separate feature. */
+  currentPage = 1;
+  totalPages = 1;
+  hasNextPage = false;
+  hasPrevPage = false;
 
   /* FILTERS */
 
@@ -85,6 +102,7 @@ export class Employee implements OnInit {
   constructor(
     readonly auth: Auth,
     readonly cd: ChangeDetectorRef,
+    readonly permissionService: PermissionService,
   ) {}
 
   ngOnInit(): void {
@@ -104,7 +122,7 @@ export class Employee implements OnInit {
   loadEmployees() {
     console.log(localStorage.getItem('token'));
 
-    this.auth.getEmployees().subscribe({
+    this.auth.getEmployees({ page: this.currentPage, limit: 10 }).subscribe({
       next: (response: any) => {
         console.log(response.data[0]);
 
@@ -116,6 +134,10 @@ export class Employee implements OnInit {
           new Set(this.employeeData.map((emp: any) => String(emp.department))),
         );
 
+        this.totalPages = response.meta?.totalPages || 1;
+        this.hasNextPage = response.meta?.hasNextPage || false;
+        this.hasPrevPage = response.meta?.hasPrevPage || false;
+
         this.cd.detectChanges();
       },
 
@@ -123,6 +145,12 @@ export class Employee implements OnInit {
         console.log(err);
       },
     });
+  }
+
+  /* PAGE CHANGE */
+  onPageChange(page: number) {
+    this.currentPage = page;
+    this.loadEmployees();
   }
 
   /* FILTERS */
@@ -146,6 +174,10 @@ export class Employee implements OnInit {
   /* OPEN MODAL */
 
   openModal() {
+    this.isEditMode = false;
+
+    this.selectedEmployeeId = '';
+
     this.showModal = true;
   }
 
@@ -153,6 +185,10 @@ export class Employee implements OnInit {
 
   closeModal() {
     this.showModal = false;
+
+    this.isEditMode = false;
+
+    this.selectedEmployeeId = '';
 
     this.errorMessage = '';
 
@@ -224,7 +260,6 @@ export class Employee implements OnInit {
   }
 
   /* ADD EMPLOYEE */
-
   addEmployee(form: any) {
     this.errorMessage = '';
 
@@ -235,6 +270,38 @@ export class Employee implements OnInit {
 
       return;
     }
+
+    /* ===========================
+     UPDATE EMPLOYEE
+     =========================== */
+
+    if (this.isEditMode) {
+      this.auth.updateEmployee(this.selectedEmployeeId, this.employeeForm).subscribe({
+        next: (response: any) => {
+          console.log(response);
+
+          this.successMessage = response.message;
+
+          this.loadEmployees();
+
+          setTimeout(() => {
+            this.closeModal();
+          }, 1000);
+        },
+
+        error: (err: any) => {
+          console.log(err);
+
+          this.errorMessage = err?.error?.message || 'Unable To Update Employee';
+        },
+      });
+
+      return;
+    }
+
+    /* ===========================
+     CREATE EMPLOYEE
+     =========================== */
 
     console.log(this.employeeForm);
 
@@ -247,8 +314,6 @@ export class Employee implements OnInit {
         this.loadEmployees();
 
         form.resetForm();
-
-        /* RESET FORM */
 
         this.employeeForm = {
           email: '',
@@ -292,8 +357,6 @@ export class Employee implements OnInit {
       error: (err: any) => {
         console.log(err);
 
-        console.log(err.error);
-
         if (err?.error?.errors) {
           this.errorMessage = err.error.errors.map((e: any) => e.msg).join(', ');
         } else {
@@ -319,5 +382,53 @@ export class Employee implements OnInit {
         alert('Unable To Delete Employee');
       },
     });
+  }
+
+  /* EDIT EMPLOYEE */
+
+  editEmployee(employee: any) {
+    // ONLY USERS WITH EDIT_EMPLOYEE PERMISSION
+
+    if (!this.permissionService.has(PERMISSIONS.EDIT_EMPLOYEE)) {
+      return;
+    }
+
+    this.isEditMode = true;
+
+    this.selectedEmployeeId = employee.employeeId;
+
+    this.employeeForm = {
+      email: employee.email,
+
+      name: employee.name,
+
+      role: employee.role,
+
+      phone: employee.phone,
+
+      department: employee.department,
+
+      designation: employee.designation,
+
+      status: employee.status,
+
+      joiningDate: employee.joiningDate ? employee.joiningDate.split('T')[0] : '',
+
+      specialization: employee.specialization || '',
+
+      medicalRegistrationNo: employee.medicalRegistrationNo || '',
+
+      qualification: employee.qualification || '',
+
+      consultationFee: employee.consultationFee || '',
+
+      availabilitySlots: employee.availabilitySlots || [],
+
+      startHour: '',
+
+      endHour: '',
+    };
+
+    this.showModal = true;
   }
 }

@@ -4,7 +4,7 @@
     <div class="left-panel">
       <!-- LOGO -->
       <div class="logo">
-        <span class="icon"> ➕ </span>
+        <span class="icon"><i class="fa-solid fa-plus"></i></span>
         <div>
           <h3> CareMatrix </h3>
           <p> HOSPITAL MANAGEMENT </p>
@@ -138,6 +138,10 @@
                   Administration
                 </option>
 
+                <option value="ICU">
+                  ICU
+                </option>
+
                 <option value="Front Office">
                   Front Office
                 </option>
@@ -166,7 +170,8 @@
           <div>
             <label for="joining date"> Joining Date </label>
             <div class="input-box">
-              <input type="date" [(ngModel)]="joiningDate" name="joiningDate">
+              <input type="date" [(ngModel)]="joiningDate" name="joiningDate" [min]="minJoiningDate"
+                [max]="maxJoiningDate">
             </div>
           </div>
           <!-- MEDICAL REGISTRATION -->
@@ -259,11 +264,8 @@
                   {{ slot }}
 
                 </label>
-
               </div>
-
             </div>
-
           </div>
           <!-- QUALIFICATION -->
           <div>

@@ -1,156 +1,305 @@
 <div class="patients-page">
 
+    <!-- ALERTS -->
     <div class="success-message" *ngIf="successMessage">
-        {{successMessage}}
+        {{ successMessage }}
     </div>
 
     <div class="error-message" *ngIf="errorMessage">
-        {{errorMessage}}
+        {{ errorMessage }}
     </div>
 
+    <!-- STATS -->
     <div class="stats-grid">
+
         <div class="stat-card blue-card">
-            <div class="stat-icon">👨‍⚕️</div>
-            <h2>{{totalPatients}}</h2>
+            <div class="stat-icon"><i class="fa-solid fa-heart-pulse"></i></div>
+            <h2>{{ totalPatients }}</h2>
             <p>Total Patients</p>
         </div>
-    </div>
 
-    <div class="form-card">
-        <div class="section-header">
-            <span>NEW ENTRY</span>
-            <h2>Create Patient</h2>
+        <div class="stat-card green-card">
+            <div class="stat-icon"><i class="fa-solid fa-user-check"></i></div>
+            <h2>{{ activePatients }}</h2>
+            <p>Active Patients</p>
         </div>
 
-        <form class="patient-form" (ngSubmit)="createPatient()">
+        <div class="stat-card red-card">
+            <div class="stat-icon"><i class="fa-solid fa-circle-pause"></i></div>
+            <h2>{{ inactivePatients }}</h2>
+            <p>Inactive Patients</p>
+        </div>
+
+    </div>
+
+    <!-- FORM -->
+    <div class="form-card">
+
+        <div class="section-header">
+            <span>{{ isEditMode ? 'EDIT RECORD' : 'NEW ENTRY' }}</span>
+            <h2>{{ isEditMode ? 'Update Patient' : 'Register Patient' }}</h2>
+        </div>
+
+        <form #patientForm="ngForm" class="patient-form" (ngSubmit)="createPatient(patientForm)">
 
             <div class="form-row">
+
+                <!-- NAME -->
                 <div class="input-group">
-                    <label for="FULL NAME">FULL NAME</label>
-                    <input type="text" [(ngModel)]="formData.name" name="name" required>
+                    <label for="full name">FULL NAME</label>
+
+                    <input type="text" [(ngModel)]="formData.name" name="name" #nameField="ngModel" required
+                        pattern="^[A-Za-z ]+$">
+
+                    <div class="validation-error" *ngIf="nameField.invalid && nameField.touched">
+
+                        <span *ngIf="nameField.errors?.['required']">
+                            Name is required
+                        </span>
+
+                        <span *ngIf="nameField.errors?.['pattern']">
+                            Only alphabets and spaces allowed
+                        </span>
+
+                    </div>
                 </div>
+
+                <!-- PHONE -->
                 <div class="input-group">
                     <label for="phone number">PHONE NUMBER</label>
-                    <input type="text" [(ngModel)]="formData.phone" name="phone" required>
+
+                    <input type="text" [(ngModel)]="formData.phone" name="phone" #phoneField="ngModel" required
+                        pattern="^[0-9]{10}$" maxlength="10">
+
+                    <div class="validation-error" *ngIf="phoneField.invalid && phoneField.touched">
+
+                        <span *ngIf="phoneField.errors?.['required']">
+                            Phone number is required
+                        </span>
+
+                        <span *ngIf="phoneField.errors?.['pattern']">
+                            Phone number must be numeric and exactly 10 digits
+                        </span>
+
+                    </div>
                 </div>
+
             </div>
 
             <div class="form-row">
+
                 <div class="input-group">
                     <label for="gender">GENDER</label>
+
                     <select [(ngModel)]="formData.gender" name="gender">
                         <option value="Male">Male</option>
                         <option value="Female">Female</option>
                         <option value="Other">Other</option>
                     </select>
                 </div>
+
                 <div class="input-group">
-                    <label for="date of birth">DATE OF BIRTH</label>
-                    <input type="date" [(ngModel)]="formData.date_of_birth" name="date_of_birth" required>
+                    <label for="dob">DATE OF BIRTH</label>
+
+                    <input type="date" [(ngModel)]="formData.date_of_birth" name="date_of_birth" #dobField="ngModel" required
+                        [max]="maxDate">
+
+                    <div class="validation-error" *ngIf="dobField.invalid && dobField.touched">
+
+                        Date of Birth is required
+
+                    </div>
                 </div>
+
             </div>
 
             <div class="form-row">
+
+                <!-- EMERGENCY CONTACT -->
                 <div class="input-group">
-                    <label for="Emergency contact">EMERGENCY CONTACT</label>
-                    <input type="text" [(ngModel)]="formData.emergencyContact" name="emergencyContact">
+                    <label for="emergency">EMERGENCY CONTACT</label>
+
+                    <input type="text" [(ngModel)]="formData.emergencyContact" name="emergencyContact" #emergencyField="ngModel"
+                        pattern="^[0-9]{10}$" maxlength="10">
+
+                    <div class="validation-error" *ngIf="emergencyField.invalid && emergencyField.touched">
+
+                        Emergency contact must be exactly 10 digits
+
+                    </div>
                 </div>
+
                 <div class="input-group">
                     <label for="status">STATUS</label>
+
                     <select [(ngModel)]="formData.status" name="status">
                         <option [ngValue]="true">Active</option>
                         <option [ngValue]="false">Inactive</option>
                     </select>
                 </div>
+
             </div>
 
             <div class="form-row">
+
+                <!-- ADDRESS -->
                 <div class="input-group">
                     <label for="address line">ADDRESS LINE</label>
-                    <input type="text" [(ngModel)]="formData.address.line1" name="line1" required>
+
+                    <input type="text" [(ngModel)]="formData.address.line1" name="line1" #addressField="ngModel" required
+                        pattern="^(?=.*[A-Za-z])(?=.*[0-9]).+$">
+
+                    <div class="validation-error" *ngIf="addressField.invalid && addressField.touched">
+
+                        <span *ngIf="addressField.errors?.['required']">
+                            Address is required
+                        </span>
+
+                        <span *ngIf="addressField.errors?.['pattern']">
+                            Address must contain both letters and numbers
+                        </span>
+
+                    </div>
                 </div>
+
+                <!-- CITY -->
                 <div class="input-group">
                     <label for="city">CITY</label>
-                    <input type="text" [(ngModel)]="formData.address.city" name="city" required>
+
+                    <input type="text" [(ngModel)]="formData.address.city" name="city" #cityField="ngModel" required
+                        pattern="^[A-Za-z ]+$">
+
+                    <div class="validation-error" *ngIf="cityField.invalid && cityField.touched">
+
+                        <span *ngIf="cityField.errors?.['required']">
+                            City is required
+                        </span>
+
+                        <span *ngIf="cityField.errors?.['pattern']">
+                            City must contain only alphabets
+                        </span>
+
+                    </div>
                 </div>
+
             </div>
 
             <div class="form-row">
+
+                <!-- POSTCODE -->
                 <div class="input-group">
                     <label for="postcode">POSTCODE</label>
-                    <input type="text" [(ngModel)]="formData.address.postcode" name="postcode" required>
+
+                    <input type="text" [(ngModel)]="formData.address.postcode" name="postcode" #postcodeField="ngModel" required
+                        pattern="^[0-9]{6}$" maxlength="6">
+
+                    <div class="validation-error" *ngIf="postcodeField.invalid && postcodeField.touched">
+
+                        <span *ngIf="postcodeField.errors?.['required']">
+                            Postcode is required
+                        </span>
+
+                        <span *ngIf="postcodeField.errors?.['pattern']">
+                            Postcode must be numeric and exactly 6 digits
+                        </span>
+
+                    </div>
                 </div>
+
             </div>
 
             <div class="form-actions">
-                <button type="submit" class="submit-btn">Create Patient</button>
+
+                <button type="button" class="reset-btn" *ngIf="isEditMode" (click)="cancelEdit()">
+                    Cancel
+                </button>
+
+                <button type="submit" class="submit-btn">
+                    {{ isEditMode ? 'Update Patient' : 'Create Patient' }}
+                </button>
+
             </div>
 
         </form>
+
     </div>
 
+    <!-- PATIENTS LIST -->
     <div class="table-card">
+
         <div class="section-header">
-            <span>DIRECTORY</span>
-            <h2>Patient Records</h2>
+            <span>RECORDS</span>
+            <h2>Patients ({{ totalPatients }})</h2>
         </div>
 
-        <div *ngIf="loading">
-            <h3 style="margin-top:20px;">Loading patients...</h3>
-        </div>
+        <div class="loading" *ngIf="loading">Loading patients...</div>
 
-        <div *ngIf="!loading && patients.length===0">
-            <h3 style="margin-top:20px;">No patients found</h3>
-        </div>
+        <table *ngIf="!loading">
 
-        <table *ngIf="!loading && patients.length>0">
             <thead>
                 <tr>
                     <th>UHID</th>
                     <th>PATIENT</th>
-                    <th>AGE</th>
+                    <th>PHONE</th>
                     <th>GENDER</th>
+                    <th>AGE</th>
                     <th>STATUS</th>
                     <th>ACTIONS</th>
                 </tr>
             </thead>
 
-            <tbody>
+            <tbody *ngIf="patients.length > 0">
                 <tr *ngFor="let patient of patients">
 
-                    <td class="patient-id">{{patient.UHID}}</td>
+                    <td><span class="patient-id">{{ patient.UHID }}</span></td>
 
                     <td>
                         <div class="patient-cell">
-                            <div class="patient-avatar">{{getInitial(patient.name)}}</div>
+                            <div class="patient-avatar">{{ getInitial(patient.name) }}</div>
                             <div>
-                                <h4>{{patient.name}}</h4>
-                                <p>{{patient.phone}}</p>
+                                <h4>{{ patient.name }}</h4>
+                                <p>{{ patient.address?.city || '—' }}</p>
                             </div>
                         </div>
                     </td>
 
-                    <td>{{calculateAge(patient.date_of_birth)}}</td>
+                    <td>{{ patient.phone }}</td>
+
+                    <td><span class="gender-pill">{{ patient.gender }}</span></td>
+
+                    <td>{{ patient.date_of_birth ? calculateAge(patient.date_of_birth) : '—' }}</td>
 
                     <td>
-                        <span class="gender-pill">{{patient.gender}}</span>
-                    </td>
-
-                    <td>
-                        <span class="status-pill" [ngClass]="patient.status?'active-status':'critical-status'">
-                            {{patient.status?'Active':'Inactive'}}
+                        <span class="status-pill" [ngClass]="patient.status ? 'active-status' : 'critical-status'">
+                            {{ patient.status ? 'Active' : 'Inactive' }}
                         </span>
                     </td>
 
                     <td>
                         <div class="action-buttons">
-                            <button class="delete-btn" (click)="deletePatient(patient.UHID)">🗑</button>
+                            <button *hasPermission="PERMISSIONS.EDIT_PATIENT" class="edit-btn" title="Edit" (click)="editPatient(patient)">Edit</button>
+                            <button *hasPermission="PERMISSIONS.DELETE_PATIENT" class="delete-btn" title="Delete" (click)="deletePatient(patient.UHID)">Delete</button>
                         </div>
                     </td>
 
                 </tr>
             </tbody>
+
+            <tbody *ngIf="patients.length === 0">
+                <tr>
+                    <td colspan="7" class="empty-state">No patients found.</td>
+                </tr>
+            </tbody>
+
         </table>
+
+        <app-pagination-controls
+            [page]="currentPage"
+            [totalPages]="totalPages"
+            [hasNextPage]="hasNextPage"
+            [hasPrevPage]="hasPrevPage"
+            (pageChange)="onPageChange($event)">
+        </app-pagination-controls>
 
     </div>
 

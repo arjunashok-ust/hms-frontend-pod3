@@ -18,37 +18,8 @@
 
     <div class="menu">
 
-        <!-- ADMIN ONLY -->
-        <a *ngIf="user?.role === 'admin'" routerLink="/dashboard" routerLinkActive="active">
-            Dashboard
-        </a>
-
-        <!-- ALL USERS -->
-        <a routerLink="/profile" routerLinkActive="active">
-            Profile
-        </a>
-
-        <!-- ADMIN ONLY -->
-        <a *ngIf="user?.role === 'admin' || user?.role === 'receptionist'" routerLink="/employees" routerLinkActive="active">
-            Employees
-        </a>
-
-        <!-- ADMIN ONLY -->
-        <a *ngIf="user?.role === 'admin'" routerLink="/approval" routerLinkActive="active">
-            Approval
-        </a>
-
-        <!-- ADMIN + RECEPTIONIST -->
-        <a *ngIf="
-        user?.role === 'admin' ||
-        user?.role === 'receptionist'
-    " routerLink="/patients" routerLinkActive="active">
-            Patients
-        </a>
-
-        <!-- ALL USERS -->
-        <a routerLink="/appointments" routerLinkActive="active">
-            Appointments
+        <a *ngFor="let node of nodes" [routerLink]="node.path" routerLinkActive="active">
+            {{ node.name }}
         </a>
 
     </div>

@@ -70,7 +70,7 @@ export class Dashboard implements OnInit {
 
       next: (response: any) => {
         console.log(response);
-        this.stats = response;
+        this.stats = response.data;
         this.isLoading = false;
         this.cd.detectChanges();
 

@@ -11,25 +11,25 @@
   <!-- STATS -->
   <div class="stats-grid">
     <div class="stat-card blue-card">
-      <div class="stat-icon">📅</div>
+      <div class="stat-icon"><i class="fa-solid fa-calendar-days"></i></div>
       <h2>{{ totalAppointments }}</h2>
       <p>Total Appointments</p>
     </div>
 
     <div class="stat-card green-card">
-      <div class="stat-icon">✅</div>
+      <div class="stat-icon"><i class="fa-solid fa-circle-check"></i></div>
       <h2>{{ completedAppointments }}</h2>
       <p>Completed</p>
     </div>
 
     <div class="stat-card orange-card">
-      <div class="stat-icon">🕒</div>
+      <div class="stat-icon"><i class="fa-solid fa-clock"></i></div>
       <h2>{{ bookedAppointments }}</h2>
       <p>Booked</p>
     </div>
 
     <div class="stat-card red-card">
-      <div class="stat-icon">❌</div>
+      <div class="stat-icon"><i class="fa-solid fa-circle-xmark"></i></div>
       <h2>{{ cancelledAppointments }}</h2>
       <p>Cancelled</p>
     </div>
@@ -38,10 +38,7 @@
   <!-- CONTENT GRID -->
   <div class="content-grid">
     <!-- FORM -->
-    <div class="form-card" *ngIf="
-    userRole === 'admin' ||
-    userRole === 'receptionist'
-  ">
+    <div class="form-card" *hasPermission="PERMISSIONS.CREATE_APPOINTMENT">
       <div class="section-header">
         <span>NEW ENTRY</span>
         <h2>Book Appointment</h2>
@@ -58,13 +55,19 @@
 
           <div class="input-group">
             <label for="doctor">DOCTOR</label>
-            <select [(ngModel)]="formData.doctorEmployeeId" name="doctorEmployeeId" (change)="onDoctorChange()"
-              required>
+
+            <!-- Admin / Receptionist -->
+            <select *ngIf="userRole !== 'doctor'" [(ngModel)]="formData.doctorEmployeeId" name="doctorEmployeeId"
+              (change)="onDoctorChange()" required>
               <option value="">Select Doctor</option>
+
               <option *ngFor="let doctor of doctors" [value]="doctor.employeeId">
                 {{ doctor.name }}
               </option>
             </select>
+
+            <!-- Doctor -->
+            <input *ngIf="userRole === 'doctor'" type="text" [value]="loggedInDoctorName" readonly />
           </div>
         </div>
 
@@ -78,15 +81,11 @@
           <div class="input-group">
             <label for="timeslot">TIME SLOT</label>
             <select [(ngModel)]="formData.timeSlot" name="timeSlot" required>
-
-              <option value="">
-                Select Time Slot
-              </option>
+              <option value="">Select Time Slot</option>
 
               <option *ngFor="let slot of availableSlots" [value]="slot">
                 {{ slot }}
               </option>
-
             </select>
           </div>
         </div>
@@ -96,41 +95,28 @@
           <label for="appointment status">APPOINTMENT STATUS</label>
 
           <div class="status-options">
-  <button
-    type="button"
-    class="status-option"
-    [class.active]="formData.status === 'BOOKED'"
-    (click)="formData.status='BOOKED'">
-    Booked
-  </button>
+            <button type="button" class="status-option" [class.active]="formData.status === 'BOOKED'"
+              (click)="formData.status = 'BOOKED'">
+              Booked
+            </button>
 
-  <button
-    type="button"
-    class="status-option"
-    [class.active]="formData.status === 'CANCELLED'"
-    (click)="formData.status='CANCELLED'">
-    Cancelled
-  </button>
+            <button type="button" class="status-option" [class.active]="formData.status === 'CANCELLED'"
+              (click)="formData.status = 'CANCELLED'">
+              Cancelled
+            </button>
 
-  <button
-    type="button"
-    class="status-option"
-    [class.active]="formData.status === 'COMPLETED'"
-    (click)="formData.status='COMPLETED'">
-    Completed
-  </button>
-</div>
+            <button type="button" class="status-option" [class.active]="formData.status === 'COMPLETED'"
+              (click)="formData.status = 'COMPLETED'">
+              Completed
+            </button>
+          </div>
         </div>
 
         <!-- BUTTONS -->
         <div class="form-actions">
-          <button type="button" class="reset-btn" (click)="resetForm()">
-            Reset
-          </button>
+          <button type="button" class="reset-btn" (click)="resetForm()">Reset</button>
 
-          <button type="submit" class="submit-btn">
-            Book Appointment
-          </button>
+          <button type="submit" class="submit-btn">Book Appointment</button>
         </div>
       </form>
     </div>
@@ -171,9 +157,7 @@
     </div>
 
     <!-- LOADING -->
-    <div class="loading" *ngIf="loading">
-      Loading appointments...
-    </div>
+    <div class="loading" *ngIf="loading">Loading appointments...</div>
 
     <!-- TABLE -->
     <table *ngIf="!loading">
@@ -197,7 +181,7 @@
 
           <td>{{ appointment.patientName }}</td>
           <td>Dr.{{ appointment.doctorName }}</td>
-          <td>{{ appointment.date | date:'dd MMM yyyy' }}</td>
+          <td>{{ appointment.date | date: 'dd MMM yyyy' }}</td>
           <td>{{ appointment.timeSlot }}</td>
 
           <td>
@@ -207,15 +191,110 @@
           </td>
 
           <td>
-            <button *ngIf="
-    userRole === 'admin' ||
-    userRole === 'receptionist'
-  " class="delete-btn" (click)="deleteAppointment(appointment.appointmentId)">
-              Delete
+            <!-- PENDING -->
+
+            <ng-container *ngIf="appointment.status === 'PENDING'">
+              <button *hasPermission="PERMISSIONS.APPROVE_APPOINTMENT" class="approve-btn"
+                (click)="approveAppointment(appointment.appointmentId)">
+                Approve
+              </button>
+
+              <button *hasPermission="PERMISSIONS.REJECT_APPOINTMENT" class="reject-btn"
+                (click)="rejectAppointment(appointment.appointmentId)">
+                Reject
+              </button>
+            </ng-container>
+
+            <!-- EDIT -->
+            <button *hasPermission="PERMISSIONS.EDIT_APPOINTMENT" class="edit-btn"
+              (click)="openEditModal(appointment)">
+              Edit
             </button>
+
+            <!-- DELETE -->
+            <ng-container *ngIf="appointment.status !== 'PENDING'">
+              <button *hasPermission="PERMISSIONS.DELETE_APPOINTMENT" class="delete-btn"
+                (click)="deleteAppointment(appointment.appointmentId)">
+                Delete
+              </button>
+            </ng-container>
           </td>
         </tr>
       </tbody>
     </table>
+
+    <app-pagination-controls
+      [page]="currentPage"
+      [totalPages]="totalPages"
+      [hasNextPage]="hasNextPage"
+      [hasPrevPage]="hasPrevPage"
+      (pageChange)="onPageChange($event)">
+    </app-pagination-controls>
+  </div>
+
+  <!-- EDIT MODAL -->
+  <div class="modal-overlay" *ngIf="showEditModal">
+    <div class="appointment-modal">
+
+      <div class="modal-header">
+        <h2>Edit Appointment</h2>
+        <button class="close-btn" (click)="closeEditModal()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <div class="error-message" *ngIf="errorMessage">
+        {{ errorMessage }}
+      </div>
+
+      <form class="appointment-form" (ngSubmit)="submitEditAppointment()">
+
+        <div class="form-row">
+          <div class="input-group">
+            <label for="edit doctor">DOCTOR</label>
+            <select [(ngModel)]="editFormData.doctorEmployeeId" name="editDoctorEmployeeId"
+              (change)="onEditDoctorChange()" required>
+              <option value="">Select Doctor</option>
+
+              <option *ngFor="let doctor of doctors" [value]="doctor.employeeId">
+                {{ doctor.name }}
+              </option>
+            </select>
+          </div>
+
+          <div class="input-group">
+            <label for="edit appointment date">APPOINTMENT DATE</label>
+            <input type="date" [(ngModel)]="editFormData.date" name="editDate" required />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="input-group">
+            <label for="edit timeslot">TIME SLOT</label>
+            <select [(ngModel)]="editFormData.timeSlot" name="editTimeSlot" required>
+              <option value="">Select Time Slot</option>
+
+              <option *ngFor="let slot of editAvailableSlots" [value]="slot">
+                {{ slot }}
+              </option>
+            </select>
+          </div>
+
+          <div class="input-group">
+            <label for="edit status">STATUS</label>
+            <select [(ngModel)]="editFormData.status" name="editStatus" required>
+              <option value="BOOKED">Booked</option>
+              <option value="CANCELLED">Cancelled</option>
+              <option value="COMPLETED">Completed</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="reset-btn" (click)="closeEditModal()">Cancel</button>
+          <button type="submit" class="submit-btn">Save Changes</button>
+        </div>
+
+      </form>
+
+    </div>
   </div>
 </div>

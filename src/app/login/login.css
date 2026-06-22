@@ -2,6 +2,9 @@
     margin:0;
     padding:0;
     box-sizing:border-box;
+}
+
+*:not([class*="fa-"]){
     font-family:"Inter", sans-serif;
 }
 
@@ -295,4 +298,28 @@ button:disabled{
 
     font-size:14px;
 
+}
+.password-box {
+  position: relative;
+}
+.password-box input {
+    padding-right: 60px;
+}
+.toggle-password {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+
+    width: auto;
+    padding: 0;
+    background: transparent;
+    border: none;
+
+    color: #2563eb;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+
+    box-shadow: none;
 }

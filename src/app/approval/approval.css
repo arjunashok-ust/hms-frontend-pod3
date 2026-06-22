@@ -80,18 +80,22 @@
 
 .yellow {
   background: #fff2d8;
+  color: #b45309;
 }
 
 .green {
   background: #daf7e3;
+  color: #15803d;
 }
 
 .red {
   background: #ffe1e1;
+  color: #b91c1c;
 }
 
 .purple {
   background: #ece4ff;
+  color: #6d28d9;
 }
 
 .stat-card h2 {

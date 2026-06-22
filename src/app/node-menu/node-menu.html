@@ -1,0 +1,125 @@
+<section class="node-wrapper">
+
+    <!-- HEADER -->
+    <div class="panel-header">
+
+        <div>
+            <span class="panel-subtitle">HMS Admin</span>
+            <h2>Sidebar Menu Management</h2>
+        </div>
+
+        <div class="header-actions">
+            <button *hasPermission="PERMISSIONS.NODE_MANAGE" class="btn-primary" (click)="openModal()">
+                Add Node
+            </button>
+        </div>
+
+    </div>
+
+    <!-- PANEL -->
+    <div class="directory-panel">
+
+        <div class="loading" *ngIf="loading">Loading nodes...</div>
+
+        <div class="table-wrapper" *ngIf="!loading">
+            <table class="modern-table">
+                <thead>
+                    <tr>
+                        <th>Node ID</th>
+                        <th>Name</th>
+                        <th>Path</th>
+                        <th>Roles</th>
+                        <th>Icon</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody *ngIf="nodes.length > 0">
+                    <tr *ngFor="let node of nodes">
+                        <td><span class="employee-id">{{ node.node_id }}</span></td>
+                        <td>{{ node.name }}</td>
+                        <td class="muted-text">{{ node.path }}</td>
+                        <td>
+                            <span class="designation-badge" *ngFor="let r of node.role">{{ r }}</span>
+                        </td>
+                        <td><code>{{ node.icon }}</code></td>
+                        <td>
+                            <div class="action-buttons">
+                                <button *hasPermission="PERMISSIONS.NODE_MANAGE" class="icon-btn edit-btn" (click)="editNode(node)">
+                                    Edit
+                                </button>
+                                <button *hasPermission="PERMISSIONS.NODE_MANAGE" class="icon-btn delete-btn" (click)="deleteNode(node)">
+                                    Delete
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+
+                <tbody *ngIf="nodes.length === 0">
+                    <tr>
+                        <td colspan="6" class="empty-state">No nodes configured.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+</section>
+
+<!-- MODAL -->
+<div class="modal-overlay" *ngIf="showModal">
+    <div class="node-modal">
+
+        <div class="modal-header">
+            <h2>{{ isEditMode ? 'Edit Node' : 'Add Node' }}</h2>
+            <button class="close-btn" (click)="closeModal()"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+
+        <div class="error-message" *ngIf="errorMessage">{{ errorMessage }}</div>
+        <div class="success-message" *ngIf="successMessage">{{ successMessage }}</div>
+
+        <form #nodeFormRef="ngForm" (ngSubmit)="submitNode(nodeFormRef)">
+            <div class="form-grid">
+
+                <div class="input-group">
+                    <label for="node id">Node ID</label>
+                    <input type="number" [(ngModel)]="nodeForm.node_id" name="node_id" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="name">Name</label>
+                    <input type="text" [(ngModel)]="nodeForm.name" name="name" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="path">Path</label>
+                    <input type="text" [(ngModel)]="nodeForm.path" name="path" required placeholder="/example-path">
+                </div>
+
+                <div class="input-group">
+                    <label for="icon">Icon (Font Awesome class)</label>
+                    <input type="text" [(ngModel)]="nodeForm.icon" name="icon" required placeholder="fa-solid fa-gauge">
+                </div>
+
+                <!-- ROLE CHECKBOXES -->
+                <div class="input-group role-checkbox-group">
+                    <label>Visible To Roles</label>
+                    <div class="role-checkbox-grid">
+                        <label class="role-checkbox" *ngFor="let r of AVAILABLE_ROLES">
+                            <input type="checkbox" [checked]="isRoleSelected(r)" (change)="toggleRole(r)">
+                            <span>{{ r }}</span>
+                        </label>
+                    </div>
+                </div>
+
+            </div>
+
+            <button type="submit" class="submit-btn">
+                {{ isEditMode ? 'Update Node' : 'Create Node' }}
+            </button>
+        </form>
+
+    </div>
+</div>

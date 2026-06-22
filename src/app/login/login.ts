@@ -16,7 +16,8 @@ export class Login {
   password = "";
   errorMessage = "";
   firstLoginMessage = "";
-
+  showPassword = false;
+  
   constructor(
     readonly auth: Auth,
     readonly router: Router,
@@ -43,13 +44,15 @@ export class Login {
       next: (response: any) => {
         console.log(response);
 
+        const data = response.data;
+
         // STORE TOKEN
-        localStorage.setItem("token", response.token);
-        localStorage.setItem("role", response.user.role);
-        localStorage.setItem("firstLogin",String(response.firstLogin));
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("role", data.user.role);
+        localStorage.setItem("firstLogin",String(data.firstLogin));
 
         // FIRST LOGIN
-        if (response.firstLogin) {
+        if (data.firstLogin) {
           this.firstLoginMessage = response.message;
 
           setTimeout(() => {

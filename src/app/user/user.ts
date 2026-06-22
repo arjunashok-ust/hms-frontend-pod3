@@ -12,9 +12,13 @@ import {
 
 } from "@angular/core";
 
+import { FormsModule } from "@angular/forms";
+
 import { Auth } from "../services/auth";
 
 import { Router } from "@angular/router";
+import { HasPermissionDirective } from "../directives/has-permission.directive";
+import { PERMISSIONS } from "../constants/permissions";
 
 @Component({
 
@@ -23,7 +27,9 @@ import { Router } from "@angular/router";
   standalone: true,
 
   imports: [
-    CommonModule
+    CommonModule,
+    FormsModule,
+    HasPermissionDirective
   ],
 
   templateUrl: "./user.html",
@@ -33,10 +39,26 @@ import { Router } from "@angular/router";
 })
 
 export class User implements OnInit {
+  /* EXPOSED FOR TEMPLATE *hasPermission CHECKS */
+  readonly PERMISSIONS = PERMISSIONS;
 
   user:any = {};
 
   loading = true;
+
+  isEditMode = false;
+
+  errorMessage = '';
+  successMessage = '';
+
+  editForm: any = {
+    name: '',
+    phone: '',
+    department: '',
+    designation: '',
+    specialization: '',
+    consultationFee: '',
+  };
 
   constructor(
 
@@ -77,10 +99,7 @@ export class User implements OnInit {
 
             /* USER DATA */
 
-            this.user =
-
-              response.user ||
-              response;
+            this.user = response.data;
 
             this.loading = false;
 
@@ -155,6 +174,50 @@ export class User implements OnInit {
 
     this.router.navigate(['/login']);
 
+  }
+
+  /* EDIT PROFILE */
+
+  enterEditMode() {
+    this.errorMessage = '';
+    this.successMessage = '';
+
+    this.editForm = {
+      name: this.user?.name || '',
+      phone: this.user?.phone || '',
+      department: this.user?.department || '',
+      designation: this.user?.designation || '',
+      specialization: this.user?.specialization || '',
+      consultationFee: this.user?.consultationFee || '',
+    };
+
+    this.isEditMode = true;
+  }
+
+  cancelEditMode() {
+    this.isEditMode = false;
+  }
+
+  saveProfile() {
+    this.errorMessage = '';
+    this.successMessage = '';
+
+    this.auth.updateProfile(this.user.id, this.editForm).subscribe({
+      next: (response: any) => {
+        console.log(response);
+
+        this.successMessage = response.message;
+        this.isEditMode = false;
+        this.loadProfile();
+      },
+
+      error: (err: any) => {
+        console.log(err);
+
+        this.errorMessage = err?.error?.message || 'Unable To Update Profile';
+        this.cd.detectChanges();
+      },
+    });
   }
 
 }

@@ -84,7 +84,7 @@
 
         <div class="mini-icon blue">
 
-          ✉
+          <i class="fa-solid fa-envelope"></i>
 
         </div>
 
@@ -110,7 +110,7 @@
 
         <div class="mini-icon green">
 
-          👤
+          <i class="fa-solid fa-user"></i>
 
         </div>
 
@@ -136,7 +136,7 @@
 
         <div class="mini-icon orange">
 
-          💼
+          <i class="fa-solid fa-briefcase"></i>
 
         </div>
 
@@ -162,7 +162,7 @@
 
         <div class="mini-icon pink">
 
-          📈
+          <i class="fa-solid fa-chart-line"></i>
 
         </div>
 
@@ -208,6 +208,22 @@
 
         </div>
 
+        <ng-container *ngIf="!isEditMode">
+          <button *hasPermission="PERMISSIONS.EDIT_PROFILE" class="logout-btn" (click)="enterEditMode()">
+            Edit Profile
+          </button>
+        </ng-container>
+
+      </div>
+
+      <!-- ALERTS -->
+
+      <div class="error-message" *ngIf="errorMessage">
+        {{ errorMessage }}
+      </div>
+
+      <div class="success-message" *ngIf="successMessage">
+        {{ successMessage }}
       </div>
 
       <!-- GRID -->
@@ -224,7 +240,8 @@
 
           </label>
 
-          <input type="text" [value]="user?.name" readonly>
+          <input *ngIf="!isEditMode" type="text" [value]="user?.name" readonly>
+          <input *ngIf="isEditMode" type="text" [(ngModel)]="editForm.name" name="name">
 
         </div>
 
@@ -260,13 +277,14 @@
 
         <div class="input-group">
 
-          <label for="designation"> 
+          <label for="designation">
 
             DESIGNATION
 
           </label>
 
-          <input type="text" [value]="user?.designation || '—'" readonly>
+          <input *ngIf="!isEditMode" type="text" [value]="user?.designation || '—'" readonly>
+          <input *ngIf="isEditMode" type="text" [(ngModel)]="editForm.designation" name="designation">
 
         </div>
 
@@ -280,7 +298,8 @@
 
           </label>
 
-          <input type="text" [value]="user?.phone || '—'" readonly>
+          <input *ngIf="!isEditMode" type="text" [value]="user?.phone || '—'" readonly>
+          <input *ngIf="isEditMode" type="text" [(ngModel)]="editForm.phone" name="phone">
 
         </div>
 
@@ -294,7 +313,8 @@
 
           </label>
 
-          <input type="text" [value]="user?.department || '—'" readonly>
+          <input *ngIf="!isEditMode" type="text" [value]="user?.department || '—'" readonly>
+          <input *ngIf="isEditMode" type="text" [(ngModel)]="editForm.department" name="department">
 
         </div>
 
@@ -302,7 +322,7 @@
 
         <div class="input-group">
 
-          <label for="joining date"> 
+          <label for="joining date">
 
             JOINING DATE
 
@@ -354,7 +374,8 @@
 
           </label>
 
-          <input type="text" [value]="user?.specialization || '—'" readonly>
+          <input *ngIf="!isEditMode" type="text" [value]="user?.specialization || '—'" readonly>
+          <input *ngIf="isEditMode" type="text" [(ngModel)]="editForm.specialization" name="specialization">
 
         </div>
 
@@ -370,7 +391,8 @@
 
           </label>
 
-          <input type="text" [value]="user?.consultationFee || '—'" readonly>
+          <input *ngIf="!isEditMode" type="text" [value]="user?.consultationFee || '—'" readonly>
+          <input *ngIf="isEditMode" type="number" [(ngModel)]="editForm.consultationFee" name="consultationFee">
 
         </div>
 
@@ -405,13 +427,19 @@
 
       </div>
 
-      <!-- LOGOUT -->
+      <!-- EDIT ACTIONS -->
 
-      <div class="logout-section">
+      <div class="logout-section" *ngIf="isEditMode">
 
-        <button class="logout-btn" (click)="logout()">
+        <button class="logout-btn" (click)="saveProfile()">
 
-          Logout
+          Save Changes
+
+        </button>
+
+        <button class="logout-btn" (click)="cancelEditMode()">
+
+          Cancel
 
         </button>
 

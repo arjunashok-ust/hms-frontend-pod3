@@ -10,10 +10,6 @@
 
       <div class="logo">
 
-        <span class="icon">
-          ➕
-        </span>
-
         <div>
 
           <h3>
@@ -103,22 +99,28 @@
           Password
         </label>
 
-        <div class="input-box" [class.invalid]="
-            passwordField.invalid &&
-            passwordField.touched
-          ">
+        <div class="input-box password-box" [class.invalid]="
+    passwordField.invalid &&
+    passwordField.touched
+  ">
 
-          <input type="password" [(ngModel)]="password" name="password" #passwordField="ngModel"
-            placeholder="Enter your password" required minlength="8">
+          <input [type]="showPassword ? 'text' : 'password'" [(ngModel)]="password" name="password"
+            #passwordField="ngModel" placeholder="Enter your password" required minlength="8">
+
+          <button type="button" class="toggle-password" (click)="showPassword = !showPassword">
+
+            {{ showPassword ? 'Hide' : 'Show' }}
+
+          </button>
 
         </div>
 
         <!-- PASSWORD ERROR -->
 
         <div class="validation-error" *ngIf="
-            passwordField.invalid &&
-            passwordField.touched
-          ">
+    passwordField.invalid &&
+    passwordField.touched
+  ">
 
           <span *ngIf="passwordField.errors?.['required']">
 
@@ -131,14 +133,6 @@
             Minimum 8 characters required
 
           </span>
-
-        </div>
-
-        <!-- FORGOT -->
-
-        <div class="forgot">
-
-          Forgot Password?
 
         </div>
 

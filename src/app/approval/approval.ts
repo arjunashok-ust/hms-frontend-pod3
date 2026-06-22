@@ -2,15 +2,21 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { Auth } from '../services/auth';
+import { HasPermissionDirective } from '../directives/has-permission.directive';
+import { PERMISSIONS } from '../constants/permissions';
+import { PaginationControls } from '../shared/pagination-controls/pagination-controls';
 
 @Component({
   selector: 'app-approval',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, HasPermissionDirective, PaginationControls],
   templateUrl: './approval.html',
   styleUrl: './approval.css',
 })
 export class Approval implements OnInit {
+  /* EXPOSED FOR TEMPLATE *hasPermission CHECKS */
+  readonly PERMISSIONS = PERMISSIONS;
+
   pendingUsers: any[] = [];
 
   pendingApprovals = 0;
@@ -19,6 +25,12 @@ export class Approval implements OnInit {
   firstLoginPending = 0;
 
   loading = true;
+
+  /* PAGINATION */
+  currentPage = 1;
+  totalPages = 1;
+  hasNextPage = false;
+  hasPrevPage = false;
 
   constructor(
     readonly auth: Auth,
@@ -33,11 +45,15 @@ export class Approval implements OnInit {
   /* LOAD TABLE */
 
   loadPendingApprovals() {
-    this.auth.getPendingApprovals().subscribe({
+    this.auth.getPendingApprovals({ page: this.currentPage, limit: 10 }).subscribe({
       next: (response: any) => {
         console.log(response);
 
         this.pendingUsers = response.data || [];
+
+        this.totalPages = response.meta?.totalPages || 1;
+        this.hasNextPage = response.meta?.hasNextPage || false;
+        this.hasPrevPage = response.meta?.hasPrevPage || false;
 
         this.loading = false;
 
@@ -54,6 +70,12 @@ export class Approval implements OnInit {
     });
   }
 
+  /* PAGE CHANGE */
+  onPageChange(page: number) {
+    this.currentPage = page;
+    this.loadPendingApprovals();
+  }
+
   /* LOAD STATS */
 
   loadApprovalStats() {
@@ -61,13 +83,13 @@ export class Approval implements OnInit {
       next: (response: any) => {
         console.log(response);
 
-        this.pendingApprovals = response.pendingApprovals || 0;
+        this.pendingApprovals = response.data.pendingApprovals || 0;
 
-        this.verifiedUsers = response.verifiedUsers || 0;
+        this.verifiedUsers = response.data.verifiedUsers || 0;
 
-        this.inactiveAccounts = response.inactiveAccounts || 0;
+        this.inactiveAccounts = response.data.inactiveAccounts || 0;
 
-        this.firstLoginPending = response.firstLoginPending || 0;
+        this.firstLoginPending = response.data.firstLoginPending || 0;
 
         this.cdr.detectChanges();
       },

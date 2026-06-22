@@ -1,0 +1,123 @@
+<section class="role-wrapper">
+
+    <!-- HEADER -->
+    <div class="panel-header">
+
+        <div>
+            <span class="panel-subtitle">HMS Admin</span>
+            <h2>Role &amp; Permission Management</h2>
+        </div>
+
+        <div class="header-actions">
+            <button *hasPermission="PERMISSIONS.ROLE_MANAGE" class="btn-primary" (click)="openModal()">
+                Add Role
+            </button>
+        </div>
+
+    </div>
+
+    <!-- PANEL -->
+    <div class="directory-panel">
+
+        <div class="loading" *ngIf="loading">Loading roles...</div>
+
+        <div class="table-wrapper" *ngIf="!loading">
+            <table class="modern-table">
+                <thead>
+                    <tr>
+                        <th>Role ID</th>
+                        <th>Role Name</th>
+                        <th>Permissions</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody *ngIf="roles.length > 0">
+                    <tr *ngFor="let role of roles">
+                        <td><span class="employee-id">{{ role.role_id }}</span></td>
+                        <td>{{ role.role_name }}</td>
+                        <td>
+                            <span class="designation-badge">{{ role.role_permissions?.length || 0 }} permissions</span>
+                        </td>
+                        <td>
+                            <div class="action-buttons">
+                                <button *hasPermission="PERMISSIONS.ROLE_MANAGE" class="icon-btn edit-btn" (click)="editRole(role)">
+                                    Edit
+                                </button>
+                                <button *hasPermission="PERMISSIONS.ROLE_MANAGE" class="icon-btn delete-btn" (click)="deleteRole(role)">
+                                    Delete
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+
+                <tbody *ngIf="roles.length === 0">
+                    <tr>
+                        <td colspan="4" class="empty-state">No roles configured.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+</section>
+
+<!-- MODAL -->
+<div class="modal-overlay" *ngIf="showModal">
+    <div class="role-modal">
+
+        <div class="modal-header">
+            <h2>{{ isEditMode ? 'Edit Role' : 'Add Role' }}</h2>
+            <button class="close-btn" (click)="closeModal()"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+
+        <div class="error-message" *ngIf="errorMessage">{{ errorMessage }}</div>
+        <div class="success-message" *ngIf="successMessage">{{ successMessage }}</div>
+
+        <form #roleFormRef="ngForm" (ngSubmit)="submitRole(roleFormRef)">
+
+            <div class="form-grid">
+                <div class="input-group">
+                    <label for="role id">Role ID</label>
+                    <input type="number" [(ngModel)]="roleForm.role_id" name="role_id" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="role name">Role Name</label>
+                    <input type="text" [(ngModel)]="roleForm.role_name" name="role_name" required
+                        placeholder="e.g. cashier">
+                </div>
+            </div>
+
+            <!-- PERMISSION GROUPS -->
+            <div class="permission-groups">
+
+                <div class="permission-group" *ngFor="let group of PERMISSION_GROUPS">
+
+                    <div class="permission-group-header">
+                        <label>{{ group.label }}</label>
+                        <button type="button" class="toggle-group-btn" (click)="toggleGroup(group.permissions)">
+                            {{ isGroupFullySelected(group.permissions) ? 'Clear All' : 'Select All' }}
+                        </button>
+                    </div>
+
+                    <div class="permission-checkbox-grid">
+                        <label class="permission-checkbox" *ngFor="let p of group.permissions">
+                            <input type="checkbox" [checked]="isPermissionSelected(p)" (change)="togglePermission(p)">
+                            <span>{{ p }}</span>
+                        </label>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <button type="submit" class="submit-btn">
+                {{ isEditMode ? 'Update Role' : 'Create Role' }}
+            </button>
+        </form>
+
+    </div>
+</div>

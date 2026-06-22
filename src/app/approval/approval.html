@@ -21,7 +21,7 @@
     <div class="stats-grid">
 
         <div class="stat-card">
-            <div class="stat-icon yellow">⏳</div>
+            <div class="stat-icon yellow"><i class="fa-solid fa-hourglass-half"></i></div>
 
             <h2>{{ pendingApprovals }}</h2>
 
@@ -29,7 +29,7 @@
         </div>
 
         <div class="stat-card">
-            <div class="stat-icon green">✔</div>
+            <div class="stat-icon green"><i class="fa-solid fa-check"></i></div>
 
             <h2>{{ verifiedUsers }}</h2>
 
@@ -37,7 +37,7 @@
         </div>
 
         <div class="stat-card">
-            <div class="stat-icon red">✖</div>
+            <div class="stat-icon red"><i class="fa-solid fa-xmark"></i></div>
 
             <h2>{{ inactiveAccounts }}</h2>
 
@@ -45,7 +45,7 @@
         </div>
 
         <div class="stat-card">
-            <div class="stat-icon purple">↪</div>
+            <div class="stat-icon purple"><i class="fa-solid fa-rotate-right"></i></div>
 
             <h2>{{ firstLoginPending }}</h2>
 
@@ -115,7 +115,7 @@
                     </td>
 
                     <td>
-                        <button class="approve-btn" (click)="approveEmployee(user.employeeId)">
+                        <button *hasPermission="PERMISSIONS.APPROVE_EMPLOYEE" class="approve-btn" (click)="approveEmployee(user.employeeId)">
                             Approve
                         </button>
                     </td>
@@ -125,6 +125,14 @@
             </tbody>
 
         </table>
+
+        <app-pagination-controls
+            [page]="currentPage"
+            [totalPages]="totalPages"
+            [hasNextPage]="hasNextPage"
+            [hasPrevPage]="hasPrevPage"
+            (pageChange)="onPageChange($event)">
+        </app-pagination-controls>
 
     </div>
 

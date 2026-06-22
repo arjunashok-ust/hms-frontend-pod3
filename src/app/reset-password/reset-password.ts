@@ -63,7 +63,6 @@ export class ResetPassword {
 
     const payload = {
       oldPassword: this.oldPassword,
-
       newPassword: this.newPassword,
     };
 
@@ -78,7 +77,6 @@ export class ResetPassword {
         alert(response.message);
 
         /* REMOVE TOKEN */
-
         localStorage.removeItem('token');
         localStorage.removeItem('firstLogin');
         localStorage.removeItem('role');
