@@ -40,8 +40,8 @@ export class ApiService {
     return this.http.post(`${this.backendUrl}/api/auth/setpassword`, payload);
   }
 
-  getAllEmployees() {
-    return this.http.get(`${this.backendUrl}/api/employees/all`);
+  getAllEmployees(params: any = {}) {
+    return this.http.get(`${this.backendUrl}/api/employees/all`, { params });
   }
 
   updateEmployee(employeeCode: string, payload: any) {

@@ -461,12 +461,12 @@ textarea {
 }
 
 .badge-active {
-  background: #dcfce7;
-  color: #10b981;
+  background: #defae8;
+  color: #029b68;
 }
 .badge-review {
   background: #fef3c7;
-  color: #d97706;
+  color: #be6601;
 }
 
 .action-cell {
@@ -496,7 +496,7 @@ textarea {
 
 .btn-icon.edit {
   background: #e0f2fe;
-  color: #0284c7;
+  color: #0572a8;
 }
 .btn-icon.edit:hover {
   background: #bae6fd;
@@ -504,7 +504,7 @@ textarea {
 
 .btn-icon.delete {
   background: #fee2e2;
-  color: #ef4444;
+  color: #ad0505;
 }
 .btn-icon.delete:hover {
   background: #fecaca;

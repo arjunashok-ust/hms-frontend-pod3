@@ -42,6 +42,13 @@ export class Employee implements OnInit {
     total: 0
   };
 
+  // --- Pagination State ---
+  currentPage = 1;
+  pageSize = 10;
+  totalRecords = 0;
+  totalPages = 1;
+  visiblePages: (number | string)[] = [];
+
   searchTerm: string = '';
   selectedDepartment: string = '';
   selectedStatus: string = '';
@@ -93,40 +100,45 @@ export class Employee implements OnInit {
         this.showPendingApprovals = false;
         this.selectedStatus = '';
       }
-      if (this.employees.length > 0) {
-        this.applyFilters();
-      }
+      this.applyFilters(); // Trigger load
       this.cdr.detectChanges();
     });
-    this.fetchEmployees();
   }
 
   minDate = getMinDate();
   maxDate = getMaxDate();
 
   fetchEmployees() {
-    this.apiService.getAllEmployees().subscribe({
-      next: (data: any) => {
-        if (!Array.isArray(data)) {
-          console.error('Backend did not return an array. Data:', data);
-          this.isLoading = false;
-          this.cdr.detectChanges();
-          this.cdr.markForCheck();
-          return;
+    this.isLoading = true;
+
+    // Compile filter params for backend
+    const params: any = {
+      page: this.currentPage,
+      limit: this.pageSize
+    };
+
+    if (this.searchTerm) params.search = this.searchTerm;
+    if (this.selectedDepartment) params.department = this.selectedDepartment;
+
+    if (this.showPendingApprovals) {
+      params.status = 'ADMIN_APPROVAL_PENDING';
+    } else if (this.selectedStatus) {
+      params.status = this.selectedStatus;
+    }
+
+    this.apiService.getAllEmployees(params).subscribe({
+      next: (res: any) => {
+        // Handle unwrapped JSON
+        this.filteredEmployees = res.data || [];
+        this.totalRecords = res.pagination?.total || 0;
+        this.totalPages = res.pagination?.pages || 1;
+
+        if (res.stats) {
+          this.stats = res.stats;
+          this.pendingCount = this.stats.pending;
         }
 
-        this.employees = data;
-
-        this.stats = {
-          pending: data.filter((e: any) => e.status === 'ADMIN_APPROVAL_PENDING').length,
-          verified: data.filter((e: any) => e.status === 'ACTIVE').length,
-          inactive: data.filter((e: any) => e.status === 'INACTIVE').length,
-          firstLogin: data.filter((e: any) => e.status === 'PASSWORD_CHANGE_PENDING').length,
-          total: data.length
-        };
-        this.pendingCount = this.stats.pending;
-
-        this.applyFilters();
+        this.generatePagesArray();
         this.isLoading = false;
         this.cdr.markForCheck();
         this.cdr.detectChanges();
@@ -137,6 +149,46 @@ export class Employee implements OnInit {
         this.cdr.markForCheck();
       },
     });
+  }
+
+  // --- Pagination Helpers ---
+  generatePagesArray() {
+    const total = this.totalPages;
+    const current = this.currentPage;
+
+    if (total <= 6) {
+      this.visiblePages = Array.from({ length: total }, (_, i) => i + 1);
+      return;
+    }
+
+    if (current <= 3) {
+      this.visiblePages = [1, 2, 3, 4, '...', total];
+    } else if (current >= total - 2) {
+      this.visiblePages = [1, '...', total - 3, total - 2, total - 1, total];
+    } else {
+      this.visiblePages = [1, '...', current - 1, current, current + 1, '...', total];
+    }
+  }
+
+  goToPage(page: number | string) {
+    if (typeof page === 'number' && page !== this.currentPage) {
+      this.currentPage = page;
+      this.fetchEmployees();
+    }
+  }
+
+  nextPage() {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+      this.fetchEmployees();
+    }
+  }
+
+  prevPage() {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+      this.fetchEmployees();
+    }
   }
 
   filterByCard(statusType: string) {
@@ -160,6 +212,11 @@ export class Employee implements OnInit {
     this.applyFilters();
   }
 
+  applyFilters() {
+    this.currentPage = 1; // Reset to page 1 on filter change
+    this.fetchEmployees();
+  }
+
   timeRangeValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
     const start = control.get('startTime')?.value;
     const end = control.get('endTime')?.value;
@@ -168,28 +225,6 @@ export class Employee implements OnInit {
     }
     return null;
   };
-
-  applyFilters() {
-    this.filteredEmployees = this.employees.filter((emp) => {
-      if (this.showPendingApprovals) return emp.status === 'ADMIN_APPROVAL_PENDING';
-      if (emp.status === 'ADMIN_APPROVAL_PENDING') return false;
-
-      const matchesSearch =
-        !this.searchTerm ||
-        emp.name?.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-        emp.email?.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-        emp.employeeCode?.toLowerCase().includes(this.searchTerm.toLowerCase());
-
-      const matchesDept = !this.selectedDepartment || emp.department === this.selectedDepartment;
-
-      let matchesStatus = true;
-      if (this.selectedStatus) {
-        matchesStatus = emp.status?.toUpperCase() === this.selectedStatus;
-      }
-
-      return matchesSearch && matchesDept && matchesStatus;
-    });
-  }
 
   getRoleString(role: any): string {
     if (!role) return 'Staff';
@@ -200,12 +235,8 @@ export class Employee implements OnInit {
     return name ? name.substring(0, 2).toUpperCase() : 'NA';
   }
 
-
-
   deleteEmployee(id: string) {
-    if (
-      confirm(`Are you absolutely sure you want to delete employee ${id}? This cannot be undone.`)
-    ) {
+    if (confirm(`Are you absolutely sure you want to delete employee ${id}? This cannot be undone.`)) {
       this.apiService.deleteEmployee(id).subscribe({
         next: () => {
           this.toast.success('Employee deleted successfully.');
