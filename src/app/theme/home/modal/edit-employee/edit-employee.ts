@@ -18,6 +18,7 @@ import {
   futureDateValidator,
   timeRangeValidator,
 } from '../../../../validators/time-range-validator';
+import { UserService } from '../../../../services/user.service';
 
 @Component({
   selector: 'app-edit-employee',
@@ -27,6 +28,7 @@ import {
 })
 export class EditEmployeeComponent implements OnInit {
   adminService: AdminService = inject(AdminService);
+  userService: UserService = inject(UserService);
   authService: AuthService = inject(AuthService);
   router: Router = inject(Router);
   toast: ToastrService = inject(ToastrService);
@@ -91,22 +93,23 @@ export class EditEmployeeComponent implements OnInit {
       this.cd.detectChanges();
     });
 
-    this.adminService.getUserEmployee(userEmail, 1, 1).subscribe({
+    this.userService.getSingleUser(userEmail).subscribe({
       next: (res) => {
-        this.userData = res.data[0] as UserEmployeeModel;
+        this.userData = res;
+        console.log(res);
         this.updateForm.patchValue({
-          name: res.data[0].name,
-          email: res.data[0].email,
-          role: res.data[0].role,
-          department: res.data[0].department,
-          designation: res.data[0].designation,
-          joiningDate: res.data[0].joiningDate
-            ? res.data[0].joiningDate.toString().split('T')[0]
+          name: res.name,
+          email: res.email,
+          role: res.role,
+          department: res.department,
+          designation: res.designation,
+          joiningDate: res.joiningDate
+            ? res.joiningDate.toString().split('T')[0]
             : '',
-          medicalRegistrationNo: res.data[0].medicalRegistrationNo,
-          specialization: res.data[0].specialization,
-          qualification: res.data[0].qualification,
-          consultationFee: res.data[0].consultationFee,
+          medicalRegistrationNo: res.medicalRegistrationNo,
+          specialization: res.specialization,
+          qualification: res.qualification,
+          consultationFee: res.consultationFee,
         });
 
         // availability slots patch

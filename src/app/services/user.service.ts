@@ -121,6 +121,17 @@ export class UserService {
       .pipe(catchError((error) => this.handleError(error)));
   }
 
+  // get single user
+  getSingleUser(email: string): Observable<UserEmployeeModel> {
+    return this.http
+      .get<UserEmployeeModel>(`${this.api.backend_url}/user/getSingleUser`, {
+        params: {
+          email,
+        },
+      })
+      .pipe(catchError((error) => this.handleError(error)));
+  }
+
   // logout
   logout() {
     localStorage.clear();

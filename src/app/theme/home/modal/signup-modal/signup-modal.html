@@ -58,7 +58,9 @@
               <span *ngIf="signUpModalForm.get('email')?.errors?.['required']"
                 >Email is required.</span
               >
-              <span *ngIf="signUpModalForm.get('email')?.errors?.['pattern']">Email is invalid.</span>
+              <span *ngIf="signUpModalForm.get('email')?.errors?.['pattern']"
+                >Email is invalid.</span
+              >
             </small>
           </div>
         </div>
@@ -72,9 +74,14 @@
             <div class="input-wrapper">
               <select id="roles" class="form-input form-select" formControlName="role">
                 <option value="" disabled>Select role</option>
-                <option *ngFor="let role of roles_data" [ngValue]="role.role_name">
-                  {{ role.role_name }}
-                </option>
+                <ng-container *ngFor="let role of roles_data">
+                  <option
+                    [ngValue]="role.role_name"
+                    *ngIf="role.role_name !== 'Admin' || userRole == 'Super Admin'"
+                  >
+                    {{ role.role_name }}
+                  </option>
+                </ng-container>
               </select>
               <span class="input-icon select-icon">
                 <i class="bi bi-chevron-down"></i>
@@ -98,12 +105,16 @@
             <div class="input-wrapper">
               <select id="department" class="form-input form-select" formControlName="department">
                 <option value="" disabled>Select department</option>
-                <option
-                  *ngFor="let department of departments_data"
-                  [ngValue]="department.department_name"
-                >
-                  {{ department.department_name }}
-                </option>
+                <ng-container *ngFor="let department of departments_data">
+                  <option
+                    [ngValue]="department.department_name"
+                    *ngIf="
+                      department.department_name !== 'Administration' || userRole == 'Super Admin'
+                    "
+                  >
+                    {{ department.department_name }}
+                  </option>
+                </ng-container>
               </select>
               <span class="input-icon select-icon">
                 <i class="bi bi-chevron-down"></i>
@@ -161,9 +172,7 @@
             >
           </small>
         </div>
-        <div
-          class="form-group"
-        >
+        <div class="form-group">
           <label class="form-label" for="qualification">
             <i class="bi bi-mortarboard"></i>
             Qualification
@@ -319,7 +328,7 @@
           <span class="error-text" *ngIf="signUpModalForm.errors?.['invalidTimeRange']">
             Start hour must be less than end hour
           </span>
-           <small *ngIf="signUpModalForm.errors?.['sameTimeRange']"
+          <small *ngIf="signUpModalForm.errors?.['sameTimeRange']"
             >Start hour and end hour should not be same.</small
           >
         </div>

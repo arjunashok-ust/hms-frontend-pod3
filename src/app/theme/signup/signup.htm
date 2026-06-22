@@ -16,9 +16,11 @@
         </small>
         <select id="roles" formControlName="role">
           <option value="" disabled>Role</option>
-          <option *ngFor="let role of roles_data" [ngValue]="role.role_name">
-            {{ role.role_name }}
-          </option>
+          <ng-container *ngFor="let role of roles_data"
+            ><option [ngValue]="role.role_name" *ngIf="role.role_name != 'Admin'">
+              {{ role.role_name }}
+            </option>
+          </ng-container>
         </select>
         <small *ngIf="!signUpForm.get('role')?.valid&&signUpForm.get('role')?.touched"
           >Role is required.</small
@@ -47,12 +49,9 @@
         >
         <select id="department" formControlName="department">
           <option value="" disabled>Department</option>
-          <option
-            *ngFor="let department of departments_data"
-            [ngValue]="department.department_name"
-          >
-            {{ department.department_name }}
-          </option>
+          <ng-container *ngFor="let department of departments_data">
+            <option [ngValue]="department.department_name" *ngIf="department.department_name !== 'Administration'">{{ department.department_name }}</option>
+          </ng-container>
         </select>
         <small *ngIf="!signUpForm.get('department')?.valid&&signUpForm.get('department')?.touched"
           >Department is required.</small
@@ -101,11 +100,7 @@
             {{ specialization.specialization_name }}
           </option>
         </select>
-        <input
-          type="text"
-          placeholder="Qualification"
-          formControlName="qualification"
-        />
+        <input type="text" placeholder="Qualification" formControlName="qualification" />
         <small *ngIf="signUpForm.get('qualification')?.touched">
           <span *ngIf="signUpForm.get('qualification')?.errors?.['pattern']"
             >Only letters and white space is allowed.</span
@@ -137,7 +132,7 @@
           <small *ngIf="signUpForm.errors?.['invalidTimeRange']"
             >Start hour must be less than end hour.</small
           >
-           <small *ngIf="signUpForm.errors?.['sameTimeRange']"
+          <small *ngIf="signUpForm.errors?.['sameTimeRange']"
             >Start hour and end hour should not be same.</small
           >
           <input

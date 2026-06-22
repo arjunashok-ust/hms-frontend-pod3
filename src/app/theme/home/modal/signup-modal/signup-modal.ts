@@ -11,11 +11,7 @@ import {
 import { Router, RouterModule } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 
-import {
-  DepartmentModel,
-  RoleModel,
-  SpecializationModel,
-} from '../../../../models/ui.model';
+import { DepartmentModel, RoleModel, SpecializationModel } from '../../../../models/ui.model';
 
 import { AuthService } from '../../../../services/auth.service';
 import { mapToSignUpRequest } from '../../../mapper/mapToSignUpRequest';
@@ -46,6 +42,7 @@ export class SignUpModalComponent implements OnInit {
 
   hours = Array.from({ length: 24 }, (_, i) => i);
   generatedSlots: string[] = [];
+  userRole : string  = localStorage.getItem("role")??'';
 
   constructor() {
     this.signUpModalForm = this.buildForm();
@@ -61,10 +58,7 @@ export class SignUpModalComponent implements OnInit {
         name: ['', [Validators.required, Validators.pattern(/^[a-z]+( [a-z]+)*$/i)]],
         email: [
           '',
-          [
-            Validators.required,
-            Validators.pattern(/^[a-z0-9._]+@[a-z0-9]+\.[a-z]{2,}$/i),
-          ],
+          [Validators.required, Validators.pattern(/^[a-z0-9._]+@[a-z0-9]+\.[a-z]{2,}$/i)],
         ],
         role: ['', Validators.required],
         department: ['', Validators.required],
@@ -73,7 +67,7 @@ export class SignUpModalComponent implements OnInit {
         joiningDate: ['', Validators.required],
         medicalRegistrationNo: ['', Validators.pattern(/^[a-z0-9]*$/i)],
         specialization: [''],
-        qualification: ['', [Validators.pattern(/^[a-z]+([ -][a-z]+)*$/i),Validators.required]],
+        qualification: ['', [Validators.pattern(/^[a-z]+([ -][a-z]+)*$/i), Validators.required]],
         consultationFee: [''],
         startHour: [''],
         endHour: [''],
@@ -81,14 +75,17 @@ export class SignUpModalComponent implements OnInit {
       },
       {
         validators: [timeRangeValidator, futureDateValidator],
-      }
+      },
     );
   }
 
   private loadUiData() {
     this.fetchData<RoleModel[]>('/ui/getRoles', (res) => (this.roles_data = res));
     this.fetchData<DepartmentModel[]>('/ui/getDepartments', (res) => (this.departments_data = res));
-    this.fetchData<SpecializationModel[]>('/ui/getSpecializations', (res) => (this.specializations_data = res));
+    this.fetchData<SpecializationModel[]>(
+      '/ui/getSpecializations',
+      (res) => (this.specializations_data = res),
+    );
   }
 
   private fetchData<T>(url: string, assign: (data: T) => void) {
@@ -117,7 +114,7 @@ export class SignUpModalComponent implements OnInit {
     for (let i = start; i < end; i++) {
       this.generatedSlots.push(
         `${this.formatHour(i)} : 00 - ${this.formatHour(i)} : 30`,
-        `${this.formatHour(i)} : 30 - ${this.formatHour(i + 1)} : 00`
+        `${this.formatHour(i)} : 30 - ${this.formatHour(i + 1)} : 00`,
       );
     }
   }
