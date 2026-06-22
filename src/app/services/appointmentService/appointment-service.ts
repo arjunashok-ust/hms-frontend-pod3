@@ -25,10 +25,10 @@ export class AppointmentService {
     return of([]);
   }
 
-  getRecentAppointments(): Observable<any[]> {
+  getRecentAppointments(params: any = {}): Observable<any> {
     if (isPlatformBrowser(this.platformId))
-      return this.http.get<any[]>(`${this.apiUrl}/api/appointment/recent`);
-    return of([]);
+      return this.http.get<any>(`${this.apiUrl}/api/appointment/recent`, { params });
+    return of({ data: [], pagination: { total: 0, pages: 1 } });
   }
 
   updateAppointment(id: string, data: any): Observable<any> {

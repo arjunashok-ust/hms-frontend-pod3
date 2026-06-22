@@ -35,6 +35,13 @@ export class Appointment implements OnInit {
   displayDoctors: any[] = [];
   selectedDoctorDisplay = '';
 
+  // 1. ADD PAGINATION STATE VARIABLES (Under your existing variables)
+  currentPage = 1;
+  pageSize = 10;
+  totalRecords = 0;
+  totalPages = 1;
+  visiblePages: (number | string)[] = [];
+
   toast: ToastrService = inject(ToastrService);
   constructor(
     private readonly fb: FormBuilder,
@@ -101,17 +108,16 @@ export class Appointment implements OnInit {
   }
 
   loadData() {
-    if (this.userRole !== 'DOCTOR') {
-      this.appointmentService.getStats().subscribe(data => {
-        this.stats = { ...this.stats, ...data };
-        this.cdr.markForCheck();
-      });
-    }
+    // Now EVERYONE gets absolute global stats from the backend! No role filtering needed here.
+    this.appointmentService.getStats().subscribe(data => {
+      this.stats = { ...this.stats, ...data };
+      this.cdr.detectChanges();
+    });
 
     this.appointmentService.getDoctors().subscribe(data => {
       this.doctors = data;
       this.displayDoctors = [...this.doctors];
-      this.cdr.markForCheck();
+      this.cdr.detectChanges();
     });
 
     this.apiService.getAllPatients().subscribe({
@@ -120,7 +126,7 @@ export class Appointment implements OnInit {
           String(pat.status).toUpperCase() === 'ACTIVE' || String(pat.status) === 'true'
         );
         this.displayPatients = [...this.patients];
-        this.cdr.markForCheck();
+        this.cdr.detectChanges();
       },
       error: (err) => console.error('Failed to fetch patients', err)
     });
@@ -128,23 +134,67 @@ export class Appointment implements OnInit {
     this.fetchRecentAppointments();
   }
 
-  fetchRecentAppointments() {
-    this.appointmentService.getRecentAppointments().subscribe(data => {
-      this.recentAppointments = data; // Backend already filtered this!
 
-      if (this.userRole === 'DOCTOR') {
-        this.stats = {
-          total: this.recentAppointments.length,
-          completed: this.recentAppointments.filter((a: any) => a.status === 'Completed').length,
-          booked: this.recentAppointments.filter((a: any) => a.status === 'Scheduled').length,
-          cancelled: this.recentAppointments.filter((a: any) => a.status === 'Cancelled').length,
-          pending: this.recentAppointments.filter((a: any) => a.status?.toUpperCase() === 'PENDING').length
-        };
-      } else {
-        this.stats.pending = this.recentAppointments.filter((a: any) => a.status?.toUpperCase() === 'PENDING').length;
-      }
-      this.cdr.detectChanges();
+  // 3. UPDATE FETCH METHOD
+  fetchRecentAppointments() {
+    const params = {
+      page: this.currentPage,
+      limit: this.pageSize
+    };
+
+    this.appointmentService.getRecentAppointments(params).subscribe({
+      next: (res: any) => {
+        // Handle the new JSON wrapper structure
+        this.recentAppointments = res.data || [];
+        this.totalRecords = res.pagination?.total || 0;
+        this.totalPages = res.pagination?.pages || 1;
+
+        this.generatePagesArray();
+        this.cdr.detectChanges();
+      },
+      error: (err) => console.error('Failed to fetch appointments', err)
     });
+  }
+
+
+  // 4. ADD PAGINATION HELPER METHODS
+  generatePagesArray() {
+    const total = this.totalPages;
+    const current = this.currentPage;
+
+    if (total <= 6) {
+      this.visiblePages = Array.from({ length: total }, (_, i) => i + 1);
+      return;
+    }
+
+    if (current <= 3) {
+      this.visiblePages = [1, 2, 3, 4, '...', total];
+    } else if (current >= total - 2) {
+      this.visiblePages = [1, '...', total - 3, total - 2, total - 1, total];
+    } else {
+      this.visiblePages = [1, '...', current - 1, current, current + 1, '...', total];
+    }
+  }
+
+  goToPage(page: number | string) {
+    if (typeof page === 'number' && page !== this.currentPage) {
+      this.currentPage = page;
+      this.fetchRecentAppointments();
+    }
+  }
+
+  nextPage() {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+      this.fetchRecentAppointments();
+    }
+  }
+
+  prevPage() {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+      this.fetchRecentAppointments();
+    }
   }
 
   fetchCurrentUser() {
