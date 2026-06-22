@@ -237,6 +237,7 @@
 
           <div class="form-card mt-4">
             <h3>Medical Observations</h3>
+              <p class="card-desc">VITALS & OTHER METRICS</p>
             <div class="array-scroll-container" formArrayName="medicalObservations">
               @if (medicalObservations.length > 0) {
                 <table class="array-table">
@@ -378,20 +379,14 @@
             </div>
           }
         </div>
-        <input
-          *hasPermission="'VIEW_ALL_RECORDS'"
-          type="text"
-          [value]="selectedFilterDoctor"
-          class="form-control"
-          style="width: 230px"
-        />
       </div>
     </div>
 
     <table class="data-table mt-3">
       <thead>
         <tr>
-          <th>ID</th>
+          <th>RECORD ID</th>
+          <th>APPOINTMENT ID</th>
           <th>PATIENT</th>
           <th>DOCTOR</th>
           <th>DIAGNOSIS</th>
@@ -403,6 +398,7 @@
         @for (rec of records; track rec._id) {
           <tr>
             <td class="text-purple fw-bold">{{ rec.recordCode }}</td>
+            <td>{{ rec.appointmentId }}</td>
             <td>
               <div class="user-cell">
                 <div class="avatar bg-purple">{{ getInitials(rec.patientId) }}</div>
@@ -421,7 +417,7 @@
               >
             </td>
             <td class="action-cell">
-              <button class="btn-icon view"><i class="bi bi-eye"></i></button>
+              <button class="btn-icon view" (click)="viewRecord(rec)"><i class="bi bi-eye"></i></button>
               @if (canEdit(rec)) {
                 <button class="btn-icon edit" (click)="editRecord(rec)">
                   <i class="bi bi-pencil-square"></i>
@@ -482,3 +478,12 @@
     </div>
   </div>
 </div>
+@if (showViewModal && selectedRecordForView) {
+  <app-record-details-modal
+    [record]="selectedRecordForView"
+    [patients]="patients"
+    [doctors]="doctors"
+    (close)="closeViewModal()"
+    (delete)="deleteRecord($event); closeViewModal()">
+  </app-record-details-modal>
+}

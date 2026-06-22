@@ -6,6 +6,7 @@ import { HasPermissionDirective } from '../../directives/has-permission.directiv
 import { ApiService } from '../../services/apiService/api-service';
 import { AppointmentService } from '../../services/appointmentService/appointment-service';
 import { RecordsService } from '../../services/recordsService/record-service';
+import { RecordDetailsModalComponent } from '../record-modal/record-modal';
 import { ToastrService } from 'ngx-toastr';
 import { forkJoin, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
@@ -13,7 +14,7 @@ import { catchError } from 'rxjs/operators';
 @Component({
   selector: 'app-medical-record',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, HasPermissionDirective],
+  imports: [CommonModule, ReactiveFormsModule, HasPermissionDirective, RecordDetailsModalComponent],
   templateUrl: './medical-record.html',
   styleUrls: ['./medical-record.css']
 })
@@ -63,10 +64,25 @@ export class MedicalRecordComponent implements OnInit {
   isFormAppointmentOpen = false; displayFormAppointments: any[] = []; selectedFormAppointment = '';
   filterDate = '';
 
+  // Add these variables inside the class:
+  showViewModal = false;
+  selectedRecordForView: any = null;
+
+  // Add this method to open the modal:
+  viewRecord(record: any) {
+    this.selectedRecordForView = record;
+    this.showViewModal = true;
+  }
+
+  // Add this method to handle modal closing:
+  closeViewModal() {
+    this.showViewModal = false;
+    this.selectedRecordForView = null;
+  }
+
   ngOnInit() {
     this.initForm();
 
-    // PLATFORM CHECK TO PREVENT SSR CRASHES ON REFRESH
     if (isPlatformBrowser(this.platformId)) {
       this.route.queryParams.subscribe(params => {
         if (params['appointmentId']) {
@@ -86,6 +102,9 @@ export class MedicalRecordComponent implements OnInit {
       complaint: [''], symptoms: [''], diagnosis: [''], notes: [''],
       medications: this.fb.array([]), medicalObservations: this.fb.array([])
     });
+    
+    this.addMedication();
+    this.addObservation();
   }
 
   get medications() { return this.recordForm.get('medications') as FormArray; }
@@ -331,13 +350,33 @@ export class MedicalRecordComponent implements OnInit {
   canEdit(record: any): boolean {
     const isMyRecord = record.doctorEmployeeId === this.currentUser?.employeeCode;
     if (this.hasPermission('UPDATE_FINALISED_RECORD')) return true;
-    if (this.hasPermission('UPDATE_RECORD') && record.status === 'DRAFT') return true;
-    if (this.hasPermission('UPDATE_MY_RECORD') && isMyRecord && record.status === 'DRAFT') return true;
+    if (record.status === 'DRAFT') {
+      if (this.hasPermission('UPDATE_RECORD')) return true;
+      if (this.hasPermission('UPDATE_MY_RECORD') && isMyRecord) return true;
+    }
     return false;
   }
 
   onSubmit(status: 'DRAFT' | 'FINAL') {
-    if (this.recordForm.invalid) { this.recordForm.markAllAsTouched(); this.toast.error('Fill required fields'); return; }
+   
+    if (this.medications.length === 1 && !this.medications.at(0).get('name')?.value) {
+      this.removeMedication(0);
+    }
+    if (this.medicalObservations.length === 1 && !this.medicalObservations.at(0).get('metricName')?.value) {
+      this.removeObservation(0);
+    }
+
+    if (this.recordForm.invalid) {
+      this.recordForm.markAllAsTouched();
+      this.toast.error('Fill required fields');
+
+      // Add the blank fields back if we removed them and validation still failed
+      if (this.medications.length === 0) this.addMedication();
+      if (this.medicalObservations.length === 0) this.addObservation();
+
+      return;
+    }
+    
     this.isSubmitting = true;
     const payload = { ...this.recordForm.getRawValue(), status: status };
 

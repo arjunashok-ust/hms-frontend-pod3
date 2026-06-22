@@ -108,7 +108,6 @@ export class Appointment implements OnInit {
   }
 
   loadData() {
-    // Now EVERYONE gets absolute global stats from the backend! No role filtering needed here.
     this.appointmentService.getStats().subscribe(data => {
       this.stats = { ...this.stats, ...data };
       this.cdr.detectChanges();
@@ -120,9 +119,13 @@ export class Appointment implements OnInit {
       this.cdr.detectChanges();
     });
 
-    this.apiService.getAllPatients().subscribe({
-      next: (data: any) => {
-        this.patients = data.filter((pat: any) =>
+    // FIX: Pass a high limit for the dropdown and safely unwrap the paginated response
+    this.apiService.getAllPatients({ limit: 1000 }).subscribe({
+      next: (res: any) => {
+        // Safely extract whether it's wrapped in { data: [] } or a raw array
+        const patientsList = res.data || res || [];
+
+        this.patients = patientsList.filter((pat: any) =>
           String(pat.status).toUpperCase() === 'ACTIVE' || String(pat.status) === 'true'
         );
         this.displayPatients = [...this.patients];
@@ -223,9 +226,10 @@ export class Appointment implements OnInit {
     this.isPatientDropdownOpen = true;
     this.selectedPatientDisplay = (event.target as HTMLInputElement).value;
 
+    // FIX: Added ?. to prevent silent Javascript crashes if a name is null
     this.displayPatients = this.patients.filter(pat =>
-      pat.name.toLowerCase().includes(term) ||
-      pat.UHID.toLowerCase().includes(term)
+      pat.name?.toLowerCase().includes(term) ||
+      pat.UHID?.toLowerCase().includes(term)
     );
   }
 

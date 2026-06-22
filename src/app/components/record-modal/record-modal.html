@@ -1,0 +1,206 @@
+<div class="modal-overlay" (click)="onClose()">
+  <div class="record-modal-container" (click)="$event.stopPropagation()">
+    <button class="close-btn" (click)="onClose()">
+      <i class="bi bi-x-lg"></i>
+    </button>
+
+    <div class="modal-header-centered">
+      <div class="modal-icon text-white bg-purple-gradient">
+        <i class="bi bi-file-earmark-text-fill"></i>
+      </div>
+      <p class="modal-eyebrow text-purple">MEDICAL RECORD</p>
+      <h2 class="modal-title">Record Details</h2>
+      <p class="modal-subtitle">
+        Full clinical summary for this encounter including medications and observations.
+      </p>
+    </div>
+
+    @if (record) {
+      <div class="modal-body-scroll">
+        <div class="summary-strip">
+          <div class="summary-item">
+            <span class="label">RECORD ID</span>
+            <span class="value text-purple fw-bold">{{ record.recordCode }}</span>
+          </div>
+          <div class="summary-item">
+            <span class="label">APPOINTMENT</span>
+            <span class="value fw-bold text-dark">{{ record.appointmentId }}</span>
+          </div>
+          <div class="summary-item">
+            <span class="label">CREATED</span>
+            <span class="value fw-bold text-dark">{{
+              record.createdAt | date: 'dd MMM, yyyy'
+            }}</span>
+          </div>
+          <div class="summary-item">
+            <span class="label">STATUS</span>
+            <span
+              class="status-pill"
+              [ngClass]="record.status === 'FINAL' ? 'badge-active' : 'badge-review'"
+            >
+              <i
+                class="bi"
+                [ngClass]="record.status === 'FINAL' ? 'bi-check-circle' : 'bi-clock'"
+              ></i>
+              {{ record.status === 'FINAL' ? 'Completed' : 'Draft' }}
+            </span>
+          </div>
+        </div>
+
+        <div class="section-container">
+          <div class="section-divider">
+            <i class="bi bi-person text-purple"></i> <span>PATIENT & DOCTOR</span>
+          </div>
+
+          <div class="user-cards-grid">
+            <div class="user-card">
+              <span class="card-label">PATIENT</span>
+              <div class="profile-cell">
+                <div class="avatar bg-purple">
+                  {{ getInitials(getPatientName(record.patientId)) }}
+                </div>
+                <div>
+                  <div class="fw-bold text-dark">{{ getPatientName(record.patientId) }}</div>
+                  <div class="text-muted small">{{ record.patientId }}</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="user-card">
+              <span class="card-label">DOCTOR</span>
+              <div class="profile-cell">
+                <div class="avatar bg-blue-solid">
+                  {{ getInitials(getDoctorName(record.doctorEmployeeId)) }}
+                </div>
+                <div>
+                  <div class="fw-bold text-dark">{{ getDoctorName(record.doctorEmployeeId) }}</div>
+                  <div class="text-muted small">{{ record.doctorEmployeeId }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-container">
+          <div class="section-divider">
+            <i class="bi bi-activity text-purple"></i> <span>CLINICAL SUMMARY</span>
+          </div>
+
+          <div class="clinical-grid">
+            <div class="clinical-card">
+              <div class="card-label"><i class="bi bi-flag"></i> COMPLAINT</div>
+              <p class="card-text">{{ record.complaint || 'No complaint recorded.' }}</p>
+            </div>
+            <div class="clinical-card">
+              <div class="card-label"><i class="bi bi-lightning"></i> SYMPTOMS</div>
+              <p class="card-text">{{ record.symptoms || 'No symptoms recorded.' }}</p>
+            </div>
+            <div class="clinical-card">
+              <div class="card-label"><i class="bi bi-file-medical"></i> DIAGNOSIS</div>
+              <p class="card-text">{{ record.diagnosis || 'Pending diagnosis.' }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-container">
+          <div class="section-divider d-flex justify-content-between">
+            <div><i class="bi bi-capsule text-purple"></i> <span>MEDICATIONS</span></div>
+            <span class="count-badge">{{ record.medications?.length || 0 }} meds</span>
+          </div>
+
+          @if (record.medications?.length > 0) {
+            <table class="detail-table">
+              <thead>
+                <tr>
+                  <th>NAME</th>
+                  <th>DOSAGE</th>
+                  <th>FREQUENCY</th>
+                  <th>DURATION</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (med of record.medications; track $index) {
+                  <tr>
+                    <td class="text-purple fw-bold">{{ med.name }}</td>
+                    <td>{{ med.dosage }}</td>
+                    <td>{{ med.frequency }}</td>
+                    <td>{{ med.duration }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          } @else {
+            <div class="empty-box">No medications prescribed.</div>
+          }
+        </div>
+
+        <div class="section-container">
+          <div class="section-divider d-flex justify-content-between">
+            <div>
+              <i class="bi bi-heart-pulse text-purple"></i> <span>MEDICAL OBSERVATIONS</span>
+            </div>
+            <span class="count-badge">{{ record.medicalObservations?.length || 0 }} entries</span>
+          </div>
+
+          @if (record.medicalObservations?.length > 0) {
+            <table class="detail-table">
+              <thead>
+                <tr>
+                  <th>METRIC</th>
+                  <th>VALUE</th>
+                  <th>RECORDED AT</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (obs of record.medicalObservations; track $index) {
+                  <tr>
+                    <td class="text-dark fw-bold">{{ obs.metricName }}</td>
+                    <td class="text-blue fw-bold">{{ obs.metricValue }}</td>
+                    <td class="text-muted">{{ obs.recordedTime | date: 'dd MMM, HH:mm' }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          } @else {
+            <div class="empty-box">No observations recorded.</div>
+          }
+        </div>
+
+        <div class="section-container">
+          <div class="section-divider">
+            <i class="bi bi-journal-text text-purple"></i> <span>ADDITIONAL NOTES</span>
+          </div>
+          <div class="notes-box">
+            {{ record.notes || 'No additional notes.' }}
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer-flex">
+        <div class="creator-info">
+          <i class="bi bi-person"></i>Created by
+          <span class="fw-bold ms-1 text-dark">{{ record.createdBy }}</span>
+        </div>
+
+        <div class="creator-info">
+          <i class="bi bi-person"></i>Last updated by
+          <span class="fw-bold ms-1 text-dark">{{ record.updatedBy }}</span>
+        </div>
+
+        <div class="modal-actions">
+          <button
+            *hasPermission="'DELETE_HEALTH_RECORD'"
+            type="button"
+            class="btn-delete-outline"
+            (click)="onDelete()"
+          >
+            <i class="bi bi-trash"></i> Delete
+          </button>
+          <button type="button" class="btn-close-solid" (click)="onClose()">
+            <i class="bi bi-x-lg"></i> Close
+          </button>
+        </div>
+      </div>
+    }
+  </div>
+</div>
