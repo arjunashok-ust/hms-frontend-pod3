@@ -147,12 +147,15 @@
                       'pill-icon-active': emp.status === 'ACTIVE',
                       'pill-icon-inactive': emp.status === 'INACTIVE',
                       'pill-icon-onboarding': emp.status === 'PASSWORD_CHANGE_PENDING',
+                      'pill-icon-approval-pending':emp.status === 'ADMIN_APPROVAL_PENDING'
                     }"
                   >
                     {{
                       emp.status === 'PASSWORD_CHANGE_PENDING'
                         ? 'Onboarding'
-                        : (emp.status | titlecase)
+                        : (emp.status === 'ADMIN_APPROVAL_PENDING'
+                        ?'Pending'
+                        :(emp.status | titlecase))
                     }}
                   </span>
                 </td>

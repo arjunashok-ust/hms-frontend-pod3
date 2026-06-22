@@ -22,7 +22,6 @@ import { HasPermissionDirective } from '../../directives/has-permission.directiv
 })
 export class Patient implements OnInit {
   patients: any[] = [];
-  filteredpatients: any[] = [];
   isLoading = true;
   showAddModal = false;
   isEditMode = false;
@@ -31,6 +30,14 @@ export class Patient implements OnInit {
   modalError: string | null = null;
   isSubmittingModal = false;
   searchTerm: string = '';
+  
+  // --- Pagination State ---
+  currentPage = 1;
+  pageSize = 10;
+  totalRecords = 0;
+  totalPages = 1;
+  visiblePages: (number | string)[] = [];
+
   toast: ToastrService = inject(ToastrService);
 
   constructor(
@@ -84,27 +91,78 @@ export class Patient implements OnInit {
 
   fetchPatients() {
     this.isLoading = true;
-    this.apiService.getAllPatients().subscribe({
-      next: (data) => {
-        const patients = data as any[];
-        this.patients = patients;
-        this.filteredpatients = patients;
+
+    const params: any = {
+      page: this.currentPage,
+      limit: this.pageSize
+    };
+
+    if (this.searchTerm) {
+      params.search = this.searchTerm;
+    }
+
+    this.apiService.getAllPatients(params).subscribe({
+      next: (res: any) => {
+        // Unwrap paginated response
+        this.patients = res.data || [];
+        this.totalRecords = res.pagination?.total || 0;
+        this.totalPages = res.pagination?.pages || 1;
+
+        this.generatePagesArray();
         this.isLoading = false;
         this.cdr.markForCheck();
       },
       error: (err) => {
         console.error(err);
         this.isLoading = false;
+        this.cdr.markForCheck();
       },
     });
   }
 
+  // --- Pagination Helpers ---
+  generatePagesArray() {
+    const total = this.totalPages;
+    const current = this.currentPage;
+
+    if (total <= 6) {
+      this.visiblePages = Array.from({ length: total }, (_, i) => i + 1);
+      return;
+    }
+
+    if (current <= 3) {
+      this.visiblePages = [1, 2, 3, 4, '...', total];
+    } else if (current >= total - 2) {
+      this.visiblePages = [1, '...', total - 3, total - 2, total - 1, total];
+    } else {
+      this.visiblePages = [1, '...', current - 1, current, current + 1, '...', total];
+    }
+  }
+
+  goToPage(page: number | string) {
+    if (typeof page === 'number' && page !== this.currentPage) {
+      this.currentPage = page;
+      this.fetchPatients();
+    }
+  }
+
+  nextPage() {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+      this.fetchPatients();
+    }
+  }
+
+  prevPage() {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+      this.fetchPatients();
+    }
+  }
+
   applyFilters() {
-    this.filteredpatients = this.patients.filter(
-      (p) =>
-        p.name.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-        p.email.toLowerCase().includes(this.searchTerm.toLowerCase()),
-    );
+    this.currentPage = 1; // Reset to page 1 when searching
+    this.fetchPatients();
   }
 
   openModal() {
@@ -127,7 +185,10 @@ export class Patient implements OnInit {
 
   deletePatient(uhid: string) {
     if (confirm('Delete patient?')) {
-      this.apiService.deletePatient(uhid).subscribe(() => this.fetchPatients());
+      this.apiService.deletePatient(uhid).subscribe(() => {
+        this.toast.success("Patient deleted successfully");
+        this.fetchPatients();
+      });
     }
   }
 
@@ -142,13 +203,13 @@ export class Patient implements OnInit {
 
     action$.subscribe({
       next: () => {
-        this.toast.success('Patient created successfully!');
+        this.toast.success(this.isEditMode ? 'Patient updated successfully!' : 'Patient created successfully!');
         this.fetchPatients();
         this.closeModal();
         this.isSubmittingModal = false;
       },
       error: (err) => {
-        this.toast.error(err.error?.message);
+        this.toast.error(err.error?.message || err.message);
         this.modalError = err.message;
         this.isSubmittingModal = false;
       },

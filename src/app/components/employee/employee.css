@@ -534,8 +534,13 @@ h6 {
 }
 
 .pill-icon-onboarding {
-  background-color: #fee2e2;
-  color: rgb(198, 0, 0);
+  background-color: #f7e2fe;
+  color: rgb(119, 0, 198);
+}
+
+.pill-icon-approval-pending {
+  background-color: #fef9c3;
+  color: #9a3412;
 }
 
 .notification-badge {
@@ -622,7 +627,7 @@ h6 {
 
 .btn-page.next {
   background-color: #f3f0ff;
-  color: #4a90e2; /* Adjusted to match your Employee blue theme */
+  color: #063cef; /* Adjusted to match your Employee blue theme */
 }
 .btn-page.next:hover:not(:disabled) {
   background-color: #e0f2fe;

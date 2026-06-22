@@ -63,8 +63,9 @@ export class ApiService {
   rejectEmployee(employeeCode: string): Observable<any> {
     return this.http.patch(`${this.backendUrl}/api/employees/reject/${employeeCode}`, {});
   }
-  getAllPatients() {
-    return this.http.get(`${this.backendUrl}/api/patients/all`);
+  // Find this and update it to accept the params argument
+  getAllPatients(params: any = {}) {
+    return this.http.get(`${this.backendUrl}/api/patients/all`, { params });
   }
 
   updatePatient(employeeCode: string, payload: any) {

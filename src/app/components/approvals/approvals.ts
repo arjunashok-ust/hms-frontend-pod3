@@ -15,12 +15,18 @@ import { HasPermissionDirective } from '../../directives/has-permission.directiv
 })
 export class Approvals implements OnInit {
   employees: any[] = [];
-  filteredEmployees: any[] = [];
   isLoading = true;
 
   searchTerm: string = '';
   selectedDepartment: string = '';
   departments = ["OPD", "IPD", "ADMIN", "LAB", "PHARMACY"];
+
+  // --- Pagination State ---
+  currentPage = 1;
+  pageSize = 10;
+  totalRecords = 0;
+  totalPages = 1;
+  visiblePages: (number | string)[] = [];
 
   toast: ToastrService = inject(ToastrService);
 
@@ -37,17 +43,26 @@ export class Approvals implements OnInit {
   }
 
   fetchPendingEmployees() {
-    this.apiService.getAllEmployees().subscribe({
-      next: (data: any) => {
-        if (!Array.isArray(data)) {
-          this.isLoading = false;
-          this.cdr.markForCheck();
-          return;
-        }
+    this.isLoading = true;
 
-        this.employees = data.filter((e: any) => e.status === 'ADMIN_APPROVAL_PENDING');
-        this.applyFilters();
+    // Compile filter params for backend
+    const params: any = {
+      page: this.currentPage,
+      limit: this.pageSize,
+      status: 'ADMIN_APPROVAL_PENDING' // Hard-lock to pending approvals
+    };
 
+    if (this.searchTerm) params.search = this.searchTerm;
+    if (this.selectedDepartment) params.department = this.selectedDepartment;
+
+    this.apiService.getAllEmployees(params).subscribe({
+      next: (res: any) => {
+        // Handle unwrapped JSON
+        this.employees = res.data || [];
+        this.totalRecords = res.pagination?.total || 0;
+        this.totalPages = res.pagination?.pages || 1;
+
+        this.generatePagesArray();
         this.isLoading = false;
         this.cdr.markForCheck();
       },
@@ -59,17 +74,49 @@ export class Approvals implements OnInit {
     });
   }
 
+  // --- Pagination Helpers ---
+  generatePagesArray() {
+    const total = this.totalPages;
+    const current = this.currentPage;
+
+    if (total <= 6) {
+      this.visiblePages = Array.from({ length: total }, (_, i) => i + 1);
+      return;
+    }
+
+    if (current <= 3) {
+      this.visiblePages = [1, 2, 3, 4, '...', total];
+    } else if (current >= total - 2) {
+      this.visiblePages = [1, '...', total - 3, total - 2, total - 1, total];
+    } else {
+      this.visiblePages = [1, '...', current - 1, current, current + 1, '...', total];
+    }
+  }
+
+  goToPage(page: number | string) {
+    if (typeof page === 'number' && page !== this.currentPage) {
+      this.currentPage = page;
+      this.fetchPendingEmployees();
+    }
+  }
+
+  nextPage() {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+      this.fetchPendingEmployees();
+    }
+  }
+
+  prevPage() {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+      this.fetchPendingEmployees();
+    }
+  }
+
   applyFilters() {
-    this.filteredEmployees = this.employees.filter((emp) => {
-      const matchesSearch = !this.searchTerm ||
-        emp.name?.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-        emp.email?.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-        emp.employeeCode?.toLowerCase().includes(this.searchTerm.toLowerCase());
-
-      const matchesDept = !this.selectedDepartment || emp.department === this.selectedDepartment;
-
-      return matchesSearch && matchesDept;
-    });
+    this.currentPage = 1; // Reset to page 1 on filter change
+    this.fetchPendingEmployees();
   }
 
   getRoleString(role: any): string {
@@ -86,6 +133,10 @@ export class Approvals implements OnInit {
       this.apiService.approveEmployee(emp.employeeCode).subscribe({
         next: () => {
           this.toast.success('Employee approved successfully!');
+          // Automatically reload page, resetting if current page becomes empty
+          if (this.employees.length === 1 && this.currentPage > 1) {
+            this.currentPage--;
+          }
           this.fetchPendingEmployees();
         },
         error: (err) => {
@@ -100,6 +151,10 @@ export class Approvals implements OnInit {
       this.apiService.rejectEmployee(emp.employeeCode).subscribe({
         next: () => {
           this.toast.success('Employee rejected successfully!');
+          // Automatically reload page, resetting if current page becomes empty
+          if (this.employees.length === 1 && this.currentPage > 1) {
+            this.currentPage--;
+          }
           this.fetchPendingEmployees();
         },
         error: (err) => {

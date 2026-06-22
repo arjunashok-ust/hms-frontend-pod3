@@ -51,14 +51,14 @@ export class Sidebar implements OnInit {
   }
 
   fetchPendingAppointments() {
-    this.appointmentService.getRecentAppointments().subscribe({
-      next: (data: any[]) => {
-        this.pendingAppointmentsCount = data.filter(
-          (apt) => apt.status?.toUpperCase() === 'PENDING'
-        ).length;
+    // Use getStats() to get the accurate global count without downloading the records
+    this.appointmentService.getStats().subscribe({
+      next: (stats: any) => {
+        // The backend returns { total, completed, booked, cancelled, pending }
+        this.pendingAppointmentsCount = stats.pending || 0;
         this.cdr.markForCheck();
       },
-      error: (err) => console.error('Error fetching pending appointments for sidebar', err)
+      error: (err) => console.error('Error fetching appointment stats for sidebar', err)
     });
   }
 

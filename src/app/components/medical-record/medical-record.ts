@@ -1,5 +1,5 @@
-import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, inject, ChangeDetectorRef, PLATFORM_ID } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { HasPermissionDirective } from '../../directives/has-permission.directive';
@@ -26,6 +26,9 @@ export class MedicalRecordComponent implements OnInit {
   private readonly toast = inject(ToastrService);
   private readonly route = inject(ActivatedRoute);
 
+  // INJECT PLATFORM ID HERE
+  private readonly platformId = inject(PLATFORM_ID);
+
   recordForm!: FormGroup;
   currentUser: any = null;
   userPermissions: string[] = [];
@@ -48,7 +51,7 @@ export class MedicalRecordComponent implements OnInit {
   pageSize = 10;
   totalRecords = 0;
   totalPages = 1;
-  visiblePages: (number | string)[] = []; 
+  visiblePages: (number | string)[] = [];
 
   // --- Dropdown States & Displays ---
   isFormPatientOpen = false; displayFormPatients: any[] = []; selectedFormPatient = '';
@@ -62,12 +65,19 @@ export class MedicalRecordComponent implements OnInit {
 
   ngOnInit() {
     this.initForm();
-    this.route.queryParams.subscribe(params => {
-      if (params['appointmentId']) {
-        this.pendingAppointmentId = params['appointmentId'];
-      }
-    });
-    this.fetchCurrentUserAndData();
+
+    // PLATFORM CHECK TO PREVENT SSR CRASHES ON REFRESH
+    if (isPlatformBrowser(this.platformId)) {
+      this.route.queryParams.subscribe(params => {
+        if (params['appointmentId']) {
+          this.pendingAppointmentId = params['appointmentId'];
+        }
+      });
+      this.fetchCurrentUserAndData();
+    } else {
+      // Prevent infinite loading state on the server render
+      this.isLoading = false;
+    }
   }
 
   initForm() {
@@ -95,14 +105,16 @@ export class MedicalRecordComponent implements OnInit {
 
         forkJoin({
           patients: this.apiService.getAllPatients().pipe(catchError(() => of([]))),
-          employees: this.apiService.getAllEmployees().pipe(catchError(() => of([]))),
+          // FIX: Replaced getAllEmployees with getDoctors to prevent 403 errors on hard refresh for doctors
+          doctorsList: this.appointmentService.getDoctors().pipe(catchError(() => of([]))),
           appointments: this.appointmentService.getAllAppointments().pipe(catchError(() => of([])))
-        }).subscribe(({ patients, employees, appointments }) => {
+        }).subscribe(({ patients, doctorsList, appointments }) => {
 
+          // Safely extract data whether it comes wrapped in pagination {data: []} or as a raw array []
           const extract = (d: any) => Array.isArray(d) ? d : (d?.data || []);
 
           this.patients = extract(patients).filter((p: any) => p.status?.toUpperCase() === 'ACTIVE' || p.status === 'true');
-          this.doctors = extract(employees).filter((e: any) => e.role?.toUpperCase() === 'DOCTOR');
+          this.doctors = extract(doctorsList);
           this.appointments = extract(appointments);
 
           this.displayFormPatients = [...this.patients];
@@ -126,6 +138,11 @@ export class MedicalRecordComponent implements OnInit {
           // Trigger initial fetch of records (Page 1)
           this.applyFilters();
         });
+      },
+      error: (err) => {
+        console.error("Failed to fetch user data on refresh", err);
+        this.isLoading = false;
+        this.cdr.detectChanges();
       }
     });
   }
@@ -292,7 +309,6 @@ export class MedicalRecordComponent implements OnInit {
         this.totalRecords = res.pagination?.total || 0;
         this.totalPages = res.pagination?.pages || 1;
 
-        // NEW: Generate the array for the template
         this.generatePagesArray();
 
         this.stats.total = this.totalRecords;
@@ -310,16 +326,13 @@ export class MedicalRecordComponent implements OnInit {
     });
   }
 
-  // ==========================================
-  // SUBMISSIONS AND ACTIONS
-  // ==========================================
   hasPermission(permission: string): boolean { return this.userPermissions.includes(permission); }
 
   canEdit(record: any): boolean {
     const isMyRecord = record.doctorEmployeeId === this.currentUser?.employeeCode;
     if (this.hasPermission('UPDATE_FINALISED_RECORD')) return true;
-    if (this.hasPermission('UPDATE_RECORDS') && record.status === 'DRAFT') return true;
-    if (this.hasPermission('UPDATE_MY_RECORDS') && isMyRecord && record.status === 'DRAFT') return true;
+    if (this.hasPermission('UPDATE_RECORD') && record.status === 'DRAFT') return true;
+    if (this.hasPermission('UPDATE_MY_RECORD') && isMyRecord && record.status === 'DRAFT') return true;
     return false;
   }
 
@@ -387,7 +400,11 @@ export class MedicalRecordComponent implements OnInit {
   }
 
   getInitials(name: string): string { return name ? name.substring(0, 2).toUpperCase() : 'MR'; }
+
   private getTokenPayload(): any {
+    // SAFE PLATFORM CHECK FOR LOCALSTORAGE
+    if (!isPlatformBrowser(this.platformId)) return {};
+
     const token = localStorage.getItem('token');
     if (!token) return {};
     try { return JSON.parse(atob(token.split('.')[1].replaceAll('-', '+').replaceAll('_', '/'))); } catch { return {}; }
@@ -397,27 +414,21 @@ export class MedicalRecordComponent implements OnInit {
     const total = this.totalPages;
     const current = this.currentPage;
 
-    // If 6 or fewer pages, show all of them
     if (total <= 6) {
       this.visiblePages = Array.from({ length: total }, (_, i) => i + 1);
       return;
     }
 
-    // Logic for more than 6 pages (using ellipsis)
     if (current <= 3) {
-      // Near the start: 1, 2, 3, 4, '...', Last
       this.visiblePages = [1, 2, 3, 4, '...', total];
     } else if (current >= total - 2) {
-      // Near the end: 1, '...', Last-3, Last-2, Last-1, Last
       this.visiblePages = [1, '...', total - 3, total - 2, total - 1, total];
     } else {
-      // In the middle: 1, '...', Current-1, Current, Current+1, '...', Last
       this.visiblePages = [1, '...', current - 1, current, current + 1, '...', total];
     }
   }
 
   goToPage(page: number | string) {
-    // Ignore clicks on the '...' string
     if (typeof page === 'number' && page !== this.currentPage) {
       this.currentPage = page;
       this.reloadRecordsData();

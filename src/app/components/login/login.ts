@@ -112,7 +112,7 @@ export class Login {
     const payload = {
       email: this.tempEmail,
       oldPassword: this.tempOldPassword,
-      newPassword: this.passwordForm.value.newPassword,
+      password: this.passwordForm.value.newPassword,
     };
 
     this.api.changeFirstPassword(payload).subscribe({
@@ -129,7 +129,7 @@ export class Login {
       },
       error: (err) => {
         this.isLoading = false;
-        this.toast.success(err.error?.message || 'Failed to update password');
+        this.toast.error(err.error?.message || 'Failed to update password');
       },
     });
   }

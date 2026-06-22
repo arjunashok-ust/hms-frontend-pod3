@@ -24,12 +24,12 @@ export const routes: Routes = [
     children: [
       {
         path: 'dashboard', component: Dashboard, canActivate: [roleGuard], data: {
-          permissions: ['VIEW_DASHBOARD','ADMIN_ACCESS']
+          permissions: ['VIEW_DASHBOARD', 'ADMIN_ACCESS']
         }
       },
       {
         path: 'appointments', component: Appointment, canActivate: [roleGuard], data: {
-          permissions: ['ADMIN_ACCESS', 'RECEPTIONIST_ACCESS','DOCTOR_ACCESS','CREATE_APOINTMENT_FOR_ANY_DOCTOR', 'VIEW_ALL_APPOINTMENT','COMPLETE_APPOINTMENT', 'VIEW_MY_APPOINTMENT', 'UPDATE_APPOINTMENT', 'DELETE_APPOINTMENT', 'APPROVE_APPOINTMENT']
+          permissions: ['ADMIN_ACCESS', 'RECEPTIONIST_ACCESS', 'DOCTOR_ACCESS', 'CREATE_APOINTMENT_FOR_ANY_DOCTOR', 'VIEW_ALL_APPOINTMENT', 'COMPLETE_APPOINTMENT', 'VIEW_MY_APPOINTMENT', 'UPDATE_APPOINTMENT', 'DELETE_APPOINTMENT', 'APPROVE_APPOINTMENT']
         }
       },
       {
@@ -54,7 +54,7 @@ export const routes: Routes = [
       },
       {
         path: 'records', component: MedicalRecordComponent, canActivate: [roleGuard], data: {
-          permissions: ['VIEW_ALL_RECORDS', 'CREATE_MY_RECORD', 'CREATE_RECORD_FOR_ANYONE']
+          permissions: ['VIEW_ALL_RECORDS', 'VIEW_MY_RECORDS', 'CREATE_MY_RECORD', 'CREATE_RECORD_FOR_ANYONE']
         }
       },
       { path: '', redirectTo: 'profile', pathMatch: 'full' }

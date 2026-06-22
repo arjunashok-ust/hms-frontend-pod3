@@ -166,17 +166,23 @@
               <textarea
                 class="scrollable-textarea-complaint"
                 formControlName="complaint"
+                placeholder="Specify the patient's complaint"
               ></textarea>
             </div>
             <div class="input-group symptoms full-width mt-3">
               <label for="syptoms">SYMPTOMS</label>
-              <textarea class="scrollable-textarea-symptoms" formControlName="symptoms"></textarea>
+              <textarea
+                class="scrollable-textarea-symptoms"
+                formControlName="symptoms"
+                placeholder="Detail the symptoms, duration, and severity"
+              ></textarea>
             </div>
             <div class="input-group diagnosis mt-3">
               <label for="diagnosis">DIAGNOSIS</label>
               <textarea
                 class="scrollable-textarea-diagnosis"
                 formControlName="diagnosis"
+                placeholder="Document the provisional or final diagnosis"
               ></textarea>
             </div>
           </div>
@@ -279,7 +285,12 @@
       <div class="form-card mt-4 full-width">
         <h3>Additional Notes</h3>
         <div class="input-group full-width">
-          <textarea class="scrollable-textarea" formControlName="notes" rows="2"></textarea>
+          <textarea
+            class="scrollable-textarea"
+            formControlName="notes"
+            placeholder="Document any additional notes"
+            rows="2"
+          ></textarea>
         </div>
       </div>
       <div class="form-actions mt-4">
@@ -368,10 +379,9 @@
           }
         </div>
         <input
-          *ngIf="!hasPermission('VIEW_ALL_RECORDS')"
+          *hasPermission="'VIEW_ALL_RECORDS'"
           type="text"
           [value]="selectedFilterDoctor"
-          disabled
           class="form-control"
           style="width: 230px"
         />
@@ -412,9 +422,11 @@
             </td>
             <td class="action-cell">
               <button class="btn-icon view"><i class="bi bi-eye"></i></button>
-              <button *ngIf="canEdit(rec)" class="btn-icon edit" (click)="editRecord(rec)">
-                <i class="bi bi-pencil-square"></i>
-              </button>
+              @if (canEdit(rec)) {
+                <button class="btn-icon edit" (click)="editRecord(rec)">
+                  <i class="bi bi-pencil-square"></i>
+                </button>
+              }
               <button
                 *hasPermission="'DELETE_HEALTH_RECORD'"
                 class="btn-icon delete"
@@ -434,10 +446,10 @@
 
     <div class="pagination-container">
       <div class="pagination-info">
-        Showing Page {{ currentPage }} of {{ totalPages }} 
+        Showing Page {{ currentPage }} of {{ totalPages }}
         <span style="font-weight: 400; margin-left: 8px">({{ totalRecords }} Total Records)</span>
       </div>
-      
+
       <div class="pagination-controls">
         <button class="btn-page prev" [disabled]="currentPage === 1" (click)="prevPage()">
           <i class="bi bi-chevron-left"></i> Prev
@@ -448,8 +460,8 @@
             @if (page === '...') {
               <span class="pagination-ellipsis">...</span>
             } @else {
-              <button 
-                class="btn-page-number" 
+              <button
+                class="btn-page-number"
                 [class.active]="currentPage === page"
                 (click)="goToPage(page)"
               >
@@ -459,12 +471,14 @@
           }
         </div>
 
-        <button class="btn-page next" [disabled]="currentPage === totalPages || totalPages === 0" (click)="nextPage()">
+        <button
+          class="btn-page next"
+          [disabled]="currentPage === totalPages || totalPages === 0"
+          (click)="nextPage()"
+        >
           Next <i class="bi bi-chevron-right"></i>
         </button>
       </div>
     </div>
   </div>
 </div>
-
-
