@@ -38,7 +38,7 @@ export class Signup {
   signupForm: FormGroup;
   medicalRoles = ['doctor', 'nurse', 'lab_tech', 'pharmacist'];
   rowSubSlotsMap: { [uniqueId: string]: GeneratedSlot[] } = {};
-  departments = ["OPD", "IPD", "ADMIN", "LAB", "PHARMACY"];
+  departments = ["OPD", "IPD", "LAB", "PHARMACY"];
 
   availableHours: string[] = Array.from({ length: 24 }, (_, i) => {
     const hour = i.toString().padStart(2, '0');

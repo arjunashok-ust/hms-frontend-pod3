@@ -6,8 +6,9 @@
     <div class="header-actions">
       <button class="btn-secondary position-relative" routerLink="/approvals">
         Approvals
-        @if(stats.pending > 0){
-        <span class="notification-badge">{{ stats.pending }}</span>}
+        @if (stats.pending > 0) {
+          <span class="notification-badge">{{ stats.pending }}</span>
+        }
       </button>
       <button class="btn-primary" (click)="openModal()">Add Employee</button>
     </div>
@@ -147,15 +148,15 @@
                       'pill-icon-active': emp.status === 'ACTIVE',
                       'pill-icon-inactive': emp.status === 'INACTIVE',
                       'pill-icon-onboarding': emp.status === 'PASSWORD_CHANGE_PENDING',
-                      'pill-icon-approval-pending':emp.status === 'ADMIN_APPROVAL_PENDING'
+                      'pill-icon-approval-pending': emp.status === 'ADMIN_APPROVAL_PENDING',
                     }"
                   >
                     {{
                       emp.status === 'PASSWORD_CHANGE_PENDING'
                         ? 'Onboarding'
-                        : (emp.status === 'ADMIN_APPROVAL_PENDING'
-                        ?'Pending'
-                        :(emp.status | titlecase))
+                        : emp.status === 'ADMIN_APPROVAL_PENDING'
+                          ? 'Pending'
+                          : (emp.status | titlecase)
                     }}
                   </span>
                 </td>
@@ -182,10 +183,12 @@
 
         <div class="pagination-container">
           <div class="pagination-info">
-            Showing Page {{ currentPage }} of {{ totalPages }} 
-            <span style="font-weight: 400; margin-left: 8px">({{ totalRecords }} Total Records)</span>
+            Showing Page {{ currentPage }} of {{ totalPages }}
+            <span style="font-weight: 400; margin-left: 8px"
+              >({{ totalRecords }} Total Records)</span
+            >
           </div>
-          
+
           <div class="pagination-controls">
             <button class="btn-page prev" [disabled]="currentPage === 1" (click)="prevPage()">
               <i class="bi bi-chevron-left"></i> Prev
@@ -195,8 +198,8 @@
                 @if (page === '...') {
                   <span class="pagination-ellipsis">...</span>
                 } @else {
-                  <button 
-                    class="btn-page-number" 
+                  <button
+                    class="btn-page-number"
                     [class.active]="currentPage === page"
                     (click)="goToPage(page)"
                   >
@@ -205,7 +208,11 @@
                 }
               }
             </div>
-            <button class="btn-page next" [disabled]="currentPage === totalPages || totalPages === 0" (click)="nextPage()">
+            <button
+              class="btn-page next"
+              [disabled]="currentPage === totalPages || totalPages === 0"
+              (click)="nextPage()"
+            >
               Next <i class="bi bi-chevron-right"></i>
             </button>
           </div>
@@ -218,7 +225,6 @@
     }
   </div>
 </div>
-
 
 @if (showAddModal) {
   <div *hasPermission="'CREATE_EMPLOYEE'" class="modal-overlay">
@@ -304,28 +310,46 @@
                   <option [value]="dept">{{ dept }}</option>
                 }
               </select>
-              @if (newEmployeeForm.get('department')?.touched && newEmployeeForm.get('department')?.invalid) {
+              @if (
+                newEmployeeForm.get('department')?.touched &&
+                newEmployeeForm.get('department')?.invalid
+              ) {
                 <span class="error-msg">Please select a department</span>
               }
             </div>
             <div class="input-group">
               <label for="designation">DESIGNATION *</label>
               <input id="designation" type="text" formControlName="designation" />
-              @if (newEmployeeForm.get('designation')?.touched && newEmployeeForm.get('designation')?.invalid) {
+              @if (
+                newEmployeeForm.get('designation')?.touched &&
+                newEmployeeForm.get('designation')?.invalid
+              ) {
                 <span class="error-msg">Designation is required</span>
               }
             </div>
             <div class="input-group col-span-2">
               <label for="qualification">QUALIFICATIONS *</label>
               <input id="qualification" formControlName="qualification" type="text" />
-              @if (newEmployeeForm.get('qualification')?.touched && newEmployeeForm.get('qualification')?.invalid) {
+              @if (
+                newEmployeeForm.get('qualification')?.touched &&
+                newEmployeeForm.get('qualification')?.invalid
+              ) {
                 <span class="error-msg">Qualification is required</span>
               }
             </div>
             <div class="input-group col-span-2">
               <label for="joiningDate">JOINING DATE *</label>
-              <input id="joiningDate" formControlName="joiningDate" type="date" [min]="minDate" [max]="maxDate" />
-              @if (newEmployeeForm.get('joiningDate')?.touched && newEmployeeForm.get('joiningDate')?.hasError('invalidDateRange')) {
+              <input
+                id="joiningDate"
+                formControlName="joiningDate"
+                type="date"
+                [min]="minDate"
+                [max]="maxDate"
+              />
+              @if (
+                newEmployeeForm.get('joiningDate')?.touched &&
+                newEmployeeForm.get('joiningDate')?.hasError('invalidDateRange')
+              ) {
                 <span class="error-msg">Date must be within 1 month of today</span>
               }
             </div>
@@ -338,14 +362,20 @@
                 <div class="input-group">
                   <label for="specialization">SPECIALIZATION *</label>
                   <input id="specialization" formControlName="specialization" type="text" />
-                  @if (newEmployeeForm.get('specialization')?.touched && newEmployeeForm.get('specialization')?.invalid) {
+                  @if (
+                    newEmployeeForm.get('specialization')?.touched &&
+                    newEmployeeForm.get('specialization')?.invalid
+                  ) {
                     <span class="error-msg">Specialization is required</span>
                   }
                 </div>
                 <div class="input-group">
                   <label for="medicalRegNo">MEDICAL REG NO. *</label>
                   <input id="medicalRegNo" formControlName="medicalRegistrationNo" type="text" />
-                  @if (newEmployeeForm.get('medicalRegistrationNo')?.touched && newEmployeeForm.get('medicalRegistrationNo')?.invalid) {
+                  @if (
+                    newEmployeeForm.get('medicalRegistrationNo')?.touched &&
+                    newEmployeeForm.get('medicalRegistrationNo')?.invalid
+                  ) {
                     <span class="error-msg">Medical Registration No is required</span>
                   }
                 </div>
@@ -358,48 +388,122 @@
               <div class="section-divider"><span>Availability & Fees</span></div>
               <div class="input-group mb-3">
                 <label for="consultationFee">CONSULTATION FEE (₹) *</label>
-                <input id="consultationFee" formControlName="consultationFee" type="number" placeholder="0.00" />
+                <input
+                  id="consultationFee"
+                  formControlName="consultationFee"
+                  type="number"
+                  placeholder="0.00"
+                />
               </div>
 
               <div formArrayName="availabilitySlots" class="slots-section">
-                <div class="slots-header" style="display: flex; justify-content: space-between; margin-bottom: 10px">
-                  <span style="font-weight: bold; color: #374151; font-size: 0.75rem">WORKING HOURS</span>
-                  <button type="button" class="btn-add text-blue fw-bold border-0 bg-transparent" style="cursor: pointer" (click)="addSlot()">+ Add Slot</button>
+                <div
+                  class="slots-header"
+                  style="display: flex; justify-content: space-between; margin-bottom: 10px"
+                >
+                  <span style="font-weight: bold; color: #374151; font-size: 0.75rem"
+                    >WORKING HOURS</span
+                  >
+                  <button
+                    type="button"
+                    class="btn-add text-blue fw-bold border-0 bg-transparent"
+                    style="cursor: pointer"
+                    (click)="addSlot()"
+                  >
+                    + Add Slot
+                  </button>
                 </div>
 
-                @for (slot of availabilitySlots.controls; track slot.get('id')?.value; let i = $index) {
-                  <div [formGroupName]="i" class="slot-card" style="background: #f9fafb; padding: 12px; border: 1px solid #e5e7eb; border-radius: 8px; margin-bottom: 12px;">
-                    <div class="d-flex align-items-center gap-2 mb-2" style="display: flex; gap: 10px; align-items: center">
-                      <select aria-label="Day" formControlName="dayOfWeek" class="form-control" style="min-width: 120px">
+                @for (
+                  slot of availabilitySlots.controls;
+                  track slot.get('id')?.value;
+                  let i = $index
+                ) {
+                  <div
+                    [formGroupName]="i"
+                    class="slot-card"
+                    style="
+                      background: #f9fafb;
+                      padding: 12px;
+                      border: 1px solid #e5e7eb;
+                      border-radius: 8px;
+                      margin-bottom: 12px;
+                    "
+                  >
+                    <div
+                      class="d-flex align-items-center gap-2 mb-2"
+                      style="display: flex; gap: 10px; align-items: center"
+                    >
+                      <select
+                        aria-label="Day"
+                        formControlName="dayOfWeek"
+                        class="form-control"
+                        style="min-width: 120px"
+                      >
                         <option value="" disabled selected>Day</option>
-                        <option value="MONDAY">Monday</option><option value="TUESDAY">Tuesday</option><option value="WEDNESDAY">Wednesday</option>
-                        <option value="THURSDAY">Thursday</option><option value="FRIDAY">Friday</option><option value="SATURDAY">Saturday</option><option value="SUNDAY">Sunday</option>
+                        <option value="MONDAY">Monday</option>
+                        <option value="TUESDAY">Tuesday</option>
+                        <option value="WEDNESDAY">Wednesday</option>
+                        <option value="THURSDAY">Thursday</option>
+                        <option value="FRIDAY">Friday</option>
+                        <option value="SATURDAY">Saturday</option>
+                        <option value="SUNDAY">Sunday</option>
                       </select>
                       <select formControlName="startTime" class="form-control">
                         <option value="" disabled selected>Start</option>
-                        @for (hour of availableHours; track hour) { <option [value]="hour">{{ hour }}</option> }
+                        @for (hour of availableHours; track hour) {
+                          <option [value]="hour">{{ hour }}</option>
+                        }
                       </select>
                       <span style="font-size: 0.8rem; color: #6b7280">to</span>
                       <select formControlName="endTime" class="form-control">
                         <option value="" disabled selected>End</option>
-                        @for (hour of availableHours; track hour) { <option [value]="hour">{{ hour }}</option> }
+                        @for (hour of availableHours; track hour) {
+                          <option [value]="hour">{{ hour }}</option>
+                        }
                       </select>
-                      <button type="button" class="btn btn-sm btn-outline-danger" style="background: transparent; border: none; color: #ef4444; font-weight: bold; cursor: pointer;" (click)="removeSlot(i)">✕</button>
+                      <button
+                        type="button"
+                        class="btn btn-sm btn-outline-danger"
+                        style="
+                          background: transparent;
+                          border: none;
+                          color: #ef4444;
+                          font-weight: bold;
+                          cursor: pointer;
+                        "
+                        (click)="removeSlot(i)"
+                      >
+                        ✕
+                      </button>
                     </div>
 
                     @if (slot.hasError('timeRangeInvalid')) {
-                      <div style="color: #ef4444; font-size: 0.75rem; margin-top: 4px; width: 100%">Error: Start time must be earlier than End time.</div>
+                      <div style="color: #ef4444; font-size: 0.75rem; margin-top: 4px; width: 100%">
+                        Error: Start time must be earlier than End time.
+                      </div>
                     }
 
                     @if (slot.get('id')?.value; as slotId) {
                       @if (rowSubSlotsMap[slotId] && rowSubSlotsMap[slotId].length) {
                         <div class="sub-slots-container mt-2 pt-2 border-top border-dashed">
-                          <p class="text-muted small mb-2" style="font-size: 0.75rem;">Select active intervals:</p>
+                          <p class="text-muted small mb-2" style="font-size: 0.75rem">
+                            Select active intervals:
+                          </p>
                           <div class="sub-slots-grid" formArrayName="checkedSlots">
-                            @for (subSlot of rowSubSlotsMap[slotId]; track subSlot.label; let subIdx = $index) {
-                              <label class="d-flex align-items-center gap-2 p-1 bg-white border rounded" style="cursor: pointer;">
+                            @for (
+                              subSlot of rowSubSlotsMap[slotId];
+                              track subSlot.label;
+                              let subIdx = $index
+                            ) {
+                              <label
+                                class="d-flex align-items-center gap-2 p-1 bg-white border rounded"
+                                style="cursor: pointer"
+                              >
                                 <input type="checkbox" [formControlName]="subIdx" />
-                                <span class="small" style="font-size: 0.75rem; color: #374151">{{ subSlot.label }}</span>
+                                <span class="small" style="font-size: 0.75rem; color: #374151">{{
+                                  subSlot.label
+                                }}</span>
                               </label>
                             }
                           </div>
@@ -417,10 +521,20 @@
           <div class="info-banner">
             <i class="bi bi-info-circle"></i> <span>All fields marked with * are mandatory</span>
           </div>
-          <div class="modal-actions-full" style="width: auto; display: flex; gap: 12px;">
+          <div class="modal-actions-full" style="width: auto; display: flex; gap: 12px">
             <button type="button" class="btn-cancel" (click)="closeModal()">Cancel</button>
-            <button type="submit" class="btn-primary" [disabled]="newEmployeeForm.invalid || isSubmittingModal">
-              {{ isSubmittingModal ? 'Processing...' : (isEditMode ? 'Update Employee' : 'Create Employee') }}
+            <button
+              type="submit"
+              class="btn-primary"
+              [disabled]="newEmployeeForm.invalid || isSubmittingModal"
+            >
+              {{
+                isSubmittingModal
+                  ? 'Processing...'
+                  : isEditMode
+                    ? 'Update Employee'
+                    : 'Create Employee'
+              }}
             </button>
           </div>
         </div>

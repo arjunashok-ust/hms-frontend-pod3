@@ -30,8 +30,8 @@ export class Patient implements OnInit {
   modalError: string | null = null;
   isSubmittingModal = false;
   searchTerm: string = '';
-  
-  // --- Pagination State ---
+
+
   currentPage = 1;
   pageSize = 10;
   totalRecords = 0;
@@ -103,7 +103,7 @@ export class Patient implements OnInit {
 
     this.apiService.getAllPatients(params).subscribe({
       next: (res: any) => {
-        // Unwrap paginated response
+
         this.patients = res.data || [];
         this.totalRecords = res.pagination?.total || 0;
         this.totalPages = res.pagination?.pages || 1;
@@ -120,7 +120,7 @@ export class Patient implements OnInit {
     });
   }
 
-  // --- Pagination Helpers ---
+
   generatePagesArray() {
     const total = this.totalPages;
     const current = this.currentPage;
@@ -161,7 +161,7 @@ export class Patient implements OnInit {
   }
 
   applyFilters() {
-    this.currentPage = 1; // Reset to page 1 when searching
+    this.currentPage = 1;
     this.fetchPatients();
   }
 

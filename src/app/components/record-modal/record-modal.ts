@@ -15,8 +15,8 @@ export class RecordDetailsModalComponent {
   @Input() patients: any[] = [];
   @Input() doctors: any[] = [];
 
-  @Output() close = new EventEmitter<void>();
-  @Output() delete = new EventEmitter<string>();
+  @Output() closeModal = new EventEmitter<void>();
+  @Output() deleteModal = new EventEmitter<string>();
 
   getPatientName(id: string): string {
     if (!id) return 'Unknown Patient';
@@ -36,10 +36,10 @@ export class RecordDetailsModalComponent {
   }
 
   onClose() {
-    this.close.emit();
+    this.closeModal.emit();
   }
 
   onDelete() {
-    this.delete.emit(this.record._id);
+    this.deleteModal.emit(this.record._id);
   }
 }

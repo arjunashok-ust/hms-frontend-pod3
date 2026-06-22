@@ -1,5 +1,5 @@
-import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, inject, OnInit, ChangeDetectorRef, PLATFORM_ID, Inject } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import {
   FormsModule,
   ReactiveFormsModule,
@@ -42,7 +42,6 @@ export class Employee implements OnInit {
     total: 0
   };
 
-  // --- Pagination State ---
   currentPage = 1;
   pageSize = 10;
   totalRecords = 0;
@@ -59,10 +58,12 @@ export class Employee implements OnInit {
   modalError: string | null = null;
   newEmployeeForm!: FormGroup;
 
+  userPermissions: string[] = [];
+
   medicalRoles = ['DOCTOR', 'NURSE', 'LAB_TECH', 'PHARMACIST'];
 
-  availableRoles = [
-    { value: 'ADMIN', label: 'Admin' },
+  // Base roles without ADMIN (we will add it dynamically if permitted)
+  baseRoles = [
     { value: 'DOCTOR', label: 'Doctor' },
     { value: 'NURSE', label: 'Nurse' },
     { value: 'LAB_TECH', label: 'Lab Technician' },
@@ -70,6 +71,9 @@ export class Employee implements OnInit {
     { value: 'RECEPTIONIST', label: 'Receptionist' },
     { value: 'CASHIER', label: 'Cashier' },
   ];
+
+  availableRoles: any[] = []; // Will be populated in ngOnInit
+
   rowSubSlotsMap: { [uniqueId: string]: GeneratedSlot[] } = {};
   availableHours: string[] = Array.from(
     { length: 24 },
@@ -87,11 +91,14 @@ export class Employee implements OnInit {
     private readonly cdr: ChangeDetectorRef,
     private readonly fb: FormBuilder,
     private readonly route: ActivatedRoute,
+    @Inject(PLATFORM_ID) private readonly platformId: Object
   ) {
     this.initForm();
   }
 
   ngOnInit() {
+    this.setupAvailableRoles();
+
     this.route.data.subscribe(data => {
       if (data['openApprovalsByDefault']) {
         this.showPendingApprovals = true;
@@ -100,9 +107,52 @@ export class Employee implements OnInit {
         this.showPendingApprovals = false;
         this.selectedStatus = '';
       }
-      this.applyFilters(); // Trigger load
+      this.applyFilters();
       this.cdr.detectChanges();
     });
+  }
+
+
+  // 1. Update setupAvailableRoles() to extract permissions
+  setupAvailableRoles() {
+    this.availableRoles = [...this.baseRoles];
+
+    if (isPlatformBrowser(this.platformId)) {
+      const token = localStorage.getItem('token');
+      if (token) {
+        try {
+          const payload = JSON.parse(atob(token.split('.')[1].replaceAll('-', '+').replaceAll('_', '/')));
+
+          // Save permissions to the class variable
+          this.userPermissions = payload.permissions || [];
+
+          if (this.userPermissions.includes('CREATE_ADMIN')) {
+            this.availableRoles.unshift({ value: 'ADMIN', label: 'Admin' });
+          }
+        } catch (err) {
+          console.error(err);
+        }
+      }
+    }
+  }
+
+  // 2. Add these two helper methods anywhere inside the class:
+  canEditEmployee(emp: any): boolean {
+    const role = this.getRoleString(emp.role).toUpperCase();
+    if (role === 'ADMIN') {
+      return this.userPermissions.includes('UPDATE_ADMIN');
+    }
+    // Standard permission check for non-admin employees
+    return this.userPermissions.includes('UPDATE_EMPLOYEE');
+  }
+
+  canDeleteEmployee(emp: any): boolean {
+    const role = this.getRoleString(emp.role).toUpperCase();
+    if (role === 'ADMIN') {
+      return this.userPermissions.includes('DELETE_ADMIN');
+    }
+    // Standard permission check for non-admin employees
+    return this.userPermissions.includes('DELETE_EMPLOYEE');
   }
 
   minDate = getMinDate();
@@ -111,7 +161,6 @@ export class Employee implements OnInit {
   fetchEmployees() {
     this.isLoading = true;
 
-    // Compile filter params for backend
     const params: any = {
       page: this.currentPage,
       limit: this.pageSize
@@ -128,7 +177,6 @@ export class Employee implements OnInit {
 
     this.apiService.getAllEmployees(params).subscribe({
       next: (res: any) => {
-        // Handle unwrapped JSON
         this.filteredEmployees = res.data || [];
         this.totalRecords = res.pagination?.total || 0;
         this.totalPages = res.pagination?.pages || 1;
@@ -151,7 +199,6 @@ export class Employee implements OnInit {
     });
   }
 
-  // --- Pagination Helpers ---
   generatePagesArray() {
     const total = this.totalPages;
     const current = this.currentPage;
@@ -213,7 +260,7 @@ export class Employee implements OnInit {
   }
 
   applyFilters() {
-    this.currentPage = 1; // Reset to page 1 on filter change
+    this.currentPage = 1;
     this.fetchEmployees();
   }
 
@@ -224,7 +271,7 @@ export class Employee implements OnInit {
       return { timeRangeInvalid: true };
     }
     return null;
-  };
+  }
 
   getRoleString(role: any): string {
     if (!role) return 'Staff';

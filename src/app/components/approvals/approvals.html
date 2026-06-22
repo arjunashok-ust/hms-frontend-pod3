@@ -137,10 +137,10 @@
 
       <div class="pagination-container">
         <div class="pagination-info">
-          Showing Page {{ currentPage }} of {{ totalPages }} 
+          Showing Page {{ currentPage }} of {{ totalPages }}
           <span style="font-weight: 400; margin-left: 8px">({{ totalRecords }} Total Records)</span>
         </div>
-        
+
         <div class="pagination-controls">
           <button class="btn-page prev" [disabled]="currentPage === 1" (click)="prevPage()">
             <i class="bi bi-chevron-left"></i> Prev
@@ -150,8 +150,8 @@
               @if (page === '...') {
                 <span class="pagination-ellipsis">...</span>
               } @else {
-                <button 
-                  class="btn-page-number" 
+                <button
+                  class="btn-page-number"
                   [class.active]="currentPage === page"
                   (click)="goToPage(page)"
                 >
@@ -160,7 +160,11 @@
               }
             }
           </div>
-          <button class="btn-page next" [disabled]="currentPage === totalPages || totalPages === 0" (click)="nextPage()">
+          <button
+            class="btn-page next"
+            [disabled]="currentPage === totalPages || totalPages === 0"
+            (click)="nextPage()"
+          >
             Next <i class="bi bi-chevron-right"></i>
           </button>
         </div>

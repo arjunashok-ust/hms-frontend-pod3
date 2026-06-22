@@ -21,7 +21,7 @@ export class Approvals implements OnInit {
   selectedDepartment: string = '';
   departments = ["OPD", "IPD", "ADMIN", "LAB", "PHARMACY"];
 
-  // --- Pagination State ---
+
   currentPage = 1;
   pageSize = 10;
   totalRecords = 0;
@@ -45,11 +45,11 @@ export class Approvals implements OnInit {
   fetchPendingEmployees() {
     this.isLoading = true;
 
-    // Compile filter params for backend
+
     const params: any = {
       page: this.currentPage,
       limit: this.pageSize,
-      status: 'ADMIN_APPROVAL_PENDING' // Hard-lock to pending approvals
+      status: 'ADMIN_APPROVAL_PENDING'
     };
 
     if (this.searchTerm) params.search = this.searchTerm;
@@ -57,7 +57,7 @@ export class Approvals implements OnInit {
 
     this.apiService.getAllEmployees(params).subscribe({
       next: (res: any) => {
-        // Handle unwrapped JSON
+
         this.employees = res.data || [];
         this.totalRecords = res.pagination?.total || 0;
         this.totalPages = res.pagination?.pages || 1;
@@ -74,7 +74,7 @@ export class Approvals implements OnInit {
     });
   }
 
-  // --- Pagination Helpers ---
+
   generatePagesArray() {
     const total = this.totalPages;
     const current = this.currentPage;
@@ -115,7 +115,7 @@ export class Approvals implements OnInit {
   }
 
   applyFilters() {
-    this.currentPage = 1; // Reset to page 1 on filter change
+    this.currentPage = 1;
     this.fetchPendingEmployees();
   }
 
@@ -133,7 +133,7 @@ export class Approvals implements OnInit {
       this.apiService.approveEmployee(emp.employeeCode).subscribe({
         next: () => {
           this.toast.success('Employee approved successfully!');
-          // Automatically reload page, resetting if current page becomes empty
+
           if (this.employees.length === 1 && this.currentPage > 1) {
             this.currentPage--;
           }
@@ -151,7 +151,7 @@ export class Approvals implements OnInit {
       this.apiService.rejectEmployee(emp.employeeCode).subscribe({
         next: () => {
           this.toast.success('Employee rejected successfully!');
-          // Automatically reload page, resetting if current page becomes empty
+
           if (this.employees.length === 1 && this.currentPage > 1) {
             this.currentPage--;
           }

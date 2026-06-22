@@ -27,14 +27,14 @@ export class MedicalRecordComponent implements OnInit {
   private readonly toast = inject(ToastrService);
   private readonly route = inject(ActivatedRoute);
 
-  // INJECT PLATFORM ID HERE
+
   private readonly platformId = inject(PLATFORM_ID);
 
   recordForm!: FormGroup;
   currentUser: any = null;
   userPermissions: string[] = [];
 
-  // Master Data Arrays
+
   records: any[] = [];
   patients: any[] = [];
   doctors: any[] = [];
@@ -47,14 +47,13 @@ export class MedicalRecordComponent implements OnInit {
   stats = { total: 0, active: 0, review: 0 };
   pendingAppointmentId: string | null = null;
 
-  // --- Pagination State ---
+
   currentPage = 1;
   pageSize = 10;
   totalRecords = 0;
   totalPages = 1;
   visiblePages: (number | string)[] = [];
 
-  // --- Dropdown States & Displays ---
   isFormPatientOpen = false; displayFormPatients: any[] = []; selectedFormPatient = '';
   isFilterPatientOpen = false; displayFilterPatients: any[] = []; selectedFilterPatient = ''; filterPatientId = '';
 
@@ -64,17 +63,17 @@ export class MedicalRecordComponent implements OnInit {
   isFormAppointmentOpen = false; displayFormAppointments: any[] = []; selectedFormAppointment = '';
   filterDate = '';
 
-  // Add these variables inside the class:
+
   showViewModal = false;
   selectedRecordForView: any = null;
 
-  // Add this method to open the modal:
+
   viewRecord(record: any) {
     this.selectedRecordForView = record;
     this.showViewModal = true;
   }
 
-  // Add this method to handle modal closing:
+
   closeViewModal() {
     this.showViewModal = false;
     this.selectedRecordForView = null;
@@ -91,7 +90,7 @@ export class MedicalRecordComponent implements OnInit {
       });
       this.fetchCurrentUserAndData();
     } else {
-      // Prevent infinite loading state on the server render
+
       this.isLoading = false;
     }
   }
@@ -102,7 +101,7 @@ export class MedicalRecordComponent implements OnInit {
       complaint: [''], symptoms: [''], diagnosis: [''], notes: [''],
       medications: this.fb.array([]), medicalObservations: this.fb.array([])
     });
-    
+
     this.addMedication();
     this.addObservation();
   }
@@ -124,12 +123,12 @@ export class MedicalRecordComponent implements OnInit {
 
         forkJoin({
           patients: this.apiService.getAllPatients().pipe(catchError(() => of([]))),
-          // FIX: Replaced getAllEmployees with getDoctors to prevent 403 errors on hard refresh for doctors
+
           doctorsList: this.appointmentService.getDoctors().pipe(catchError(() => of([]))),
           appointments: this.appointmentService.getAllAppointments().pipe(catchError(() => of([])))
         }).subscribe(({ patients, doctorsList, appointments }) => {
 
-          // Safely extract data whether it comes wrapped in pagination {data: []} or as a raw array []
+
           const extract = (d: any) => Array.isArray(d) ? d : (d?.data || []);
 
           this.patients = extract(patients).filter((p: any) => p.status?.toUpperCase() === 'ACTIVE' || p.status === 'true');
@@ -154,7 +153,7 @@ export class MedicalRecordComponent implements OnInit {
             if (apt) this.selectAppointment(apt);
           }
 
-          // Trigger initial fetch of records (Page 1)
+
           this.applyFilters();
         });
       },
@@ -166,9 +165,6 @@ export class MedicalRecordComponent implements OnInit {
     });
   }
 
-  // ==========================================
-  // FORM DROPDOWN HANDLERS
-  // ==========================================
   openFormDoctorDropdown() {
     if (this.hasPermission('CREATE_RECORD_FOR_ANYONE')) {
       this.isFormDoctorOpen = true;
@@ -285,11 +281,11 @@ export class MedicalRecordComponent implements OnInit {
     }, 150);
   }
 
-  // ==========================================
-  // PAGINATION & SERVER FILTERING
-  // ==========================================
+
+
+
   applyFilters() {
-    this.currentPage = 1; // Reset to page 1 whenever a filter changes
+    this.currentPage = 1;
     this.reloadRecordsData();
   }
 
@@ -358,7 +354,7 @@ export class MedicalRecordComponent implements OnInit {
   }
 
   onSubmit(status: 'DRAFT' | 'FINAL') {
-   
+
     if (this.medications.length === 1 && !this.medications.at(0).get('name')?.value) {
       this.removeMedication(0);
     }
@@ -370,13 +366,13 @@ export class MedicalRecordComponent implements OnInit {
       this.recordForm.markAllAsTouched();
       this.toast.error('Fill required fields');
 
-      // Add the blank fields back if we removed them and validation still failed
+
       if (this.medications.length === 0) this.addMedication();
       if (this.medicalObservations.length === 0) this.addObservation();
 
       return;
     }
-    
+
     this.isSubmitting = true;
     const payload = { ...this.recordForm.getRawValue(), status: status };
 
@@ -413,7 +409,7 @@ export class MedicalRecordComponent implements OnInit {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  deleteRecord(id: string) {
+  deleteRecord(id: any) {
     if (confirm('Delete this record?')) {
       this.recordsService.deleteMedicalRecord(id).subscribe({
         next: () => {
@@ -441,7 +437,7 @@ export class MedicalRecordComponent implements OnInit {
   getInitials(name: string): string { return name ? name.substring(0, 2).toUpperCase() : 'MR'; }
 
   private getTokenPayload(): any {
-    // SAFE PLATFORM CHECK FOR LOCALSTORAGE
+
     if (!isPlatformBrowser(this.platformId)) return {};
 
     const token = localStorage.getItem('token');

@@ -35,7 +35,6 @@ export class Appointment implements OnInit {
   displayDoctors: any[] = [];
   selectedDoctorDisplay = '';
 
-  // 1. ADD PAGINATION STATE VARIABLES (Under your existing variables)
   currentPage = 1;
   pageSize = 10;
   totalRecords = 0;
@@ -119,10 +118,10 @@ export class Appointment implements OnInit {
       this.cdr.detectChanges();
     });
 
-    // FIX: Pass a high limit for the dropdown and safely unwrap the paginated response
+
     this.apiService.getAllPatients({ limit: 1000 }).subscribe({
       next: (res: any) => {
-        // Safely extract whether it's wrapped in { data: [] } or a raw array
+
         const patientsList = res.data || res || [];
 
         this.patients = patientsList.filter((pat: any) =>
@@ -138,7 +137,7 @@ export class Appointment implements OnInit {
   }
 
 
-  // 3. UPDATE FETCH METHOD
+
   fetchRecentAppointments() {
     const params = {
       page: this.currentPage,
@@ -147,7 +146,7 @@ export class Appointment implements OnInit {
 
     this.appointmentService.getRecentAppointments(params).subscribe({
       next: (res: any) => {
-        // Handle the new JSON wrapper structure
+
         this.recentAppointments = res.data || [];
         this.totalRecords = res.pagination?.total || 0;
         this.totalPages = res.pagination?.pages || 1;
@@ -160,7 +159,7 @@ export class Appointment implements OnInit {
   }
 
 
-  // 4. ADD PAGINATION HELPER METHODS
+
   generatePagesArray() {
     const total = this.totalPages;
     const current = this.currentPage;
@@ -226,7 +225,7 @@ export class Appointment implements OnInit {
     this.isPatientDropdownOpen = true;
     this.selectedPatientDisplay = (event.target as HTMLInputElement).value;
 
-    // FIX: Added ?. to prevent silent Javascript crashes if a name is null
+
     this.displayPatients = this.patients.filter(pat =>
       pat.name?.toLowerCase().includes(term) ||
       pat.UHID?.toLowerCase().includes(term)
@@ -522,14 +521,14 @@ export class Appointment implements OnInit {
   }
 
   startEncounter(apt: any) {
-    // Only allow starting an encounter if the appointment is Scheduled/Completed
-    // (You can adjust this logic based on your business rules)
+
+
     if (apt.status === 'Cancelled' || apt.status.toUpperCase() === 'PENDING') {
       this.toast.error('Cannot start encounter for this appointment status.');
       return;
     }
 
-    // Redirect to the records page and pass the appointment ID in the query string
+
     this.router.navigate(['/records'], {
       queryParams: { appointmentId: apt.appointmentCode }
     });

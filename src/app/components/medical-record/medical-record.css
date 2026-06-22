@@ -52,7 +52,6 @@ textarea {
   font-size: 0.9rem;
 }
 
-/* Stat Cards */
 .stats-grid {
   display: flex;
   gap: 20px;
@@ -85,12 +84,12 @@ textarea {
   color: #7c3aed;
 }
 .stat-card.green .icon-box {
-  background: #dcfce7;
-  color: #10b981;
+  background: #dff5e6;
+  color: #01724c;
 }
 .stat-card.blue .icon-box {
-  background: #dbeafe;
-  color: #3b82f6;
+  background: #fef2db;
+  color: #8e6005;
 }
 
 .stat-info h2 {
@@ -106,7 +105,6 @@ textarea {
   font-size: 0.85rem;
 }
 
-/* Form Layout */
 .form-container {
   margin-top: 20px;
 }
@@ -140,7 +138,6 @@ textarea {
   text-transform: uppercase;
 }
 
-
 .input-group label {
   font-size: 0.75rem;
   font-weight: 700;
@@ -168,7 +165,7 @@ textarea {
 
 .input-group input:disabled {
   background-color: #f3f4f6;
-  color: #9ca3af;
+  color: #5e6067;
   cursor: not-allowed;
 }
 
@@ -178,10 +175,9 @@ textarea {
   box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
 }
 
-
 .full-width {
   width: 100%;
-  grid-column: 1 / -1; /* Forces it to span all columns if placed inside a grid */
+  grid-column: 1 / -1;
 }
 
 .mt-3 {
@@ -202,8 +198,6 @@ textarea {
   height: 250px;
 }
 
-
-/* Array Tables */
 .array-table {
   width: 100%;
   border-collapse: collapse;
@@ -222,10 +216,9 @@ textarea {
   padding: 4px;
 }
 
-/* Add box-sizing to prevent inputs from bleeding into the button column */
 .array-table input {
   width: 100%;
-  box-sizing: border-box; /* CRITICAL FIX */
+  box-sizing: border-box;
   padding: 8px;
   border: none;
   border-bottom: 1px solid #e5e7eb;
@@ -233,7 +226,6 @@ textarea {
   outline: none;
 }
 
-/* Force the last column to always have exactly enough space for the button */
 .array-table th:last-child,
 .array-table td:last-child {
   width: 44px;
@@ -262,7 +254,7 @@ textarea {
 
 .btn-delete:hover {
   background: #c70606;
-  color:#fee2e2
+  color: #fee2e2;
 }
 
 .btn-add-array {
@@ -282,7 +274,6 @@ textarea {
   border-color: #7c3aed;
 }
 
-/* Actions Footer */
 .form-actions {
   display: flex;
   justify-content: space-between;
@@ -345,7 +336,6 @@ textarea {
   cursor: not-allowed;
 }
 
-/* Main Table */
 .table-container {
   background: white;
   border-radius: 16px;
@@ -461,12 +451,12 @@ textarea {
 }
 
 .badge-active {
-  background: #defae8;
-  color: #029b68;
+  background: #def5e6;
+  color: #00710f;
 }
 .badge-review {
   background: #fef3c7;
-  color: #be6601;
+  color: #985101;
 }
 
 .action-cell {
@@ -509,11 +499,10 @@ textarea {
 .btn-icon.delete:hover {
   background: #fecaca;
 }
-/* --- UI Refinements --- */
 .scrollable-textarea {
-  height: 53px; /* Fixed height */
-  resize: none; /* Prevent manual expanding */
-  overflow-y: auto; /* Scroll vertically if text exceeds box */
+  height: 53px;
+  resize: none;
+  overflow-y: auto;
   line-height: 1.5;
 }
 
@@ -522,17 +511,14 @@ textarea {
   resize: none;
 }
 
-
-
 .array-scroll-container {
-  max-height: 280px; /* Approx: Header (30px) + 5 rows (50px each) */
+  max-height: 280px;
   overflow-y: auto;
   overflow-x: hidden;
-  border-bottom: 1px solid #f3f4f6; /* Clean edge for scrolling content */
-  padding-right: 8px; /* Room for scrollbar */
+  border-bottom: 1px solid #f3f4f6;
+  padding-right: 8px;
 }
 
-/* Custom Scrollbar Styling (Optional but looks much cleaner) */
 .array-scroll-container::-webkit-scrollbar,
 .scrollable-textarea::-webkit-scrollbar {
   width: 6px;
@@ -552,9 +538,6 @@ textarea {
   background: #94a3b8;
 }
 
-/* --- CLINICAL SUMMARY EQUAL HEIGHT FIX --- */
-
-/* Make the card a flex column */
 .form-card.summary {
   margin-top: 24px;
   height: 619px;
@@ -562,48 +545,43 @@ textarea {
   flex-direction: column;
 }
 
-/* Force ALL THREE input wrappers to share the space equally */
 .input-group.complaint,
 .input-group.symptoms,
 .input-group.diagnosis {
   margin-top: 16px;
-  flex: 1; /* Splits the height evenly 3 ways */
+  flex: 1;
   display: flex;
   flex-direction: column;
-  height: auto; 
+  height: auto;
 }
 
-/* Remove margin from the top one so it sits flush with the title */
 .input-group.complaint {
   margin-top: 0;
 }
 
-/* Force ALL THREE text areas to stretch to the bottom of their wrappers */
 .scrollable-textarea-complaint,
 .scrollable-textarea-symptoms,
 .scrollable-textarea-diagnosis {
-  flex: 1; /* Stretches to fill wrapper */
+  flex: 1;
   resize: none;
   overflow-y: auto;
   line-height: 1.5;
-  height: auto !important; /* Overrides any previous hardcoded heights */
+  height: auto !important;
 }
-/* Tell the input group to take up all remaining vertical space */
 .input-group.diagnosis {
   margin-top: 16px;
   flex-grow: 1;
   display: flex;
   flex-direction: column;
-  height: auto; /* Overrides the previous 150px fixed height */
+  height: auto;
 }
 
-/* Tell the text area itself to stretch to the bottom */
 .scrollable-textarea-diagnosis {
   flex-grow: 1;
   resize: none;
   overflow-y: auto;
   line-height: 1.5;
-  height: auto; /* Overrides the previous 150px fixed height */
+  height: auto;
 }
 
 .scrollable-textarea-complaint {
@@ -611,10 +589,9 @@ textarea {
   resize: none;
   overflow-y: auto;
   line-height: 1.5;
-  height: auto; /* Overrides the previous 150px fixed height */
+  height: auto;
 }
 
-/* --- Autocomplete Dropdown Styling --- */
 .autocomplete-wrapper {
   position: relative;
   width: 100%;
@@ -636,8 +613,6 @@ textarea {
   overflow-y: auto;
   z-index: 1000;
 }
-
-
 
 .autocomplete-list li {
   padding: 10px 14px;
@@ -680,49 +655,41 @@ textarea {
   border-radius: 4px;
 }
 
-
 .filter-list {
   min-width: 250px;
 }
 
-
-
-/* Update your existing input-row to flex-wrap */
 .input-row {
   display: flex;
   gap: 16px;
-  flex-wrap: wrap; /* CRITICAL: Prevents squishing inputs */
+  flex-wrap: wrap;
 }
 
 .input-group {
   display: flex;
   flex-direction: column;
-  flex: 1 1 200px; /* CRITICAL: Enforces a minimum width */
+  flex: 1 1 200px;
 }
 
-/* Creates a stacking context so lists float above tables */
 .searchable-dropdown-container {
   position: relative;
-  z-index: 50; 
+  z-index: 50;
 }
 
-/* Dropdown list styling */
 .dropdown-list {
   position: absolute;
   top: 100%;
   left: 0;
   right: 0;
-  background-color: #ffffff; /* Must be solid white */
+  background-color: #ffffff;
   border: 1px solid #e5e7eb;
   border-radius: 8px;
   max-height: 250px;
   overflow-y: auto;
-  z-index: 9999; /* Must be extremely high */
+  z-index: 9999;
   margin-top: 4px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15); /* Adds visual separation from table below */
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
 }
-
-
 
 .dropdown-item {
   padding: 10px 16px;
@@ -760,32 +727,29 @@ textarea {
   border-radius: 4px;
 }
 
-/* --- Layout Fix: Make Right Column match Left Column height --- */
 .right-col {
   display: flex;
   flex-direction: column;
-  height: 100%; /* Spans the full height created by the left column */
+  height: 100%;
 }
 
 .right-col .form-card {
-  flex: 1; /* Forces both cards to share the vertical space equally */
+  flex: 1;
   display: flex;
   flex-direction: column;
 }
 
 .right-col .array-scroll-container {
-  flex: 1; /* Forces the table container to stretch and fill the card */
-  max-height: none; /* Overrides the previous fixed 280px max-height */
-  min-height: 0; /* Ensures the scrollbar works properly inside the flex container */
-  margin-bottom: 8px; /* Adds a little breathing room before the add button */
+  flex: 1;
+  max-height: none;
+  min-height: 0;
+  margin-bottom: 8px;
 }
 
-
-/* --- Pagination Container Styling --- */
 .pagination-container {
   display: flex;
-  flex-direction: column; /* Stacks the info text above the buttons */
-  align-items: center; /* Centers everything perfectly in the middle */
+  flex-direction: column;
+  align-items: center;
   gap: 12px;
   margin-top: 24px;
   padding-top: 16px;
@@ -805,10 +769,9 @@ textarea {
   gap: 12px;
 }
 
-/* Forces the number buttons to align horizontally */
 .page-numbers {
   display: flex;
-  flex-direction: row; 
+  flex-direction: row;
   align-items: center;
   gap: 4px;
 }

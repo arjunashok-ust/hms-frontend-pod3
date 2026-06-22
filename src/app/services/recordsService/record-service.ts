@@ -9,12 +9,12 @@ export class RecordsService {
 
   constructor(private readonly http: HttpClient) { }
 
-  // Admin/Receptionist Fetch
+
   getAllMedicalRecords(params: any = {}): Observable<any> {
     return this.http.get<any>(`${this.backendUrl}/api/records/getAllRecords`, { params });
   }
 
-  // Doctor Fetch
+
   getMyMedicalRecords(params: any = {}): Observable<any> {
     return this.http.get<any>(`${this.backendUrl}/api/records/getMyRecords`, { params });
   }

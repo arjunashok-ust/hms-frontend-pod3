@@ -1,12 +1,12 @@
-<div class="modal-overlay" (click)="onClose()">
-  <div class="record-modal-container" (click)="$event.stopPropagation()">
+<div class="modal-overlay" (keydown)="onClose()" (click)="onClose()">
+  <div class="record-modal-container" (keydown)="$event.stopPropagation()" (click)="$event.stopPropagation()">
     <button class="close-btn" (click)="onClose()">
       <i class="bi bi-x-lg"></i>
     </button>
 
     <div class="modal-header-centered">
       <div class="modal-icon text-white bg-purple-gradient">
-        <i class="bi bi-file-earmark-text-fill"></i>
+        <i class="bi bi-file-earmark-text"></i>
       </div>
       <p class="modal-eyebrow text-purple">MEDICAL RECORD</p>
       <h2 class="modal-title">Record Details</h2>

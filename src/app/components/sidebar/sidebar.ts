@@ -51,10 +51,10 @@ export class Sidebar implements OnInit {
   }
 
   fetchPendingAppointments() {
-    // Use getStats() to get the accurate global count without downloading the records
+
     this.appointmentService.getStats().subscribe({
       next: (stats: any) => {
-        // The backend returns { total, completed, booked, cancelled, pending }
+
         this.pendingAppointmentsCount = stats.pending || 0;
         this.cdr.markForCheck();
       },

@@ -73,7 +73,6 @@
   border-radius: 0 4px 4px 0;
 }
 
-/* Ensure the link container allows flexible badge placement */
 .menu-link {
   display: flex;
   align-items: center;
@@ -81,15 +80,14 @@
   text-decoration: none;
 }
 
-/* --- PULSING BADGE --- */
 .badge-pulse {
-  background-color: #e30606; /* Vivid Alert Red */
+  background-color: #e30606;
   color: #ffffff;
   font-size: 0.75rem;
   font-weight: 700;
   padding: 2px 8px;
   border-radius: 12px;
-  margin-left: auto; /* Pushes the badge to the far right */
+  margin-left: auto;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -97,7 +95,6 @@
   animation: pulse-animation 2s infinite;
 }
 
-/* Keyframes for smooth expanding shadow heartbeat */
 @keyframes pulse-animation {
   0% {
     transform: scale(0.95);
