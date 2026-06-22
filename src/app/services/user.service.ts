@@ -40,9 +40,15 @@ export class UserService {
   }
 
   // get all patients
-  getPatients(): Observable<PatientModel[]> {
+  getPatients(selectedText: string, page: number, limit: number): Observable<any> {
     return this.http
-      .get<PatientModel[]>(`${this.api.backend_url}/user/getPatients`)
+      .get(`${this.api.backend_url}/user/getPatients`, {
+        params: {
+          selectedText,
+          page,
+          limit,
+        },
+      })
       .pipe(catchError((error) => this.handleError(error)));
   }
 

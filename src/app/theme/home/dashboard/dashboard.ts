@@ -8,19 +8,20 @@ import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-dashboard',
-  imports: [CommonModule,RouterModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css',
 })
-
 export class DashboardComponent implements OnInit {
   dashboardData: DashboardModel | null = null;
-  userData: EmployeeModel[]  = [];
+  userData: EmployeeModel[] = [];
 
   adminService: AdminService = inject(AdminService);
   cd: ChangeDetectorRef = inject(ChangeDetectorRef);
   toast: ToastrService = inject(ToastrService);
   route: Router = inject(Router);
+
+  employeeEmail: string = localStorage.getItem('email') ?? '';
 
   ngOnInit() {
     this.adminService.getDashboardData().subscribe({
@@ -32,15 +33,15 @@ export class DashboardComponent implements OnInit {
         this.toast.error(err?.error?.message);
       },
     });
-    
-    this.adminService.getEmployees().subscribe({
+
+    this.adminService.getEmployees('', '', 1, 10).subscribe({
       next: (res) => {
-        this.userData = res;
+        this.userData = res.data;
         this.cd.detectChanges();
       },
       error: (err) => {
         console.error(err);
-        this.toast.error(err?.error?.message || "Error getting employee data");
+        this.toast.error(err?.error?.message || 'Error getting employee data');
       },
     });
   }

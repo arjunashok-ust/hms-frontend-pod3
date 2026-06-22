@@ -69,12 +69,14 @@ export class MedicalRecordComponent implements OnInit {
       observations: this.fb.array([this.createObsRow()]),
       notes: [''],
       createdBy: [this.employeeId, [Validators.required]],
-      status: ['Completed'],
+      status: [''],
     });
   }
 
   ngOnInit(): void {
     this.fetchMedicalRecordStats();
+    this.getDoctors();
+    this.getPatients();
 
     this.editRoute.paramMap.subscribe((params) => {
       this.medicalRecordId = params.get('medRecordId') || '';
@@ -197,7 +199,7 @@ export class MedicalRecordComponent implements OnInit {
         this.cd.detectChanges();
       },
       error: (err) => {
-        this.toast.error(err?.error?.message || 'Error getting appointment stats');
+        this.toast.error(err?.error?.message || 'Error getting medical records');
       },
     });
   }
@@ -211,7 +213,7 @@ export class MedicalRecordComponent implements OnInit {
         this.deletedCount = res.deletedCount;
       },
       error: (error) => {
-        this.toast.error(error?.error?.message || 'Error getting appointment stats');
+        this.toast.error(error?.error?.message || 'Error getting medical record stats');
       },
     });
   }
@@ -240,6 +242,7 @@ export class MedicalRecordComponent implements OnInit {
       .get('patientId')
       ?.valueChanges.pipe(debounceTime(300))
       .subscribe((value) => {
+        if (!value) return;
         this.userService.getPatientsBySearch(value).subscribe({
           next: (res) => {
             this.filteredPatients = res;
@@ -397,6 +400,31 @@ export class MedicalRecordComponent implements OnInit {
     return true;
   }
 
+  validateCompleted(): boolean {
+    const requiredFields = [
+      'patientId',
+      'doctorId',
+      'appointmentId',
+      'complaint',
+      'symptoms',
+      'diagnosis',
+      'createdBy',
+    ];
+
+    let isValid = true;
+
+    requiredFields.forEach((field) => {
+      const control = this.medicalForm.get(field);
+      control?.markAsTouched();
+
+      if (!control?.value?.trim()) {
+        isValid = false;
+      }
+    });
+
+    return isValid;
+  }
+
   deleteMedicalRecord(medicalRecordId: string) {
     this.medicalRecordService.deleteMedicalRecord(medicalRecordId).subscribe({
       next: (res) => {
@@ -414,9 +442,8 @@ export class MedicalRecordComponent implements OnInit {
   // create or update medical record
   onSubmit(recordStatus: string) {
     if (recordStatus == 'Draft') {
-      const valid = this.validateDraft();
-      if (!valid) {
-        this.toast.error('PatientId,DoctorId and Appointment Id is required to save draft!');
+      if (!this.validateDraft()) {
+        this.toast.error('Patient, Doctor and Appointment are required to save as Draft!');
         this.medicalForm.get('patientId')?.markAsTouched();
         this.medicalForm.get('doctorId')?.markAsTouched();
         this.medicalForm.get('appointmentId')?.markAsTouched();
@@ -424,10 +451,9 @@ export class MedicalRecordComponent implements OnInit {
       }
     }
 
-    if (recordStatus == 'Completed') {
-      if (!this.medicalForm.valid) {
-        this.toast.error('Form Validation Failed!');
-        this.medicalForm.markAllAsTouched();
+    if (recordStatus === 'Completed') {
+      if (!this.validateCompleted()) {
+        this.toast.error('Please fill all required fields to complete the record!');
         return;
       }
     }
@@ -455,7 +481,7 @@ export class MedicalRecordComponent implements OnInit {
 
       this.medicalRecordService.updateMedicalRecord(payload).subscribe({
         next: (res) => {
-          this.toast.success('Medical Record Updated Sucessfully.');
+          this.toast.success(res?.message || 'Medical Record Updated Sucessfully.');
           this.isDraftLoading = false;
 
           this.fetchMedicalRecordPageDetails();
@@ -474,7 +500,6 @@ export class MedicalRecordComponent implements OnInit {
       });
     } else {
       this.isCreateLoading = true;
-
       payload.created_at = new Date();
 
       this.medicalRecordService.createMedicalRecord(payload).subscribe({
@@ -486,6 +511,7 @@ export class MedicalRecordComponent implements OnInit {
           this.fetchMedicalRecordStats();
 
           this.medicalForm.reset({ createdBy: this.employeeId });
+          this.cd.detectChanges();
         },
         error: (err) => {
           this.toast.error(err?.error?.message || err?.message || 'Something went wrong!');

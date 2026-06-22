@@ -77,10 +77,9 @@ export class EditEmployeeComponent implements OnInit {
 
   ngOnInit(): void {
     const userEmail = localStorage.getItem('updateEmail') ?? '';
-    this.adminService.getUserEmployee().subscribe({
+    this.adminService.getUserEmployee(userEmail,1,1).subscribe({
       next: (res) => {
-        this.users = res;
-        this.userData = this.users.find((emp) => emp.email === userEmail) || null;
+        this.userData = res.data;
         this.updateForm.patchValue({
           name: this.userData?.name,
           email: this.userData?.email,

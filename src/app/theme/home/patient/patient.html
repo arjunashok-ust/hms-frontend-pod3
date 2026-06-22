@@ -4,7 +4,7 @@
       <span class="hero-kicker">Patients</span>
       <h1>Patient Management</h1>
       <p>
-        Register new patients, manage records, and track medical history from one unified dashboard.
+        Register new patients and manage records
       </p>
     </div>
     <div class="patient-hero-side">
@@ -26,30 +26,6 @@
       <div class="metric-body">
         <h2>{{ patientUiData.patientCount }}</h2>
         <p>Total Patients</p>
-      </div>
-    </div>
-    <div class="metric-card green">
-      <div class="metric-top">
-        <div class="metric-icon">
-          <i class="bi bi-person-check-fill"></i>
-        </div>
-        <span class="metric-tag">Active</span>
-      </div>
-      <div class="metric-body">
-        <h2>{{ patientUiData.activeCount }}</h2>
-        <p>Active Patients</p>
-      </div>
-    </div>
-    <div class="metric-card rose">
-      <div class="metric-top">
-        <div class="metric-icon">
-          <i class="bi bi-person-dash-fill"></i>
-        </div>
-        <span class="metric-tag">Inactive</span>
-      </div>
-      <div class="metric-body">
-        <h2>{{ patientUiData.inActiveCount }}</h2>
-        <p>Inactive Patients</p>
       </div>
     </div>
   </div>
@@ -295,7 +271,19 @@
           <span class="panel-subtitle">Records</span>
           <h2>All Patients</h2>
         </div>
-        <div class="table-controls"></div>
+        <div class="table-controls">
+          <div class="panel-tools">
+            <div class="search-box">
+              <i class="bi bi-search"></i>
+              <input
+                type="text"
+                placeholder="Search by name, email or patient id..."
+                [(ngModel)]="searchText"
+                (input)="updateData()"
+              />
+            </div>
+          </div>
+        </div>
       </div>
 
       <div class="table-wrapper">
@@ -322,7 +310,9 @@
                   <div class="patient-avatar pa-gradient-1">JD</div>
                   <div>
                     <h4>{{ patient.name }}</h4>
-                    <span *ngIf="patient.emergencyContact">Emergency: {{ patient.emergencyContact }}</span>
+                    <span *ngIf="patient.emergencyContact"
+                      >Emergency: {{ patient.emergencyContact }}</span
+                    >
                   </div>
                 </div>
               </td>
@@ -352,6 +342,24 @@
             </tr>
           </tbody>
         </table>
+        <div class="pagination-bar">
+          <button class="page-btn" (click)="prevPage()" [disabled]="page === 1">Prev</button>
+
+          <div class="page-numbers">
+            <button
+              *ngFor="let p of [].constructor(totalPages); let i = index"
+              class="page-number"
+              [class.active]="page === i + 1"
+              (click)="goToPage(i + 1)"
+            >
+              {{ i + 1 }}
+            </button>
+          </div>
+
+          <button class="page-btn" (click)="nextPage()" [disabled]="page === totalPages">
+            Next
+          </button>
+        </div>
       </div>
     </div>
   </div>

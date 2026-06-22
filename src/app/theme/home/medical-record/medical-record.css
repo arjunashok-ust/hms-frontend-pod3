@@ -731,6 +731,8 @@ small {
   color: #c4c4c4;
 }
 
+/* styling for pagination bar */
+
 .pagination-bar {
   margin-top: 20px;
   display: flex;

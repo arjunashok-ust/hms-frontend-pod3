@@ -3,7 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { ApiUrl } from '../environment/environment';
 import { catchError, Observable, throwError } from 'rxjs';
 import { DashboardModel } from '../models/ui.model';
-import { EmployeeModel, UserEmployeeModel, UserModel } from '../models/user.model';
+import { UserModel } from '../models/user.model';
 
 @Injectable({ providedIn: 'root' })
 export class AdminService {
@@ -22,15 +22,33 @@ export class AdminService {
       .pipe(catchError((error) => this.handleError(error)));
   }
 
-  getEmployees(): Observable<EmployeeModel[]> {
+  getEmployees(
+    selectedText: string,
+    selectedDepartment: string,
+    page: number,
+    limit: number,
+  ): Observable<any> {
     return this.http
-      .get<EmployeeModel[]>(`${this.apiUrl.backend_url}/admin/getAllUsers`)
+      .get<any>(`${this.apiUrl.backend_url}/admin/getAllUsers`, {
+        params: {
+          selectedText,
+          selectedDepartment,
+          page,
+          limit,
+        },
+      })
       .pipe(catchError((error) => this.handleError(error)));
   }
 
-  getUserEmployee(): Observable<UserEmployeeModel[]> {
+  getUserEmployee(selectedText: string, page: number, limit: number): Observable<any> {
     return this.http
-      .get<UserEmployeeModel[]>(`${this.apiUrl.backend_url}/admin/getUserEmployee`)
+      .get(`${this.apiUrl.backend_url}/admin/getUserEmployee`, {
+        params: {
+          selectedText,
+          page,
+          limit,
+        },
+      })
       .pipe(catchError((error) => this.handleError(error)));
   }
 

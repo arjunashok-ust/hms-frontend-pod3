@@ -17,7 +17,14 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 
 @Component({
   selector: 'app-patient',
-  imports: [RouterModule, FormsModule, ReactiveFormsModule, CommonModule, HasPermissionDirective, MatAutocompleteModule],
+  imports: [
+    RouterModule,
+    FormsModule,
+    ReactiveFormsModule,
+    CommonModule,
+    HasPermissionDirective,
+    MatAutocompleteModule,
+  ],
   templateUrl: './patient.html',
   styleUrl: './patient.css',
 })
@@ -37,14 +44,20 @@ export class PatientComponent implements OnInit {
     inActiveCount: 0,
   };
 
+  searchText: string = '';
+  page: number = 1;
+  totalPages: number = 1;
+  limit: number = 5;
+
   ngOnInit(): void {
     this.updateData();
   }
 
   updateData() {
-    this.userService.getPatients().subscribe({
+    this.userService.getPatients(this.searchText, this.page, this.limit).subscribe({
       next: (res) => {
-        this.patientData = res;
+        this.patientData = res.data;
+        this.totalPages = res.totalPages;
         this.loadUiData();
         this.cd.detectChanges();
       },
@@ -85,12 +98,6 @@ export class PatientComponent implements OnInit {
 
   loadUiData() {
     this.patientUiData.patientCount = this.patientData?.length || 0;
-
-    this.patientUiData.activeCount =
-      this.patientData?.filter((patient) => patient.status === 'Active').length || 0;
-
-    this.patientUiData.inActiveCount =
-      this.patientData?.filter((patient) => patient.status === 'InActive').length || 0;
   }
 
   deletePatient(patientId: string) {
@@ -113,6 +120,25 @@ export class PatientComponent implements OnInit {
     localStorage.setItem('updatePatientEmail', email);
     this.route.navigate(['edit-patient']);
     console.log(this.patientForm.errors);
+  }
+
+  prevPage() {
+    if (this.page > 1) {
+      this.page--;
+    }
+    this.updateData();
+  }
+
+  nextPage() {
+    if (this.page < this.totalPages) {
+      this.page++;
+    }
+    this.updateData();
+  }
+
+  goToPage(index: number) {
+    this.page = index;
+    this.updateData();
   }
 
   onSubmit() {

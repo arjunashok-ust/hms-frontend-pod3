@@ -1,5 +1,11 @@
 import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { AppointmentService } from '../../../services/appointment.service';
 import { AppointmentModel, AppointmentResponseModel } from '../../../models/appointment.model';
@@ -12,7 +18,7 @@ import { UserService } from '../../../services/user.service';
 
 @Component({
   selector: 'app-appointment',
-  imports: [RouterModule, CommonModule, ReactiveFormsModule, HasPermissionDirective],
+  imports: [RouterModule, CommonModule, ReactiveFormsModule, HasPermissionDirective, FormsModule],
   templateUrl: './appointment.html',
   styleUrl: './appointment.css',
 })
@@ -32,6 +38,11 @@ export class AppointmentComponent implements OnInit {
 
   // for setting doctor time slots
   doctorTimeSlots: string[] = [];
+
+  page: number = 1;
+  totalPages: number = 1;
+  limit: number = 5;
+  searchText: string = '';
 
   employeeId = localStorage.getItem('employeeId');
   role = localStorage.getItem('role');
@@ -55,6 +66,7 @@ export class AppointmentComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.fetchAppointments();
     this.loadUiData();
     // time slot container bug fix
     this.doctorTimeSlots.length = 0;
@@ -80,17 +92,20 @@ export class AppointmentComponent implements OnInit {
         this.toast.error(err?.error?.message);
       },
     });
+  }
 
-    this.appointmentService.getAllAppointment().subscribe({
+  fetchAppointments() {
+    this.appointmentService.getAllAppointment(this.searchText, this.page, this.limit).subscribe({
       next: (res) => {
+        this.totalPages = res.totalPages;
         if (this.role === 'Doctor') {
-          this.fetchDoctorAppointments(res);
+          this.fetchDoctorAppointments(res.data);
           this.displayedAppointments = this.doctorAppointments;
         } else {
-          this.appointments = res;
+          this.appointments = res.data;
           this.displayedAppointments = this.appointments;
         }
-        this.mapDoctorAndPatients(res);
+        this.mapDoctorAndPatients(res.data);
         this.cd.detectChanges();
       },
       error: (err) => {
@@ -209,6 +224,25 @@ export class AppointmentComponent implements OnInit {
         });
       }
     });
+  }
+
+  prevPage() {
+    if (this.page > 1) {
+      this.page--;
+    }
+    this.fetchAppointments();
+  }
+
+  nextPage() {
+    if (this.page < this.totalPages) {
+      this.page++;
+    }
+    this.fetchAppointments();
+  }
+
+  goToPage(index: number) {
+    this.page = index;
+    this.fetchAppointments();
   }
 
   onSubmit() {

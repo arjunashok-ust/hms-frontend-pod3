@@ -18,9 +18,15 @@ export class AppointmentService {
   }
 
   // get all appointments
-  getAllAppointment(): Observable<AppointmentModel[]> {
+  getAllAppointment(selectedText: string, page: number, limit: number): Observable<any> {
     return this.http
-      .get<AppointmentModel[]>(`${this.api.backend_url}/appointment/getAllAppointments`)
+      .get(`${this.api.backend_url}/appointment/getAllAppointments`, {
+        params: {
+          selectedText,
+          page,
+          limit,
+        },
+      })
       .pipe(catchError((error) => this.handleError(error)));
   }
 

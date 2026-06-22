@@ -253,6 +253,19 @@
           {{ role === 'Doctor' ? 'Recent Appointments For You' : 'Recent Appointments' }}
         </h2>
       </div>
+      <div class="table-controls">
+          <div class="panel-tools">
+            <div class="search-box">
+              <i class="bi bi-search"></i>
+              <input
+                type="text"
+                placeholder="Search by name, email or patient id..."
+                [(ngModel)]="searchText"
+                (input)="fetchAppointments()"
+              />
+            </div>
+          </div>
+        </div>
     </div>
 
     <div class="table-wrapper" *hasPermission="['view:appointment']">
@@ -362,6 +375,22 @@
           </tr>
         </tbody>
       </table>
+      <div class="pagination-bar">
+        <button class="page-btn" (click)="prevPage()" [disabled]="page === 1">Prev</button>
+
+        <div class="page-numbers">
+          <button
+            *ngFor="let p of [].constructor(totalPages); let i = index"
+            class="page-number"
+            [class.active]="page === i + 1"
+            (click)="goToPage(i + 1)"
+          >
+            {{ i + 1 }}
+          </button>
+        </div>
+
+        <button class="page-btn" (click)="nextPage()" [disabled]="page === totalPages">Next</button>
+      </div>
     </div>
   </div>
 </div>

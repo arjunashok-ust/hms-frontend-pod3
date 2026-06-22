@@ -14,9 +14,6 @@ export class RouteGuard implements CanActivate {
   canActivate(route: ActivatedRouteSnapshot): boolean {
     const requiredPermissions = route.data['permissions'];
 
-    console.log("user permissions : ",this.permissionService.getPermission());
-    console.log("required permission : ",requiredPermissions);
-
     if (this.permissionService.hasAnyPermission(requiredPermissions)) {
       return true;
     }

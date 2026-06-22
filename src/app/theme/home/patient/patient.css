@@ -329,8 +329,8 @@ form {
   transition: 0.3s ease;
 }
 
-.form-input{
-  border:solid rgba(0,0,0,0.2) 1px;
+.form-input {
+  border: solid rgba(0, 0, 0, 0.2) 1px;
 }
 
 .form-input:focus,
@@ -348,12 +348,12 @@ form {
 .form-textarea {
   min-height: 100px;
   resize: vertical;
-  border:solid rgba(0,0,0,0.2) 1px;
+  border: solid rgba(0, 0, 0, 0.2) 1px;
 }
 
 .form-select {
   cursor: pointer;
-  border:solid rgba(0,0,0,0.2) 1px;
+  border: solid rgba(0, 0, 0, 0.2) 1px;
   appearance: none;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%232563eb' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
   background-repeat: no-repeat;
@@ -410,7 +410,7 @@ small {
   color: #ff6b6b;
   font-size: 11px;
   margin-top: -8px;
-  padding:5px;
+  padding: 5px;
 }
 
 .status-label {
@@ -761,6 +761,64 @@ small {
 .action-btn.edit:hover {
   background: #2563eb;
   color: #ffffff;
+}
+
+/* styling for pagination bar */
+
+.pagination-bar {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.page-btn {
+  padding: 8px 16px;
+  border-radius: 10px;
+  border: none;
+  background: #7c3aed;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.page-btn:disabled {
+  background: #e2e8f0;
+  color: #3f454e;
+  cursor: not-allowed;
+}
+
+.page-btn:hover:not(:disabled) {
+  background: #6d28d9;
+}
+
+.page-numbers {
+  display: flex;
+  gap: 8px;
+}
+
+.page-number {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  border: none;
+  background: #f5f3ff;
+  color: #5b21b6;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.page-number:hover {
+  background: #ddd6fe;
+}
+
+.page-number.active {
+  background: #7c3aed;
+  color: white;
 }
 
 @media (max-width: 992px) {

@@ -21,30 +21,18 @@ export class EmployeeComponent implements OnInit {
   toast: ToastrService = inject(ToastrService);
   cd: ChangeDetectorRef = inject(ChangeDetectorRef);
 
+  page: number = 1;
+  totalPages: number = 1;
+  limit: number = 5;
+
   employeeData: EmployeeModel[] = [];
   departmentsData: DepartmentModel[] = [];
-
-  filteredEmployeeData: EmployeeModel[] = [];
 
   selectedText: string = '';
   selectedDepartment: string = '';
 
   ngOnInit(): void {
-    this.adminService.getEmployees().subscribe({
-      next: (res) => {
-        this.employeeData = res;
-        this.applyFilters();
-
-        this.cd.detectChanges();
-      },
-      error: (err) => {
-        this.toast.error(err?.error?.message || 'Error getting employees data');
-        if (err.status === 403) {
-          this.router.navigate(['/access-denied']);
-        }
-      },
-    });
-
+    this.fetchEmployees();
     this.authService.getUiData<DepartmentModel[]>('/ui/getDepartments').subscribe({
       next: (res) => {
         this.departmentsData = res;
@@ -55,24 +43,44 @@ export class EmployeeComponent implements OnInit {
     });
   }
 
-  applyFilters() {
-    this.filteredEmployeeData = this.employeeData?.filter((employee) => {
-      const searchMatch =
-        employee.name.toLowerCase().includes(this.selectedText.toLowerCase()) ||
-        employee.email.toLowerCase().includes(this.selectedText.toLowerCase()) ||
-        employee.employeeCode.toLowerCase().includes(this.selectedText.toLowerCase());
-
-      const departmentMatch =
-        !this.selectedDepartment || employee.department === this.selectedDepartment;
-
-      return searchMatch && departmentMatch;
-    });
+  fetchEmployees() {
+    this.adminService
+      .getEmployees(this.selectedText, this.selectedDepartment, this.page, this.limit)
+      .subscribe({
+        next: (res) => {
+          this.employeeData = res.data;
+          this.totalPages = res.totalPages;
+          this.cd.detectChanges();
+        },
+        error: (err) => {
+          this.toast.error(err?.error?.message || 'Error getting employees data');
+        },
+      });
   }
 
   // saving email to use it in the update profile
   updateProfile(email: string) {
     localStorage.setItem('updateEmail', email);
     this.router.navigate(['/edit-employee']);
+  }
+
+  prevPage() {
+    if (this.page > 1) {
+      this.page--;
+    }
+    this.fetchEmployees();
+  }
+
+  nextPage() {
+    if (this.page < this.totalPages) {
+      this.page++;
+    }
+    this.fetchEmployees();
+  }
+
+  goToPage(index: number) {
+    this.page = index;
+    this.fetchEmployees();
   }
 
   deleteUserProfile(employeeId: string) {
@@ -88,7 +96,6 @@ export class EmployeeComponent implements OnInit {
           this.employeeData = this.employeeData.filter(
             (employee) => employee.employeeCode !== employeeId,
           );
-          this.applyFilters();
           this.cd.detectChanges();
           this.toast.success(res?.message || 'Account deleted successfully');
         },

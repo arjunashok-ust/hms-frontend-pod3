@@ -9,7 +9,7 @@
     <div class="approval-hero-side">
       <div class="hero-chip">
         <i class="bi bi-people-fill"></i>
-        <span>{{ filteredData.length }} Records</span>
+        <span>{{ userData.length }} Records</span>
       </div>
       <a class="primary-btn" routerLink="/employee">
         <i class="bi bi-plus-lg"></i>
@@ -27,7 +27,7 @@
         <span class="metric-tag">Queue</span>
       </div>
       <div class="metric-body">
-        <h2>{{ approvalUiData.pendingCount }}</h2>
+        <h2>{{ approvalUiData.pendingApprovalCount }}</h2>
         <p>Pending Approvals</p>
       </div>
     </div>
@@ -53,7 +53,7 @@
         <span class="metric-tag">Review</span>
       </div>
       <div class="metric-body">
-        <h2>{{ approvalUiData.inActiveCount }}</h2>
+        <h2>{{ approvalUiData.inactiveCount }}</h2>
         <p>Inactive Accounts</p>
       </div>
     </div>
@@ -66,7 +66,7 @@
         <span class="metric-tag">Onboarding</span>
       </div>
       <div class="metric-body">
-        <h2>{{ approvalUiData.firstLoginCount }}</h2>
+        <h2>{{ approvalUiData.pendingFirstLoginCount }}</h2>
         <p>First Login Pending</p>
       </div>
     </div>
@@ -84,9 +84,9 @@
           <i class="bi bi-search"></i>
           <input
             type="text"
-            placeholder="Search by name, email, employee ID, or role..."
+            placeholder="Search by name, email, employee ID..."
             [(ngModel)]="searchText"
-            (input)="applyFilters()"
+            (input)="fetchUsersData()"
           />
         </div>
       </div>
@@ -107,97 +107,113 @@
         </thead>
 
         <tbody>
-          <ng-container *ngFor="let user of filteredData">
+          <ng-container *ngFor="let user of userData">
             <tr *ngIf="user.role !== 'Patient'">
-            <td>
-              <div class="employee-block">
-                <div class="avatar">
-                  {{ user.name.charAt(0) | uppercase }}
+              <td>
+                <div class="employee-block">
+                  <div class="avatar">
+                    {{ user.name.charAt(0) | uppercase }}
+                  </div>
+                  <div class="employee-copy">
+                    <h4>{{ user.name }}</h4>
+                    <span>{{ user.employeeId }}</span>
+                  </div>
                 </div>
-                <div class="employee-copy">
-                  <h4>{{ user.name }}</h4>
-                  <span>{{ user.employeeId }}</span>
-                </div>
-              </div>
-            </td>
+              </td>
 
-            <td class="muted-text">{{ user.email }}</td>
+              <td class="muted-text">{{ user.email }}</td>
 
-            <td>
-              <span class="role-badge">{{ user.role }}</span>
-            </td>
+              <td>
+                <span class="role-badge">{{ user.role }}</span>
+              </td>
 
-            <td>
-              <span
-                class="status-badge"
-                [ngClass]="
-                  user.status.toLowerCase() === 'active' ? 'active-status' : 'inactive-status'
-                "
-              >
-                <span class="status-dot"></span>
-                {{ user.status }}
-              </span>
-            </td>
-
-            <td>
-              <span
-                class="state-badge"
-                [ngClass]="user.status == 'Active' ? 'success-chip' : 'warning-chip'"
-              >
-                <i
-                  class="bi"
+              <td>
+                <span
+                  class="status-badge"
                   [ngClass]="
-                    user.status == 'Active' ? 'bi-lightning-charge-fill' : 'bi-hourglass-split'
+                    user.status.toLowerCase() === 'active' ? 'active-status' : 'inactive-status'
                   "
-                ></i>
-                {{ user.status == 'Active' ? 'Activated' : 'Not Activated' }}
-              </span>
-            </td>
+                >
+                  <span class="status-dot"></span>
+                  {{ user.status }}
+                </span>
+              </td>
 
-            <td>
-              <span
-                class="state-badge"
-                [ngClass]="user.isVerified ? 'success-chip' : 'pending-chip'"
-              >
-                <i
-                  class="bi"
-                  [ngClass]="user.isVerified ? 'bi-patch-check-fill' : 'bi-shield-exclamation'"
-                ></i>
-                {{ user.isVerified ? 'Verified' : 'Not Verified' }}
-              </span>
-            </td>
+              <td>
+                <span
+                  class="state-badge"
+                  [ngClass]="user.status == 'Active' ? 'success-chip' : 'warning-chip'"
+                >
+                  <i
+                    class="bi"
+                    [ngClass]="
+                      user.status == 'Active' ? 'bi-lightning-charge-fill' : 'bi-hourglass-split'
+                    "
+                  ></i>
+                  {{ user.status == 'Active' ? 'Activated' : 'Not Activated' }}
+                </span>
+              </td>
 
-            <td>
-              <div class="action-group">
-                <button
-                  class="table-action approve"
-                  title="Approve User"
-                  *ngIf="user.status === 'Pending' || user.status === 'Inactive'"
-                  (click)="approveUser(user.employeeId)"
+              <td>
+                <span
+                  class="state-badge"
+                  [ngClass]="user.isVerified ? 'success-chip' : 'pending-chip'"
                 >
-                  <i class="bi bi-check2"></i>
-                </button>
-                <button
-                  class="table-action no-task"
-                  title="Approve User"
-                  *ngIf="user.status === 'Active'"
-                >
-                  <i class="bi bi-slash-circle"></i>
-                </button>
-                <button
-                  class="table-action reject"
-                  title="Reject User"
-                  *ngIf="user.status === 'Pending'"
-                  (click)="rejectUser(user.employeeId)"
-                >
-                  <i class="bi bi-x-lg"></i>
-                </button>
-              </div>
-            </td>
-          </tr>
+                  <i
+                    class="bi"
+                    [ngClass]="user.isVerified ? 'bi-patch-check-fill' : 'bi-shield-exclamation'"
+                  ></i>
+                  {{ user.isVerified ? 'Verified' : 'Not Verified' }}
+                </span>
+              </td>
+
+              <td>
+                <div class="action-group">
+                  <button
+                    class="table-action approve"
+                    title="Approve User"
+                    *ngIf="user.status === 'Pending' || user.status === 'Inactive'"
+                    (click)="approveUser(user.employeeId)"
+                  >
+                    <i class="bi bi-check2"></i>
+                  </button>
+                  <button
+                    class="table-action no-task"
+                    title="Approve User"
+                    *ngIf="user.status === 'Active'"
+                  >
+                    <i class="bi bi-slash-circle"></i>
+                  </button>
+                  <button
+                    class="table-action reject"
+                    title="Reject User"
+                    *ngIf="user.status === 'Pending'"
+                    (click)="rejectUser(user.employeeId)"
+                  >
+                    <i class="bi bi-x-lg"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
           </ng-container>
         </tbody>
       </table>
+      <div class="pagination-bar">
+        <button class="page-btn" (click)="prevPage()" [disabled]="page === 1">Prev</button>
+
+        <div class="page-numbers">
+          <button
+            *ngFor="let p of [].constructor(totalPages); let i = index"
+            class="page-number"
+            [class.active]="page === i + 1"
+            (click)="goToPage(i + 1)"
+          >
+            {{ i + 1 }}
+          </button>
+        </div>
+
+        <button class="page-btn" (click)="nextPage()" [disabled]="page === totalPages">Next</button>
+      </div>
     </div>
   </div>
 </section>
