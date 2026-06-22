@@ -10,15 +10,13 @@ export class RecordsService {
   constructor(private readonly http: HttpClient) { }
 
   // Admin/Receptionist Fetch
-  getAllMedicalRecords(): Observable<any[]> {
-    return this.http.get<any>(`${this.backendUrl}/api/records/getAllRecords`)
-      .pipe(map(res => res.data || res));
+  getAllMedicalRecords(params: any = {}): Observable<any> {
+    return this.http.get<any>(`${this.backendUrl}/api/records/getAllRecords`, { params });
   }
 
   // Doctor Fetch
-  getMyMedicalRecords(): Observable<any[]> {
-    return this.http.get<any>(`${this.backendUrl}/api/records/getMyRecords`)
-      .pipe(map(res => res.data || res));
+  getMyMedicalRecords(params: any = {}): Observable<any> {
+    return this.http.get<any>(`${this.backendUrl}/api/records/getMyRecords`, { params });
   }
 
   getMedicalRecordById(id: string): Observable<any> {

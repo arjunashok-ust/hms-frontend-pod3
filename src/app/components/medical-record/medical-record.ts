@@ -30,8 +30,8 @@ export class MedicalRecordComponent implements OnInit {
   currentUser: any = null;
   userPermissions: string[] = [];
 
+  // Master Data Arrays
   records: any[] = [];
-  filteredRecords: any[] = [];
   patients: any[] = [];
   doctors: any[] = [];
   appointments: any[] = [];
@@ -42,6 +42,13 @@ export class MedicalRecordComponent implements OnInit {
   editingRecordId: string | null = null;
   stats = { total: 0, active: 0, review: 0 };
   pendingAppointmentId: string | null = null;
+
+  // --- Pagination State ---
+  currentPage = 1;
+  pageSize = 10;
+  totalRecords = 0;
+  totalPages = 1;
+  visiblePages: (number | string)[] = []; 
 
   // --- Dropdown States & Displays ---
   isFormPatientOpen = false; displayFormPatients: any[] = []; selectedFormPatient = '';
@@ -55,14 +62,11 @@ export class MedicalRecordComponent implements OnInit {
 
   ngOnInit() {
     this.initForm();
-
-    // Check if redirected from Appointments page
     this.route.queryParams.subscribe(params => {
       if (params['appointmentId']) {
         this.pendingAppointmentId = params['appointmentId'];
       }
     });
-
     this.fetchCurrentUserAndData();
   }
 
@@ -89,23 +93,17 @@ export class MedicalRecordComponent implements OnInit {
         this.currentUser = res.user?.profile || res.user || res;
         this.userPermissions = this.getTokenPayload().permissions || [];
 
-        const recordsCall = this.hasPermission('VIEW_ALL_RECORDS')
-          ? this.recordsService.getAllMedicalRecords()
-          : this.recordsService.getMyMedicalRecords();
-
         forkJoin({
           patients: this.apiService.getAllPatients().pipe(catchError(() => of([]))),
           employees: this.apiService.getAllEmployees().pipe(catchError(() => of([]))),
-          appointments: this.appointmentService.getAllAppointments().pipe(catchError(() => of([]))),
-          records: recordsCall.pipe(catchError(() => of([])))
-        }).subscribe(({ patients, employees, appointments, records }) => {
+          appointments: this.appointmentService.getAllAppointments().pipe(catchError(() => of([])))
+        }).subscribe(({ patients, employees, appointments }) => {
 
           const extract = (d: any) => Array.isArray(d) ? d : (d?.data || []);
 
           this.patients = extract(patients).filter((p: any) => p.status?.toUpperCase() === 'ACTIVE' || p.status === 'true');
           this.doctors = extract(employees).filter((e: any) => e.role?.toUpperCase() === 'DOCTOR');
           this.appointments = extract(appointments);
-          this.records = extract(records);
 
           this.displayFormPatients = [...this.patients];
           this.displayFilterPatients = [...this.patients];
@@ -120,22 +118,20 @@ export class MedicalRecordComponent implements OnInit {
             this.filterDoctorId = this.currentUser.employeeCode;
           }
 
-          // Pre-fill if redirected from another page
           if (this.pendingAppointmentId) {
             const apt = this.appointments.find(a => a.appointmentCode === this.pendingAppointmentId);
             if (apt) this.selectAppointment(apt);
           }
 
+          // Trigger initial fetch of records (Page 1)
           this.applyFilters();
-          this.isLoading = false;
-          this.cdr.markForCheck();
         });
       }
     });
   }
 
   // ==========================================
-  // SAFE DROPDOWN TOGGLES
+  // FORM DROPDOWN HANDLERS
   // ==========================================
   openFormDoctorDropdown() {
     if (this.hasPermission('CREATE_RECORD_FOR_ANYONE')) {
@@ -151,9 +147,6 @@ export class MedicalRecordComponent implements OnInit {
     }
   }
 
-  // ==========================================
-  // FORM DROPDOWN HANDLERS
-  // ==========================================
   onAppointmentInput(event: Event) {
     const term = (event.target as HTMLInputElement).value.toLowerCase();
     this.isFormAppointmentOpen = true;
@@ -167,8 +160,8 @@ export class MedicalRecordComponent implements OnInit {
     this.selectedFormAppointment = apt.appointmentCode;
     this.isFormAppointmentOpen = false;
 
-    if (apt.patientID) {
-      const pat = this.patients.find(p => p.UHID === apt.patientID);
+    if (apt.patientId) {
+      const pat = this.patients.find(p => p.UHID === apt.patientId);
       if (pat) this.selectPatient(pat, 'form');
     }
     if (apt.doctorEmployeeID && this.hasPermission('CREATE_RECORD_FOR_ANYONE')) {
@@ -256,18 +249,65 @@ export class MedicalRecordComponent implements OnInit {
     }, 150);
   }
 
+  // ==========================================
+  // PAGINATION & SERVER FILTERING
+  // ==========================================
   applyFilters() {
-    this.filteredRecords = this.records.filter(rec => {
-      const matchPat = !this.filterPatientId || rec.patientId === this.filterPatientId;
-      const matchDoc = !this.filterDoctorId || rec.doctorEmployeeId === this.filterDoctorId;
-      const matchDate = !this.filterDate || new Date(rec.visitDate).toISOString().split('T')[0] === this.filterDate;
-      return matchPat && matchDoc && matchDate;
-    });
+    this.currentPage = 1; // Reset to page 1 whenever a filter changes
+    this.reloadRecordsData();
+  }
 
-    this.stats.total = this.filteredRecords.length;
-    this.stats.active = this.filteredRecords.filter(r => r.status === 'FINAL').length;
-    this.stats.review = this.filteredRecords.filter(r => r.status === 'DRAFT').length;
-    this.cdr.detectChanges();
+  nextPage() {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+      this.reloadRecordsData();
+    }
+  }
+
+  prevPage() {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+      this.reloadRecordsData();
+    }
+  }
+
+  reloadRecordsData() {
+    this.isLoading = true;
+
+    const params: any = {
+      page: this.currentPage,
+      limit: this.pageSize
+    };
+    if (this.filterPatientId) params.patientId = this.filterPatientId;
+    if (this.filterDoctorId) params.doctorId = this.filterDoctorId;
+    if (this.filterDate) params.date = this.filterDate;
+
+    const recordsCall = this.hasPermission('VIEW_ALL_RECORDS')
+      ? this.recordsService.getAllMedicalRecords(params)
+      : this.recordsService.getMyMedicalRecords(params);
+
+    recordsCall.subscribe({
+      next: (res: any) => {
+        this.records = res.data || [];
+        this.totalRecords = res.pagination?.total || 0;
+        this.totalPages = res.pagination?.pages || 1;
+
+        // NEW: Generate the array for the template
+        this.generatePagesArray();
+
+        this.stats.total = this.totalRecords;
+        this.stats.active = this.records.filter(r => r.status === 'FINAL').length;
+        this.stats.review = this.records.filter(r => r.status === 'DRAFT').length;
+
+        this.isLoading = false;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.isLoading = false;
+        this.toast.error("Failed to load records");
+        this.cdr.detectChanges();
+      }
+    });
   }
 
   // ==========================================
@@ -299,17 +339,6 @@ export class MedicalRecordComponent implements OnInit {
         this.reloadRecordsData();
       },
       error: (err: any) => { this.isSubmitting = false; this.toast.error(err.error?.message || 'Error occurred'); }
-    });
-  }
-
-  reloadRecordsData() {
-    const recordsCall = this.hasPermission('VIEW_ALL_RECORDS')
-      ? this.recordsService.getAllMedicalRecords()
-      : this.recordsService.getMyMedicalRecords();
-
-    recordsCall.subscribe(recs => {
-      this.records = (recs as any)?.data || recs || [];
-      this.applyFilters();
     });
   }
 
@@ -362,5 +391,36 @@ export class MedicalRecordComponent implements OnInit {
     const token = localStorage.getItem('token');
     if (!token) return {};
     try { return JSON.parse(atob(token.split('.')[1].replaceAll('-', '+').replaceAll('_', '/'))); } catch { return {}; }
+  }
+
+  generatePagesArray() {
+    const total = this.totalPages;
+    const current = this.currentPage;
+
+    // If 6 or fewer pages, show all of them
+    if (total <= 6) {
+      this.visiblePages = Array.from({ length: total }, (_, i) => i + 1);
+      return;
+    }
+
+    // Logic for more than 6 pages (using ellipsis)
+    if (current <= 3) {
+      // Near the start: 1, 2, 3, 4, '...', Last
+      this.visiblePages = [1, 2, 3, 4, '...', total];
+    } else if (current >= total - 2) {
+      // Near the end: 1, '...', Last-3, Last-2, Last-1, Last
+      this.visiblePages = [1, '...', total - 3, total - 2, total - 1, total];
+    } else {
+      // In the middle: 1, '...', Current-1, Current, Current+1, '...', Last
+      this.visiblePages = [1, '...', current - 1, current, current + 1, '...', total];
+    }
+  }
+
+  goToPage(page: number | string) {
+    // Ignore clicks on the '...' string
+    if (typeof page === 'number' && page !== this.currentPage) {
+      this.currentPage = page;
+      this.reloadRecordsData();
+    }
   }
 }

@@ -78,7 +78,7 @@ export class Appointment implements OnInit {
     if (isPlatformBrowser(this.platformId)) {
       this.fetchCurrentUser();
 
-      
+
 
       this.appointmentForm.get('doctorEmployeeID')?.valueChanges.subscribe(() => {
         this.updateDynamicTimeSlots();
@@ -92,7 +92,7 @@ export class Appointment implements OnInit {
 
   initForm() {
     this.appointmentForm = this.fb.group({
-      patientID: ['', Validators.required],
+      patientId: ['', Validators.required],
       doctorEmployeeID: ['', Validators.required],
       date: ['', [Validators.required, this.pastDateValidator]],
       timeSlot: ['', Validators.required],
@@ -160,7 +160,7 @@ export class Appointment implements OnInit {
 
           this.selectedDoctorDisplay = `${this.currentUser.name} (${this.currentUser.department || 'General Medicine'})`;
         }
-        
+
         this.loadData();
         this.cdr.markForCheck();
       },
@@ -180,7 +180,7 @@ export class Appointment implements OnInit {
   }
 
   selectPatient(pat: any) {
-    this.appointmentForm.patchValue({ patientID: pat.UHID });
+    this.appointmentForm.patchValue({ patientId: pat.UHID });
     this.selectedPatientDisplay = `${pat.name} (${pat.UHID})`;
     this.isPatientDropdownOpen = false;
     this.displayPatients = [...this.patients];
@@ -190,7 +190,7 @@ export class Appointment implements OnInit {
     setTimeout(() => {
       this.isPatientDropdownOpen = false;
 
-      const currentVal = this.appointmentForm.get('patientID')?.value;
+      const currentVal = this.appointmentForm.get('patientId')?.value;
       if (currentVal) {
         const pat = this.patients.find(p => p.UHID === currentVal);
         this.selectedPatientDisplay = pat ? `${pat.name} (${pat.UHID})` : currentVal;
@@ -240,7 +240,7 @@ export class Appointment implements OnInit {
     this.selectedPatientDisplay = '';
     this.selectedDoctorDisplay = '';
     this.appointmentForm.patchValue({
-      patientID: '',
+      patientId: '',
       doctorEmployeeID: ''
     });
 
@@ -351,15 +351,15 @@ export class Appointment implements OnInit {
     const formattedDate = new Date(apt.date).toISOString().split('T')[0];
 
     this.appointmentForm.patchValue({
-      patientID: apt.patientID,
+      patientId: apt.patientId,
       doctorEmployeeID: apt.doctorEmployeeID,
       date: formattedDate,
       timeSlot: apt.timeSlot,
       status: apt.status
     }, { emitEvent: false });
 
-    const pat = this.patients.find(p => p.UHID === apt.patientID);
-    this.selectedPatientDisplay = pat ? `${pat.name} (${pat.UHID})` : apt.patientID;
+    const pat = this.patients.find(p => p.UHID === apt.patientId);
+    this.selectedPatientDisplay = pat ? `${pat.name} (${pat.UHID})` : apt.patientId;
 
     const doc = this.doctors.find(d => d.employeeCode === apt.doctorEmployeeID);
     this.selectedDoctorDisplay = doc ? `${doc.name} (${doc.department || 'General'})` : apt.doctorEmployeeID;

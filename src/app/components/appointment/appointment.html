@@ -63,7 +63,7 @@
       <form [formGroup]="appointmentForm" (ngSubmit)="onSubmit()">
         <div class="form-grid">
           <div class="form-group">
-            <label for="patientID">
+            <label for="patientId">
               <i class="bi bi-person-badge text-blue"></i> PATIENT
               <span class="text-danger">*</span>
             </label>
@@ -78,8 +78,8 @@
                 (focus)="isPatientDropdownOpen = true; displayPatients = patients"
                 (blur)="closePatientDropdown()"
                 [class.is-invalid]="
-                  appointmentForm.get('patientID')?.invalid &&
-                  appointmentForm.get('patientID')?.touched
+                  appointmentForm.get('patientId')?.invalid &&
+                  appointmentForm.get('patientId')?.touched
                 "
               />
 
@@ -109,7 +109,7 @@
             </div>
 
             @if (
-              appointmentForm.get('patientID')?.invalid && appointmentForm.get('patientID')?.touched
+              appointmentForm.get('patientId')?.invalid && appointmentForm.get('patientId')?.touched
             ) {
               <small class="text-danger mt-1 d-block">Please select a patient.</small>
             }
@@ -141,7 +141,7 @@
               />
 
               @if (isDoctorDropdownOpen) {
-                <div *hasPermission="'CREATE_APPOINTMENT'" class="dropdown-list shadow-sm">
+                <div class="dropdown-list shadow-sm">
                   @for (doc of displayDoctors; track doc.employeeCode) {
                     <div
                       class="dropdown-item"
@@ -187,6 +187,9 @@
             />
 
             @if (appointmentForm.get('date')?.touched) {
+              @if (appointmentForm.get('date')?.invalid) {
+                <small class="text-danger">Choose a date.</small>
+              }
               @if (appointmentForm.get('date')?.hasError('pastDate')) {
                 <small class="text-danger">Appointments cannot be booked in the past.</small>
               }
@@ -245,12 +248,6 @@
               <small class="text-danger mt-1 d-block">Please select a time slot.</small>
             }
           </div>
-
-          @if (
-            appointmentForm.get('timeSlot')?.invalid && appointmentForm.get('timeSlot')?.touched
-          ) {
-            <small class="text-danger mt-1 d-block">Please select a time slot.</small>
-          }
         </div>
 
         <div class="status-section">
@@ -367,9 +364,9 @@
               <td class="text-blue font-weight-bold">{{ apt.appointmentCode }}</td>
               <td>
                 <div class="patient-cell">
-                  <div class="avatar bg-green-solid">{{ getInitials(apt.patientID) || 'AB' }}</div>
+                  <div class="avatar bg-green-solid">{{ getInitials(apt.patientId) || 'AB' }}</div>
                   <div>
-                    <div class="font-weight-bold">{{ apt.patientID }}</div>
+                    <div class="font-weight-bold">{{ apt.patientId }}</div>
                   </div>
                 </div>
               </td>
@@ -389,7 +386,7 @@
               </td>
               <td>
                 <div class="creator-cell">
-                  <span class="fw-bold">{{ apt.creatorName || apt.patientID }}</span>
+                  <span class="fw-bold">{{ apt.creatorName || apt.patientId }}</span>
                 </div>
               </td>
               <td>
@@ -398,7 +395,6 @@
                     <button
                       *hasPermission="['CREATE_RECORD_FOR_ANYONE', 'CREATE_MY_RECORD']"
                       class="btn-action start-encounter"
-                      
                       (click)="startEncounter(apt)"
                       title="Start Medical Encounter"
                     >

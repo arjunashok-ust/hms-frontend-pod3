@@ -210,7 +210,11 @@
                           <input type="text" formControlName="duration" placeholder="5 days" />
                         </td>
                         <td>
-                          <button type="button" class="btn-delete medication" (click)="removeMedication(i)">
+                          <button
+                            type="button"
+                            class="btn-delete medication"
+                            (click)="removeMedication(i)"
+                          >
                             <i class="bi bi-x"></i>
                           </button>
                         </td>
@@ -363,16 +367,14 @@
             </div>
           }
         </div>
-
-        @if (!hasPermission('VIEW_ALL_RECORDS')) {
-          <input
-            type="text"
-            [value]="selectedFilterDoctor"
-            disabled
-            class="form-control"
-            style="width: 230px"
-          />
-        }
+        <input
+          *ngIf="!hasPermission('VIEW_ALL_RECORDS')"
+          type="text"
+          [value]="selectedFilterDoctor"
+          disabled
+          class="form-control"
+          style="width: 230px"
+        />
       </div>
     </div>
 
@@ -388,9 +390,9 @@
         </tr>
       </thead>
       <tbody>
-        @for (rec of filteredRecords; track rec._id) {
+        @for (rec of records; track rec._id) {
           <tr>
-            <td class="text-purple">{{ rec.recordCode }}</td>
+            <td class="text-purple fw-bold">{{ rec.recordCode }}</td>
             <td>
               <div class="user-cell">
                 <div class="avatar bg-purple">{{ getInitials(rec.patientId) }}</div>
@@ -410,11 +412,9 @@
             </td>
             <td class="action-cell">
               <button class="btn-icon view"><i class="bi bi-eye"></i></button>
-              @if (canEdit(rec)) {
-                <button class="btn-icon edit" (click)="editRecord(rec)">
-                  <i class="bi bi-pencil-square"></i>
-                </button>
-              }
+              <button *ngIf="canEdit(rec)" class="btn-icon edit" (click)="editRecord(rec)">
+                <i class="bi bi-pencil-square"></i>
+              </button>
               <button
                 *hasPermission="'DELETE_HEALTH_RECORD'"
                 class="btn-icon delete"
@@ -426,10 +426,45 @@
           </tr>
         } @empty {
           <tr>
-            <td colspan="8" class="text-center text-muted py-4">No records found.</td>
+            <td colspan="6" class="text-center text-muted py-4">No records found.</td>
           </tr>
         }
       </tbody>
     </table>
+
+    <div class="pagination-container">
+      <div class="pagination-info">
+        Showing Page {{ currentPage }} of {{ totalPages }} 
+        <span style="font-weight: 400; margin-left: 8px">({{ totalRecords }} Total Records)</span>
+      </div>
+      
+      <div class="pagination-controls">
+        <button class="btn-page prev" [disabled]="currentPage === 1" (click)="prevPage()">
+          <i class="bi bi-chevron-left"></i> Prev
+        </button>
+
+        <div class="page-numbers">
+          @for (page of visiblePages; track $index) {
+            @if (page === '...') {
+              <span class="pagination-ellipsis">...</span>
+            } @else {
+              <button 
+                class="btn-page-number" 
+                [class.active]="currentPage === page"
+                (click)="goToPage(page)"
+              >
+                {{ page }}
+              </button>
+            }
+          }
+        </div>
+
+        <button class="btn-page next" [disabled]="currentPage === totalPages || totalPages === 0" (click)="nextPage()">
+          Next <i class="bi bi-chevron-right"></i>
+        </button>
+      </div>
+    </div>
   </div>
 </div>
+
+
