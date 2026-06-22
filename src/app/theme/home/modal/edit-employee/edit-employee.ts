@@ -77,22 +77,36 @@ export class EditEmployeeComponent implements OnInit {
 
   ngOnInit(): void {
     const userEmail = localStorage.getItem('updateEmail') ?? '';
-    this.adminService.getUserEmployee(userEmail,1,1).subscribe({
+
+    this.authService.getUiData<RoleModel[]>('/ui/getRoles').subscribe((res) => {
+      this.roles_data = res;
+      this.cd.detectChanges();
+    });
+    this.authService.getUiData<DepartmentModel[]>('/ui/getDepartments').subscribe((res) => {
+      this.departments_data = res;
+      this.cd.detectChanges();
+    });
+    this.authService.getUiData<SpecializationModel[]>('/ui/getSpecializations').subscribe((res) => {
+      this.specializations_data = res;
+      this.cd.detectChanges();
+    });
+
+    this.adminService.getUserEmployee(userEmail, 1, 1).subscribe({
       next: (res) => {
-        this.userData = res.data;
+        this.userData = res.data[0] as UserEmployeeModel;
         this.updateForm.patchValue({
-          name: this.userData?.name,
-          email: this.userData?.email,
-          role: this.userData?.role,
-          department: this.userData?.department,
-          designation: this.userData?.designation,
-          joiningDate: this.userData?.joiningDate
-            ? this.userData.joiningDate.toString().split('T')[0]
+          name: res.data[0].name,
+          email: res.data[0].email,
+          role: res.data[0].role,
+          department: res.data[0].department,
+          designation: res.data[0].designation,
+          joiningDate: res.data[0].joiningDate
+            ? res.data[0].joiningDate.toString().split('T')[0]
             : '',
-          medicalRegistrationNo: this.userData?.medicalRegistrationNo,
-          specialization: this.userData?.specialization,
-          qualification: this.userData?.qualification,
-          consultationFee: this.userData?.consultationFee,
+          medicalRegistrationNo: res.data[0].medicalRegistrationNo,
+          specialization: res.data[0].specialization,
+          qualification: res.data[0].qualification,
+          consultationFee: res.data[0].consultationFee,
         });
 
         // availability slots patch
@@ -108,21 +122,6 @@ export class EditEmployeeComponent implements OnInit {
       error: (err) => {
         this.toast.error(err?.error?.message);
       },
-    });
-
-    this.authService.getUiData<RoleModel[]>('/ui/getRoles').subscribe((res) => {
-      this.roles_data = res;
-      this.cd.detectChanges();
-    });
-
-    this.authService.getUiData<DepartmentModel[]>('/ui/getDepartments').subscribe((res) => {
-      this.departments_data = res;
-      this.cd.detectChanges();
-    });
-
-    this.authService.getUiData<SpecializationModel[]>('/ui/getSpecializations').subscribe((res) => {
-      this.specializations_data = res;
-      this.cd.detectChanges();
     });
   }
 
@@ -189,9 +188,9 @@ export class EditEmployeeComponent implements OnInit {
       employeeId: this.userData?.employeeId,
       data: {
         name: this.updateForm.get('name')?.value,
-        email: this.updateForm.get('email')?.value,
+        email: this.userData?.email,
         designation: this.updateForm.get('designation')?.value,
-        role: this.updateForm.get('role')?.value,
+        role: this.userData?.role,
         department: this.updateForm.get('department')?.value,
         status: this.updateForm.get('status')?.value,
         joiningDate: this.updateForm.get('joiningDate')?.value,

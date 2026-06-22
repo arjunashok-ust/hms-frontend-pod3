@@ -21,6 +21,8 @@ export class LoginComponent implements OnInit {
   router: Router = inject(Router);
   toast: ToastrService = inject(ToastrService);
 
+  isLoading : boolean = false;
+
   constructor(readonly fb: FormBuilder) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.pattern(/^[a-z0-9._]+@[a-z0-9]*\.[a-z]{2,}$/i)]],
@@ -46,6 +48,7 @@ export class LoginComponent implements OnInit {
 
     this.auth.login(payload).subscribe({
       next: (loginRes) => {
+        this.isLoading = true;
         if (loginRes.status !== 'Active') {
           this.toast.info('Your account is not activated yet,Please contact the admin');
           this.router.navigate(['/login']);

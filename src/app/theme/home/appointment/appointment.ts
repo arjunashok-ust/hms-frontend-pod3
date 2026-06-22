@@ -207,11 +207,12 @@ export class AppointmentComponent implements OnInit {
     }
   }
 
-  mapDoctorAndPatients(appoinments: AppointmentModel[]) {
+  mapDoctorAndPatients(appointments: AppointmentModel[]) {
     this.appointments.forEach((appointment) => {
       // patient name map
       if (appointment.patientId && !this.patientNameMap[appointment.patientId]) {
         this.userService.getPatientById(appointment.patientId).subscribe((res) => {
+          console.log(res);
           this.patientNameMap[appointment.patientId] = res.name;
           this.cd.detectChanges();
         });
