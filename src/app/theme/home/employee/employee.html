@@ -15,13 +15,15 @@
       <div class="search-box">
         <input
           type="text"
+          id="search-employee"
+          aria-label="search-employee"
           placeholder="Search Employee"
           [(ngModel)]="selectedText"
           (input)="fetchEmployees()"
         />
       </div>
       <div class="filter-group">
-        <select [(ngModel)]="selectedDepartment" (change)="fetchEmployees()">
+        <select [(ngModel)]="selectedDepartment" (change)="fetchEmployees()" id="selectedDepartment" aria-label="selectedDepartment">
           <option value="" selected>All Department</option>
           <option *ngFor="let department of departmentsData" [value]="department.department_name">
             {{ department.department_name }}
@@ -43,7 +45,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let employee of employeeData">
+          <tr *ngFor="let employee of employeeData; trackBy: trackFn">
             <ng-container *ngIf="employee.designation !== 'Admin'">
               <td>
                 <span class="employee-id">{{ employee.employeeCode }}</span>

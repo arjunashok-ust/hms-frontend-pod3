@@ -19,7 +19,9 @@ export class AuthService {
   // login
   login(data: any): Observable<any> {
     return this.http
-      .post(`${this.api.backend_url}/auth/login`, data)
+      .post(`${this.api.backend_url}/auth/login`, data, {
+        withCredentials: true,
+      })
       .pipe(catchError((error) => this.handleError(error)));
   }
 
@@ -40,11 +42,18 @@ export class AuthService {
   // get user permissions
   getPermissions(role: string): Observable<any> {
     return this.http
-      .get(`${this.api.backend_url}/auth/getPermissions`,{
+      .get(`${this.api.backend_url}/auth/getPermissions`, {
         params: {
-          role: role
-        }
+          role: role,
+        },
       })
+      .pipe(catchError((error) => this.handleError(error)));
+  }
+
+  // get access token
+  getAccessToken(): Observable<any> {
+    return this.http
+      .get(`${this.api.backend_url}/auth/refresh-token`, { withCredentials: true })
       .pipe(catchError((error) => this.handleError(error)));
   }
 

@@ -254,18 +254,20 @@
         </h2>
       </div>
       <div class="table-controls">
-          <div class="panel-tools">
-            <div class="search-box">
-              <i class="bi bi-search"></i>
-              <input
-                type="text"
-                placeholder="Search by name, email or patient id..."
-                [(ngModel)]="searchText"
-                (input)="fetchAppointments()"
-              />
-            </div>
+        <div class="panel-tools">
+          <div class="search-box">
+            <i class="bi bi-search"></i>
+            <input
+              type="text"
+              placeholder="Search by name, email or patient id..."
+              [(ngModel)]="searchText"
+              (input)="fetchAppointments()"
+              id="search-box"
+              aria-label="search-box"
+            />
           </div>
         </div>
+      </div>
     </div>
 
     <div class="table-wrapper" *hasPermission="['view:appointment']">
@@ -288,7 +290,7 @@
             <td colspan="8">No appointments available</td>
           </tr>
 
-          <tr *ngFor="let appointment of displayedAppointments">
+          <tr *ngFor="let appointment of displayedAppointments;trackBy: trackFn">
             <td>
               <span class="apt-id">{{ appointment.appointmentId }}</span>
             </td>

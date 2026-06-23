@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -21,6 +21,7 @@ import { UserService } from '../../../services/user.service';
   imports: [RouterModule, CommonModule, ReactiveFormsModule, HasPermissionDirective, FormsModule],
   templateUrl: './appointment.html',
   styleUrl: './appointment.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppointmentComponent implements OnInit {
   appointmentForm: FormGroup;
@@ -212,7 +213,6 @@ export class AppointmentComponent implements OnInit {
       // patient name map
       if (appointment.patientId && !this.patientNameMap[appointment.patientId]) {
         this.userService.getPatientById(appointment.patientId).subscribe((res) => {
-          console.log(res);
           this.patientNameMap[appointment.patientId] = res.name;
           this.cd.detectChanges();
         });
@@ -225,6 +225,10 @@ export class AppointmentComponent implements OnInit {
         });
       }
     });
+  }
+
+  trackFn(index:number,item: AppointmentModel){
+    return item.appointmentId;
   }
 
   prevPage() {

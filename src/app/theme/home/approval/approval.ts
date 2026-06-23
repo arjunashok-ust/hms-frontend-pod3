@@ -1,16 +1,17 @@
-import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AdminService } from '../../../services/admin.service';
 import { ToastrService } from 'ngx-toastr';
-import { UserEmployeeModel } from '../../../models/user.model';
+import { UserEmployeeModel, UserModel } from '../../../models/user.model';
 
 @Component({
   selector: 'app-approval',
   imports: [RouterModule, CommonModule, FormsModule],
   templateUrl: './approval.html',
   styleUrl: './approval.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ApprovalComponent implements OnInit {
   adminService: AdminService = inject(AdminService);
@@ -127,5 +128,9 @@ export class ApprovalComponent implements OnInit {
   goToPage(index: number) {
     this.page = index;
     this.fetchUsersData();
+  }
+
+  trackFn(index: number,item: UserModel){
+    return item.employeeId;
   }
 }

@@ -3,9 +3,7 @@
     <div class="patient-hero-copy">
       <span class="hero-kicker">Patients</span>
       <h1>Patient Management</h1>
-      <p>
-        Register new patients and manage records
-      </p>
+      <p>Register new patients and manage records</p>
     </div>
     <div class="patient-hero-side">
       <div class="hero-chip">
@@ -280,6 +278,8 @@
                 placeholder="Search by name, email or patient id..."
                 [(ngModel)]="searchText"
                 (input)="updateData()"
+                id="search-box"
+                aria-label="search-box"
               />
             </div>
           </div>
@@ -301,7 +301,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let patient of patientData">
+            <tr *ngFor="let patient of patientData; trackBy: trackFn">
               <td>
                 <span class="patient-id">{{ patient.uhid }}</span>
               </td>

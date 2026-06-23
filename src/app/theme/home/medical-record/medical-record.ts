@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { UserService } from '../../../services/user.service';
 import { EmployeeModel, PatientModel } from '../../../models/user.model';
@@ -18,6 +18,7 @@ import { HasPermissionDirective } from '../../../directive/has-permission.direct
   imports: [ReactiveFormsModule, CommonModule, MatAutocompleteModule, HasPermissionDirective],
   templateUrl: './medical-record.html',
   styleUrl: './medical-record.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MedicalRecordComponent implements OnInit {
   medicalForm: FormGroup;
@@ -437,6 +438,10 @@ export class MedicalRecordComponent implements OnInit {
         this.toast.error(error.error.message || 'Unexpected error occured!');
       },
     });
+  }
+
+  trackFn(index: number,item: MedicalRecordModel){
+    return item.medicalRecordId;
   }
 
   // create or update medical record

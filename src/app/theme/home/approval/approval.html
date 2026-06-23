@@ -85,6 +85,8 @@
           <input
             type="text"
             placeholder="Search by name, email, employee ID..."
+            id="search-box"
+            aria-label="search-box"
             [(ngModel)]="searchText"
             (input)="fetchUsersData()"
           />
@@ -107,7 +109,7 @@
         </thead>
 
         <tbody>
-          <ng-container *ngFor="let user of userData">
+          <ng-container *ngFor="let user of userData; trackBy: trackFn">
             <tr *ngIf="user.role !== 'Patient'">
               <td>
                 <div class="employee-block">

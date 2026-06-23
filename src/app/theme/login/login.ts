@@ -21,7 +21,7 @@ export class LoginComponent implements OnInit {
   router: Router = inject(Router);
   toast: ToastrService = inject(ToastrService);
 
-  isLoading : boolean = false;
+  isLoading: boolean = false;
 
   constructor(readonly fb: FormBuilder) {
     this.loginForm = this.fb.group({
@@ -46,9 +46,10 @@ export class LoginComponent implements OnInit {
       password: this.loginForm.value.password,
     };
 
+    this.isLoading = true;
+
     this.auth.login(payload).subscribe({
       next: (loginRes) => {
-        this.isLoading = true;
         if (loginRes.status !== 'Active') {
           this.toast.info('Your account is not activated yet,Please contact the admin');
           this.router.navigate(['/login']);
@@ -70,7 +71,7 @@ export class LoginComponent implements OnInit {
               this.router.navigate(['/access-denied']);
               return;
             }
-
+            this.isLoading = false;
             if (loginRes.firstLogin) {
               this.toast.info('Set your password');
               this.router.navigate(['/password-modal']);
@@ -80,6 +81,7 @@ export class LoginComponent implements OnInit {
             }
           },
           error: (err) => {
+            this.isLoading = false;
             this.toast.error('Error fetching user permissions');
           },
         });

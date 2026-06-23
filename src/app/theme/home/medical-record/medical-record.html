@@ -4,7 +4,7 @@
       <span class="hero-kicker">Medical Records</span>
       <h1>Medical Records</h1>
       <p>
-        Create, manage, and review patient medical records including diagnoses, medications, and
+        Create, manage, and review patient medical records including diagnosis, medications, and
         clinical observations.
       </p>
     </div>
@@ -273,10 +273,38 @@
 
             <tbody id="med-body" formArrayName="medications">
               <tr *ngFor="let med of medications.controls; let i = index" [formGroupName]="i">
-                <td><input type="text" placeholder="e.g. Paracetamol" formControlName="name" /></td>
-                <td><input type="text" placeholder="500mg" formControlName="dosage" /></td>
-                <td><input type="text" placeholder="Twice Daily" formControlName="frequency" /></td>
-                <td><input type="text" placeholder="7 Days" formControlName="duration" /></td>
+                <td>
+                  <input
+                    type="text"
+                    aria-label="medicationName"
+                    placeholder="e.g. Paracetamol"
+                    formControlName="name"
+                  />
+                </td>
+                <td>
+                  <input
+                    type="text"
+                    aria-label="medicationDosage"
+                    placeholder="500mg"
+                    formControlName="dosage"
+                  />
+                </td>
+                <td>
+                  <input
+                    type="text"
+                    aria-label="medicationFrequency"
+                    placeholder="Twice Daily"
+                    formControlName="frequency"
+                  />
+                </td>
+                <td>
+                  <input
+                    type="text"
+                    aria-label="medicationDuration"
+                    placeholder="7 Days"
+                    formControlName="duration"
+                  />
+                </td>
                 <td>
                   <button type="button" class="remove-btn" (click)="removeMedRow(i)">
                     <svg
@@ -415,12 +443,27 @@
                     type="text"
                     placeholder="e.g. Blood Pressure"
                     formControlName="metricName"
+                    id="metricName"
+                    aria-label="metricName"
                   />
                 </td>
                 <td>
-                  <input type="text" placeholder="120/80 mmHg" formControlName="metricValue" />
+                  <input
+                    type="text"
+                    placeholder="120/80 mmHg"
+                    formControlName="metricValue"
+                    id="metricValue"
+                    aria-label="metricValue"
+                  />
                 </td>
-                <td><input type="datetime-local" formControlName="recordedTime" /></td>
+                <td>
+                  <input
+                    type="datetime-local"
+                    formControlName="recordedTime"
+                    id="recordedTime"
+                    aria-label="recordedTime"
+                  />
+                </td>
                 <td>
                   <button type="button" class="remove-btn" (click)="removeObsRow(i)">
                     <svg
@@ -464,6 +507,8 @@
             rows="3"
             placeholder="Any additional clinical notes, follow-up instructions, or special observations..."
             formControlName="notes"
+            id="notes"
+            aria-label="notes"
           ></textarea>
         </div>
       </div>
@@ -578,7 +623,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let record of medicalRecords">
+          <tr *ngFor="let record of medicalRecords;trackBy: trackFn">
             <td>
               <span class="record-id">{{ record.medicalRecordId }}</span>
             </td>

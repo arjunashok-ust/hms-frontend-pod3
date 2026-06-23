@@ -1,4 +1,10 @@
-import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  inject,
+  OnInit,
+} from '@angular/core';
 import { AdminService } from '../../../services/admin.service';
 import { EmployeeModel } from '../../../models/user.model';
 import { DepartmentModel } from '../../../models/ui.model';
@@ -13,6 +19,7 @@ import { ToastrService } from 'ngx-toastr';
   imports: [CommonModule, FormsModule, RouterLink, RouterModule],
   templateUrl: './employee.html',
   styleUrl: './employee.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EmployeeComponent implements OnInit {
   adminService: AdminService = inject(AdminService);
@@ -104,5 +111,9 @@ export class EmployeeComponent implements OnInit {
         },
       });
     }
+  }
+
+  trackFn(index: number,item: EmployeeModel){
+    return item.employeeCode;
   }
 }

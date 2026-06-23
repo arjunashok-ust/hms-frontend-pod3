@@ -1,4 +1,10 @@
-import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  inject,
+  OnInit,
+} from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -27,6 +33,7 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
   ],
   templateUrl: './patient.html',
   styleUrl: './patient.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PatientComponent implements OnInit {
   patientForm: FormGroup;
@@ -139,6 +146,10 @@ export class PatientComponent implements OnInit {
   goToPage(index: number) {
     this.page = index;
     this.updateData();
+  }
+
+  trackFn(index: number, item: PatientModel) {
+    return item.uhid;
   }
 
   onSubmit() {
