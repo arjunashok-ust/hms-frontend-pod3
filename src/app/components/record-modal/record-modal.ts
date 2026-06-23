@@ -1,4 +1,3 @@
-
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HasPermissionDirective } from '../../directives/has-permission.directive';
@@ -15,8 +14,9 @@ export class RecordDetailsModalComponent {
   @Input() patients: any[] = [];
   @Input() doctors: any[] = [];
 
-  @Output() closeModal = new EventEmitter<void>();
-  @Output() deleteModal = new EventEmitter<string>();
+  // FIX: Explicit output names that exactly match the parent HTML
+  @Output() onCloseModal = new EventEmitter<void>();
+  @Output() onDeleteRecord = new EventEmitter<string>();
 
   getPatientName(id: string): string {
     if (!id) return 'Unknown Patient';
@@ -36,10 +36,10 @@ export class RecordDetailsModalComponent {
   }
 
   onClose() {
-    this.closeModal.emit();
+    this.onCloseModal.emit();
   }
 
   onDelete() {
-    this.deleteModal.emit(this.record._id);
+    this.onDeleteRecord.emit(this.record._id);
   }
 }

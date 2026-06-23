@@ -10,6 +10,7 @@ import { RecordDetailsModalComponent } from '../record-modal/record-modal';
 import { ToastrService } from 'ngx-toastr';
 import { forkJoin, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+import { environment } from '../../../environments';
 
 @Component({
   selector: 'app-medical-record',
@@ -26,7 +27,6 @@ export class MedicalRecordComponent implements OnInit {
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly toast = inject(ToastrService);
   private readonly route = inject(ActivatedRoute);
-
 
   private readonly platformId = inject(PLATFORM_ID);
 
@@ -49,7 +49,7 @@ export class MedicalRecordComponent implements OnInit {
 
 
   currentPage = 1;
-  pageSize = 10;
+  pageSize = environment.pageSize;
   totalRecords = 0;
   totalPages = 1;
   visiblePages: (number | string)[] = [];

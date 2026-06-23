@@ -45,6 +45,7 @@
                 <label for="appointment"><i class="bi bi-calendar"></i> APPOINTMENT ID *</label>
                 <div class="searchable-dropdown-container">
                   <input
+                    aria-label="appointmentInput"
                     type="text"
                     class="form-control custom-select"
                     placeholder="Search APT ID..."
@@ -287,6 +288,7 @@
         <h3>Additional Notes</h3>
         <div class="input-group full-width">
           <textarea
+            aria-label="Notes"
             class="scrollable-textarea"
             formControlName="notes"
             placeholder="Document any additional notes"
@@ -316,6 +318,7 @@
       <div class="filter-group">
         <div class="searchable-dropdown-container">
           <input
+            aria-label="patientInput"
             type="text"
             class="form-control custom-select"
             placeholder="Filter Patient Name/ID"
@@ -344,6 +347,7 @@
         </div>
 
         <input
+          aria-label="DateFilter"
           type="date"
           [value]="filterDate"
           (change)="onFilterDateChange($event)"
@@ -353,6 +357,7 @@
 
         <div class="searchable-dropdown-container" *hasPermission="'VIEW_ALL_RECORDS'">
           <input
+            aria-label="doctorControl"
             type="text"
             class="form-control custom-select"
             placeholder="Filter Doctor Name/ID"
@@ -485,8 +490,7 @@
     [record]="selectedRecordForView"
     [patients]="patients"
     [doctors]="doctors"
-    (close)="closeViewModal()"
-    (delete)="deleteRecord($event); closeViewModal()"
-  >
+    (onCloseModal)="closeViewModal()" 
+    (onDeleteRecord)="deleteRecord($event); closeViewModal()">
   </app-record-details-modal>
 }

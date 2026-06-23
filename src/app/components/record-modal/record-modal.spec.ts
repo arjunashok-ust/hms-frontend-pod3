@@ -1,17 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { RecordModal } from './record-modal';
+import { RecordDetailsModalComponent } from './record-modal';
 
 describe('RecordModal', () => {
-  let component: RecordModal;
-  let fixture: ComponentFixture<RecordModal>;
+  let component: RecordDetailsModalComponent;
+  let fixture: ComponentFixture<RecordDetailsModalComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [RecordModal],
+      imports: [RecordDetailsModalComponent],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(RecordModal);
+    fixture = TestBed.createComponent(RecordDetailsModalComponent);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });

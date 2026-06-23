@@ -19,6 +19,7 @@ import {
 import { ToastrService } from 'ngx-toastr';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { HasPermissionDirective } from '../../directives/has-permission.directive';
+import { environment } from '../../../environments';
 
 @Component({
   selector: 'app-employee',
@@ -43,7 +44,7 @@ export class Employee implements OnInit {
   };
 
   currentPage = 1;
-  pageSize = 10;
+  pageSize = environment.pageSize;
   totalRecords = 0;
   totalPages = 1;
   visiblePages: (number | string)[] = [];

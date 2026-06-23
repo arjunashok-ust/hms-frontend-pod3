@@ -12,6 +12,7 @@ import {
 import { ApiService } from '../../services/apiService/api-service';
 import { ToastrService } from 'ngx-toastr';
 import { HasPermissionDirective } from '../../directives/has-permission.directive';
+import { environment } from '../../../environments';
 
 @Component({
   selector: 'app-patient',
@@ -31,9 +32,8 @@ export class Patient implements OnInit {
   isSubmittingModal = false;
   searchTerm: string = '';
 
-
   currentPage = 1;
-  pageSize = 10;
+  pageSize = environment.pageSize;
   totalRecords = 0;
   totalPages = 1;
   visiblePages: (number | string)[] = [];

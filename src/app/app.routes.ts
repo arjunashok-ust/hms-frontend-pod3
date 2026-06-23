@@ -54,7 +54,7 @@ export const routes: Routes = [
       },
       {
         path: 'records', component: MedicalRecordComponent, canActivate: [roleGuard], data: {
-          permissions: ['VIEW_ALL_RECORDS', 'VIEW_MY_RECORDS', 'CREATE_MY_RECORD', 'CREATE_RECORD_FOR_ANYONE']
+          permissions: ['VIEW_ALL_RECORDS', 'VIEW_MY_PATIENT_RECORD', 'VIEW_MY_RECORDS', 'CREATE_MY_RECORD', 'CREATE_RECORD_FOR_ANYONE']
         }
       },
       { path: '', redirectTo: 'profile', pathMatch: 'full' }

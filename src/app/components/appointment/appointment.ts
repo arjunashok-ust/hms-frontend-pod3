@@ -6,6 +6,7 @@ import { ApiService } from '../../services/apiService/api-service';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
 import { HasPermissionDirective } from '../../directives/has-permission.directive';
+import { environment } from '../../../environments';
 
 @Component({
   selector: 'app-appointment',
@@ -36,7 +37,7 @@ export class Appointment implements OnInit {
   selectedDoctorDisplay = '';
 
   currentPage = 1;
-  pageSize = 10;
+  pageSize = environment.pageSize;
   totalRecords = 0;
   totalPages = 1;
   visiblePages: (number | string)[] = [];
