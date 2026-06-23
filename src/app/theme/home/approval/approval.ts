@@ -45,6 +45,7 @@ export class ApprovalComponent implements OnInit {
   fetchUsersData() {
     this.adminService.getUserEmployee(this.searchText, this.page, this.limit).subscribe({
       next: (res) => {
+        if(res.data.length == 0) return;
         this.userData = res.data as UserEmployeeModel[];
         this.totalPages = res.totalPages;
         this.loadUiData();

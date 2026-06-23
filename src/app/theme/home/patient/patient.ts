@@ -63,6 +63,7 @@ export class PatientComponent implements OnInit {
   updateData() {
     this.userService.getPatients(this.searchText, this.page, this.limit).subscribe({
       next: (res) => {
+        if(res.data.length == 0) return;
         this.patientData = res.data;
         this.totalPages = res.totalPages;
         this.loadUiData();

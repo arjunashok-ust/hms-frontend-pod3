@@ -419,6 +419,11 @@
                 placeholder="Enter clinical diagnosis..."
                 formControlName="diagnosis"
               ></textarea>
+              <small *ngIf="medicalForm.get('diagnosis')?.touched">
+                <span *ngIf="medicalForm.get('diagnosis')?.errors?.['required']"
+                  >Diagnosis is required.</span
+                >
+              </small>
             </div>
           </div>
         </div>
@@ -559,7 +564,6 @@
           class="btn btn-primary"
           (click)="onSubmit('Draft')"
           [disabled]="isCreateLoading || isDraftLoading"
-          *ngIf="!isEditable"
         >
           <svg
             width="14"
@@ -623,13 +627,15 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let record of medicalRecords;trackBy: trackFn">
+          <tr *ngFor="let record of medicalRecords; trackBy: trackFn">
             <td>
               <span class="record-id">{{ record.medicalRecordId }}</span>
             </td>
             <td>
               <div class="patient-cell">
-                <div class="patient-avatar pa-1">JD</div>
+                <div class="patient-avatar pa-1">
+                  {{ patientMap[record.patientId] || 'Loading...' | slice: 0 : 2 | uppercase }}
+                </div>
                 <div>
                   <h4>{{ patientMap[record.patientId] || 'Loading...' }}</h4>
                   <span>{{ record.patientId }}</span>

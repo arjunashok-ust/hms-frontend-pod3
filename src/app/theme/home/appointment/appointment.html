@@ -297,7 +297,7 @@
 
             <td>
               <div class="patient-info">
-                <div class="patient-avatar">P</div>
+                <div class="patient-avatar">{{ (patientNameMap[appointment.patientId] || 'Loading...') | slice:0:2 | uppercase}}</div>
                 <div>
                   <h4>{{ patientNameMap[appointment.patientId] || 'Loading...' }}</h4>
                   <span>{{ appointment.patientId }}</span>

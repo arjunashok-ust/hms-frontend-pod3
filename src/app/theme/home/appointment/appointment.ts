@@ -48,8 +48,8 @@ export class AppointmentComponent implements OnInit {
   employeeId = localStorage.getItem('employeeId');
   role = localStorage.getItem('role');
 
-  doctorNameMap: { [key: string]: any } = {};
-  patientNameMap: { [key: string]: any } = {};
+  doctorNameMap: { [key: string]: string } = {};
+  patientNameMap: { [key: string]: string } = {};
 
   public constructor(readonly fb: FormBuilder) {
     this.appointmentForm = this.fb.group(
@@ -98,6 +98,7 @@ export class AppointmentComponent implements OnInit {
   fetchAppointments() {
     this.appointmentService.getAllAppointment(this.searchText, this.page, this.limit).subscribe({
       next: (res) => {
+        if(res.data.length == 0) return;
         this.totalPages = res.totalPages;
         if (this.role === 'Doctor') {
           this.fetchDoctorAppointments(res.data);

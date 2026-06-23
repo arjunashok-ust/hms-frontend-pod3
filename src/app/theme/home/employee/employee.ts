@@ -55,6 +55,7 @@ export class EmployeeComponent implements OnInit {
       .getEmployees(this.selectedText, this.selectedDepartment, this.page, this.limit)
       .subscribe({
         next: (res) => {
+          if(res.data.length == 0) return;
           this.employeeData = res.data;
           this.totalPages = res.totalPages;
           this.cd.detectChanges();

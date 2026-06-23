@@ -307,7 +307,7 @@
               </td>
               <td>
                 <div class="patient-info">
-                  <div class="patient-avatar pa-gradient-1">JD</div>
+                  <div class="patient-avatar pa-gradient-1">{{ patient.name.toUpperCase().slice(0,2) || 'PA'}}</div>
                   <div>
                     <h4>{{ patient.name }}</h4>
                     <span *ngIf="patient.emergencyContact"

@@ -1,5 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  inject,
+  OnInit,
+} from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { UserService } from '../../../services/user.service';
 import { EmployeeModel, PatientModel } from '../../../models/user.model';
@@ -55,8 +61,8 @@ export class MedicalRecordComponent implements OnInit {
   medicalRecord: MedicalRecordModel | null = null;
   medicalRecordId = '';
 
-  patientMap: { [key: string]: any } = {};
-  doctorMap: { [key: string]: any } = {};
+  patientMap: { [key: string]: string } = {};
+  doctorMap: { [key: string]: string } = {};
 
   constructor(readonly fb: FormBuilder) {
     this.medicalForm = fb.group({
@@ -193,7 +199,6 @@ export class MedicalRecordComponent implements OnInit {
   fetchMedicalRecordPageDetails() {
     this.medicalRecordService.getMedicalRecords(this.page, this.limit).subscribe({
       next: (res) => {
-        console.log(res);
         this.totalPages = res.totalPages;
         this.medicalRecords = res.data;
         this.mapPatientAndDoctors(this.medicalRecords);
@@ -224,7 +229,7 @@ export class MedicalRecordComponent implements OnInit {
       .get('doctorId')
       ?.valueChanges.pipe(debounceTime(300))
       .subscribe((value) => {
-        if (!value.trim()) return;
+        if (!value?.trim()) return;
         this.userService.getDoctorsBySearch(value).subscribe({
           next: (res) => {
             this.filteredDoctors = res;
@@ -381,7 +386,13 @@ export class MedicalRecordComponent implements OnInit {
   }
 
   editProfile(medRecordId: any) {
-    this.router.navigate(['medical-record', medRecordId]);
+    setTimeout(() => {
+      const formPanel = document.querySelector('.panel-header');
+      if (formPanel) {
+        formPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+      this.router.navigate(['medical-record', medRecordId]);
+    }, 200);
   }
 
   cancelEdit() {
@@ -440,7 +451,7 @@ export class MedicalRecordComponent implements OnInit {
     });
   }
 
-  trackFn(index: number,item: MedicalRecordModel){
+  trackFn(index: number, item: MedicalRecordModel) {
     return item.medicalRecordId;
   }
 
@@ -495,7 +506,9 @@ export class MedicalRecordComponent implements OnInit {
           this.medicalForm.reset({
             createdBy: this.employeeId,
           });
+
           this.cd.detectChanges();
+          this.cancelEdit();
         },
         error: (err) => {
           this.toast.error(err?.error?.message || err?.message || 'Something went wrong!');
@@ -524,5 +537,11 @@ export class MedicalRecordComponent implements OnInit {
         },
       });
     }
+    setTimeout(() => {
+      const formPanel = document.querySelector('.table-wrapper');
+      if (formPanel) {
+        formPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 200);
   }
 }
