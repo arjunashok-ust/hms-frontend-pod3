@@ -26,5 +26,5 @@ export interface Medications {
 export interface Observations {
   metricName: string;
   metricValue: string;
-  recordedAt: Date;
+  recordedTime: Date;
 }

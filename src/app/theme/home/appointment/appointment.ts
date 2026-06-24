@@ -250,7 +250,7 @@ export class AppointmentComponent implements OnInit {
   }
 
   mapDoctorAndPatients(appointments: AppointmentModel[]) {
-    this.appointments.forEach((appointment) => {
+    appointments.forEach((appointment) => {
       // patient name map
       if (appointment.patientId && !this.patientNameMap[appointment.patientId]) {
         this.userService.getPatientById(appointment.patientId).subscribe((res) => {

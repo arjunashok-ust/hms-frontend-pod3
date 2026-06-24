@@ -66,15 +66,15 @@ export class MedicalRecordComponent implements OnInit {
 
   constructor(readonly fb: FormBuilder) {
     this.medicalForm = fb.group({
-      patientId: ['', [Validators.required]],
-      appointmentId: ['', [Validators.required]],
-      doctorId: ['', [Validators.required]],
-      complaint: ['', [Validators.required]],
-      symptoms: ['', [Validators.required]],
-      diagnosis: ['', [Validators.required]],
+      patientId: ['', [Validators.required, Validators.pattern(String.raw`PAT-[0-9]{6}`)]],
+      appointmentId: ['', [Validators.required, Validators.pattern(String.raw`APT-[0-9]{6}`)]],
+      doctorId: ['', [Validators.required, Validators.pattern(String.raw`EMP-[0-9]{6}`)]],
+      complaint: ['', [Validators.required, Validators.pattern(String.raw`^[A-Za-z0-9\-\s,.]+$`)]],
+      symptoms: ['', [Validators.required, Validators.pattern(String.raw`^[A-Za-z0-9\-\s,.]+$`)]],
+      diagnosis: ['', [Validators.required, Validators.pattern(String.raw`^[A-Za-z0-9\-\s,.]+$`)]],
       medications: this.fb.array([this.createMedRow()]),
       observations: this.fb.array([this.createObsRow()]),
-      notes: [''],
+      notes: ['', Validators.pattern(String.raw`^[A-Za-z0-9\-\s,.]+$`)],
       createdBy: [this.employeeId, [Validators.required]],
       status: [''],
     });
@@ -379,11 +379,16 @@ export class MedicalRecordComponent implements OnInit {
         this.fb.group({
           metricName: o.metricName,
           metricValue: o.metricValue,
-          recordedTime: o.recordedTime,
+          recordedTime: o.recordedTime ? new Date(o.recordedTime).toISOString().slice(0, 10) : '',
         }),
       );
     });
   }
+
+  // set max limit for recorded time
+  maxDate = new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+    .toISOString()
+    .slice(0, 10);
 
   editProfile(medRecordId: any) {
     setTimeout(() => {

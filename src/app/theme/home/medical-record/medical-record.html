@@ -170,6 +170,9 @@
                 <span *ngIf="medicalForm.get('patientId')?.errors?.['required']"
                   >Patient ID is required.</span
                 >
+                <span *ngIf="medicalForm.get('patientId')?.errors?.['pattern']"
+                  >Invalid patient id format.</span
+                >
               </small>
             </div>
 
@@ -208,6 +211,9 @@
               <small *ngIf="medicalForm.get('doctorId')?.touched">
                 <span *ngIf="medicalForm.get('doctorId')?.errors?.['required']"
                   >Doctor ID is required.</span
+                >
+                <span *ngIf="medicalForm.get('doctorId')?.errors?.['pattern']"
+                  >Invalid doctor id format</span
                 >
               </small>
             </div>
@@ -250,6 +256,9 @@
               <small *ngIf="medicalForm.get('appointmentId')?.touched">
                 <span *ngIf="medicalForm.get('appointmentId')?.errors?.['required']"
                   >Appointment ID is required.</span
+                >
+                <span *ngIf="medicalForm.get('appointmentId')?.errors?.['pattern']"
+                  >Invalid appointment id format</span
                 >
               </small>
             </div>
@@ -367,6 +376,9 @@
                 <span *ngIf="medicalForm.get('complaint')?.errors?.['required']"
                   >Complaint is required.</span
                 >
+                <span *ngIf="medicalForm.get('complaint')?.errors?.['pattern']"
+                  >Only letter,numbers and hyphens are allowed</span
+                >
               </small>
             </div>
             <div>
@@ -393,6 +405,9 @@
               <small *ngIf="medicalForm.get('symptoms')?.touched">
                 <span *ngIf="medicalForm.get('symptoms')?.errors?.['required']"
                   >Symptoms is required.</span
+                >
+                <span *ngIf="medicalForm.get('symptoms')?.errors?.['pattern']"
+                  >Only letter,numbers and hyphens are allowed</span
                 >
               </small>
             </div>
@@ -421,6 +436,9 @@
               <small *ngIf="medicalForm.get('diagnosis')?.touched">
                 <span *ngIf="medicalForm.get('diagnosis')?.errors?.['required']"
                   >Diagnosis is required.</span
+                >
+                <span *ngIf="medicalForm.get('diagnosis')?.errors?.['pattern']"
+                  >Only letters,numbers and hyphen is allowed</span
                 >
               </small>
             </div>
@@ -462,10 +480,11 @@
                 </td>
                 <td>
                   <input
-                    type="datetime-local"
+                    type="date"
                     formControlName="recordedTime"
                     id="recordedTime"
                     aria-label="recordedTime"
+                    [max]="maxDate"
                   />
                 </td>
                 <td>
@@ -514,6 +533,11 @@
             id="notes"
             aria-label="notes"
           ></textarea>
+          <small *ngIf="medicalForm.get('notes')?.touched">
+                <span *ngIf="medicalForm.get('notes')?.errors?.['pattern']"
+                  >Only letters,numbers and hyphen is allowed</span
+                >
+              </small>
         </div>
       </div>
 

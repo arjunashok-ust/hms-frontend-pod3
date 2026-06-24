@@ -267,7 +267,7 @@
                 <td>
                   <span class="vmr-pill vmr-pill-blue">{{ obs.metricValue }}</span>
                 </td>
-                <td>{{ obs.recordedAt | date: 'dd MMM yyyy, hh:mm a' }}</td>
+                <td>{{ obs.recordedTime | date: 'dd MMM yyyy' }}</td>
               </tr>
               <tr *ngIf="record?.medicalObservations?.length === 0">
                 <td colspan="3" class="vmr-empty-row">No observations recorded.</td>
