@@ -43,7 +43,10 @@ export class PatientComponent implements OnInit {
   cd: ChangeDetectorRef = inject(ChangeDetectorRef);
   route: Router = inject(Router);
 
+  isLoading: boolean = false;
+
   patientData: PatientModel[] = [];
+  employeeId: string = localStorage.getItem('employeeId') ?? '';
 
   patientUiData = {
     patientCount: 0,
@@ -63,7 +66,7 @@ export class PatientComponent implements OnInit {
   updateData() {
     this.userService.getPatients(this.searchText, this.page, this.limit).subscribe({
       next: (res) => {
-        if(res.data.length == 0) return;
+        if (res.data.length == 0) return;
         this.patientData = res.data;
         this.totalPages = res.totalPages;
         this.loadUiData();
@@ -111,12 +114,14 @@ export class PatientComponent implements OnInit {
   deletePatient(patientId: string) {
     const payload = {
       patientId: patientId,
+      deletedBy: this.employeeId,
     };
 
     this.userService.deletePatient(payload).subscribe({
       next: (res) => {
         this.toast.success('Patient deleted sucessfully');
         this.updateData();
+        this.cd.detectChanges();
       },
       error: (error) => {
         this.toast.error('Server error during patient deletion');
@@ -127,7 +132,6 @@ export class PatientComponent implements OnInit {
   editPatientProfile(email: string) {
     localStorage.setItem('updatePatientEmail', email);
     this.route.navigate(['edit-patient']);
-    console.log(this.patientForm.errors);
   }
 
   prevPage() {
@@ -153,11 +157,17 @@ export class PatientComponent implements OnInit {
     return item.uhid;
   }
 
+  resetForm() {
+    this.patientForm.reset({ status: 'Active' });
+  }
+
   onSubmit() {
     if (!this.patientForm.valid) {
       this.toast.error('Invalid input. Please check your entries and try again.');
       return;
     }
+
+    this.isLoading = true;
 
     const payload = {
       name: this.patientForm.get('name')?.value,
@@ -174,11 +184,13 @@ export class PatientComponent implements OnInit {
 
     this.userService.createPatient(payload).subscribe({
       next: (res) => {
+        this.isLoading = false;
         this.toast.success('Patient added sucessfully');
         this.patientForm.reset({ status: 'Active' });
         this.updateData();
       },
       error: (err) => {
+        this.isLoading = false;
         this.toast.error(err?.error?.message || err?.message || 'Something went wrong!');
       },
     });

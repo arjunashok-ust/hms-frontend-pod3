@@ -52,10 +52,10 @@ export class AppointmentService {
   }
 
   // delete appointment
-  deleteAppointment(appointmentId: string): Observable<any> {
+  deleteAppointment(appointmentId: string, deletedBy: string): Observable<any> {
     return this.http
       .get(`${this.api.backend_url}/appointment/deleteAppointment`, {
-        params: { appointmentId: appointmentId },
+        params: { appointmentId, deletedBy },
       })
       .pipe(catchError((error) => this.handleError(error)));
   }

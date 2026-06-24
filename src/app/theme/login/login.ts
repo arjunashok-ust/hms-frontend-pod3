@@ -46,11 +46,12 @@ export class LoginComponent implements OnInit {
       password: this.loginForm.value.password,
     };
 
-    this.isLoading = true;
 
     this.auth.login(payload).subscribe({
       next: (loginRes) => {
+        this.isLoading = true;
         if (loginRes.status !== 'Active') {
+          this.isLoading = false;
           this.toast.info('Your account is not activated yet,Please contact the admin');
           this.router.navigate(['/login']);
           return;
@@ -67,15 +68,18 @@ export class LoginComponent implements OnInit {
             this.permission.setPermission(res.role_permissions);
 
             if (loginRes.role === 'Patient') {
+              this.isLoading = false;
               this.toast.error('Patients are allowed to log in only through the mobile app.');
               this.router.navigate(['/access-denied']);
               return;
             }
-            this.isLoading = false;
+          
             if (loginRes.firstLogin) {
+              this.isLoading = false;
               this.toast.info('Set your password');
               this.router.navigate(['/password-modal']);
             } else {
+              this.isLoading = false;
               this.toast.success('Login Sucessfull');
               this.router.navigate(['/profile']);
             }
@@ -88,8 +92,10 @@ export class LoginComponent implements OnInit {
       },
       error: (error) => {
         if (error.status === 401) {
+          this.isLoading=false;
           this.toast.warning('Invalid email or password');
         } else {
+          this.isLoading=false;
           this.toast.error(error?.error?.message || error?.message || 'Login Failed!');
         }
       },

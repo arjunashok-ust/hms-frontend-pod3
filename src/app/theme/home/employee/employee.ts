@@ -55,7 +55,7 @@ export class EmployeeComponent implements OnInit {
       .getEmployees(this.selectedText, this.selectedDepartment, this.page, this.limit)
       .subscribe({
         next: (res) => {
-          if(res.data.length == 0) return;
+          if (res.data.length == 0) return;
           this.employeeData = res.data;
           this.totalPages = res.totalPages;
           this.cd.detectChanges();
@@ -104,6 +104,8 @@ export class EmployeeComponent implements OnInit {
           this.employeeData = this.employeeData.filter(
             (employee) => employee.employeeCode !== employeeId,
           );
+
+          this.fetchEmployees();
           this.cd.detectChanges();
           this.toast.success(res?.message || 'Account deleted successfully');
         },
@@ -114,7 +116,7 @@ export class EmployeeComponent implements OnInit {
     }
   }
 
-  trackFn(index: number,item: EmployeeModel){
+  trackFn(index: number, item: EmployeeModel) {
     return item.employeeCode;
   }
 }

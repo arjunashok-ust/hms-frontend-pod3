@@ -69,8 +69,16 @@
               id="patientId"
               placeholder="e.g. PAT-00123"
               formControlName="patientId"
+              [matAutocomplete]="auto"
               required
             />
+            <mat-autocomplete #auto="matAutocomplete">
+              <mat-option *ngFor="let patient of patients" [value]="patient.uhid">
+                <span class="option-title">{{ patient.name }}</span
+                ><br />
+                <span class="option-value">{{ patient.uhid }}</span>
+              </mat-option>
+            </mat-autocomplete>
             <small *ngIf="appointmentForm.get('patientId')?.touched">
               <span *ngIf="appointmentForm.get('patientId')?.errors?.['pattern']"
                 >Only digits,letters and hyphen are allowed.</span
@@ -207,7 +215,7 @@
             [ngClass]="appointmentForm.valid ? 'btn-primary' : 'btn-disabled'"
             [disabled]="!appointmentForm.valid"
           >
-            <i class="bi bi-calendar-plus"></i> Book Appointment
+            <i class="bi bi-calendar-plus"></i> {{ isLoading ? 'Booking...' : 'Book Appointment' }}
           </button>
         </div>
       </form>
@@ -290,14 +298,18 @@
             <td colspan="8">No appointments available</td>
           </tr>
 
-          <tr *ngFor="let appointment of displayedAppointments;trackBy: trackFn">
+          <tr *ngFor="let appointment of displayedAppointments; trackBy: trackFn">
             <td>
               <span class="apt-id">{{ appointment.appointmentId }}</span>
             </td>
 
             <td>
               <div class="patient-info">
-                <div class="patient-avatar">{{ (patientNameMap[appointment.patientId] || 'Loading...') | slice:0:2 | uppercase}}</div>
+                <div class="patient-avatar">
+                  {{
+                    patientNameMap[appointment.patientId] || 'Loading...' | slice: 0 : 2 | uppercase
+                  }}
+                </div>
                 <div>
                   <h4>{{ patientNameMap[appointment.patientId] || 'Loading...' }}</h4>
                   <span>{{ appointment.patientId }}</span>

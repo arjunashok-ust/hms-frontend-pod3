@@ -242,7 +242,7 @@
           </div>
         </div>
         <div class="form-footer">
-          <button type="button" class="btn btn-ghost" (click)="patientForm.reset()">
+          <button type="button" class="btn btn-ghost" (click)="resetForm()">
             <i class="bi bi-arrow-counterclockwise"></i> Reset
           </button>
           <button type="button" class="btn btn-danger-outline">
@@ -255,7 +255,7 @@
             [disabled]="patientForm.invalid"
             [ngClass]="{ 'btn-disabled': patientForm.invalid }"
           >
-            <i class="bi bi-person-plus-fill"></i> Save Patient
+            <i class="bi bi-person-plus-fill"></i> {{ isLoading ? 'Saving...' : 'Save Patient' }}
           </button>
         </div>
       </form>
@@ -307,7 +307,9 @@
               </td>
               <td>
                 <div class="patient-info">
-                  <div class="patient-avatar pa-gradient-1">{{ patient.name.toUpperCase().slice(0,2) || 'PA'}}</div>
+                  <div class="patient-avatar pa-gradient-1">
+                    {{ patient.name.toUpperCase().slice(0, 2) || 'PA' }}
+                  </div>
                   <div>
                     <h4>{{ patient.name }}</h4>
                     <span *ngIf="patient.emergencyContact"

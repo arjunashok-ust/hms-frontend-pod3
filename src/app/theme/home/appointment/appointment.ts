@@ -1,4 +1,10 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  inject,
+  OnInit,
+} from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -10,15 +16,24 @@ import { RouterModule } from '@angular/router';
 import { AppointmentService } from '../../../services/appointment.service';
 import { AppointmentModel, AppointmentResponseModel } from '../../../models/appointment.model';
 import { CommonModule } from '@angular/common';
-import { EmployeeModel } from '../../../models/user.model';
+import { EmployeeModel, PatientModel } from '../../../models/user.model';
 import { ToastrService } from 'ngx-toastr';
 import { appointmentDateValidator } from '../../../validators/time-range-validator';
 import { HasPermissionDirective } from '../../../directive/has-permission.directive';
 import { UserService } from '../../../services/user.service';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { debounceTime, distinctUntilChanged, filter, switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-appointment',
-  imports: [RouterModule, CommonModule, ReactiveFormsModule, HasPermissionDirective, FormsModule],
+  imports: [
+    RouterModule,
+    CommonModule,
+    ReactiveFormsModule,
+    HasPermissionDirective,
+    FormsModule,
+    MatAutocompleteModule,
+  ],
   templateUrl: './appointment.html',
   styleUrl: './appointment.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -32,10 +47,13 @@ export class AppointmentComponent implements OnInit {
   toast: ToastrService = inject(ToastrService);
 
   doctors: EmployeeModel[] = [];
+  patients: PatientModel[] = [];
   appointmentUiData: AppointmentResponseModel | null = null;
   appointments: AppointmentModel[] = [];
   doctorAppointments: AppointmentModel[] = [];
   displayedAppointments: AppointmentModel[] = [];
+
+  isLoading: boolean = false;
 
   // for setting doctor time slots
   doctorTimeSlots: string[] = [];
@@ -69,6 +87,25 @@ export class AppointmentComponent implements OnInit {
   ngOnInit(): void {
     this.fetchAppointments();
     this.loadUiData();
+
+    this.appointmentForm
+      .get('patientId')
+      ?.valueChanges.pipe(
+        debounceTime(300),
+        distinctUntilChanged(),
+        filter((value) => !!value?.trim()),
+        switchMap((value) => this.userService.getPatients(value, 1, 5)),
+      )
+      .subscribe({
+        next: (res) => {
+          if (res.data.length == 0) return;
+          this.patients = res.data;
+          this.cd.detectChanges();
+        },
+        error: (err) => {
+          this.toast.error(err.error?.message || 'Error occured while getting patients');
+        },
+      });
     // time slot container bug fix
     this.doctorTimeSlots.length = 0;
   }
@@ -98,7 +135,7 @@ export class AppointmentComponent implements OnInit {
   fetchAppointments() {
     this.appointmentService.getAllAppointment(this.searchText, this.page, this.limit).subscribe({
       next: (res) => {
-        if(res.data.length == 0) return;
+        if (res.data.length == 0) return;
         this.totalPages = res.totalPages;
         if (this.role === 'Doctor') {
           this.fetchDoctorAppointments(res.data);
@@ -165,9 +202,10 @@ export class AppointmentComponent implements OnInit {
     );
 
     if (isConfirmed) {
-      this.appointmentService.deleteAppointment(appointmentId).subscribe({
+      this.appointmentService.deleteAppointment(appointmentId, this.employeeId ?? '').subscribe({
         next: (res) => {
           this.loadUiData();
+          this.fetchAppointments();
           this.cd.detectChanges();
           this.toast.success(res.message);
         },
@@ -197,6 +235,8 @@ export class AppointmentComponent implements OnInit {
           }
 
           this.loadUiData();
+          this.fetchAppointments();
+
           this.cd.detectChanges();
           this.toast.success(res.message);
         },
@@ -228,7 +268,7 @@ export class AppointmentComponent implements OnInit {
     });
   }
 
-  trackFn(index:number,item: AppointmentModel){
+  trackFn(index: number, item: AppointmentModel) {
     return item.appointmentId;
   }
 
@@ -252,6 +292,7 @@ export class AppointmentComponent implements OnInit {
   }
 
   onSubmit() {
+    this.isLoading = true;
     const payload = {
       patientId: this.appointmentForm.value.patientId,
       doctorEmployeeId: this.appointmentForm.value.doctorEmployeeId,
@@ -264,10 +305,14 @@ export class AppointmentComponent implements OnInit {
     this.appointmentService.createAppointment(payload).subscribe({
       next: (res) => {
         this.loadUiData();
+        this.fetchAppointments();
+        this.isLoading = false;
         this.cd.detectChanges();
         this.toast.success(res.message);
       },
       error: (err) => {
+        this.isLoading = false;
+        this.cd.detectChanges();
         this.toast.error(err?.error?.message || err?.message || 'Something went wrong!');
       },
     });
