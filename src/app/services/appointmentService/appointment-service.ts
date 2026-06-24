@@ -43,6 +43,10 @@ export class AppointmentService {
     return this.http.delete<any>(`${this.apiUrl}/api/appointment/${id}`);
   }
 
+  cancelAppointment(id: string, data: any): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/api/appointment/${id}`, data);
+  }
+
   getAvailableSlots(doctorId: string, date: string): Observable<string[]> {
     let headers = new HttpHeaders();
 

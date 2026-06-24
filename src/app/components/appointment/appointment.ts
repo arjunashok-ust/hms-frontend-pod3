@@ -120,7 +120,7 @@ export class Appointment implements OnInit {
     });
 
 
-    this.apiService.getAllPatients({ limit: 1000 }).subscribe({
+    this.apiService.getAllPatients({ limit: 100 }).subscribe({
       next: (res: any) => {
 
         const patientsList = res.data || res || [];

@@ -83,8 +83,8 @@ export class Login {
             return;
           }
 
-          if (response.token) {
-            localStorage.setItem('token', response.token);
+          if (response.accessToken) {
+            localStorage.setItem('token', response.accessToken);
           }
 
           const userRole = response.user?.role?.toUpperCase() || '';
@@ -120,7 +120,9 @@ export class Login {
         this.isLoading = false;
         this.showFirstLoginModal = false;
 
-        localStorage.setItem('token', res.token);
+        if (res.accessToken) {
+          localStorage.setItem('token', res.accessToken);
+        }
         const userRole = res.user?.role?.toUpperCase() || '';
 
         if (userRole !== 'ADMIN') {

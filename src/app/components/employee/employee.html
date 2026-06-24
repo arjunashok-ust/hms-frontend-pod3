@@ -79,6 +79,7 @@
     <div class="filter-bar">
       <div class="search-box">
         <input
+        aria-label="search"
           type="text"
           placeholder="Search Employee"
           [(ngModel)]="searchTerm"
@@ -88,14 +89,14 @@
       </div>
 
       <div class="dropdown-group">
-        <select class="form-control" [(ngModel)]="selectedDepartment" (change)="applyFilters()">
+        <select aria-label="dept" class="form-control" [(ngModel)]="selectedDepartment" (change)="applyFilters()">
           <option value="">All Departments</option>
           @for (dept of departments; track dept) {
             <option [value]="dept">{{ dept }}</option>
           }
         </select>
 
-        <select class="form-control" [(ngModel)]="selectedStatus" (change)="applyFilters()">
+        <select aria-label="status" class="form-control" [(ngModel)]="selectedStatus" (change)="applyFilters()">
           <option value="">All Statuses</option>
           <option value="ACTIVE">Active</option>
           <option value="INACTIVE">Inactive</option>

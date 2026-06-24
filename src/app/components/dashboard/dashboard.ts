@@ -78,7 +78,6 @@ export class Dashboard implements OnInit {
             color: '#ef4444',
             bg: '#fef2f2',
           },
-          { title: 'Cancelled', value: 0, icon: 'x-circle-fill', color: '#fca5a5', bg: '#fef2f2' },
         ];
 
         this.cdr.markForCheck();

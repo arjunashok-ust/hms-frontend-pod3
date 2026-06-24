@@ -391,7 +391,7 @@
               </td>
               <td>
                 <div class="action-buttons">
-                  @if (apt.status === 'Scheduled' || apt.status === 'Completed') {
+                  @if (apt.status === 'Scheduled') {
                     <button
                       *hasPermission="['CREATE_RECORD_FOR_ANYONE', 'CREATE_MY_RECORD']"
                       class="btn-action start-encounter"

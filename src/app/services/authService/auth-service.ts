@@ -34,15 +34,45 @@ export class Auth {
   }
 
   login(credentials: any): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/login`, credentials).pipe(
+    return this.http
+      .post<any>(`${this.apiUrl}/login`, credentials, { withCredentials: true })
+      .pipe(
+        tap((response) => {
+          if (response?.accessToken) {
+            localStorage.setItem('token', response.accessToken);
+            localStorage.setItem('user_session', JSON.stringify(response.user));
+            this.currentUserSignal.set(response.user);
+          }
+        }),
+      );
+  }
+
+  refreshAccessToken(): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/refresh`, {}, { withCredentials: true }).pipe(
       tap((response) => {
-        if (response?.token) {
-          localStorage.setItem('token', response.token);
-          localStorage.setItem('user_session', JSON.stringify(response.user));
-          this.currentUserSignal.set(response.user);
+        if (response?.accessToken) {
+          localStorage.setItem('token', response.accessToken);
         }
       }),
     );
+  }
+
+  logoutRemote(): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/logout`, {}, { withCredentials: true });
+  }
+
+  setAccessToken(token: string) {
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.setItem('token', token);
+    }
+  }
+
+  clearSession() {
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user_session');
+      this.currentUserSignal.set(null);
+    }
   }
 
   getCurrentUser(): any {
@@ -68,8 +98,9 @@ export class Auth {
   }
 
   logout() {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user_session');
-    this.currentUserSignal.set(null);
+    this.logoutRemote().subscribe({
+      next: () => this.clearSession(),
+      error: () => this.clearSession(),
+    });
   }
 }
