@@ -31,12 +31,13 @@ export class MedicalRecordService {
   }
 
   // Get Medical Records
-  getMedicalRecords(page: number, limit: number): Observable<any> {
+  getMedicalRecords(page: number, limit: number, doctorId?: string): Observable<any> {
     return this.http
       .get(`${this.api.backend_url}/medicalRecord/getMedicalRecords`, {
         params: {
           page,
           limit,
+          ...(doctorId && { doctorId: doctorId }),
         },
       })
       .pipe(catchError((error) => this.handleError(error)));

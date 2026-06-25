@@ -52,7 +52,10 @@
         <tbody>
           <tr *ngFor="let employee of employeeData; trackBy: trackFn">
             <ng-container
-              *ngIf="employee.department !== 'Administration' || role === 'Super Admin'"
+              *ngIf="
+                employee.employeeCode !== employeeId &&
+                (role === 'Super Admin' || employee.department !== 'Administration')
+              "
             >
               <td>
                 <span class="employee-id">{{ employee.employeeCode }}</span>

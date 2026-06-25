@@ -4,17 +4,23 @@
       <form [formGroup]="signUpForm" (ngSubmit)="onSubmit()">
         <h2>SignUp</h2>
         <p class="title-text">Please fill in the details to create your account.</p>
-        <input type="text" placeholder="Name" id="name" formControlName="name" />
+        <input type="text" placeholder="Name" id="name" formControlName="name" aria-label="name" />
         <small *ngIf="signUpForm.get('name')?.touched">
           <span *ngIf="signUpForm.get('name')?.errors?.['required']">Name is required.</span>
           <span *ngIf="signUpForm.get('name')?.errors?.['pattern']">Only letters is allowed.</span>
         </small>
-        <input type="email" placeholder="Email" id="email" formControlName="email" />
+        <input
+          type="email"
+          placeholder="Email"
+          id="email"
+          formControlName="email"
+          aria-label="email"
+        />
         <small *ngIf="signUpForm.get('email')?.touched">
           <span *ngIf="signUpForm.get('email')?.errors?.['required']">Email is required.</span>
           <span *ngIf="signUpForm.get('email')?.errors?.['pattern']">Email is invalid.</span>
         </small>
-        <select id="roles" formControlName="role">
+        <select id="roles" formControlName="role" aria-label="role">
           <option value="" disabled>Role</option>
           <ng-container *ngFor="let role of roles_data"
             ><option [ngValue]="role.role_name" *ngIf="role.role_name != 'Admin'">
@@ -25,7 +31,13 @@
         <small *ngIf="!signUpForm.get('role')?.valid&&signUpForm.get('role')?.touched"
           >Role is required.</small
         >
-        <input type="password" id="password" placeholder="Password" formControlName="password" />
+        <input
+          type="password"
+          id="password"
+          placeholder="Password"
+          formControlName="password"
+          aria-label="password"
+        />
         <small *ngIf="signUpForm.get('password')?.touched">
           <span *ngIf="signUpForm.get('password')?.errors?.['required']"
             >Password is required.</span
@@ -40,6 +52,7 @@
         <input
           type="password"
           id="confirmPassword"
+          aria-label="confirm-password"
           placeholder="Confirm Password"
           formControlName="confirmPassword"
         />
@@ -47,16 +60,26 @@
           *ngIf="signUpForm.get('confirmPassword')?.touched&&signUpForm.errors?.['passwordMismatch']"
           >Passwords doesnt match.</small
         >
-        <select id="department" formControlName="department">
+        <select id="department" formControlName="department" aria-label="department">
           <option value="" disabled>Department</option>
           <ng-container *ngFor="let department of departments_data">
-            <option [ngValue]="department.department_name" *ngIf="department.department_name !== 'Administration'">{{ department.department_name }}</option>
+            <option
+              [ngValue]="department.department_name"
+              *ngIf="department.department_name !== 'Administration'"
+            >
+              {{ department.department_name }}
+            </option>
           </ng-container>
         </select>
         <small *ngIf="!signUpForm.get('department')?.valid&&signUpForm.get('department')?.touched"
           >Department is required.</small
         >
-        <input type="text" placeholder="Designation" formControlName="designation" />
+        <input
+          type="text"
+          placeholder="Designation"
+          formControlName="designation"
+          aria-label="designation"
+        />
         <small *ngIf="!signUpForm.get('designation')?.valid&&signUpForm.get('designation')?.touched"
           >Designation is required.</small
         >
@@ -68,7 +91,7 @@
               >Joining date is required.</span
             >
             <span *ngIf="signUpForm.errors?.['invalidJoiningDate']"
-              >Joining Date must be behind or forward of 3 months.</span
+              >Joining Date can be before 3 months not future</span
             >
           </small>
         </div>
@@ -77,6 +100,7 @@
           placeholder="Medical Registration Number"
           formControlName="medicalRegistrationNo"
           *ngIf="signUpForm.get('role')?.value == 'Doctor' || signUpForm.get('role')?.value == 'Nurse'"
+          aria-label="medicalRegistrationNo"
         />
         <small *ngIf="signUpForm.get('medicalRegistrationNo')?.touched">
           <span
@@ -91,6 +115,7 @@
           id="specialization"
           formControlName="specialization"
           *ngIf="signUpForm.get('role')?.value =='Doctor'"
+          aria-label="specialization"
         >
           <option value="" disabled>Specialization</option>
           <option
@@ -100,7 +125,12 @@
             {{ specialization.specialization_name }}
           </option>
         </select>
-        <input type="text" placeholder="Qualification" formControlName="qualification" />
+        <input
+          type="text"
+          placeholder="Qualification"
+          formControlName="qualification"
+          aria-label="qualification"
+        />
         <small *ngIf="signUpForm.get('qualification')?.touched">
           <span *ngIf="signUpForm.get('qualification')?.errors?.['pattern']"
             >Only letters and white space is allowed.</span
@@ -114,6 +144,8 @@
           placeholder="Consultation Fee"
           formControlName="consultationFee"
           *ngIf="signUpForm.get('role')?.value == 'Doctor'"
+          id="consultationFee"
+          aria-label="consultationFee"
         />
         <small
           *ngIf="signUpForm.get('consultationFee')?.errors?.['pattern']&&signUpForm.get('consultationFee')?.touched"
@@ -121,11 +153,11 @@
         >
         <div class="slot-container" *ngIf="signUpForm.get('role')?.value == 'Doctor'">
           <label for="slot-container">Select Time Slots</label>
-          <select id="startTime" formControlName="startHour">
+          <select id="startTime" formControlName="startHour" aria-label="startHour">
             <option value="" disabled>Start Hour</option>
             <option *ngFor="let hour of hours" [value]="hour">{{ hour }}</option>
           </select>
-          <select id="endTime" formControlName="endHour">
+          <select id="endTime" formControlName="endHour" aria-label="endHour">
             <option value="" disabled>End Hour</option>
             <option *ngFor="let hour of hours" [value]="hour">{{ hour }}</option>
           </select>
@@ -146,7 +178,7 @@
           <label for="slot-container">Generated Time Slots</label>
           <div class="generated-option" *ngFor="let slot of generatedSlots">
             <span>{{ slot }}</span>
-            <input type="checkbox" [value]="slot" (change)="toggleSlot(slot)" />
+            <input type="checkbox" [value]="slot" (change)="toggleSlot(slot)" aria-label="slot" />
           </div>
         </div>
         <div class="slot-container" *ngIf="signUpForm.value.availabilitySlots.length">

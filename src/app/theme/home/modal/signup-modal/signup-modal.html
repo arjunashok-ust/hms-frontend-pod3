@@ -168,7 +168,7 @@
               >Joining date is required.</span
             >
             <span *ngIf="signUpModalForm.errors?.['invalidJoiningDate']"
-              >Joining Date must be behind or forward of 3 months.</span
+              >Joining Date can be behind 3 months not in the future</span
             >
           </small>
         </div>
@@ -297,7 +297,7 @@
           </label>
           <div class="slot-generator">
             <div class="input-wrapper">
-              <select id="startTime" class="form-input form-select" formControlName="startHour">
+              <select id="startTime" class="form-input form-select" formControlName="startHour" aria-label="startHour">
                 <option value="" disabled>Start Hour</option>
                 <option *ngFor="let hour of hours" [value]="hour">{{ hour }}</option>
               </select>
@@ -307,7 +307,7 @@
             </div>
             <span class="slot-separator">to</span>
             <div class="input-wrapper">
-              <select id="endTime" class="form-input form-select" formControlName="endHour">
+              <select id="endTime" class="form-input form-select" formControlName="endHour" aria-label="endHour">
                 <option value="" disabled>End Hour</option>
                 <option *ngFor="let hour of hours" [value]="hour">{{ hour }}</option>
               </select>

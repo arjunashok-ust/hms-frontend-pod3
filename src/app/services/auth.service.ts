@@ -57,6 +57,12 @@ export class AuthService {
       .pipe(catchError((error) => this.handleError(error)));
   }
 
+  logout(): Observable<any> {
+    return this.http
+      .get(`${this.api.backend_url}/auth/logout`)
+      .pipe(catchError((error) => this.handleError(error)));
+  }
+
   // error handling
   handleError(error: HttpErrorResponse) {
     return throwError(() => error);

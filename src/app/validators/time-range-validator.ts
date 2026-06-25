@@ -8,8 +8,8 @@ export function timeRangeValidator(control: AbstractControl): ValidationErrors |
     return null;
   }
 
-  if(start==end){
-    return { sameTimeRange: true};
+  if (start == end) {
+    return { sameTimeRange: true };
   }
 
   if (start != end && start >= end) {
@@ -28,12 +28,10 @@ export function futureDateValidator(control: AbstractControl): ValidationErrors 
   let inputDate = new Date(inputValue);
   let today = new Date();
   let pastLimit = new Date();
-  let futureLimit = new Date();
 
-  futureLimit.setMonth(today.getMonth() + 3);
   pastLimit.setMonth(today.getMonth() - 3);
 
-  if (inputDate > futureLimit || inputDate < pastLimit) {
+  if (inputDate > today || inputDate < pastLimit) {
     return { invalidJoiningDate: true };
   }
 
@@ -66,8 +64,8 @@ export function appointmentDateValidator(control: AbstractControl): ValidationEr
   const date = new Date(inputDate);
   const today = new Date();
 
-  date.setHours(0,0,0,0);
-  today.setHours(0,0,0,0);
+  date.setHours(0, 0, 0, 0);
+  today.setHours(0, 0, 0, 0);
 
   if (date < today) {
     return { invalidAppointmentDate: true };

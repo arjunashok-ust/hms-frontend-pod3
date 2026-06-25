@@ -42,6 +42,7 @@ export class MedicalRecordComponent implements OnInit {
   filteredAppointments: AppointmentModel[] | [] = [];
 
   employeeId = localStorage.getItem('employeeId');
+  role = localStorage.getItem('role');
 
   medicalRecordCount = 0;
   completedCount = 0;
@@ -197,7 +198,9 @@ export class MedicalRecordComponent implements OnInit {
   }
 
   fetchMedicalRecordPageDetails() {
-    this.medicalRecordService.getMedicalRecords(this.page, this.limit).subscribe({
+    const doctorId = this.role === 'Doctor' ? (this.employeeId ?? undefined) : undefined;
+
+    this.medicalRecordService.getMedicalRecords(this.page, this.limit, doctorId).subscribe({
       next: (res) => {
         this.totalPages = res.totalPages;
         this.medicalRecords = res.data;

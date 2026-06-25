@@ -35,6 +35,7 @@ export class EmployeeComponent implements OnInit {
   employeeData: EmployeeModel[] = [];
   departmentsData: DepartmentModel[] = [];
   role: string = localStorage.getItem('role') ?? '';
+  employeeId: string = localStorage.getItem('employeeId') ?? '';
 
   selectedText: string = '';
   selectedDepartment: string = '';
