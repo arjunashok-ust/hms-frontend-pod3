@@ -23,7 +23,12 @@
         />
       </div>
       <div class="filter-group">
-        <select [(ngModel)]="selectedDepartment" (change)="fetchEmployees()" id="selectedDepartment" aria-label="selectedDepartment">
+        <select
+          [(ngModel)]="selectedDepartment"
+          (change)="fetchEmployees()"
+          id="selectedDepartment"
+          aria-label="selectedDepartment"
+        >
           <option value="" selected>All Department</option>
           <option *ngFor="let department of departmentsData" [value]="department.department_name">
             {{ department.department_name }}
@@ -46,7 +51,9 @@
         </thead>
         <tbody>
           <tr *ngFor="let employee of employeeData; trackBy: trackFn">
-            <ng-container *ngIf="employee.designation !== 'Admin'">
+            <ng-container
+              *ngIf="employee.department !== 'Administration' || role === 'Super Admin'"
+            >
               <td>
                 <span class="employee-id">{{ employee.employeeCode }}</span>
               </td>

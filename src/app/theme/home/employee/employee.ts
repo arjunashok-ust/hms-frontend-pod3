@@ -30,10 +30,11 @@ export class EmployeeComponent implements OnInit {
 
   page: number = 1;
   totalPages: number = 1;
-  limit: number = 5;
+  limit: number = 10;
 
   employeeData: EmployeeModel[] = [];
   departmentsData: DepartmentModel[] = [];
+  role: string = localStorage.getItem('role') ?? '';
 
   selectedText: string = '';
   selectedDepartment: string = '';
