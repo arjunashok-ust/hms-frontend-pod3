@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectorRef, ChangeDetectionStrategy, HostListener, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   FormsModule,
@@ -20,6 +20,7 @@ import { environment } from '../../../environments';
   imports: [CommonModule, FormsModule, ReactiveFormsModule, HasPermissionDirective],
   templateUrl: './patient.html',
   styleUrls: ['./patient.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Patient implements OnInit {
   patients: any[] = [];
@@ -44,12 +45,22 @@ export class Patient implements OnInit {
     private readonly apiService: ApiService,
     private readonly cdr: ChangeDetectorRef,
     private readonly fb: FormBuilder,
+    private readonly elementRef: ElementRef
   ) {
     this.initForm();
   }
 
   ngOnInit() {
     this.fetchPatients();
+  }
+
+
+  @HostListener('document:mousedown', ['$event'])
+  onGlobalClick(event: MouseEvent): void {
+    const modalOverlay = this.elementRef.nativeElement.querySelector('.modal-overlay');
+    if (this.showAddModal && event.target === modalOverlay) {
+      this.closeModal();
+    }
   }
 
   initForm() {

@@ -684,7 +684,7 @@ textarea {
   width: 100%;
   margin-top: 4px;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-  z-index: 1050; /* A high value to ensure it's above other elements */
+  z-index: 1050; 
 }
 
 .dropdown-item {

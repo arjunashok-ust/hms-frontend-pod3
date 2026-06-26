@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, ChangeDetectorRef, PLATFORM_ID, Inject } from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectorRef, PLATFORM_ID, Inject, HostListener, ElementRef } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import {
   FormsModule,
@@ -72,7 +72,7 @@ export class Employee implements OnInit {
     { value: 'CASHIER', label: 'Cashier' },
   ];
 
-  availableRoles: any[] = []; 
+  availableRoles: any[] = [];
 
   rowSubSlotsMap: { [uniqueId: string]: GeneratedSlot[] } = {};
   availableHours: string[] = Array.from(
@@ -91,7 +91,8 @@ export class Employee implements OnInit {
     private readonly cdr: ChangeDetectorRef,
     private readonly fb: FormBuilder,
     private readonly route: ActivatedRoute,
-    @Inject(PLATFORM_ID) private readonly platformId: Object
+    @Inject(PLATFORM_ID) private readonly platformId: Object,
+    private readonly elementRef: ElementRef
   ) {
     this.initForm();
   }
@@ -113,6 +114,18 @@ export class Employee implements OnInit {
   }
 
   setupAvailableRoles() {
+
+    this.route.data.subscribe(data => {
+      if (data['openApprovalsByDefault']) {
+        this.showPendingApprovals = true;
+        this.selectedStatus = '';
+      } else {
+        this.showPendingApprovals = false;
+        this.selectedStatus = '';
+      }
+      this.applyFilters();
+      this.cdr.detectChanges();
+    });
     this.availableRoles = [...this.baseRoles];
 
     if (isPlatformBrowser(this.platformId)) {
@@ -130,6 +143,14 @@ export class Employee implements OnInit {
           console.error(err);
         }
       }
+    }
+  }
+
+  @HostListener('document:mousedown', ['$event'])
+  onGlobalClick(event: MouseEvent): void {
+    const modalOverlay = this.elementRef.nativeElement.querySelector('.modal-overlay');
+    if (this.showAddModal && event.target === modalOverlay) {
+      this.closeModal();
     }
   }
 
