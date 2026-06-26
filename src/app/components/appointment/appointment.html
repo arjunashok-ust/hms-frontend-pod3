@@ -70,6 +70,7 @@
 
             <div class="searchable-dropdown-container position-relative">
               <input
+                aria-label="patientInput"
                 type="text"
                 class="form-control custom-select"
                 placeholder="Search by Name or UHID..."
@@ -123,6 +124,7 @@
 
             <div class="searchable-dropdown-container position-relative">
               <input
+                aria-label="doctorInput"
                 type="text"
                 class="form-control custom-select"
                 placeholder="Search by Name, ID, or Dept..."
@@ -179,6 +181,7 @@
               <span class="text-danger">*</span>
             </label>
             <input
+              aria-label="date"
               type="date"
               formControlName="date"
               class="form-control"
@@ -396,7 +399,12 @@
                       *hasPermission="['CREATE_RECORD_FOR_ANYONE', 'CREATE_MY_RECORD']"
                       class="btn-action start-encounter"
                       (click)="startEncounter(apt)"
-                      title="Start Medical Encounter"
+                      [title]="
+                        canStartEncounter(apt)
+                          ? 'Start Medical Encounter'
+                          : 'Cannot start before appointment time'
+                      "
+                      [disabled]="!canStartEncounter(apt)"
                     >
                       <i class="bi bi-arrow-right-square"></i>
                     </button>
@@ -463,12 +471,12 @@
         <span style="font-weight: 400; margin-left: 8px">({{ totalRecords }} Total Records)</span>
       </div>
 
-      <div class="pagination-controls">
+      <div class="pagination-btn-controls">
         <button class="btn-page prev" [disabled]="currentPage === 1" (click)="prevPage()">
           <i class="bi bi-chevron-left"></i> Prev
         </button>
 
-        <div class="page-numbers">
+        <div class="show-page-numbers">
           @for (page of visiblePages; track $index) {
             @if (page === '...') {
               <span class="pagination-ellipsis">...</span>

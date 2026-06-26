@@ -792,14 +792,14 @@ h6 {
   color: #4b5563;
 }
 
-.pagination-controls {
+.pagination-btn-controls {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 12px;
 }
 
-.page-numbers {
+.show-page-numbers {
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -844,6 +844,10 @@ h6 {
 .btn-page:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+.btn-action.start-encounter:disabled{
+background-color: #6365632d;
+color:#ffffff
 }
 
 .btn-page-number {

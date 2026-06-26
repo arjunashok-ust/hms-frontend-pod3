@@ -671,11 +671,6 @@ textarea {
   flex: 1 1 200px;
 }
 
-.searchable-dropdown-container {
-  position: relative;
-  z-index: 50;
-}
-
 .dropdown-list {
   position: absolute;
   top: 100%;
@@ -686,9 +681,10 @@ textarea {
   border-radius: 8px;
   max-height: 250px;
   overflow-y: auto;
-  z-index: 9999;
+  width: 100%;
   margin-top: 4px;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  z-index: 1050; /* A high value to ensure it's above other elements */
 }
 
 .dropdown-item {
@@ -769,7 +765,7 @@ textarea {
   gap: 12px;
 }
 
-.page-numbers {
+.clickable-page-numbers {
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -840,4 +836,15 @@ textarea {
 .btn-page-number.active {
   background-color: #7c3aed;
   color: white;
+}
+
+
+.searchable-dropdown-container {
+  position: relative;
+}
+
+.cell {
+  display: flex;
+  align-items: center;
+  gap: 16px;
 }

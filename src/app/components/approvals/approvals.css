@@ -291,7 +291,7 @@ h6 {
   gap: 12px;
 }
 
-.page-numbers {
+.show-page-numbers {
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -317,11 +317,11 @@ h6 {
   transition: 0.2s;
 }
 
-.btn-page.prev {
+.btn-page.previous {
   background-color: #f3f4f6;
   color: #4b5563;
 }
-.btn-page.prev:hover:not(:disabled) {
+.btn-page.previous:hover:not(:disabled) {
   background-color: #e5e7eb;
 }
 
@@ -362,4 +362,17 @@ h6 {
 .btn-page-number.active {
   background-color: #3267a3;
   color: white;
+}
+
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }

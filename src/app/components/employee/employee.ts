@@ -63,7 +63,6 @@ export class Employee implements OnInit {
 
   medicalRoles = ['DOCTOR', 'NURSE', 'LAB_TECH', 'PHARMACIST'];
 
-  // Base roles without ADMIN (we will add it dynamically if permitted)
   baseRoles = [
     { value: 'DOCTOR', label: 'Doctor' },
     { value: 'NURSE', label: 'Nurse' },
@@ -73,7 +72,7 @@ export class Employee implements OnInit {
     { value: 'CASHIER', label: 'Cashier' },
   ];
 
-  availableRoles: any[] = []; // Will be populated in ngOnInit
+  availableRoles: any[] = []; 
 
   rowSubSlotsMap: { [uniqueId: string]: GeneratedSlot[] } = {};
   availableHours: string[] = Array.from(
@@ -113,8 +112,6 @@ export class Employee implements OnInit {
     });
   }
 
-
-  // 1. Update setupAvailableRoles() to extract permissions
   setupAvailableRoles() {
     this.availableRoles = [...this.baseRoles];
 
@@ -124,7 +121,6 @@ export class Employee implements OnInit {
         try {
           const payload = JSON.parse(atob(token.split('.')[1].replaceAll('-', '+').replaceAll('_', '/')));
 
-          // Save permissions to the class variable
           this.userPermissions = payload.permissions || [];
 
           if (this.userPermissions.includes('CREATE_ADMIN')) {
@@ -137,13 +133,11 @@ export class Employee implements OnInit {
     }
   }
 
-  // 2. Add these two helper methods anywhere inside the class:
   canEditEmployee(emp: any): boolean {
     const role = this.getRoleString(emp.role).toUpperCase();
     if (role === 'ADMIN') {
       return this.userPermissions.includes('UPDATE_ADMIN');
     }
-    // Standard permission check for non-admin employees
     return this.userPermissions.includes('UPDATE_EMPLOYEE');
   }
 
@@ -152,7 +146,6 @@ export class Employee implements OnInit {
     if (role === 'ADMIN') {
       return this.userPermissions.includes('DELETE_ADMIN');
     }
-    // Standard permission check for non-admin employees
     return this.userPermissions.includes('DELETE_EMPLOYEE');
   }
 
@@ -202,19 +195,19 @@ export class Employee implements OnInit {
 
   generatePagesArray() {
     const total = this.totalPages;
-    const current = this.currentPage;
+    const thisPage = this.currentPage;
 
     if (total <= 6) {
       this.visiblePages = Array.from({ length: total }, (_, i) => i + 1);
       return;
     }
 
-    if (current <= 3) {
+    if (thisPage <= 3) {
       this.visiblePages = [1, 2, 3, 4, '...', total];
-    } else if (current >= total - 2) {
+    } else if (thisPage >= total - 2) {
       this.visiblePages = [1, '...', total - 3, total - 2, total - 1, total];
     } else {
-      this.visiblePages = [1, '...', current - 1, current, current + 1, '...', total];
+      this.visiblePages = [1, '...', thisPage - 1, thisPage, thisPage + 1, '...', total];
     }
   }
 

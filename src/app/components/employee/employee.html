@@ -79,7 +79,7 @@
     <div class="filter-bar">
       <div class="search-box">
         <input
-        aria-label="search"
+          aria-label="search"
           type="text"
           placeholder="Search Employee"
           [(ngModel)]="searchTerm"
@@ -89,14 +89,25 @@
       </div>
 
       <div class="dropdown-group">
-        <select aria-label="dept" class="form-control" [(ngModel)]="selectedDepartment" (change)="applyFilters()">
+        <label for="departmentFilter" class="visually-hidden">Filter by Department</label>
+        <select
+          id="departmentFilter"
+          class="form-control"
+          [(ngModel)]="selectedDepartment"
+          (change)="applyFilters()"
+        >
           <option value="">All Departments</option>
           @for (dept of departments; track dept) {
             <option [value]="dept">{{ dept }}</option>
           }
         </select>
 
-        <select aria-label="status" class="form-control" [(ngModel)]="selectedStatus" (change)="applyFilters()">
+        <select
+          aria-label="Filter by Status"
+          class="form-control"
+          [(ngModel)]="selectedStatus"
+          (change)="applyFilters()"
+        >
           <option value="">All Statuses</option>
           <option value="ACTIVE">Active</option>
           <option value="INACTIVE">Inactive</option>
@@ -450,14 +461,16 @@
                         <option value="SATURDAY">Saturday</option>
                         <option value="SUNDAY">Sunday</option>
                       </select>
-                      <select formControlName="startTime" class="form-control">
+                      <label for="startTime" class="visually-hidden">Start Time</label>
+                      <select id="startTime" formControlName="startTime" class="form-control">
                         <option value="" disabled selected>Start</option>
                         @for (hour of availableHours; track hour) {
                           <option [value]="hour">{{ hour }}</option>
                         }
                       </select>
                       <span style="font-size: 0.8rem; color: #6b7280">to</span>
-                      <select formControlName="endTime" class="form-control">
+                      <label for="endTime" class="visually-hidden">End Time</label>
+                      <select id="endTime" formControlName="endTime" class="form-control">
                         <option value="" disabled selected>End</option>
                         @for (hour of availableHours; track hour) {
                           <option [value]="hour">{{ hour }}</option>

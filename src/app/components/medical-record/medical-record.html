@@ -43,7 +43,7 @@
             <div class="input-row">
               <div class="input-group">
                 <label for="appointment"><i class="bi bi-calendar"></i> APPOINTMENT ID *</label>
-                <div class="searchable-dropdown-container">
+                <div class="searchable-dropdown-container position-relative">
                   <input
                     aria-label="appointmentInput"
                     type="text"
@@ -52,7 +52,6 @@
                     [value]="selectedFormAppointment"
                     (input)="onAppointmentInput($event)"
                     (focus)="isFormAppointmentOpen = true; displayFormAppointments = appointments"
-                    (blur)="closeDropdowns('formAppointment')"
                     [class.is-invalid]="
                       recordForm.get('appointmentId')?.invalid &&
                       recordForm.get('appointmentId')?.touched
@@ -81,15 +80,15 @@
 
               <div class="input-group">
                 <label for="patient"><i class="bi bi-person"></i> PATIENT *</label>
-                <div class="searchable-dropdown-container">
+                <div class="searchable-dropdown-container position-relative">
                   <input
+                    aria-label="patientInput"
                     type="text"
                     class="form-control custom-select"
                     placeholder="Search Name or ID..."
                     [value]="selectedFormPatient"
                     (input)="onPatientInput($event, 'form')"
                     (focus)="isFormPatientOpen = true; displayFormPatients = patients"
-                    (blur)="closeDropdowns('formPatient')"
                     [class.is-invalid]="
                       recordForm.get('patientId')?.invalid && recordForm.get('patientId')?.touched
                     "
@@ -118,15 +117,15 @@
 
               <div class="input-group">
                 <label for="doctor"><i class="bi bi-person-badge"></i> DOCTOR *</label>
-                <div class="searchable-dropdown-container">
+                <div class="searchable-dropdown-container position-relative">
                   <input
+                    aria-label="doctorInput"
                     type="text"
                     class="form-control custom-select"
                     placeholder="Search Name or ID..."
                     [value]="selectedFormDoctor"
                     (input)="onDoctorInput($event, 'form')"
                     (focus)="openFormDoctorDropdown()"
-                    (blur)="closeDropdowns('formDoctor')"
                     [readonly]="!userPermissions.includes('CREATE_RECORD_FOR_ANYONE')"
                     [class.is-invalid]="
                       recordForm.get('doctorEmployeeId')?.invalid &&
@@ -165,6 +164,7 @@
             <div class="input-group complaint full-width">
               <label for="complaint">COMPLAINT</label>
               <textarea
+                aria-label="complaint"
                 class="scrollable-textarea-complaint"
                 formControlName="complaint"
                 placeholder="Specify the patient's complaint"
@@ -173,6 +173,7 @@
             <div class="input-group symptoms full-width mt-3">
               <label for="syptoms">SYMPTOMS</label>
               <textarea
+                aria-label="symptoms"
                 class="scrollable-textarea-symptoms"
                 formControlName="symptoms"
                 placeholder="Detail the symptoms, duration, and severity"
@@ -181,6 +182,7 @@
             <div class="input-group diagnosis mt-3">
               <label for="diagnosis">DIAGNOSIS</label>
               <textarea
+                aria-label="diagnosis"
                 class="scrollable-textarea-diagnosis"
                 formControlName="diagnosis"
                 placeholder="Document the provisional or final diagnosis"
@@ -208,13 +210,37 @@
                   <tbody>
                     @for (med of medications.controls; track $index; let i = $index) {
                       <tr [formGroupName]="i">
-                        <td><input type="text" formControlName="name" placeholder="Name" /></td>
-                        <td><input type="text" formControlName="dosage" placeholder="50mg" /></td>
                         <td>
-                          <input type="text" formControlName="frequency" placeholder="Twice" />
+                          <input
+                            aria-label="name"
+                            type="text"
+                            formControlName="name"
+                            placeholder="Name"
+                          />
                         </td>
                         <td>
-                          <input type="text" formControlName="duration" placeholder="5 days" />
+                          <input
+                            aria-label="dosage"
+                            type="text"
+                            formControlName="dosage"
+                            placeholder="50mg"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            aria-label="freq"
+                            type="text"
+                            formControlName="frequency"
+                            placeholder="Twice"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            aria-label="duration"
+                            type="text"
+                            formControlName="duration"
+                            placeholder="5 days"
+                          />
                         </td>
                         <td>
                           <button
@@ -254,13 +280,24 @@
                     @for (obs of medicalObservations.controls; track $index; let i = $index) {
                       <tr [formGroupName]="i">
                         <td>
-                          <input type="text" formControlName="metricName" placeholder="metric" />
-                        </td>
-                        <td>
-                          <input type="text" formControlName="metricValue" placeholder="value" />
+                          <input
+                            aria-label="metric"
+                            type="text"
+                            formControlName="metricName"
+                            placeholder="metric"
+                          />
                         </td>
                         <td>
                           <input
+                            aria-label="value"
+                            type="text"
+                            formControlName="metricValue"
+                            placeholder="value"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            aria-label="recordedTime"
                             type="datetime-local"
                             formControlName="recordedTime"
                             placeholder="datetime"
@@ -405,12 +442,23 @@
             <td class="text-purple fw-bold">{{ rec.recordCode }}</td>
             <td>{{ rec.appointmentId }}</td>
             <td>
-              <div class="user-cell">
-                <div class="avatar bg-purple">{{ getInitials(rec.patientId) }}</div>
-                <div class="fw-bold">{{ rec.patientId }}</div>
+              <div class="cell patient">
+                <div class="avatar bg-purple">{{ getInitials(rec.patientName) }}</div>
+                <div>
+                  <div>{{ rec.patientName }}</div>
+                  <div>{{ rec.patientId }}</div>
+                </div>
               </div>
             </td>
-            <td>{{ rec.doctorEmployeeId }}</td>
+            <td>
+              <div class="cell patient">
+                <div class="avatar bg-purple">{{ getInitials(rec.doctorName) }}</div>
+                <div>
+                  <div>Dr. {{ rec.doctorName }}</div>
+                  <div>{{ rec.doctorEmployeeId }}</div>
+                </div>
+              </div>
+            </td>
             <td>
               <span class="truncate-text">{{ rec.diagnosis || 'Pending' }}</span>
             </td>
@@ -458,7 +506,7 @@
           <i class="bi bi-chevron-left"></i> Prev
         </button>
 
-        <div class="page-numbers">
+        <div class="clickable-page-numbers">
           @for (page of visiblePages; track $index) {
             @if (page === '...') {
               <span class="pagination-ellipsis">...</span>
@@ -490,7 +538,8 @@
     [record]="selectedRecordForView"
     [patients]="patients"
     [doctors]="doctors"
-    (onCloseModal)="closeViewModal()" 
-    (onDeleteRecord)="deleteRecord($event); closeViewModal()">
+    (closeModal)="closeViewModal()"
+    (deleteRecord)="deleteRecord($event); closeViewModal()"
+  >
   </app-record-details-modal>
 }

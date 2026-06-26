@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, ChangeDetectorRef, PLATFORM_ID } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef, PLATFORM_ID, ChangeDetectionStrategy, HostListener } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
@@ -17,7 +17,8 @@ import { environment } from '../../../environments';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, HasPermissionDirective, RecordDetailsModalComponent],
   templateUrl: './medical-record.html',
-  styleUrls: ['./medical-record.css']
+  styleUrls: ['./medical-record.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MedicalRecordComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
@@ -33,7 +34,6 @@ export class MedicalRecordComponent implements OnInit {
   recordForm!: FormGroup;
   currentUser: any = null;
   userPermissions: string[] = [];
-
 
   records: any[] = [];
   patients: any[] = [];
@@ -63,16 +63,55 @@ export class MedicalRecordComponent implements OnInit {
   isFormAppointmentOpen = false; displayFormAppointments: any[] = []; selectedFormAppointment = '';
   filterDate = '';
 
-
   showViewModal = false;
   selectedRecordForView: any = null;
-
 
   viewRecord(record: any) {
     this.selectedRecordForView = record;
     this.showViewModal = true;
   }
 
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent) {
+    const target = event.target as HTMLElement;
+
+    // 1. If the click happened completely outside any dropdown, close all of them.
+    if (!target.closest('.searchable-dropdown-container')) {
+      this.isFormAppointmentOpen = false;
+      this.isFormPatientOpen = false;
+      this.isFilterPatientOpen = false;
+      this.isFormDoctorOpen = false;
+      this.isFilterDoctorOpen = false;
+      this.cdr.markForCheck();
+      return;
+    }
+
+    // 2. If the click happened INSIDE a dropdown container, close the others.
+    const clickedContainer = target.closest('.searchable-dropdown-container');
+    const clickedInput = clickedContainer?.querySelector('input');
+    const label = clickedInput?.getAttribute('aria-label');
+    const isFilterGroup = target.closest('.filter-group');
+
+    if (label !== 'appointmentInput') this.isFormAppointmentOpen = false;
+
+    if (label === 'patientInput') {
+      if (isFilterGroup) this.isFormPatientOpen = false;
+      else this.isFilterPatientOpen = false;
+    } else {
+      this.isFormPatientOpen = false;
+      this.isFilterPatientOpen = false;
+    }
+    if (label === 'doctorInput') {
+      this.isFilterDoctorOpen = false;
+    } else if (label === 'doctorControl') {
+      this.isFormDoctorOpen = false;
+    } else {
+      this.isFormDoctorOpen = false;
+      this.isFilterDoctorOpen = false;
+    }
+
+    this.cdr.markForCheck();
+  }
 
   closeViewModal() {
     this.showViewModal = false;
@@ -116,6 +155,8 @@ export class MedicalRecordComponent implements OnInit {
   removeObservation(i: number) { this.medicalObservations.removeAt(i); }
 
   fetchCurrentUserAndData() {
+    this.isLoading = true;
+    this.cdr.markForCheck();
     this.apiService.getCurrentUser().subscribe({
       next: (res: any) => {
         this.currentUser = res.user?.profile || res.user || res;
@@ -152,15 +193,13 @@ export class MedicalRecordComponent implements OnInit {
             const apt = this.appointments.find(a => a.appointmentCode === this.pendingAppointmentId);
             if (apt) this.selectAppointment(apt);
           }
-
-
           this.applyFilters();
         });
       },
       error: (err) => {
         console.error("Failed to fetch user data on refresh", err);
         this.isLoading = false;
-        this.cdr.detectChanges();
+        this.cdr.markForCheck();
       }
     });
   }
@@ -184,7 +223,7 @@ export class MedicalRecordComponent implements OnInit {
     this.isFormAppointmentOpen = true;
     this.selectedFormAppointment = (event.target as HTMLInputElement).value;
     this.displayFormAppointments = this.appointments.filter(apt => (apt.appointmentCode || '').toLowerCase().includes(term));
-    this.cdr.detectChanges();
+    this.cdr.markForCheck();
   }
 
   selectAppointment(apt: any) {
@@ -200,7 +239,7 @@ export class MedicalRecordComponent implements OnInit {
       const doc = this.doctors.find(d => d.employeeCode === apt.doctorEmployeeID);
       if (doc) this.selectDoctor(doc, 'form');
     }
-    this.cdr.detectChanges();
+    this.cdr.markForCheck();
   }
 
   onPatientInput(event: Event, source: 'form' | 'filter') {
@@ -217,7 +256,7 @@ export class MedicalRecordComponent implements OnInit {
       if (!val) { this.filterPatientId = ''; this.applyFilters(); }
       this.displayFilterPatients = this.patients.filter(p => (p.name || '').toLowerCase().includes(term) || (p.UHID || '').toLowerCase().includes(term));
     }
-    this.cdr.detectChanges();
+    this.cdr.markForCheck();
   }
 
   onDoctorInput(event: Event, source: 'form' | 'filter') {
@@ -234,7 +273,7 @@ export class MedicalRecordComponent implements OnInit {
       if (!val) { this.filterDoctorId = ''; this.applyFilters(); }
       this.displayFilterDoctors = this.doctors.filter(d => (d.name || '').toLowerCase().includes(term) || (d.employeeCode || '').toLowerCase().includes(term));
     }
-    this.cdr.detectChanges();
+    this.cdr.markForCheck();
   }
 
   selectPatient(pat: any, source: 'form' | 'filter') {
@@ -248,7 +287,7 @@ export class MedicalRecordComponent implements OnInit {
       this.isFilterPatientOpen = false;
       this.applyFilters();
     }
-    this.cdr.detectChanges();
+    this.cdr.markForCheck();
   }
 
   selectDoctor(doc: any, source: 'form' | 'filter') {
@@ -262,7 +301,7 @@ export class MedicalRecordComponent implements OnInit {
       this.isFilterDoctorOpen = false;
       this.applyFilters();
     }
-    this.cdr.detectChanges();
+    this.cdr.markForCheck();
   }
 
   onFilterDateChange(event: Event) {
@@ -277,7 +316,7 @@ export class MedicalRecordComponent implements OnInit {
       if (key === 'formDoctor') this.isFormDoctorOpen = false;
       if (key === 'filterDoctor') this.isFilterDoctorOpen = false;
       if (key === 'formAppointment') this.isFormAppointmentOpen = false;
-      this.cdr.detectChanges();
+      this.cdr.markForCheck();
     }, 150);
   }
 
@@ -331,12 +370,12 @@ export class MedicalRecordComponent implements OnInit {
         this.stats.review = this.records.filter(r => r.status === 'DRAFT').length;
 
         this.isLoading = false;
-        this.cdr.detectChanges();
+        this.cdr.markForCheck();
       },
       error: () => {
         this.isLoading = false;
         this.toast.error("Failed to load records");
-        this.cdr.detectChanges();
+        this.cdr.markForCheck();
       }
     });
   }
@@ -434,7 +473,7 @@ export class MedicalRecordComponent implements OnInit {
     }
   }
 
-  getInitials(name: string): string { return name ? name.substring(0, 2).toUpperCase() : 'MR'; }
+  getInitials(name: string | undefined): string { return name ? name.substring(0, 2).toUpperCase() : 'MR'; }
 
   private getTokenPayload(): any {
 
@@ -447,19 +486,19 @@ export class MedicalRecordComponent implements OnInit {
 
   generatePagesArray() {
     const total = this.totalPages;
-    const current = this.currentPage;
+    const currentShowingPage = this.currentPage;
 
     if (total <= 6) {
       this.visiblePages = Array.from({ length: total }, (_, i) => i + 1);
       return;
     }
 
-    if (current <= 3) {
+    if (currentShowingPage <= 3) {
       this.visiblePages = [1, 2, 3, 4, '...', total];
-    } else if (current >= total - 2) {
+    } else if (currentShowingPage >= total - 2) {
       this.visiblePages = [1, '...', total - 3, total - 2, total - 1, total];
     } else {
-      this.visiblePages = [1, '...', current - 1, current, current + 1, '...', total];
+      this.visiblePages = [1, '...', currentShowingPage - 1, currentShowingPage, currentShowingPage + 1, '...', total];
     }
   }
 

@@ -9,9 +9,9 @@ export class HasPermissionDirective {
     private requiredPermissions: string[] = [];
     private requireAllLogic = false;
 
-    private templateRef = inject(TemplateRef<any>);
-    private viewContainer = inject(ViewContainerRef);
-    private platformId = inject(PLATFORM_ID);
+    private readonly templateRef = inject(TemplateRef<any>);
+    private readonly viewContainer = inject(ViewContainerRef);
+    private readonly platformId = inject(PLATFORM_ID);
 
     @Input() set hasPermission(val: string | string[]) {
         this.requiredPermissions = Array.isArray(val) ? val : [val];

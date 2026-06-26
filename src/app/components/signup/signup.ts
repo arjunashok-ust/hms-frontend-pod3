@@ -1,4 +1,4 @@
-import { Component, inject, ChangeDetectorRef } from '@angular/core';
+import { Component, inject, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
 import {
   ReactiveFormsModule,
   FormBuilder,
@@ -25,6 +25,7 @@ import {
   imports: [FormsModule, ReactiveFormsModule, CommonModule, RouterLink],
   templateUrl: './signup.html',
   styleUrl: './signup.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Signup {
   private readonly auth = inject(Auth);

@@ -32,7 +32,6 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     catchError((error: HttpErrorResponse) => {
       if (error.status === 401 && isPlatformBrowser(platformId) && !req.url.includes('/auth/refresh')) {
         if (isRefreshing) {
-          // If a refresh is already in progress, wait for it to complete
           return refreshTokenSubject.pipe(
             filter(token => token != null),
             take(1),
@@ -45,12 +44,12 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
           isRefreshing = true;
           refreshTokenSubject.next(null);
 
-          return authService.refreshAccessToken().pipe( // 1. Attempt to refresh
-            switchMap((refreshResponse) => { // 2. If refresh is successful...
+          return authService.refreshAccessToken().pipe( 
+            switchMap((refreshResponse) => {
               isRefreshing = false;
               const newToken = refreshResponse?.accessToken;
               if (!newToken) {
-                // If refresh call is successful but returns no token, logout
+               
                 authService.logout();
                 router.navigate(['/login']);
                 return throwError(() => new Error('Token refresh failed: No new token received'));
@@ -61,13 +60,12 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
                 setHeaders: { Authorization: `Bearer ${newToken}` },
                 withCredentials: true,
               });
-              return next(retryReq); // 3. Retry the original request with the new token
+              return next(retryReq); 
             }),
-            catchError((refreshError) => { // 4. This ONLY catches errors from refreshAccessToken()
+            catchError((refreshError) => { 
               isRefreshing = false;
-              authService.logout(); // Logout user
-              router.navigate(['/login']); // Redirect to login
-              // Return the error from the refresh token call
+              authService.logout(); 
+              router.navigate(['/login']); 
               return throwError(() => refreshError);
             })
           );

@@ -163,19 +163,19 @@ export class Appointment implements OnInit {
 
   generatePagesArray() {
     const total = this.totalPages;
-    const current = this.currentPage;
+    const nowPage = this.currentPage;
 
     if (total <= 6) {
       this.visiblePages = Array.from({ length: total }, (_, i) => i + 1);
       return;
     }
 
-    if (current <= 3) {
+    if (nowPage <= 3) {
       this.visiblePages = [1, 2, 3, 4, '...', total];
-    } else if (current >= total - 2) {
+    } else if (nowPage >= total - 2) {
       this.visiblePages = [1, '...', total - 3, total - 2, total - 1, total];
     } else {
-      this.visiblePages = [1, '...', current - 1, current, current + 1, '...', total];
+      this.visiblePages = [1, '...', nowPage - 1, nowPage, nowPage + 1, '...', total];
     }
   }
 
@@ -521,14 +521,32 @@ export class Appointment implements OnInit {
     }
   }
 
+  canStartEncounter(apt: any): boolean {
+    const now = new Date();
+    const appointmentDate = new Date(apt.date);
+    const startTime = (apt.timeSlot || '00:00').split(' - ')[0];
+    const [hours, minutes] = startTime.split(':').map(Number);
+    const appointmentDateTime = new Date(appointmentDate.getFullYear(), appointmentDate.getMonth(), appointmentDate.getDate(), hours, minutes);
+
+    return now >= appointmentDateTime;
+  }
+
   startEncounter(apt: any) {
-
-
     if (apt.status === 'Cancelled' || apt.status.toUpperCase() === 'PENDING') {
       this.toast.error('Cannot start encounter for this appointment status.');
       return;
     }
 
+    const now = new Date();
+    const appointmentDate = new Date(apt.date);
+    const startTime = (apt.timeSlot || '00:00').split(' - ')[0];
+    const [hours, minutes] = startTime.split(':').map(Number);
+    const appointmentDateTime = new Date(appointmentDate.getFullYear(), appointmentDate.getMonth(), appointmentDate.getDate(), hours, minutes);
+
+    if (now < appointmentDateTime) {
+      this.toast.error('Cannot start encounter before the scheduled appointment time.');
+      return;
+    }
 
     this.router.navigate(['/records'], {
       queryParams: { appointmentId: apt.appointmentCode }

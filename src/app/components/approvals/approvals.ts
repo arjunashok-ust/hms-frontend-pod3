@@ -78,19 +78,19 @@ export class Approvals implements OnInit {
 
   generatePagesArray() {
     const total = this.totalPages;
-    const current = this.currentPage;
+    const currentlyShowing = this.currentPage;
 
     if (total <= 6) {
-      this.visiblePages = Array.from({ length: total }, (_, i) => i + 1);
+      this.visiblePages = Array.from({ length: total }, (_, num) => num + 1);
       return;
     }
 
-    if (current <= 3) {
+    if (currentlyShowing <= 3) {
       this.visiblePages = [1, 2, 3, 4, '...', total];
-    } else if (current >= total - 2) {
+    } else if (currentlyShowing >= total - 2) {
       this.visiblePages = [1, '...', total - 3, total - 2, total - 1, total];
     } else {
-      this.visiblePages = [1, '...', current - 1, current, current + 1, '...', total];
+      this.visiblePages = [1, '...', currentlyShowing - 1, currentlyShowing, currentlyShowing + 1, '...', total];
     }
   }
 
