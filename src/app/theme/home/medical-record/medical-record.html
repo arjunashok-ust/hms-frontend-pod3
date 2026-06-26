@@ -126,7 +126,6 @@
         <span class="panel-subtitle">New Entry</span>
         <h2>Medical Record</h2>
       </div>
-      <div class="panel-actions"></div>
     </div>
 
     <form [formGroup]="medicalForm">
@@ -534,10 +533,10 @@
             aria-label="notes"
           ></textarea>
           <small *ngIf="medicalForm.get('notes')?.touched">
-                <span *ngIf="medicalForm.get('notes')?.errors?.['pattern']"
-                  >Only letters,numbers and hyphen is allowed</span
-                >
-              </small>
+            <span *ngIf="medicalForm.get('notes')?.errors?.['pattern']"
+              >Only letters,numbers and hyphen is allowed</span
+            >
+          </small>
         </div>
       </div>
 
@@ -633,6 +632,19 @@
       <div>
         <span class="panel-subtitle">Records</span>
         <h2>All Medical Records</h2>
+      </div>
+      <div class="panel-tools">
+        <div class="search-box">
+          <i class="bi bi-search"></i>
+          <input
+            type="text"
+            placeholder="Search medical record"
+            id="search-box"
+            aria-label="search-box"
+            [(ngModel)]="selectedText"
+            (input)="fetchMedicalRecordPageDetails()"
+          />
+        </div>
       </div>
     </div>
     <div class="table-wrapper">

@@ -65,7 +65,6 @@ export class EditPatientComponent implements OnInit {
 
     this.userService.getPatientProfile(userEmail).subscribe({
       next: (res) => {
-        console.log(res);
         this.patientData = res;
         this.updateForm.patchValue({
           name: this.patientData?.name,

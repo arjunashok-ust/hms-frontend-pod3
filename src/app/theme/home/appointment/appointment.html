@@ -135,6 +135,7 @@
               class="form-input"
               id="appointmentDate"
               formControlName="date"
+              [min]="minDate"
               required
             />
             <small *ngIf="appointmentForm.get('date')?.touched">
@@ -267,7 +268,7 @@
             <i class="bi bi-search"></i>
             <input
               type="text"
-              placeholder="Search by name, email or patient id..."
+              placeholder="Search appointment"
               [(ngModel)]="searchText"
               (input)="fetchAppointments()"
               id="search-box"

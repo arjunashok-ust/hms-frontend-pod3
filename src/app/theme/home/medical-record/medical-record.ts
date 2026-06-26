@@ -6,7 +6,14 @@ import {
   inject,
   OnInit,
 } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormArray,
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { UserService } from '../../../services/user.service';
 import { EmployeeModel, PatientModel } from '../../../models/user.model';
 import { ToastrService } from 'ngx-toastr';
@@ -21,7 +28,13 @@ import { HasPermissionDirective } from '../../../directive/has-permission.direct
 
 @Component({
   selector: 'app-medical-record',
-  imports: [ReactiveFormsModule, CommonModule, MatAutocompleteModule, HasPermissionDirective],
+  imports: [
+    ReactiveFormsModule,
+    CommonModule,
+    MatAutocompleteModule,
+    HasPermissionDirective,
+    FormsModule,
+  ],
   templateUrl: './medical-record.html',
   styleUrl: './medical-record.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -57,6 +70,7 @@ export class MedicalRecordComponent implements OnInit {
   page = 1;
   limit = 5;
   total = 0;
+  selectedText = '';
 
   medicalRecords: MedicalRecordModel[] | [] = [];
   medicalRecord: MedicalRecordModel | null = null;
@@ -199,18 +213,20 @@ export class MedicalRecordComponent implements OnInit {
 
   fetchMedicalRecordPageDetails() {
     const doctorId = this.role === 'Doctor' ? (this.employeeId ?? undefined) : undefined;
-
-    this.medicalRecordService.getMedicalRecords(this.page, this.limit, doctorId).subscribe({
-      next: (res) => {
-        this.totalPages = res.totalPages;
-        this.medicalRecords = res.data;
-        this.mapPatientAndDoctors(this.medicalRecords);
-        this.cd.detectChanges();
-      },
-      error: (err) => {
-        this.toast.error(err?.error?.message || 'Error getting medical records');
-      },
-    });
+    this.medicalRecordService
+      .getMedicalRecords(this.selectedText, this.page, this.limit, doctorId)
+      .subscribe({
+        next: (res) => {
+          if(res.data.length == 0) return;
+          this.totalPages = res.totalPages;
+          this.medicalRecords = res.data;
+          this.mapPatientAndDoctors(this.medicalRecords);
+          this.cd.detectChanges();
+        },
+        error: (err) => {
+          this.toast.error(err?.error?.message || 'Error getting medical records');
+        },
+      });
   }
 
   fetchMedicalRecordStats() {

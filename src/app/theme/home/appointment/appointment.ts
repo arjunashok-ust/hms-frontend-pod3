@@ -159,6 +159,10 @@ export class AppointmentComponent implements OnInit {
     );
   }
 
+  minDate = new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+    .toISOString()
+    .slice(0, 10);
+
   onDoctorChange() {
     let doctorEmployeeId = this.appointmentForm.get('doctorEmployeeId')?.value;
 
@@ -180,6 +184,8 @@ export class AppointmentComponent implements OnInit {
       return;
     }
 
+    const now = new Date();
+
     const bookedSlots = this.appointments
       ?.filter((apt) => {
         const apt_date = new Date(apt.date);
@@ -191,7 +197,23 @@ export class AppointmentComponent implements OnInit {
       })
       .map((apt) => apt.timeSlot);
 
-    this.doctorTimeSlots = allSlots?.filter((slot) => !bookedSlots?.includes(slot)) || [];
+    this.doctorTimeSlots =
+      allSlots?.filter((slot) => {
+        if (bookedSlots?.includes(slot)) return false;
+
+        const startTime = slot.split('-')[0];
+        const [hour, minute] = startTime.split(':').map((s) => Number.parseInt(s.trim(), 10));
+
+        const slotTime = new Date(date);
+        slotTime.setHours(hour, minute, 0, 0);
+
+        if (date.toDateString() == slotTime.toDateString()) {
+          return slotTime > now;
+        }
+
+        return true;
+      }) || [];
+
     this.appointmentForm.patchValue({ timeSlot: '' });
     this.cd.detectChanges();
   }

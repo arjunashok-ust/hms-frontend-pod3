@@ -96,7 +96,6 @@ export class EditEmployeeComponent implements OnInit {
     this.userService.getSingleUser(userEmail).subscribe({
       next: (res) => {
         this.userData = res;
-        console.log(res);
         this.updateForm.patchValue({
           name: res.name,
           email: res.email,

@@ -20,8 +20,7 @@ a {
   min-height: 100vh;
   background:
     radial-gradient(circle at top left, #dbeafe 0%, transparent 30%),
-    radial-gradient(circle at top right, #ede9fe 0%, transparent 30%),
-    #f8fafc;
+    radial-gradient(circle at top right, #ede9fe 0%, transparent 30%), #f8fafc;
   font-family: 'Google Sans', sans-serif;
 }
 
@@ -286,7 +285,7 @@ a {
   padding: 14px 16px;
   border-radius: 16px;
   background: #f8fafc;
-  border: 1px solid transparent;
+  border: 1px solid rgba(0, 0, 0, 0.2);
   transition: 0.3s ease;
 }
 
@@ -486,7 +485,7 @@ a {
   color: #f27b7b;
 }
 
-.no-task{
+.no-task {
   background: rgba(108, 169, 255, 0.12);
   color: #1d1d1d;
 }

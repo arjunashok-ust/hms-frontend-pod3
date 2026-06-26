@@ -31,10 +31,16 @@ export class MedicalRecordService {
   }
 
   // Get Medical Records
-  getMedicalRecords(page: number, limit: number, doctorId?: string): Observable<any> {
+  getMedicalRecords(
+    selectedText: string,
+    page: number,
+    limit: number,
+    doctorId?: string,
+  ): Observable<any> {
     return this.http
       .get(`${this.api.backend_url}/medicalRecord/getMedicalRecords`, {
         params: {
+          selectedText,
           page,
           limit,
           ...(doctorId && { doctorId: doctorId }),
