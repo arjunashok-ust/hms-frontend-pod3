@@ -1,7 +1,3 @@
-/**
- * Mirrors hms-backend-pod-3/src/constants/permissions.js exactly.
- * Always reference these constants — never raw strings — to avoid drift from the backend.
- */
 export const PERMISSIONS = {
   VIEW_DASHBOARD: 'view:dashboard',
   VIEW_EMPLOYEE: 'view:employee',
@@ -28,6 +24,9 @@ export const PERMISSIONS = {
   COMPLETE_APPOINTMENT: 'complete:appointment',
 
   APPROVE_EMPLOYEE: 'approve:employee',
+
+  // Admin-tier management (create/update/delete admin & super_admin) — super_admin only
+  MANAGE_ADMIN: 'manage:admin',
 
   EDIT_APPOINTMENT: 'edit:appointment',
   EDIT_PATIENT: 'edit:patient',

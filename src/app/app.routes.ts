@@ -22,7 +22,7 @@ export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: 'login', component: Login },
   { path: 'signup', component: Signup },
-  {path: 'reset-password',component: ResetPassword,canActivate: [FirstLoginGuard]},
+  { path: 'reset-password', component: ResetPassword, canActivate: [FirstLoginGuard] },
 
   /* PROTECTED ROUTES */
   {
@@ -80,14 +80,14 @@ export const routes: Routes = [
         },
       },
 
-      {
-        path: 'node-menu',
-        component: NodeMenu,
-        canActivate: [roleGuard],
-        data: {
-          roles: ['admin', 'super_admin'],
-        },
-      },
+      // {
+      //   path: 'node-menu',
+      //   component: NodeMenu,
+      //   canActivate: [roleGuard],
+      //   data: {
+      //     roles: ['admin', 'super_admin'],
+      //   },
+      // },
 
       {
         path: 'medical-records',
@@ -98,14 +98,14 @@ export const routes: Routes = [
         },
       },
 
-      {
-        path: 'role-menu',
-        component: RoleMenu,
-        canActivate: [roleGuard],
-        data: {
-          roles: ['admin', 'super_admin'],
-        },
-      },
+      // {
+      //   path: 'role-menu',
+      //   component: RoleMenu,
+      //   canActivate: [roleGuard],
+      //   data: {
+      //     roles: ['admin', 'super_admin'],
+      //   },
+      // },
     ],
   },
 

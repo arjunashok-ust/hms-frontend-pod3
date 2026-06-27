@@ -207,23 +207,19 @@
 
                             <div class="action-buttons">
 
-                               <button
-  *hasPermission="PERMISSIONS.EDIT_EMPLOYEE"
-  class="icon-btn edit-btn"
-  (click)="editEmployee(employee)">
+                                <button *ngIf="canEditEmployee(employee)" class="icon-btn edit-btn"
+                                    (click)="editEmployee(employee)">
 
-  Edit
+                                    Edit
 
-</button>
+                                </button>
 
-                               <button
-  *hasPermission="PERMISSIONS.DELETE_EMPLOYEE"
-  class="icon-btn delete-btn"
-  (click)="deleteEmployee(employee.employeeId)">
+                                <button *ngIf="canDeleteEmployee(employee)" class="icon-btn delete-btn"
+                                    (click)="deleteEmployee(employee.employeeId)">
 
-  Delete
+                                    Delete
 
-</button>
+                                </button>
 
                             </div>
 
@@ -235,13 +231,9 @@
 
             </table>
 
-            <app-pagination-controls
-                [page]="currentPage"
-                [totalPages]="totalPages"
-                [hasNextPage]="hasNextPage"
-                [hasPrevPage]="hasPrevPage"
-                (pageChange)="onPageChange($event)">
-            </app-pagination-controls>
+            <app-pagination [page]="currentPage" [totalPages]="totalPages" [hasNextPage]="hasNextPage"
+                [hasPrevPage]="hasPrevPage" (pageChange)="onPageChange($event)">
+            </app-pagination>
 
         </div>
 
@@ -379,6 +371,11 @@
 
                         <option value="lab_Tech">
                             Lab Technician
+                        </option>
+
+                        <!-- Admin-tier: only a super admin (manage:admin) may create an admin -->
+                        <option *hasPermission="PERMISSIONS.MANAGE_ADMIN" value="admin">
+                            Admin
                         </option>
 
                     </select>

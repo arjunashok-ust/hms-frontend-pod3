@@ -2,15 +2,6 @@ import { Directive, Input, OnDestroy, TemplateRef, ViewContainerRef } from '@ang
 import { Subscription } from 'rxjs';
 import { PermissionService } from '../services/permission';
 
-/**
- * Structural directive that shows its host element only if the current
- * user's permissions (fetched fresh from the backend, never from the JWT)
- * include at least one of the given permission strings.
- *
- * Usage:
- *   <button *hasPermission="PERMISSIONS.CREATE_APPOINTMENT">Book</button>
- *   <button *hasPermission="[PERMISSIONS.EDIT_PATIENT, PERMISSIONS.DELETE_PATIENT]">...</button>
- */
 @Directive({
   selector: '[hasPermission]',
   standalone: true,

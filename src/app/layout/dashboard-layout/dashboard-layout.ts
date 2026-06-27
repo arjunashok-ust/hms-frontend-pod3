@@ -16,32 +16,24 @@ import { Auth } from '../../services/auth';
 import { PermissionService } from '../../services/permission';
 
 @Component({
-
   selector: 'app-dashboard-layout',
-
   standalone: true,
-
   imports: [
     CommonModule,
     RouterOutlet,
     Navbar,
     Sidebar
   ],
-
   templateUrl: './dashboard-layout.html',
-
   styleUrl: './dashboard-layout.css'
-
 })
 
 export class DashboardLayout implements OnInit {
 
   constructor(
-
     public router:Router,
     readonly auth: Auth,
     readonly permissionService: PermissionService
-
   ){}
 
   ngOnInit(): void {

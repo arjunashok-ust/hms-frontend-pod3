@@ -7,20 +7,18 @@ import { RouterLink } from '@angular/router';
 import { HasPermissionDirective } from '../directives/has-permission.directive';
 import { PermissionService } from '../services/permission';
 import { PERMISSIONS } from '../constants/permissions';
-import { PaginationControls } from '../shared/pagination-controls/pagination-controls';
+import { Pagination } from '../pagination/pagination';
+
 @Component({
   selector: 'app-employee',
-
   standalone: true,
-
-  imports: [CommonModule, RouterLink, FormsModule, HasPermissionDirective, PaginationControls],
-
+  imports: [CommonModule, RouterLink, FormsModule, HasPermissionDirective, Pagination],
   templateUrl: './employee.html',
-
   styleUrl: './employee.css',
 })
+
 export class Employee implements OnInit {
-  /* EXPOSED FOR TEMPLATE *hasPermission CHECKS */
+  
   readonly PERMISSIONS = PERMISSIONS;
 
   isEditMode = false;
@@ -33,13 +31,11 @@ export class Employee implements OnInit {
 
   departments: string[] = [];
 
-  /* PAGINATION — note: the text/department/status filters below only filter
-     the CURRENTLY LOADED page, not the whole dataset, since the backend has
-     no search filter for employees. Real cross-page search is a separate feature. */
   currentPage = 1;
   totalPages = 1;
   hasNextPage = false;
   hasPrevPage = false;
+  loading = false;
 
   /* FILTERS */
 
@@ -48,23 +44,13 @@ export class Employee implements OnInit {
   selectedDepartment = '';
 
   selectedStatus = '';
-
-  /* MODAL */
-
   showModal = false;
-
   /* ALERTS */
-
   errorMessage = '';
-
   successMessage = '';
-
   /* SLOT DATA */
-
   hours: number[] = Array.from({ length: 24 }, (_, i) => i);
-
   generatedSlots: string[] = [];
-
   /* FORM */
 
   employeeForm: any = {
@@ -108,7 +94,6 @@ export class Employee implements OnInit {
   ngOnInit(): void {
     if (globalThis.window) {
       const token = localStorage.getItem('token');
-
       console.log(token);
 
       if (token) {
@@ -117,38 +102,67 @@ export class Employee implements OnInit {
     }
   }
 
+  isProtectedRole(role: string): boolean {
+    return role === 'admin' || role === 'super_admin';
+  }
+
+  get canManageAdmins(): boolean {
+    return this.permissionService.has(PERMISSIONS.MANAGE_ADMIN);
+  }
+
+  canEditEmployee(employee: any): boolean {
+    if (!this.permissionService.has(PERMISSIONS.EDIT_EMPLOYEE)) {
+      return false;
+    }
+    if (this.isProtectedRole(employee.role)) {
+      return this.canManageAdmins;
+    }
+    return true;
+  }
+
+  canDeleteEmployee(employee: any): boolean {
+    if (!this.permissionService.has(PERMISSIONS.DELETE_EMPLOYEE)) {
+      return false;
+    }
+    if (this.isProtectedRole(employee.role)) {
+      return this.canManageAdmins;
+    }
+    return true;
+  }
+
   /* LOAD EMPLOYEES */
 
   loadEmployees() {
     console.log(localStorage.getItem('token'));
 
-    this.auth.getEmployees({ page: this.currentPage, limit: 10 }).subscribe({
+    this.loading = true;
+    this.auth.getEmployees({ page: this.currentPage, limit: 5 }).subscribe({
       next: (response: any) => {
         console.log(response.data[0]);
-
         this.employeeData = response.data || [];
-
         this.filteredEmployeeData = response.data || [];
-
         this.departments = Array.from(
           new Set(this.employeeData.map((emp: any) => String(emp.department))),
         );
-
         this.totalPages = response.meta?.totalPages || 1;
         this.hasNextPage = response.meta?.hasNextPage || false;
         this.hasPrevPage = response.meta?.hasPrevPage || false;
-
+        this.loading = false;
         this.cd.detectChanges();
       },
 
       error: (err: any) => {
         console.log(err);
+        this.loading = false;
+        this.cd.detectChanges();
       },
     });
   }
 
   /* PAGE CHANGE */
   onPageChange(page: number) {
+    /* Ignore clicks while a page request is in flight (dup-request + race guard). */
+    if (this.loading) return;
     this.currentPage = page;
     this.loadEmployees();
   }
@@ -162,11 +176,8 @@ export class Employee implements OnInit {
         employee.email?.toLowerCase().includes(this.selectedText.toLowerCase()) ||
         employee.employeeId?.toLowerCase().includes(this.selectedText.toLowerCase());
 
-      const departmentMatch =
-        !this.selectedDepartment || employee.department === this.selectedDepartment;
-
+      const departmentMatch =!this.selectedDepartment || employee.department === this.selectedDepartment;
       const statusMatch = !this.selectedStatus || String(employee.status) === this.selectedStatus;
-
       return searchMatch && departmentMatch && statusMatch;
     });
   }
@@ -175,9 +186,7 @@ export class Employee implements OnInit {
 
   openModal() {
     this.isEditMode = false;
-
     this.selectedEmployeeId = '';
-
     this.showModal = true;
   }
 
@@ -185,13 +194,9 @@ export class Employee implements OnInit {
 
   closeModal() {
     this.showModal = false;
-
     this.isEditMode = false;
-
     this.selectedEmployeeId = '';
-
     this.errorMessage = '';
-
     this.successMessage = '';
   }
 
@@ -199,14 +204,10 @@ export class Employee implements OnInit {
 
   generateTimeSlots() {
     this.errorMessage = '';
-
     const startHour = Number(this.employeeForm.startHour);
-
     const endHour = Number(this.employeeForm.endHour);
-
     if (startHour >= endHour) {
       this.errorMessage = 'Start hour must be less than end hour';
-
       return;
     }
 
@@ -215,7 +216,6 @@ export class Employee implements OnInit {
     for (let i = startHour; i < endHour; i++) {
       this.generatedSlots.push(
         `${this.formatHour(i)} - ${this.formatHourHalf(i)}`,
-
         `${this.formatHourHalf(i)} - ${this.formatHour(i + 1)}`,
       );
     }
@@ -243,9 +243,7 @@ export class Employee implements OnInit {
 
   formatHour(hour: number) {
     const period = hour >= 12 ? 'PM' : 'AM';
-
     const formattedHour = hour % 12 || 12;
-
     return `${formattedHour}:00 ${period}`;
   }
 
@@ -253,21 +251,17 @@ export class Employee implements OnInit {
 
   formatHourHalf(hour: number) {
     const period = hour >= 12 ? 'PM' : 'AM';
-
     const formattedHour = hour % 12 || 12;
-
     return `${formattedHour}:30 ${period}`;
   }
 
   /* ADD EMPLOYEE */
   addEmployee(form: any) {
     this.errorMessage = '';
-
     this.successMessage = '';
 
     if (form.invalid) {
       this.errorMessage = 'Please fill all required fields';
-
       return;
     }
 

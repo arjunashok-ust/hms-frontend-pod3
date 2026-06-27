@@ -14,11 +14,11 @@
 
 .sidebar-section{
 
-    width:245px;
+    width:270px;
 
-    min-width:245px;
+    min-width:270px;
 
-    background:white;
+    background:#f8fafc;
 
     border-right:1px solid #e2e8f0;
 
@@ -40,9 +40,9 @@
 
 .main-section{
 
-    margin-left:245px;
+    margin-left:270px;
 
-    width:calc(100% - 245px);
+    width:calc(100% - 270px);
 
     min-height:100vh;
 

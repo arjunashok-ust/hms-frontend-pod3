@@ -1,48 +1,31 @@
-import {
+import { CommonModule } from '@angular/common';
 
-  CommonModule
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 
-} from "@angular/common";
+import { FormsModule } from '@angular/forms';
 
-import {
+import { Auth } from '../services/auth';
 
-  Component,
-  OnInit,
-  ChangeDetectorRef
-
-} from "@angular/core";
-
-import { FormsModule } from "@angular/forms";
-
-import { Auth } from "../services/auth";
-
-import { Router } from "@angular/router";
-import { HasPermissionDirective } from "../directives/has-permission.directive";
-import { PERMISSIONS } from "../constants/permissions";
+import { Router } from '@angular/router';
+import { HasPermissionDirective } from '../directives/has-permission.directive';
+import { PERMISSIONS } from '../constants/permissions';
 
 @Component({
-
-  selector: "app-user",
+  selector: 'app-user',
 
   standalone: true,
 
-  imports: [
-    CommonModule,
-    FormsModule,
-    HasPermissionDirective
-  ],
+  imports: [CommonModule, FormsModule, HasPermissionDirective],
 
-  templateUrl: "./user.html",
+  templateUrl: './user.html',
 
-  styleUrl: "./user.css",
-
+  styleUrl: './user.css',
 })
-
 export class User implements OnInit {
   /* EXPOSED FOR TEMPLATE *hasPermission CHECKS */
   readonly PERMISSIONS = PERMISSIONS;
 
-  user:any = {};
+  user: any = {};
 
   loading = true;
 
@@ -61,40 +44,26 @@ export class User implements OnInit {
   };
 
   constructor(
+    readonly auth: Auth,
 
-    readonly auth:Auth,
+    readonly cd: ChangeDetectorRef,
 
-    readonly cd:ChangeDetectorRef,
-
-    readonly router:Router
-
+    readonly router: Router,
   ) {}
 
   ngOnInit(): void {
-
     this.loadProfile();
-
   }
 
   /* LOAD PROFILE */
 
-  loadProfile(){
-
+  loadProfile() {
     if (globalThis.window) {
+      const token = localStorage.getItem('token');
 
-      const token =
-
-        localStorage.getItem(
-          'token'
-        );
-
-      if(token){
-
-        this.auth.getCurrentUser()
-        .subscribe({
-
-          next:(response:any)=>{
-
+      if (token) {
+        this.auth.getCurrentUser().subscribe({
+          next: (response: any) => {
             console.log(response);
 
             /* USER DATA */
@@ -104,76 +73,50 @@ export class User implements OnInit {
             this.loading = false;
 
             this.cd.detectChanges();
-
           },
 
-          error:(err:any)=>{
-
+          error: (err: any) => {
             console.log(err);
 
             this.loading = false;
 
             this.cd.detectChanges();
-
-          }
-
+          },
         });
-
       }
-
     }
-
   }
 
   /* USER INITIAL */
 
-  getInitial(name:string):string{
-
-    return name
-
-      ? name.charAt(0)
-        .toUpperCase()
-
-      : '?';
-
+  getInitial(name: string): string {
+    return name ? name.charAt(0).toUpperCase() : '?';
   }
 
   /* FORMAT DATE */
 
-  formatDate(date:string):string{
-
-    if(!date){
-
+  formatDate(date: string): string {
+    if (!date) {
       return '—';
-
     }
 
-    return new Date(date)
-    .toLocaleDateString(
-
+    return new Date(date).toLocaleDateString(
       'en-IN',
 
       {
-
-        day:'2-digit',
-        month:'short',
-        year:'numeric'
-
-      }
-
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric',
+      },
     );
-
   }
 
   /* LOGOUT */
 
-  logout(){
-
+  logout() {
     localStorage.removeItem('token');
     localStorage.removeItem('role');
-
     this.router.navigate(['/login']);
-
   }
 
   /* EDIT PROFILE */
@@ -181,7 +124,6 @@ export class User implements OnInit {
   enterEditMode() {
     this.errorMessage = '';
     this.successMessage = '';
-
     this.editForm = {
       name: this.user?.name || '',
       phone: this.user?.phone || '',
@@ -219,5 +161,4 @@ export class User implements OnInit {
       },
     });
   }
-
 }

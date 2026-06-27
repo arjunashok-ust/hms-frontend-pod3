@@ -4,16 +4,15 @@ import { FormsModule } from '@angular/forms';
 import { Auth } from '../services/auth';
 import { HasPermissionDirective } from '../directives/has-permission.directive';
 import { PERMISSIONS } from '../constants/permissions';
-import { PaginationControls } from '../shared/pagination-controls/pagination-controls';
+import { Pagination } from '../pagination/pagination';
 
 @Component({
   selector: 'app-patients',
   standalone: true,
-  imports: [CommonModule, FormsModule, HasPermissionDirective, PaginationControls],
+  imports: [CommonModule, FormsModule, HasPermissionDirective, Pagination],
   templateUrl: './patients.html',
-  styleUrl: './patients.css'
+  styleUrl: './patients.css',
 })
-
 export class Patients implements OnInit {
   /* EXPOSED FOR TEMPLATE *hasPermission CHECKS */
   readonly PERMISSIONS = PERMISSIONS;
@@ -37,9 +36,10 @@ export class Patients implements OnInit {
 
   successMessage = '';
   errorMessage = '';
-//Max Date
+  //Max Date
   maxDate = new Date().toISOString().split('T')[0];
   formData: any = {
+    email: '',
     name: '',
     phone: '',
     gender: 'Male',
@@ -49,35 +49,28 @@ export class Patients implements OnInit {
     address: {
       line1: '',
       city: '',
-      postcode: ''
-    }
+      postcode: '',
+    },
   };
 
-  constructor(readonly auth: Auth, readonly cdr: ChangeDetectorRef) { }
+  constructor(
+    readonly auth: Auth,
+    readonly cdr: ChangeDetectorRef,
+  ) {}
 
   ngOnInit(): void {
-
-     if (globalThis.window)  {
-
+    if (globalThis.window) {
       const token = localStorage.getItem('token');
 
       console.log('PATIENT TOKEN', token);
 
       if (token) {
-
         this.loadPatients();
         this.loadPatientStats();
-
-      }
-
-      else {
-
+      } else {
         this.errorMessage = 'No token found';
-
       }
-
     }
-
   }
 
   loadPatientStats() {
@@ -90,13 +83,13 @@ export class Patients implements OnInit {
       },
       error: (err: any) => {
         console.log(err);
-      }
+      },
     });
   }
 
   loadPatients() {
     this.loading = true;
-    this.auth.getAllPatients({ page: this.currentPage, limit: 10 }).subscribe({
+    this.auth.getAllPatients({ page: this.currentPage, limit: 5 }).subscribe({
       next: (response: any) => {
         console.log(response);
         this.patients = response.data || [];
@@ -111,12 +104,16 @@ export class Patients implements OnInit {
         console.log(err);
         this.loading = false;
         this.cdr.detectChanges();
-      }
+      },
     });
   }
 
   /* PAGE CHANGE */
   onPageChange(page: number) {
+    /* Ignore page clicks while a request is in flight — prevents duplicate
+       requests and the out-of-order race where a slow earlier page overwrites
+       a faster later one. */
+    if (this.loading) return;
     this.currentPage = page;
     this.loadPatients();
   }
@@ -126,6 +123,11 @@ export class Patients implements OnInit {
     this.successMessage = '';
 
     if (form.invalid) {
+      /* Fields pre-filled by editPatient() are never "touched" by the user,
+         so their inline error stays hidden even though they're blocking
+         submission. Marking everything touched here surfaces exactly which
+         field is wrong instead of just the generic banner. */
+      form.form.markAllAsTouched();
       this.errorMessage = 'Please fill all required fields';
       return;
     }
@@ -146,7 +148,7 @@ export class Patients implements OnInit {
           console.log(err);
           this.errorMessage = err?.error?.message || 'Unable To Update Patient';
           this.cdr.detectChanges();
-        }
+        },
       });
       return;
     }
@@ -164,7 +166,7 @@ export class Patients implements OnInit {
         console.log(err);
         this.errorMessage = err?.error?.message || 'Unable To Create Patient';
         this.cdr.detectChanges();
-      }
+      },
     });
   }
 
@@ -173,6 +175,7 @@ export class Patients implements OnInit {
     this.selectedPatientUHID = patient.UHID;
 
     this.formData = {
+      email: patient.email || '',
       name: patient.name,
       phone: patient.phone,
       gender: patient.gender,
@@ -182,8 +185,8 @@ export class Patients implements OnInit {
       address: {
         line1: patient.address?.line1 || '',
         city: patient.address?.city || '',
-        postcode: patient.address?.postcode || ''
-      }
+        postcode: patient.address?.postcode || '',
+      },
     };
   }
 
@@ -204,12 +207,13 @@ export class Patients implements OnInit {
       error: (err: any) => {
         console.log(err);
         this.cdr.detectChanges();
-      }
+      },
     });
   }
 
   resetForm() {
     this.formData = {
+      email: '',
       name: '',
       phone: '',
       gender: 'Male',
@@ -219,8 +223,8 @@ export class Patients implements OnInit {
       address: {
         line1: '',
         city: '',
-        postcode: ''
-      }
+        postcode: '',
+      },
     };
   }
 
@@ -238,5 +242,4 @@ export class Patients implements OnInit {
     }
     return age;
   }
-
 }

@@ -21,6 +21,22 @@ export class Sidebar implements OnInit {
   user: any;
   nodes: any[] = [];
 
+  private readonly ICONS: Record<string, string> = {
+    '/dashboard': 'fa-solid fa-gauge-high',
+    '/employees': 'fa-solid fa-users',
+    '/approval': 'fa-solid fa-clipboard-check',
+    '/patients': 'fa-solid fa-hospital-user',
+    '/profile': 'fa-solid fa-user',
+    '/appointments': 'fa-solid fa-calendar-check',
+    '/node-menu': 'fa-solid fa-sitemap',
+    '/medical-records': 'fa-solid fa-file-medical',
+    '/role-menu': 'fa-solid fa-user-shield',
+  };
+
+  getIcon(path: string): string {
+    return this.ICONS[path] || 'fa-solid fa-circle';
+  }
+
   constructor(
     readonly auth: Auth,
 

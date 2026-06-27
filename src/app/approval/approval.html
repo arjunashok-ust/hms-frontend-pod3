@@ -115,9 +115,17 @@
                     </td>
 
                     <td>
-                        <button *hasPermission="PERMISSIONS.APPROVE_EMPLOYEE" class="approve-btn" (click)="approveEmployee(user.employeeId)">
-                            Approve
-                        </button>
+                        <div class="action-buttons">
+                            <button *hasPermission="PERMISSIONS.APPROVE_EMPLOYEE" class="approve-btn"
+                                (click)="approveEmployee(user.employeeId)">
+                                Approve
+                            </button>
+
+                            <button *hasPermission="PERMISSIONS.APPROVE_EMPLOYEE" class="reject-btn"
+                                (click)="rejectEmployee(user.employeeId)">
+                                Reject
+                            </button>
+                        </div>
                     </td>
 
                 </tr>
@@ -126,13 +134,9 @@
 
         </table>
 
-        <app-pagination-controls
-            [page]="currentPage"
-            [totalPages]="totalPages"
-            [hasNextPage]="hasNextPage"
-            [hasPrevPage]="hasPrevPage"
-            (pageChange)="onPageChange($event)">
-        </app-pagination-controls>
+        <app-pagination [page]="currentPage" [totalPages]="totalPages" [hasNextPage]="hasNextPage"
+            [hasPrevPage]="hasPrevPage" (pageChange)="onPageChange($event)">
+        </app-pagination>
 
     </div>
 

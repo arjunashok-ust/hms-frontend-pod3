@@ -1,52 +1,32 @@
 <!-- RESET PASSWORD PAGE -->
 
-<ng-container
-  *ngIf="
+<ng-container *ngIf="
     router.url === '/reset-password';
     else dashboardLayout
-  "
->
-
+  ">
   <router-outlet></router-outlet>
-
 </ng-container>
-
 <!-- NORMAL DASHBOARD -->
-
 <ng-template #dashboardLayout>
 
   <div class="layout-container">
 
     <!-- SIDEBAR -->
-
     <div class="sidebar-section">
-
       <app-sidebar></app-sidebar>
-
     </div>
 
     <!-- MAIN -->
-
     <div class="main-section">
-
       <!-- NAVBAR -->
-
       <div class="navbar-section">
-
         <app-navbar></app-navbar>
-
       </div>
-
+      
       <!-- PAGE -->
-
       <div class="page-content">
-
         <router-outlet></router-outlet>
-
       </div>
-
     </div>
-
   </div>
-
 </ng-template>

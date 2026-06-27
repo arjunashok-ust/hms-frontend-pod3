@@ -1,90 +1,61 @@
-import { Component, OnInit,ChangeDetectorRef  } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Auth } from '../services/auth';
-
 
 @Component({
   selector: 'app-dashboard',
 
   standalone: true,
 
-  imports: [
-    CommonModule
-  ],
+  imports: [CommonModule],
 
   templateUrl: './dashboard.html',
 
   styleUrl: './dashboard.css',
 })
-
 export class Dashboard implements OnInit {
 
-  // LOADING
-
   isLoading = true;
+  // ERROR
+  errorMessage = '';
+  // DASHBOARD STATS — null until a successful response actually arrives,
+  // so a failed/forbidden request can never render as "everything is zero".
 
-  // DASHBOARD STATS
-
-  stats: any = {
-
-    totalEmployees: 0,
-
-    activeEmployees: 0,
-
-    pendingApprovals: 0,
-
-    pendingVerifications: 0,
-
-    totalPatients: 0,
-
-    totalDepartments: 0,
-
-    totalAppointments: 0
-
-  };
+  stats: any = null;
 
   constructor(
     readonly auth: Auth,
-    readonly cd: ChangeDetectorRef
-  ) { }
+    readonly cd: ChangeDetectorRef,
+  ) {}
 
   ngOnInit(): void {
-
     if (globalThis.window) {
-
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem('token');
 
       if (token) {
-
         this.loadDashboardStats();
-
       }
-
     }
-
   }
 
   loadDashboardStats() {
+    this.errorMessage = '';
 
     this.auth.getDashboardStats().subscribe({
-
       next: (response: any) => {
         console.log(response);
         this.stats = response.data;
         this.isLoading = false;
         this.cd.detectChanges();
-
       },
 
       error: (err: any) => {
         console.log(err);
+        this.stats = null;
+        this.errorMessage = err?.error?.message || 'Unable to load dashboard stats';
         this.isLoading = false;
         this.cd.detectChanges();
-
-      }
-
+      },
     });
-
   }
-
 }

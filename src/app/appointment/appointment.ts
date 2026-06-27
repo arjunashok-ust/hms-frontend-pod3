@@ -5,12 +5,12 @@ import { FormsModule } from '@angular/forms';
 import { Auth } from '../services/auth';
 import { HasPermissionDirective } from '../directives/has-permission.directive';
 import { PERMISSIONS } from '../constants/permissions';
-import { PaginationControls } from '../shared/pagination-controls/pagination-controls';
+import { Pagination } from '../pagination/pagination';
 
 @Component({
   selector: 'app-appointment',
   standalone: true,
-  imports: [CommonModule, FormsModule, HasPermissionDirective, PaginationControls],
+  imports: [CommonModule, FormsModule, HasPermissionDirective, Pagination],
   templateUrl: './appointment.html',
   styleUrl: './appointment.css',
 })
@@ -25,6 +25,13 @@ export class Appointment implements OnInit {
   /* APPOINTMENT DATA */
   appointments: any[] = [];
   doctors: any[] = [];
+  patients: any[] = [];
+
+  /* Earliest selectable date = today (blocks past-date booking) */
+  minDate = new Date().toISOString().split('T')[0];
+
+  /* Raw slots of the selected doctor, before past-time filtering */
+  private doctorSlots: string[] = [];
 
   totalAppointments = 0;
   bookedAppointments = 0;
@@ -94,6 +101,20 @@ export class Appointment implements OnInit {
 
     this.loadAppointments();
     this.loadAppointmentUI();
+    this.loadPatients();
+  }
+
+  /* LOAD PATIENTS (all, for the dropdown — same idea as doctors) */
+  loadPatients() {
+    this.auth.getAllPatients({ limit: 100 }).subscribe({
+      next: (response: any) => {
+        this.patients = response.data || [];
+        this.cdr.detectChanges();
+      },
+      error: (err: any) => {
+        console.log(err);
+      },
+    });
   }
 
   onDoctorChange() {
@@ -101,15 +122,57 @@ export class Appointment implements OnInit {
       (doctor) => doctor.employeeId === this.formData.doctorEmployeeId,
     );
 
-    this.availableSlots = selectedDoctor?.availabilitySlots || [];
-
+    this.doctorSlots = selectedDoctor?.availabilitySlots || [];
     this.formData.timeSlot = '';
+    this.refreshSlots();
+  }
+
+  /* DATE CHANGED — re-filter slots (drop past times if the date is today) */
+  onDateChange() {
+    this.formData.timeSlot = '';
+    this.refreshSlots();
+  }
+
+  /* Show only slots that haven't already passed when booking for today;
+     future dates show all of the doctor's slots. */
+  private refreshSlots() {
+    const today = new Date().toISOString().split('T')[0];
+
+    if (!this.formData.date || this.formData.date !== today) {
+      this.availableSlots = [...this.doctorSlots];
+      return;
+    }
+
+    const now = new Date();
+    this.availableSlots = this.doctorSlots.filter((slot) => {
+      const start = this.slotStartDate(slot, this.formData.date);
+      return start ? start.getTime() > now.getTime() : true;
+    });
+  }
+
+  /* Parses an appointment day + a slot's START time ("9:00 AM - 9:30 AM" -> 9:00)
+     into a Date so past slots can be filtered out. Returns null if unparseable. */
+  private slotStartDate(slot: string, dateStr: string): Date | null {
+    if (!slot || !dateStr) return null;
+
+    const startStr = slot.split(' - ')[0]?.trim();
+    const [time, period] = (startStr || '').split(' ');
+    if (!time || !period) return null;
+
+    let [hours, minutes] = time.split(':').map(Number);
+    if (Number.isNaN(hours) || Number.isNaN(minutes)) return null;
+
+    if (period.toUpperCase() === 'PM' && hours !== 12) hours += 12;
+    if (period.toUpperCase() === 'AM' && hours === 12) hours = 0;
+
+    const [year, month, day] = dateStr.split('-').map(Number);
+    return new Date(year, month - 1, day, hours, minutes, 0, 0);
   }
   /* LOAD APPOINTMENTS */
   loadAppointments() {
     this.loading = true;
 
-    this.auth.getAllAppointments({ page: this.currentPage, limit: 10 }).subscribe({
+    this.auth.getAllAppointments({ page: this.currentPage, limit: 5 }).subscribe({
       next: (response: any) => {
         console.log(response);
         this.appointments = response.data || [];
@@ -129,6 +192,8 @@ export class Appointment implements OnInit {
 
   /* PAGE CHANGE */
   onPageChange(page: number) {
+    /* Ignore clicks while a page request is in flight (dup-request + race guard). */
+    if (this.loading) return;
     this.currentPage = page;
     this.loadAppointments();
   }
@@ -151,7 +216,8 @@ export class Appointment implements OnInit {
 
             this.formData.doctorEmployeeId = loggedInDoctor.employeeId;
 
-            this.availableSlots = loggedInDoctor.availabilitySlots || [];
+            this.doctorSlots = loggedInDoctor.availabilitySlots || [];
+            this.refreshSlots();
           }
         }
 

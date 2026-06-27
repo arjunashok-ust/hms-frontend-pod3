@@ -2,6 +2,7 @@
 
     <button class="page-btn nav-btn" [disabled]="!hasPrevPage" (click)="prev()">
         <i class="fa-solid fa-chevron-left"></i>
+        <span>Prev</span>
     </button>
 
     <ng-container *ngFor="let p of visiblePages">
@@ -12,6 +13,7 @@
     </ng-container>
 
     <button class="page-btn nav-btn" [disabled]="!hasNextPage" (click)="next()">
+        <span>Next</span>
         <i class="fa-solid fa-chevron-right"></i>
     </button>
 

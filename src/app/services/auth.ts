@@ -30,9 +30,19 @@ export class Auth {
 
   constructor(readonly http: HttpClient) {}
 
-  /* LOGIN */
+  /* LOGIN — withCredentials so the server can set the httpOnly refresh cookie */
   login(data: any) {
-    return this.http.post(`${this.apiUrl}/login`, data);
+    return this.http.post(`${this.apiUrl}/login`, data, { withCredentials: true });
+  }
+
+  /* REFRESH ACCESS TOKEN — sends the httpOnly refresh cookie, gets a new access token */
+  refresh() {
+    return this.http.post(`${this.apiUrl}/refresh`, {}, { withCredentials: true });
+  }
+
+  /* LOGOUT — revokes the refresh session server-side and clears the cookie */
+  logout() {
+    return this.http.post(`${this.apiUrl}/logout`, {}, { withCredentials: true });
   }
 
   /* FORM SIGNUP */
@@ -154,6 +164,10 @@ export class Auth {
 
   approveEmployee(employeeId: string) {
     return this.http.put(`${this.apiUrl}/approveEmployee/${employeeId}`, {});
+  }
+
+  rejectEmployee(employeeId: string) {
+    return this.http.delete(`${this.apiUrl}/rejectEmployee/${employeeId}`);
   }
 
   getApprovalStats() {

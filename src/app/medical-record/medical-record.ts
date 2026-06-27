@@ -5,12 +5,12 @@ import { Auth } from '../services/auth';
 import { HasPermissionDirective } from '../directives/has-permission.directive';
 import { PermissionService } from '../services/permission';
 import { PERMISSIONS } from '../constants/permissions';
-import { PaginationControls } from '../shared/pagination-controls/pagination-controls';
+import { Pagination } from '../pagination/pagination';
 
 @Component({
   selector: 'app-medical-record',
   standalone: true,
-  imports: [CommonModule, FormsModule, HasPermissionDirective, PaginationControls],
+  imports: [CommonModule, FormsModule, HasPermissionDirective, Pagination],
   templateUrl: './medical-record.html',
   styleUrl: './medical-record.css',
 })
@@ -86,7 +86,6 @@ export class MedicalRecord implements OnInit {
     this.loadRecords();
   }
 
-  /* DROPDOWN SOURCES — limit:100 so the default limit:10 pagination doesn't truncate the list */
   loadDropdownSources() {
     this.auth.getAllPatients({ limit: 100 }).subscribe({
       next: (res: any) => {
@@ -119,7 +118,7 @@ export class MedicalRecord implements OnInit {
 
     this.auth.getMedicalRecords({
       page: this.currentPage,
-      limit: 10,
+      limit: 5,
       patientId: this.filterPatientId || undefined,
       status: this.filterStatus || undefined,
     }).subscribe({
@@ -142,9 +141,7 @@ export class MedicalRecord implements OnInit {
     this.loadStatusCounts();
   }
 
-  /* DRAFT/FINAL COUNTS — must reflect the whole filtered dataset, not just the
-     current page, so these are separate count-only queries (limit:1 keeps the
-     payload tiny; totalCount comes from countDocuments(), unaffected by limit). */
+
   loadStatusCounts() {
     this.auth.getMedicalRecords({
       limit: 1,
@@ -178,13 +175,13 @@ export class MedicalRecord implements OnInit {
 
   /* PAGE CHANGE */
   onPageChange(page: number) {
+    /* Ignore clicks while a page request is in flight (dup-request + race guard). */
+    if (this.loading) return;
     this.currentPage = page;
     this.loadRecords();
   }
 
-  /* APPOINTMENT DROPDOWN MUST ONLY OFFER APPOINTMENTS THAT ACTUALLY BELONG
-     TO THE CURRENTLY SELECTED PATIENT + DOCTOR — otherwise a record could be
-     saved pointing at someone else's appointment. */
+  
   onPatientOrDoctorChange() {
     const { patientId, doctorEmployeeId } = this.recordForm;
 
@@ -229,7 +226,7 @@ export class MedicalRecord implements OnInit {
     this.selectedRecordCode = '';
     this.resetForm();
 
-    /* DOCTORS CREATE RECORDS UNDER THEIR OWN NAME — no point asking them to pick themselves */
+    
     if (this.currentUser?.role === 'doctor') {
       this.recordForm.doctorEmployeeId = this.currentUser.id;
       this.onPatientOrDoctorChange();
@@ -334,15 +331,12 @@ export class MedicalRecord implements OnInit {
     });
   }
 
-  /* DOCTORS HOLD EDIT_MEDICAL_RECORD BUT CAN ONLY EDIT THEIR OWN RECORDS (server-enforced) —
-     row-level check, can't be a static *hasPermission. */
+
   canEditRecord(record: any): boolean {
     if (!this.permissionService.has(PERMISSIONS.EDIT_MEDICAL_RECORD)) {
       return false;
     }
 
-    /* FINAL records additionally require UPDATE_FINALIZED_MEDICAL_RECORD —
-       currently only super_admin and admin hold it, so doctors never edit a FINAL record. */
     if (record.status === 'FINAL' && !this.permissionService.has(PERMISSIONS.UPDATE_FINALIZED_MEDICAL_RECORD)) {
       return false;
     }
@@ -353,7 +347,7 @@ export class MedicalRecord implements OnInit {
     return true;
   }
 
-  /* DISPLAY HELPERS — IDs aren't human-readable on their own */
+
   patientLabel(patientId: string): string {
     const p = this.patients.find((x: any) => x.UHID === patientId);
     return p ? `${p.name} (${p.UHID})` : patientId;

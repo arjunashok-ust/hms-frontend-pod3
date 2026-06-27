@@ -48,9 +48,14 @@
         <!-- PATIENT + DOCTOR -->
         <div class="form-row">
           <div class="input-group">
-            <label for="patient id">PATIENT ID</label>
-            <input type="text" placeholder="e.g. UHID-000001" [(ngModel)]="formData.patientId" name="patientId"
-              required />
+            <label for="patient id">PATIENT</label>
+            <select [(ngModel)]="formData.patientId" name="patientId" required>
+              <option value="">Select Patient</option>
+
+              <option *ngFor="let patient of patients" [value]="patient.UHID">
+                {{ patient.name }} ({{ patient.UHID }})
+              </option>
+            </select>
           </div>
 
           <div class="input-group">
@@ -75,7 +80,8 @@
         <div class="form-row">
           <div class="input-group">
             <label for="appointment date">APPOINTMENT DATE</label>
-            <input type="date" [(ngModel)]="formData.date" name="date" required />
+            <input type="date" [(ngModel)]="formData.date" name="date" [min]="minDate" (ngModelChange)="onDateChange()"
+              required />
           </div>
 
           <div class="input-group">
@@ -223,13 +229,13 @@
       </tbody>
     </table>
 
-    <app-pagination-controls
+    <app-pagination
       [page]="currentPage"
       [totalPages]="totalPages"
       [hasNextPage]="hasNextPage"
       [hasPrevPage]="hasPrevPage"
       (pageChange)="onPageChange($event)">
-    </app-pagination-controls>
+    </app-pagination>
   </div>
 
   <!-- EDIT MODAL -->

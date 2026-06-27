@@ -267,13 +267,15 @@
 
   border-radius:18px;
 
-  border:2px dashed #d1d5db;
+  border:1px solid #cbd5e1;
 
-  background:#fafafa;
+  background:white;
 
   padding:0 18px;
 
   font-size:15px;
+
+  color:#0f172a;
 
   outline:none;
 
@@ -286,7 +288,7 @@
 
   border:2px solid #2563eb;
 
-  background:white;
+  box-shadow:0 0 0 4px rgba(37,99,235,0.12);
 
 }
 

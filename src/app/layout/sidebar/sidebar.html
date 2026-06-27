@@ -19,7 +19,8 @@
     <div class="menu">
 
         <a *ngFor="let node of nodes" [routerLink]="node.path" routerLinkActive="active">
-            {{ node.name }}
+            <i [class]="getIcon(node.path)"></i>
+            <span>{{ node.name }}</span>
         </a>
 
     </div>

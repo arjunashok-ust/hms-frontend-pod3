@@ -6,7 +6,7 @@
 
     padding:28px 22px;
 
-    background:white;
+    background:#f8fafc;
 
     display:flex;
 
@@ -56,6 +56,12 @@
 
 .menu a{
 
+    display:flex;
+
+    align-items:center;
+
+    gap:14px;
+
     text-decoration:none;
 
     color:#0f172a;
@@ -69,6 +75,16 @@
     transition:0.3s ease;
 
     cursor:pointer;
+
+}
+
+.menu a i{
+
+    font-size:18px;
+
+    width:20px;
+
+    text-align:center;
 
 }
 

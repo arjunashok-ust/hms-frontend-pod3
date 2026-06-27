@@ -88,6 +88,30 @@
 
             <div class="form-row">
 
+                <!-- EMAIL -->
+                <div class="input-group">
+                    <label for="email">EMAIL</label>
+
+                    <input type="email" [(ngModel)]="formData.email" name="email" #emailField="ngModel" required email>
+
+                    <div class="validation-error" *ngIf="emailField.invalid && emailField.touched">
+
+                        <span *ngIf="emailField.errors?.['required']">
+                            Email is required
+                        </span>
+
+                        <span *ngIf="emailField.errors?.['email']">
+                            Enter a valid email address
+                        </span>
+
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="form-row">
+
+                <!-- GENDER -->
                 <div class="input-group">
                     <label for="gender">GENDER</label>
 
@@ -293,13 +317,13 @@
 
         </table>
 
-        <app-pagination-controls
+        <app-pagination
             [page]="currentPage"
             [totalPages]="totalPages"
             [hasNextPage]="hasNextPage"
             [hasPrevPage]="hasPrevPage"
             (pageChange)="onPageChange($event)">
-        </app-pagination-controls>
+        </app-pagination>
 
     </div>
 

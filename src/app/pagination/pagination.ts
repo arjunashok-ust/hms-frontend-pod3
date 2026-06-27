@@ -1,24 +1,18 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-/**
- * Reusable page-number + prev/next control.
- * Caller owns the actual page/limit state and re-fetches on (pageChange) —
- * this component only renders the affordance and emits the requested page.
- */
 @Component({
-  selector: 'app-pagination-controls',
+  selector: 'app-pagination',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './pagination-controls.html',
-  styleUrl: './pagination-controls.css',
+  templateUrl: './pagination.html',
+  styleUrl: './pagination.css',
 })
-export class PaginationControls {
-  @Input() page = 1;
+export class Pagination {
+  @Input() page = 1;  
   @Input() totalPages = 1;
   @Input() hasNextPage = false;
   @Input() hasPrevPage = false;
-
   @Output() pageChange = new EventEmitter<number>();
 
   goTo(targetPage: number) {
@@ -40,7 +34,7 @@ export class PaginationControls {
     }
   }
 
-  /* -1 is an ellipsis marker, not a real page number */
+
   get visiblePages(): number[] {
     const total = this.totalPages;
     const current = this.page;
