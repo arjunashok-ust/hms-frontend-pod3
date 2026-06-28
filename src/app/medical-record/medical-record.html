@@ -1,9 +1,5 @@
 <div class="record-page">
 
-    <!-- ALERTS -->
-    <div class="success-message" *ngIf="successMessage">{{ successMessage }}</div>
-    <div class="error-message" *ngIf="errorMessage">{{ errorMessage }}</div>
-
     <!-- STATS -->
     <div class="stats-grid">
 
@@ -116,9 +112,6 @@
             <h2>{{ isEditMode ? 'Edit Medical Record' : 'New Medical Record' }}{{ selectedRecordCode ? ' — ' + selectedRecordCode : '' }}</h2>
             <button class="close-btn" (click)="closeModal()"><i class="fa-solid fa-xmark"></i></button>
         </div>
-
-        <div class="error-message" *ngIf="errorMessage">{{ errorMessage }}</div>
-        <div class="success-message" *ngIf="successMessage">{{ successMessage }}</div>
 
         <form #recordFormRef="ngForm" (ngSubmit)="submitRecord(recordFormRef)">
             <div class="form-grid">

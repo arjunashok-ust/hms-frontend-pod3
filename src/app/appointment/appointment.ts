@@ -1,8 +1,9 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 import { Auth } from '../services/auth';
+import { NotificationService } from '../services/notification';
 import { HasPermissionDirective } from '../directives/has-permission.directive';
 import { PERMISSIONS } from '../constants/permissions';
 import { Pagination } from '../pagination/pagination';
@@ -13,6 +14,7 @@ import { Pagination } from '../pagination/pagination';
   imports: [CommonModule, FormsModule, HasPermissionDirective, Pagination],
   templateUrl: './appointment.html',
   styleUrl: './appointment.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Appointment implements OnInit {
   /* EXPOSED FOR TEMPLATE *hasPermission CHECKS */
@@ -46,10 +48,6 @@ export class Appointment implements OnInit {
   hasNextPage = false;
   hasPrevPage = false;
 
-  /* ALERTS */
-  successMessage = '';
-  errorMessage = '';
-
   loggedInDoctorName = '';
   currentUser: any = null;
   /* FORM */
@@ -75,6 +73,7 @@ export class Appointment implements OnInit {
   constructor(
     readonly auth: Auth,
     readonly cdr: ChangeDetectorRef,
+    readonly notify: NotificationService,
   ) {}
 
   ngOnInit(): void {
@@ -91,7 +90,7 @@ export class Appointment implements OnInit {
         }
 
         this.loadDoctors();
-        this.cdr.detectChanges();
+        this.cdr.markForCheck();
       },
 
       error: (err: any) => {
@@ -109,7 +108,7 @@ export class Appointment implements OnInit {
     this.auth.getAllPatients({ limit: 100 }).subscribe({
       next: (response: any) => {
         this.patients = response.data || [];
-        this.cdr.detectChanges();
+        this.cdr.markForCheck();
       },
       error: (err: any) => {
         console.log(err);
@@ -180,12 +179,12 @@ export class Appointment implements OnInit {
         this.hasNextPage = response.meta?.hasNextPage || false;
         this.hasPrevPage = response.meta?.hasPrevPage || false;
         this.loading = false;
-        this.cdr.detectChanges();
+        this.cdr.markForCheck();
       },
       error: (err: any) => {
         console.log(err);
         this.loading = false;
-        this.cdr.detectChanges();
+        this.cdr.markForCheck();
       },
     });
   }
@@ -221,12 +220,12 @@ export class Appointment implements OnInit {
           }
         }
 
-        this.cdr.detectChanges();
+        this.cdr.markForCheck();
       },
 
       error: (err: any) => {
         console.log(err);
-        this.cdr.detectChanges();
+        this.cdr.markForCheck();
       },
     });
   }
@@ -240,35 +239,28 @@ export class Appointment implements OnInit {
         this.bookedAppointments = response.data.bookedAppointments || 0;
         this.completedAppointments = response.data.completedAppointments || 0;
         this.cancelledAppointments = response.data.cancelledAppointments || 0;
-        this.cdr.detectChanges();
+        this.cdr.markForCheck();
       },
       error: (err: any) => {
         console.log(err);
-        this.cdr.detectChanges();
+        this.cdr.markForCheck();
       },
     });
   }
 
   /* CREATE APPOINTMENT */
   createAppointment() {
-    this.errorMessage = '';
-    this.successMessage = '';
-
-    console.log(this.formData);
-
     this.auth.createAppointment(this.formData).subscribe({
       next: (response: any) => {
-        console.log(response);
-        this.successMessage = response.message;
+        this.notify.success(response.message || 'Appointment Created Successfully');
         this.loadAppointments();
         this.loadAppointmentUI();
         this.resetForm();
-        this.cdr.detectChanges();
+        this.cdr.markForCheck();
       },
       error: (err: any) => {
-        console.log(err);
-        this.errorMessage = err?.error?.message || 'Unable To Create Appointment';
-        this.cdr.detectChanges();
+        this.notify.error(err?.error?.message || 'Unable To Create Appointment');
+        this.cdr.markForCheck();
       },
     });
   }
@@ -280,18 +272,16 @@ export class Appointment implements OnInit {
         console.log(response);
         this.loadAppointments();
         this.loadAppointmentUI();
-        this.cdr.detectChanges();
+        this.cdr.markForCheck();
       },
       error: (err: any) => {
         console.log(err);
-        this.cdr.detectChanges();
+        this.cdr.markForCheck();
       },
     });
   }
   /* EDIT — OPEN MODAL */
   openEditModal(appointment: any) {
-    this.errorMessage = '';
-    this.successMessage = '';
     this.selectedAppointmentId = appointment.appointmentId;
 
     this.editFormData = {
@@ -326,22 +316,17 @@ export class Appointment implements OnInit {
 
   /* EDIT — SUBMIT */
   submitEditAppointment() {
-    this.errorMessage = '';
-    this.successMessage = '';
-
     this.auth.updateAppointment(this.selectedAppointmentId, this.editFormData).subscribe({
       next: (response: any) => {
-        console.log(response);
-        this.successMessage = response.message;
+        this.notify.success(response.message || 'Appointment Updated Successfully');
         this.loadAppointments();
         this.loadAppointmentUI();
         this.closeEditModal();
-        this.cdr.detectChanges();
+        this.cdr.markForCheck();
       },
       error: (err: any) => {
-        console.log(err);
-        this.errorMessage = err?.error?.message || 'Unable To Update Appointment';
-        this.cdr.detectChanges();
+        this.notify.error(err?.error?.message || 'Unable To Update Appointment');
+        this.cdr.markForCheck();
       },
     });
   }

@@ -1,12 +1,4 @@
 <div class="appointment-page">
-  <!-- ALERTS -->
-  <div class="success-message" *ngIf="successMessage">
-    {{ successMessage }}
-  </div>
-
-  <div class="error-message" *ngIf="errorMessage">
-    {{ errorMessage }}
-  </div>
 
   <!-- STATS -->
   <div class="stats-grid">
@@ -245,10 +237,6 @@
       <div class="modal-header">
         <h2>Edit Appointment</h2>
         <button class="close-btn" (click)="closeEditModal()"><i class="fa-solid fa-xmark"></i></button>
-      </div>
-
-      <div class="error-message" *ngIf="errorMessage">
-        {{ errorMessage }}
       </div>
 
       <form class="appointment-form" (ngSubmit)="submitEditAppointment()">

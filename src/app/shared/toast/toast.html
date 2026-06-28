@@ -1,0 +1,17 @@
+<div class="toast-container">
+  <div
+    *ngFor="let toast of notifications.toasts$ | async"
+    class="toast"
+    [ngClass]="toast.type"
+    (click)="notifications.dismiss(toast.id)"
+  >
+    <i
+      class="toast-icon fa-solid"
+      [class.fa-circle-check]="toast.type === 'success'"
+      [class.fa-circle-xmark]="toast.type === 'error'"
+      [class.fa-circle-info]="toast.type === 'info'"
+    ></i>
+    <span class="toast-message">{{ toast.message }}</span>
+    <i class="toast-close fa-solid fa-xmark"></i>
+  </div>
+</div>

@@ -1,7 +1,8 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Auth } from '../services/auth';
+import { NotificationService } from '../services/notification';
 import { HasPermissionDirective } from '../directives/has-permission.directive';
 import { PermissionService } from '../services/permission';
 import { PERMISSIONS } from '../constants/permissions';
@@ -13,6 +14,7 @@ import { Pagination } from '../pagination/pagination';
   imports: [CommonModule, FormsModule, HasPermissionDirective, Pagination],
   templateUrl: './medical-record.html',
   styleUrl: './medical-record.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MedicalRecord implements OnInit {
   /* EXPOSED FOR TEMPLATE *hasPermission CHECKS */
@@ -45,8 +47,6 @@ export class MedicalRecord implements OnInit {
   selectedRecordCode = '';
 
   showModal = false;
-  errorMessage = '';
-  successMessage = '';
 
   currentUser: any = null;
 
@@ -67,6 +67,7 @@ export class MedicalRecord implements OnInit {
     readonly auth: Auth,
     readonly cd: ChangeDetectorRef,
     readonly permissionService: PermissionService,
+    readonly notify: NotificationService,
   ) {}
 
   ngOnInit(): void {
@@ -77,7 +78,7 @@ export class MedicalRecord implements OnInit {
     this.auth.getCurrentUser().subscribe({
       next: (response: any) => {
         this.currentUser = response.data;
-        this.cd.detectChanges();
+        this.cd.markForCheck();
       },
       error: (err: any) => console.log(err),
     });
@@ -90,7 +91,7 @@ export class MedicalRecord implements OnInit {
     this.auth.getAllPatients({ limit: 100 }).subscribe({
       next: (res: any) => {
         this.patients = res.data || [];
-        this.cd.detectChanges();
+        this.cd.markForCheck();
       },
       error: (err: any) => console.log(err),
     });
@@ -98,7 +99,7 @@ export class MedicalRecord implements OnInit {
     this.auth.getDoctors({ limit: 100 }).subscribe({
       next: (res: any) => {
         this.doctors = res.data || [];
-        this.cd.detectChanges();
+        this.cd.markForCheck();
       },
       error: (err: any) => console.log(err),
     });
@@ -106,7 +107,7 @@ export class MedicalRecord implements OnInit {
     this.auth.getAllAppointments({ limit: 100 }).subscribe({
       next: (res: any) => {
         this.appointments = res.data || [];
-        this.cd.detectChanges();
+        this.cd.markForCheck();
       },
       error: (err: any) => console.log(err),
     });
@@ -129,12 +130,12 @@ export class MedicalRecord implements OnInit {
         this.hasNextPage = response.meta?.hasNextPage || false;
         this.hasPrevPage = response.meta?.hasPrevPage || false;
         this.loading = false;
-        this.cd.detectChanges();
+        this.cd.markForCheck();
       },
       error: (err: any) => {
         console.log(err);
         this.loading = false;
-        this.cd.detectChanges();
+        this.cd.markForCheck();
       },
     });
 
@@ -150,7 +151,7 @@ export class MedicalRecord implements OnInit {
     }).subscribe({
       next: (res: any) => {
         this.draftCount = res.meta?.totalCount ?? 0;
-        this.cd.detectChanges();
+        this.cd.markForCheck();
       },
       error: (err: any) => console.log(err),
     });
@@ -162,7 +163,7 @@ export class MedicalRecord implements OnInit {
     }).subscribe({
       next: (res: any) => {
         this.finalCount = res.meta?.totalCount ?? 0;
-        this.cd.detectChanges();
+        this.cd.markForCheck();
       },
       error: (err: any) => console.log(err),
     });
@@ -238,8 +239,8 @@ export class MedicalRecord implements OnInit {
   closeModal() {
     this.showModal = false;
     this.isEditMode = false;
-    this.errorMessage = '';
-    this.successMessage = '';
+    /* Called from setTimeout after save — mark dirty so the modal closes under OnPush. */
+    this.cd.markForCheck();
   }
 
   resetForm() {
@@ -259,23 +260,20 @@ export class MedicalRecord implements OnInit {
   }
 
   submitRecord(form: any) {
-    this.errorMessage = '';
-    this.successMessage = '';
-
     if (form.invalid) {
-      this.errorMessage = 'Please fill all required fields';
+      this.notify.error('Please fill all required fields');
       return;
     }
 
     if (this.isEditMode) {
       this.auth.updateMedicalRecord(this.selectedRecordMongoId, this.recordForm).subscribe({
         next: (response: any) => {
-          this.successMessage = response.message;
+          this.notify.success(response.message || 'Medical record updated successfully');
           this.loadRecords();
           setTimeout(() => this.closeModal(), 1000);
         },
         error: (err: any) => {
-          this.errorMessage = err?.error?.message || 'Unable To Update Medical Record';
+          this.notify.error(err?.error?.message || 'Unable To Update Medical Record');
         },
       });
       return;
@@ -283,12 +281,12 @@ export class MedicalRecord implements OnInit {
 
     this.auth.createMedicalRecord(this.recordForm).subscribe({
       next: (response: any) => {
-        this.successMessage = response.message;
+        this.notify.success(response.message || 'Medical record created successfully');
         this.loadRecords();
         setTimeout(() => this.closeModal(), 1000);
       },
       error: (err: any) => {
-        this.errorMessage = err?.error?.message || 'Unable To Create Medical Record';
+        this.notify.error(err?.error?.message || 'Unable To Create Medical Record');
       },
     });
   }
@@ -323,10 +321,13 @@ export class MedicalRecord implements OnInit {
     }
 
     this.auth.deleteMedicalRecord(record._id).subscribe({
-      next: () => this.loadRecords(),
+      next: () => {
+        this.notify.success('Medical record deleted successfully');
+        this.loadRecords();
+      },
       error: (err: any) => {
-        this.errorMessage = err?.error?.message || 'Unable To Delete Medical Record';
-        this.cd.detectChanges();
+        this.notify.error(err?.error?.message || 'Unable To Delete Medical Record');
+        this.cd.markForCheck();
       },
     });
   }

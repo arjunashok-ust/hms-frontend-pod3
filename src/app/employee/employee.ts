@@ -1,8 +1,9 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, ChangeDetectorRef } from '@angular/core';
 
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Auth } from '../services/auth';
+import { NotificationService } from '../services/notification';
 import { RouterLink } from '@angular/router';
 import { HasPermissionDirective } from '../directives/has-permission.directive';
 import { PermissionService } from '../services/permission';
@@ -15,6 +16,7 @@ import { Pagination } from '../pagination/pagination';
   imports: [CommonModule, RouterLink, FormsModule, HasPermissionDirective, Pagination],
   templateUrl: './employee.html',
   styleUrl: './employee.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 
 export class Employee implements OnInit {
@@ -45,9 +47,6 @@ export class Employee implements OnInit {
 
   selectedStatus = '';
   showModal = false;
-  /* ALERTS */
-  errorMessage = '';
-  successMessage = '';
   /* SLOT DATA */
   hours: number[] = Array.from({ length: 24 }, (_, i) => i);
   generatedSlots: string[] = [];
@@ -89,6 +88,7 @@ export class Employee implements OnInit {
     readonly auth: Auth,
     readonly cd: ChangeDetectorRef,
     readonly permissionService: PermissionService,
+    readonly notify: NotificationService,
   ) {}
 
   ngOnInit(): void {
@@ -148,13 +148,13 @@ export class Employee implements OnInit {
         this.hasNextPage = response.meta?.hasNextPage || false;
         this.hasPrevPage = response.meta?.hasPrevPage || false;
         this.loading = false;
-        this.cd.detectChanges();
+        this.cd.markForCheck();
       },
 
       error: (err: any) => {
         console.log(err);
         this.loading = false;
-        this.cd.detectChanges();
+        this.cd.markForCheck();
       },
     });
   }
@@ -196,18 +196,17 @@ export class Employee implements OnInit {
     this.showModal = false;
     this.isEditMode = false;
     this.selectedEmployeeId = '';
-    this.errorMessage = '';
-    this.successMessage = '';
+    /* Called from setTimeout after save — mark dirty so the modal actually closes under OnPush. */
+    this.cd.markForCheck();
   }
 
   /* GENERATE TIME SLOTS */
 
   generateTimeSlots() {
-    this.errorMessage = '';
     const startHour = Number(this.employeeForm.startHour);
     const endHour = Number(this.employeeForm.endHour);
     if (startHour >= endHour) {
-      this.errorMessage = 'Start hour must be less than end hour';
+      this.notify.error('Start hour must be less than end hour');
       return;
     }
 
@@ -257,11 +256,8 @@ export class Employee implements OnInit {
 
   /* ADD EMPLOYEE */
   addEmployee(form: any) {
-    this.errorMessage = '';
-    this.successMessage = '';
-
     if (form.invalid) {
-      this.errorMessage = 'Please fill all required fields';
+      this.notify.error('Please fill all required fields');
       return;
     }
 
@@ -272,21 +268,13 @@ export class Employee implements OnInit {
     if (this.isEditMode) {
       this.auth.updateEmployee(this.selectedEmployeeId, this.employeeForm).subscribe({
         next: (response: any) => {
-          console.log(response);
-
-          this.successMessage = response.message;
-
+          this.notify.success(response.message || 'Employee updated successfully');
           this.loadEmployees();
-
-          setTimeout(() => {
-            this.closeModal();
-          }, 1000);
+          setTimeout(() => this.closeModal(), 1000);
         },
 
         error: (err: any) => {
-          console.log(err);
-
-          this.errorMessage = err?.error?.message || 'Unable To Update Employee';
+          this.notify.error(err?.error?.message || 'Unable To Update Employee');
         },
       });
 
@@ -301,9 +289,7 @@ export class Employee implements OnInit {
 
     this.auth.adminSignup(this.employeeForm).subscribe({
       next: (response: any) => {
-        console.log(response);
-
-        this.successMessage = response.message;
+        this.notify.success(response.message || 'Employee created successfully');
 
         this.loadEmployees();
 
@@ -342,19 +328,16 @@ export class Employee implements OnInit {
         };
 
         this.generatedSlots = [];
+        this.cd.markForCheck();
 
-        setTimeout(() => {
-          this.closeModal();
-        }, 1500);
+        setTimeout(() => this.closeModal(), 1500);
       },
 
       error: (err: any) => {
-        console.log(err);
-
         if (err?.error?.errors) {
-          this.errorMessage = err.error.errors.map((e: any) => e.msg).join(', ');
+          this.notify.error(err.error.errors.map((e: any) => e.msg).join(', '));
         } else {
-          this.errorMessage = err?.error?.message || 'Unable To Create Employee';
+          this.notify.error(err?.error?.message || 'Unable To Create Employee');
         }
       },
     });
@@ -364,16 +347,13 @@ export class Employee implements OnInit {
 
   deleteEmployee(employeeId: string) {
     this.auth.deleteEmployee(employeeId).subscribe({
-      next: (response: any) => {
-        alert('Employee Deleted Successfully');
-
+      next: () => {
+        this.notify.success('Employee Deleted Successfully');
         this.loadEmployees();
       },
 
-      error: (err: any) => {
-        console.log(err);
-
-        alert('Unable To Delete Employee');
+      error: () => {
+        this.notify.error('Unable To Delete Employee');
       },
     });
   }

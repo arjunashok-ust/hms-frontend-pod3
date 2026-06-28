@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { BehaviorSubject } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 function buildParams(params?: Record<string, any>): HttpParams {
   let httpParams = new HttpParams();
@@ -18,12 +19,12 @@ function buildParams(params?: Record<string, any>): HttpParams {
   providedIn: 'root',
 })
 export class Auth {
-  readonly apiUrl = 'http://localhost:5000/api/emp';
-  readonly patientUrl = 'http://localhost:5000/api/patient';
-  readonly appointmentUrl = 'http://localhost:5000/api/appointment';
-  readonly nodeUrl = 'http://localhost:5000/api/node';
-  readonly medicalRecordUrl = 'http://localhost:5000/api/medical-record';
-  readonly roleUrl = 'http://localhost:5000/api/role';
+  readonly apiUrl = `${environment.apiBaseUrl}/api/emp`;
+  readonly patientUrl = `${environment.apiBaseUrl}/api/patient`;
+  readonly appointmentUrl = `${environment.apiBaseUrl}/api/appointment`;
+  readonly nodeUrl = `${environment.apiBaseUrl}/api/node`;
+  readonly medicalRecordUrl = `${environment.apiBaseUrl}/api/medical-record`;
+  readonly roleUrl = `${environment.apiBaseUrl}/api/role`;
 
   readonly userSubject = new BehaviorSubject<any>(null);
   user$ = this.userSubject.asObservable();

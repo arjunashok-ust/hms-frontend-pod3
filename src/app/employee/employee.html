@@ -263,22 +263,6 @@
 
         </div>
 
-        <!-- ERROR -->
-
-        <div class="error-message" *ngIf="errorMessage">
-
-            {{ errorMessage }}
-
-        </div>
-
-        <!-- SUCCESS -->
-
-        <div class="success-message" *ngIf="successMessage">
-
-            {{ successMessage }}
-
-        </div>
-
         <!-- FORM -->
 
         <form #employeeFormRef="ngForm" (ngSubmit)="addEmployee(employeeFormRef)">

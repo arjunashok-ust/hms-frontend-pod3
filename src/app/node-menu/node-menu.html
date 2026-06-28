@@ -77,9 +77,6 @@
             <button class="close-btn" (click)="closeModal()"><i class="fa-solid fa-xmark"></i></button>
         </div>
 
-        <div class="error-message" *ngIf="errorMessage">{{ errorMessage }}</div>
-        <div class="success-message" *ngIf="successMessage">{{ successMessage }}</div>
-
         <form #nodeFormRef="ngForm" (ngSubmit)="submitNode(nodeFormRef)">
             <div class="form-grid">
 

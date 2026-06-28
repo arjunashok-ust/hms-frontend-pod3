@@ -1,7 +1,8 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Auth } from '../services/auth';
+import { NotificationService } from '../services/notification';
 import { HasPermissionDirective } from '../directives/has-permission.directive';
 import { PERMISSIONS } from '../constants/permissions';
 
@@ -11,6 +12,7 @@ import { PERMISSIONS } from '../constants/permissions';
   imports: [CommonModule, FormsModule, HasPermissionDirective],
   templateUrl: './node-menu.html',
   styleUrl: './node-menu.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NodeMenu implements OnInit {
   /* EXPOSED FOR TEMPLATE *hasPermission CHECKS */
@@ -29,8 +31,6 @@ export class NodeMenu implements OnInit {
   selectedNodeMongoId = '';
 
   showModal = false;
-  errorMessage = '';
-  successMessage = '';
 
   nodeForm: any = {
     node_id: null,
@@ -40,7 +40,11 @@ export class NodeMenu implements OnInit {
     icon: '',
   };
 
-  constructor(readonly auth: Auth, readonly cd: ChangeDetectorRef) {}
+  constructor(
+    readonly auth: Auth,
+    readonly cd: ChangeDetectorRef,
+    readonly notify: NotificationService,
+  ) {}
 
   ngOnInit(): void {
     if (globalThis.window && localStorage.getItem('token')) {
@@ -54,12 +58,12 @@ export class NodeMenu implements OnInit {
       next: (response: any) => {
         this.nodes = (response.data || []).sort((a: any, b: any) => a.node_id - b.node_id);
         this.loading = false;
-        this.cd.detectChanges();
+        this.cd.markForCheck();
       },
       error: (err: any) => {
         console.log(err);
         this.loading = false;
-        this.cd.detectChanges();
+        this.cd.markForCheck();
       },
     });
   }
@@ -89,8 +93,8 @@ export class NodeMenu implements OnInit {
     this.showModal = false;
     this.isEditMode = false;
     this.selectedNodeMongoId = '';
-    this.errorMessage = '';
-    this.successMessage = '';
+    /* Called from setTimeout after save — mark dirty so the modal closes under OnPush. */
+    this.cd.markForCheck();
   }
 
   resetForm() {
@@ -99,16 +103,13 @@ export class NodeMenu implements OnInit {
   }
 
   submitNode(form: any) {
-    this.errorMessage = '';
-    this.successMessage = '';
-
     if (form.invalid) {
-      this.errorMessage = 'Please fill all required fields';
+      this.notify.error('Please fill all required fields');
       return;
     }
 
     if (this.nodeForm.role.length === 0) {
-      this.errorMessage = 'Select at least one role';
+      this.notify.error('Select at least one role');
       return;
     }
 
@@ -123,12 +124,12 @@ export class NodeMenu implements OnInit {
     if (this.isEditMode) {
       this.auth.updateNode(this.selectedNodeMongoId, payload).subscribe({
         next: (response: any) => {
-          this.successMessage = response.message;
+          this.notify.success(response.message || 'Node updated successfully');
           this.loadNodes();
           setTimeout(() => this.closeModal(), 1000);
         },
         error: (err: any) => {
-          this.errorMessage = err?.error?.message || 'Unable To Update Node';
+          this.notify.error(err?.error?.message || 'Unable To Update Node');
         },
       });
       return;
@@ -136,12 +137,12 @@ export class NodeMenu implements OnInit {
 
     this.auth.createNode(payload).subscribe({
       next: (response: any) => {
-        this.successMessage = response.message;
+        this.notify.success(response.message || 'Node created successfully');
         this.loadNodes();
         setTimeout(() => this.closeModal(), 1000);
       },
       error: (err: any) => {
-        this.errorMessage = err?.error?.message || 'Unable To Create Node';
+        this.notify.error(err?.error?.message || 'Unable To Create Node');
       },
     });
   }
@@ -165,10 +166,13 @@ export class NodeMenu implements OnInit {
     }
 
     this.auth.deleteNode(node._id).subscribe({
-      next: () => this.loadNodes(),
+      next: () => {
+        this.notify.success('Node deleted successfully');
+        this.loadNodes();
+      },
       error: (err: any) => {
-        this.errorMessage = err?.error?.message || 'Unable To Delete Node';
-        this.cd.detectChanges();
+        this.notify.error(err?.error?.message || 'Unable To Delete Node');
+        this.cd.markForCheck();
       },
     });
   }

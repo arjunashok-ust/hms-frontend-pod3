@@ -1,7 +1,8 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Auth } from '../services/auth';
+import { NotificationService } from '../services/notification';
 import { HasPermissionDirective } from '../directives/has-permission.directive';
 import { PERMISSIONS } from '../constants/permissions';
 
@@ -11,6 +12,7 @@ import { PERMISSIONS } from '../constants/permissions';
   imports: [CommonModule, FormsModule, HasPermissionDirective],
   templateUrl: './role-menu.html',
   styleUrl: './role-menu.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RoleMenu implements OnInit {
   /* EXPOSED FOR TEMPLATE *hasPermission CHECKS */
@@ -86,8 +88,6 @@ export class RoleMenu implements OnInit {
   selectedRoleMongoId = '';
 
   showModal = false;
-  errorMessage = '';
-  successMessage = '';
 
   roleForm: any = {
     role_id: null,
@@ -95,7 +95,11 @@ export class RoleMenu implements OnInit {
     role_permissions: [] as string[],
   };
 
-  constructor(readonly auth: Auth, readonly cd: ChangeDetectorRef) {}
+  constructor(
+    readonly auth: Auth,
+    readonly cd: ChangeDetectorRef,
+    readonly notify: NotificationService,
+  ) {}
 
   ngOnInit(): void {
     if (globalThis.window && localStorage.getItem('token')) {
@@ -109,12 +113,12 @@ export class RoleMenu implements OnInit {
       next: (response: any) => {
         this.roles = (response.data || []).sort((a: any, b: any) => a.role_id - b.role_id);
         this.loading = false;
-        this.cd.detectChanges();
+        this.cd.markForCheck();
       },
       error: (err: any) => {
         console.log(err);
         this.loading = false;
-        this.cd.detectChanges();
+        this.cd.markForCheck();
       },
     });
   }
@@ -164,8 +168,8 @@ export class RoleMenu implements OnInit {
     this.showModal = false;
     this.isEditMode = false;
     this.selectedRoleMongoId = '';
-    this.errorMessage = '';
-    this.successMessage = '';
+    /* Called from setTimeout after save — mark dirty so the modal closes under OnPush. */
+    this.cd.markForCheck();
   }
 
   resetForm() {
@@ -174,11 +178,8 @@ export class RoleMenu implements OnInit {
   }
 
   submitRole(form: any) {
-    this.errorMessage = '';
-    this.successMessage = '';
-
     if (form.invalid) {
-      this.errorMessage = 'Please fill all required fields';
+      this.notify.error('Please fill all required fields');
       return;
     }
 
@@ -191,12 +192,12 @@ export class RoleMenu implements OnInit {
     if (this.isEditMode) {
       this.auth.updateRole(this.selectedRoleMongoId, payload).subscribe({
         next: (response: any) => {
-          this.successMessage = response.message;
+          this.notify.success(response.message || 'Role updated successfully');
           this.loadRoles();
           setTimeout(() => this.closeModal(), 1000);
         },
         error: (err: any) => {
-          this.errorMessage = err?.error?.message || 'Unable To Update Role';
+          this.notify.error(err?.error?.message || 'Unable To Update Role');
         },
       });
       return;
@@ -204,12 +205,12 @@ export class RoleMenu implements OnInit {
 
     this.auth.createRole(payload).subscribe({
       next: (response: any) => {
-        this.successMessage = response.message;
+        this.notify.success(response.message || 'Role created successfully');
         this.loadRoles();
         setTimeout(() => this.closeModal(), 1000);
       },
       error: (err: any) => {
-        this.errorMessage = err?.error?.message || 'Unable To Create Role';
+        this.notify.error(err?.error?.message || 'Unable To Create Role');
       },
     });
   }
@@ -231,10 +232,13 @@ export class RoleMenu implements OnInit {
     }
 
     this.auth.deleteRole(role._id).subscribe({
-      next: () => this.loadRoles(),
+      next: () => {
+        this.notify.success('Role deleted successfully');
+        this.loadRoles();
+      },
       error: (err: any) => {
-        this.errorMessage = err?.error?.message || 'Unable To Delete Role';
-        this.cd.detectChanges();
+        this.notify.error(err?.error?.message || 'Unable To Delete Role');
+        this.cd.markForCheck();
       },
     });
   }

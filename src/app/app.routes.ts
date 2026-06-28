@@ -2,116 +2,101 @@ import { Routes } from '@angular/router';
 
 import { authGuard } from './guards/auth.guard';
 import { roleGuard } from './guards/role.guard';
-
 import { FirstLoginGuard } from './guards/first-login.guard';
-import { Approval } from './approval/approval';
-import { Login } from './login/login';
-import { Signup } from './signup/signup';
-import { User } from './user/user';
-import { Dashboard } from './dashboard/dashboard';
-import { DashboardLayout } from './layout/dashboard-layout/dashboard-layout';
-import { Employee } from './employee/employee';
-import { ResetPassword } from './reset-password/reset-password';
-import { Patients } from './patients/patients';
-import { Appointment } from './appointment/appointment';
-import { NodeMenu } from './node-menu/node-menu';
-import { MedicalRecord } from './medical-record/medical-record';
-import { RoleMenu } from './role-menu/role-menu';
 
+/* Routes use loadComponent for lazy, route-level code splitting — each feature
+   is bundled separately and only fetched when its route is first activated. */
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
-  { path: 'login', component: Login },
-  { path: 'signup', component: Signup },
-  { path: 'reset-password', component: ResetPassword, canActivate: [FirstLoginGuard] },
+  {
+    path: 'login',
+    loadComponent: () => import('./login/login').then((m) => m.Login),
+  },
+  {
+    path: 'signup',
+    loadComponent: () => import('./signup/signup').then((m) => m.Signup),
+  },
+  {
+    path: 'reset-password',
+    loadComponent: () =>
+      import('./reset-password/reset-password').then((m) => m.ResetPassword),
+    canActivate: [FirstLoginGuard],
+  },
 
   /* PROTECTED ROUTES */
   {
     path: '',
-    component: DashboardLayout,
+    loadComponent: () =>
+      import('./layout/dashboard-layout/dashboard-layout').then(
+        (m) => m.DashboardLayout,
+      ),
     canActivate: [authGuard],
 
     children: [
       {
         path: 'dashboard',
-        component: Dashboard,
+        loadComponent: () =>
+          import('./dashboard/dashboard').then((m) => m.Dashboard),
         canActivate: [roleGuard],
-        data: {
-          roles: ['admin', 'super_admin'],
-        },
+        data: { roles: ['admin', 'super_admin'] },
       },
-
       {
         path: 'profile',
-        component: User,
+        loadComponent: () => import('./user/user').then((m) => m.User),
       },
       {
         path: 'approval',
-        component: Approval,
+        loadComponent: () =>
+          import('./approval/approval').then((m) => m.Approval),
         canActivate: [roleGuard],
-        data: {
-          roles: ['admin', 'super_admin'],
-        },
+        data: { roles: ['admin', 'super_admin'] },
       },
-
       {
         path: 'employees',
-        component: Employee,
+        loadComponent: () =>
+          import('./employee/employee').then((m) => m.Employee),
         canActivate: [roleGuard],
-        data: {
-          roles: ['admin', 'super_admin', 'receptionist'],
-        },
+        data: { roles: ['admin', 'super_admin', 'receptionist'] },
       },
-
       {
         path: 'patients',
-        component: Patients,
+        loadComponent: () =>
+          import('./patients/patients').then((m) => m.Patients),
         canActivate: [roleGuard],
-        data: {
-          roles: ['admin', 'super_admin', 'receptionist'],
-        },
+        data: { roles: ['admin', 'super_admin', 'receptionist'] },
+      },
+      {
+        path: 'appointments',
+        loadComponent: () =>
+          import('./appointment/appointment').then((m) => m.Appointment),
+        canActivate: [roleGuard],
+        data: { roles: ['admin', 'super_admin', 'receptionist', 'doctor'] },
       },
 
       {
-        path: 'appointments',
-        component: Appointment,
+        path: 'node-menu',
+        loadComponent: () => import('./node-menu/node-menu').then((m) => m.NodeMenu),
         canActivate: [roleGuard],
-        data: {
-          roles: ['admin', 'super_admin', 'receptionist', 'doctor'],
-        },
+        data: { roles: ['admin', 'super_admin'] },
       },
-
-      // {
-      //   path: 'node-menu',
-      //   component: NodeMenu,
-      //   canActivate: [roleGuard],
-      //   data: {
-      //     roles: ['admin', 'super_admin'],
-      //   },
-      // },
 
       {
         path: 'medical-records',
-        component: MedicalRecord,
+        loadComponent: () =>
+          import('./medical-record/medical-record').then((m) => m.MedicalRecord),
         canActivate: [roleGuard],
-        data: {
-          roles: ['admin', 'super_admin', 'doctor', 'receptionist'],
-        },
+        data: { roles: ['admin', 'super_admin', 'doctor', 'receptionist'] },
       },
 
-      // {
-      //   path: 'role-menu',
-      //   component: RoleMenu,
-      //   canActivate: [roleGuard],
-      //   data: {
-      //     roles: ['admin', 'super_admin'],
-      //   },
-      // },
+      {
+        path: 'role-menu',
+        loadComponent: () => import('./role-menu/role-menu').then((m) => m.RoleMenu),
+        canActivate: [roleGuard],
+        data: { roles: ['admin', 'super_admin'] },
+      },
     ],
   },
 
   /* FALLBACK */
-  {
-    path: '**',
-    redirectTo: 'login',
-  },
+  { path: '**', redirectTo: 'login' },
 ];

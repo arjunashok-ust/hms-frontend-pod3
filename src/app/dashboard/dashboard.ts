@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Auth } from '../services/auth';
 
@@ -12,6 +12,7 @@ import { Auth } from '../services/auth';
   templateUrl: './dashboard.html',
 
   styleUrl: './dashboard.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Dashboard implements OnInit {
 
@@ -46,7 +47,7 @@ export class Dashboard implements OnInit {
         console.log(response);
         this.stats = response.data;
         this.isLoading = false;
-        this.cd.detectChanges();
+        this.cd.markForCheck();
       },
 
       error: (err: any) => {
@@ -54,7 +55,7 @@ export class Dashboard implements OnInit {
         this.stats = null;
         this.errorMessage = err?.error?.message || 'Unable to load dashboard stats';
         this.isLoading = false;
-        this.cd.detectChanges();
+        this.cd.markForCheck();
       },
     });
   }

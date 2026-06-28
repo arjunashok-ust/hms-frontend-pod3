@@ -1,10 +1,11 @@
 import { CommonModule } from '@angular/common';
 
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, ChangeDetectorRef } from '@angular/core';
 
 import { FormsModule } from '@angular/forms';
 
 import { Auth } from '../services/auth';
+import { NotificationService } from '../services/notification';
 
 import { Router } from '@angular/router';
 import { HasPermissionDirective } from '../directives/has-permission.directive';
@@ -20,6 +21,7 @@ import { PERMISSIONS } from '../constants/permissions';
   templateUrl: './user.html',
 
   styleUrl: './user.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class User implements OnInit {
   /* EXPOSED FOR TEMPLATE *hasPermission CHECKS */
@@ -30,9 +32,6 @@ export class User implements OnInit {
   loading = true;
 
   isEditMode = false;
-
-  errorMessage = '';
-  successMessage = '';
 
   editForm: any = {
     name: '',
@@ -49,6 +48,8 @@ export class User implements OnInit {
     readonly cd: ChangeDetectorRef,
 
     readonly router: Router,
+
+    readonly notify: NotificationService,
   ) {}
 
   ngOnInit(): void {
@@ -72,7 +73,7 @@ export class User implements OnInit {
 
             this.loading = false;
 
-            this.cd.detectChanges();
+            this.cd.markForCheck();
           },
 
           error: (err: any) => {
@@ -80,7 +81,7 @@ export class User implements OnInit {
 
             this.loading = false;
 
-            this.cd.detectChanges();
+            this.cd.markForCheck();
           },
         });
       }
@@ -122,8 +123,6 @@ export class User implements OnInit {
   /* EDIT PROFILE */
 
   enterEditMode() {
-    this.errorMessage = '';
-    this.successMessage = '';
     this.editForm = {
       name: this.user?.name || '',
       phone: this.user?.phone || '',
@@ -141,23 +140,17 @@ export class User implements OnInit {
   }
 
   saveProfile() {
-    this.errorMessage = '';
-    this.successMessage = '';
-
     this.auth.updateProfile(this.user.id, this.editForm).subscribe({
       next: (response: any) => {
-        console.log(response);
-
-        this.successMessage = response.message;
+        this.notify.success(response.message || 'Profile updated successfully');
         this.isEditMode = false;
         this.loadProfile();
+        this.cd.markForCheck();
       },
 
       error: (err: any) => {
-        console.log(err);
-
-        this.errorMessage = err?.error?.message || 'Unable To Update Profile';
-        this.cd.detectChanges();
+        this.notify.error(err?.error?.message || 'Unable To Update Profile');
+        this.cd.markForCheck();
       },
     });
   }

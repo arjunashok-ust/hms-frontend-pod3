@@ -1,7 +1,8 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { Auth } from '../services/auth';
+import { NotificationService } from '../services/notification';
 import { HasPermissionDirective } from '../directives/has-permission.directive';
 import { PERMISSIONS } from '../constants/permissions';
 import { Pagination } from '../pagination/pagination';
@@ -12,6 +13,7 @@ import { Pagination } from '../pagination/pagination';
   imports: [CommonModule, HasPermissionDirective, Pagination],
   templateUrl: './approval.html',
   styleUrl: './approval.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Approval implements OnInit {
   
@@ -35,6 +37,7 @@ export class Approval implements OnInit {
   constructor(
     readonly auth: Auth,
     readonly cdr: ChangeDetectorRef,
+    readonly notify: NotificationService,
   ) {}
 
   ngOnInit(): void {
@@ -58,7 +61,7 @@ export class Approval implements OnInit {
 
         this.loading = false;
 
-        this.cdr.detectChanges();
+        this.cdr.markForCheck();
       },
 
       error: (err: any) => {
@@ -66,7 +69,7 @@ export class Approval implements OnInit {
 
         this.loading = false;
 
-        this.cdr.detectChanges();
+        this.cdr.markForCheck();
       },
     });
   }
@@ -94,13 +97,13 @@ export class Approval implements OnInit {
 
         this.firstLoginPending = response.data.firstLoginPending || 0;
 
-        this.cdr.detectChanges();
+        this.cdr.markForCheck();
       },
 
       error: (err: any) => {
         console.log(err);
 
-        this.cdr.detectChanges();
+        this.cdr.markForCheck();
       },
     });
   }
@@ -109,20 +112,14 @@ export class Approval implements OnInit {
 
   approveEmployee(employeeId: string) {
     this.auth.approveEmployee(employeeId).subscribe({
-      next: (response: any) => {
-        console.log(response);
-
-        alert('Employee Approved Successfully');
-
+      next: () => {
+        this.notify.success('Employee Approved Successfully');
         this.loadPendingApprovals();
-
         this.loadApprovalStats();
       },
 
-      error: (err: any) => {
-        console.log(err);
-
-        alert('Unable To Approve Employee');
+      error: () => {
+        this.notify.error('Unable To Approve Employee');
       },
     });
   }
@@ -135,20 +132,14 @@ export class Approval implements OnInit {
     }
 
     this.auth.rejectEmployee(employeeId).subscribe({
-      next: (response: any) => {
-        console.log(response);
-
-        alert('Employee Rejected Successfully');
-
+      next: () => {
+        this.notify.success('Employee Rejected Successfully');
         this.loadPendingApprovals();
-
         this.loadApprovalStats();
       },
 
       error: (err: any) => {
-        console.log(err);
-
-        alert(err?.error?.message || 'Unable To Reject Employee');
+        this.notify.error(err?.error?.message || 'Unable To Reject Employee');
       },
     });
   }
