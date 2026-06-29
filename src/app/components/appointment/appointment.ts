@@ -432,9 +432,9 @@ export class Appointment implements OnInit {
   }
 
   deleteAppointment(appointmentCode: string) {
-    const isConfirmed = confirm(`Are you sure you want to delete appointment ${appointmentCode}? This action cannot be undone.`);
+    const canDelete = confirm(`Are you sure you want to delete appointment ${appointmentCode}? This action cannot be undone.`);
 
-    if (isConfirmed) {
+    if (canDelete) {
       this.appointmentService.deleteAppointment(appointmentCode).subscribe({
         next: () => {
           this.toast.success('Appointment deleted successfully!');
