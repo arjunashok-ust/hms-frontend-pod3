@@ -17,6 +17,8 @@ import { RouteGuard } from './services/guard/route.guard';
 import { EditPatientComponent } from './theme/home/modal/edit-patient/edit-patient';
 import { MedicalRecordComponent } from './theme/home/medical-record/medical-record';
 import { ViewMedicalRecordComponent } from './theme/home/modal/view-medical-record/view-medical-record';
+import { PermissionComponent } from './theme/home/permission/permission';
+import { NodeComponent } from './theme/home/node/node';
 
 export const routes: Routes = [
   {
@@ -76,14 +78,32 @@ export const routes: Routes = [
       {
         path: 'medical-record',
         component: MedicalRecordComponent,
+        canActivate: [RouteGuard],
+        data: { permissions: ['view:medical-record'] },
       },
       {
         path: 'medical-record/:medRecordId',
         component: MedicalRecordComponent,
+        canActivate: [RouteGuard],
+        data: { permissions: ['view:medical-record'] },
       },
       {
         path: 'view-medical-record/:medicalRecordId',
         component: ViewMedicalRecordComponent,
+        canActivate: [RouteGuard],
+        data: { permissions: ['view:medical-record'] },
+      },
+      {
+        path: 'permission',
+        component: PermissionComponent,
+        canActivate: [RouteGuard],
+        data: { permissions: ['view:permission'] },
+      },
+      {
+        path: 'node',
+        component: NodeComponent,
+        canActivate: [RouteGuard],
+        data: { permissions: ['view:node'] },
       },
     ],
   },

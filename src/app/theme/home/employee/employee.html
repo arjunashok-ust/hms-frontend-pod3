@@ -5,8 +5,16 @@
       <h2>Employee Management</h2>
     </div>
     <div class="header-actions">
-      <button class="btn-secondary"><a routerLink="/approval">Approvals</a></button>
-      <button class="btn-primary" routerLink="/signup-modal">Add Employee</button>
+      <button class="btn-secondary">
+        <a routerLink="/approval" *hasPermission="['approve:user']">Approvals</a>
+      </button>
+      <button
+        class="btn-primary"
+        routerLink="/signup-modal"
+        *hasPermission="['create:employee', 'create:admin']"
+      >
+        Add Employee
+      </button>
     </div>
   </div>
 
@@ -87,12 +95,17 @@
               </td>
               <td>
                 <div class="action-buttons">
-                  <button class="icon-btn edit-btn" (click)="updateProfile(employee.email)">
+                  <button
+                    class="icon-btn edit-btn"
+                    (click)="updateProfile(employee.email)"
+                    *hasPermission="['edit:employee']"
+                  >
                     Edit
                   </button>
                   <button
                     class="icon-btn delete-btn"
                     (click)="deleteUserProfile(employee.employeeCode)"
+                    *hasPermission="['delete:employee']"
                   >
                     Delete
                   </button>

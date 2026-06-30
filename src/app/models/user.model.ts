@@ -46,9 +46,20 @@ export interface PatientModel {
   email: string;
   gender: string;
   dob: Date;
-  bloodGroup: string,
-  allergies: string,
+  bloodGroup: string;
+  allergies: string;
   address: string;
   emergencyContact: string;
   status: string;
+}
+
+export interface RoleResponseModel {
+  _id: RoleId;
+  role_id: number;
+  role_name: string;
+  role_permissions: string[];
+}
+
+interface RoleId {
+  $oid: string;
 }

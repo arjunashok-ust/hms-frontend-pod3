@@ -3,7 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { ApiUrl } from '../environment/environment';
 import { catchError, Observable, throwError } from 'rxjs';
 import { DashboardModel } from '../models/ui.model';
-import { UserModel } from '../models/user.model';
+import { RoleResponseModel, UserModel } from '../models/user.model';
 
 @Injectable({ providedIn: 'root' })
 export class AdminService {
@@ -82,6 +82,49 @@ export class AdminService {
   updateUserProfile(data: any): Observable<any> {
     return this.http
       .post(`${this.apiUrl.backend_url}/admin/updateUserProfile`, data)
+      .pipe(catchError((error) => this.handleError(error)));
+  }
+
+  // get roles
+  getRoles(): Observable<any> {
+    return this.http
+      .get(`${this.apiUrl.backend_url}/admin/getRolesData`)
+      .pipe(catchError((error) => this.handleError(error)));
+  }
+
+  // update roles
+  updateRole(data: any): Observable<any> {
+    return this.http
+      .post<RoleResponseModel>(`${this.apiUrl.backend_url}/admin/updateRole`, {
+        roleName: data.role_name,
+        data,
+      })
+      .pipe(catchError((error) => this.handleError(error)));
+  }
+
+  // create node
+  createNode(data: any): Observable<any> {
+    return this.http
+      .post(`${this.apiUrl.backend_url}/node/createNode`, data)
+      .pipe(catchError((error) => this.handleError(error)));
+  }
+
+  // edit node
+  editNode(nodeName: string, data: any): Observable<any> {
+    return this.http
+      .post(`${this.apiUrl.backend_url}/node/editNode`, {
+        nodeName,
+        data,
+      })
+      .pipe(catchError((error) => this.handleError(error)));
+  }
+
+  // delete node
+  deleteNode(nodeName: string): Observable<any> {
+    return this.http
+      .post(`${this.apiUrl.backend_url}/node/deleteNode`, {
+        nodeName,
+      })
       .pipe(catchError((error) => this.handleError(error)));
   }
 

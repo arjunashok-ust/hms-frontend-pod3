@@ -13,10 +13,11 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink, RouterModule } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
+import { HasPermissionDirective } from '../../../directive/has-permission.directive';
 
 @Component({
   selector: 'app-employee',
-  imports: [CommonModule, FormsModule, RouterLink, RouterModule],
+  imports: [CommonModule, FormsModule, RouterLink, RouterModule, HasPermissionDirective],
   templateUrl: './employee.html',
   styleUrl: './employee.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

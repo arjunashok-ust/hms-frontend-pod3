@@ -5,10 +5,11 @@ import { FormsModule } from '@angular/forms';
 import { AdminService } from '../../../services/admin.service';
 import { ToastrService } from 'ngx-toastr';
 import { UserEmployeeModel, UserModel } from '../../../models/user.model';
+import { HasPermissionDirective } from '../../../directive/has-permission.directive';
 
 @Component({
   selector: 'app-approval',
-  imports: [RouterModule, CommonModule, FormsModule],
+  imports: [RouterModule, CommonModule, FormsModule, HasPermissionDirective],
   templateUrl: './approval.html',
   styleUrl: './approval.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

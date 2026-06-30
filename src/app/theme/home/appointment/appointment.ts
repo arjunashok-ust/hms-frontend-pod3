@@ -33,6 +33,7 @@ import { debounceTime, distinctUntilChanged, filter, switchMap } from 'rxjs';
     HasPermissionDirective,
     FormsModule,
     MatAutocompleteModule,
+    HasPermissionDirective,
   ],
   templateUrl: './appointment.html',
   styleUrl: './appointment.css',

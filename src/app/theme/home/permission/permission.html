@@ -1,0 +1,327 @@
+<div class="perm-wrapper">
+  <div class="perm-hero">
+    <div class="hero-copy">
+      <span class="hero-kicker">Access Control</span>
+      <h1>Permission Management</h1>
+      <p>
+        Assign, remove, and create permissions for each role. Changes take effect immediately across
+        all active sessions.
+      </p>
+    </div>
+    <div class="hero-side">
+      <div class="hero-chip chip-purple">
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.5"
+        >
+          <rect x="3" y="11" width="18" height="11" rx="2" />
+          <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+        </svg>
+        <span>{{ totalPermissions }} Permissions</span>
+      </div>
+      <div class="hero-chip chip-blue">
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.5"
+        >
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+          <circle cx="9" cy="7" r="4" />
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+          <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+        </svg>
+        <span>{{ roles.length }} Roles</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="perm-layout">
+    <div class="side-panel">
+      <div class="glass-panel side-glass">
+        <div class="side-panel-header">
+          <div>
+            <span class="panel-subtitle">Roles</span>
+            <h2>All Roles</h2>
+          </div>
+        </div>
+        <div class="role-list">
+          <ng-container *ngFor="let role of roles">
+            <button
+              class="role-item"
+              [class.role-item--active]="selectedRole?._id?.$oid === role._id.$oid"
+              (click)="selectRole(role)"
+              *ngIf="role.role_name != 'Super Admin'"
+            >
+              <div class="role-avatar" [ngClass]="getRoleAvatarClass(role.role_name)">
+                {{ role.role_name | slice: 0 : 2 | uppercase }}
+              </div>
+              <div class="role-info">
+                <span class="role-name">{{ role.role_name }}</span>
+                <span class="role-count">{{ role.role_permissions.length }} permissions</span>
+              </div>
+              <svg
+                class="role-chevron"
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+              >
+                <polyline points="9 18 15 12 9 6" />
+              </svg>
+            </button>
+          </ng-container>
+        </div>
+      </div>
+
+      <div class="glass-panel side-glass new-perm-panel" *hasPermission="['edit:permission']">
+        <div class="side-panel-header">
+          <div>
+            <span class="panel-subtitle">Register</span>
+            <h2>New Permission</h2>
+          </div>
+        </div>
+        <form [formGroup]="newPermForm" (ngSubmit)="createPermission()">
+          <div class="new-perm-fields">
+            <div>
+              <label class="form-label" for="permAction">
+                <svg
+                  width="13"
+                  height="13"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="#7c3aed"
+                  stroke-width="2.5"
+                >
+                  <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+                </svg>
+                Action <span class="required">*</span>
+              </label>
+              <input
+                type="text"
+                class="form-input"
+                id="permAction"
+                placeholder="e.g. create"
+                formControlName="action"
+              />
+            </div>
+            <div>
+              <label class="form-label" for="permResource">
+                <svg
+                  width="13"
+                  height="13"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="#7c3aed"
+                  stroke-width="2.5"
+                >
+                  <rect x="3" y="3" width="18" height="18" rx="2" />
+                  <path d="M9 9h6M9 12h6M9 15h4" />
+                </svg>
+                Resource <span class="required">*</span>
+              </label>
+              <input
+                type="text"
+                class="form-input"
+                id="permResource"
+                placeholder="e.g. patient"
+                formControlName="resource"
+              />
+            </div>
+            <div
+              class="perm-preview"
+              *ngIf="newPermForm.get('action')?.value || newPermForm.get('resource')?.value"
+            >
+              <span class="preview-label">Preview</span>
+              <span class="perm-slug">
+                {{ newPermForm.get('action')?.value || 'action' }}:{{
+                  newPermForm.get('resource')?.value || 'resource'
+                }}
+              </span>
+            </div>
+          </div>
+          <button
+            type="submit"
+            class="btn btn-primary btn-full"
+            [disabled]="newPermForm.invalid || isCreating"
+          >
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+            >
+              <line x1="12" y1="5" x2="12" y2="19" />
+              <line x1="5" y1="12" x2="19" y2="12" />
+            </svg>
+            {{ isCreating ? 'Registering...' : 'Register Permission' }}
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <div class="main-panel">
+      <div class="glass-panel" *ngIf="!selectedRole">
+        <div class="empty-state">
+          <div class="empty-icon">
+            <svg
+              width="40"
+              height="40"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#c4b5fd"
+              stroke-width="1.5"
+            >
+              <rect x="3" y="11" width="18" height="11" rx="2" />
+              <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+            </svg>
+          </div>
+          <h3>No Role Selected</h3>
+          <p>Select a role from the left panel to manage its permissions.</p>
+        </div>
+      </div>
+
+      <div class="glass-panel" *ngIf="selectedRole">
+        <div class="panel-header">
+          <div class="panel-header-left">
+            <span class="panel-subtitle">Editing</span>
+            <h2>{{ selectedRole.role_name }}</h2>
+          </div>
+          <div class="panel-tools">
+            <div class="search-box">
+              <svg
+                width="15"
+                height="15"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="#94a3b8"
+                stroke-width="2"
+              >
+                <circle cx="11" cy="11" r="8" />
+                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+              </svg>
+              <input
+                type="text"
+                placeholder="Filter permissions"
+                [(ngModel)]="permSearch"
+                aria-label="filter-permissions"
+              />
+            </div>
+            <button
+              class="btn btn-primary"
+              (click)="saveChanges()"
+              [disabled]="isSaving"
+              *hasPermission="['edit:permission']"
+            >
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+              >
+                <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
+                <polyline points="17 21 17 13 7 13 7 21" />
+                <polyline points="7 3 7 8 15 8" />
+              </svg>
+              {{ isSaving ? 'Saving...' : 'Save Changes' }}
+            </button>
+          </div>
+        </div>
+
+        <div class="perm-groups" *ngFor="let group of filteredGroups">
+          <div class="group-header">
+            <div class="group-dot" [ngClass]="getGroupDotClass(group.key)"></div>
+            <span class="group-label">{{ group.key }}</span>
+            <span class="group-count">{{ group.permissions.length }}</span>
+            <div class="group-line"></div>
+            <button
+              class="group-toggle-all"
+              (click)="toggleGroup(group.key)"
+              *hasPermission="['edit:permission']"
+            >
+              {{ isGroupFullyAssigned(group.key) ? 'Remove All' : 'Assign All' }}
+            </button>
+          </div>
+          <div class="perm-grid">
+            <div
+              *ngFor="let perm of group.permissions"
+              class="perm-chip"
+              [class.perm-chip--active]="isAssigned(perm)"
+              (keydown.enter)="togglePermission(perm)"
+              (keydown.space)="togglePermission(perm)"
+              (click)="togglePermission(perm)"
+            >
+              <div class="perm-chip-indicator"></div>
+              <span class="perm-chip-text">{{ perm }}</span>
+              <svg
+                *ngIf="isAssigned(perm)"
+                class="perm-check"
+                width="12"
+                height="12"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="3"
+              >
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+              <svg
+                *ngIf="!isAssigned(perm)"
+                class="perm-add"
+                width="12"
+                height="12"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+              >
+                <line x1="12" y1="5" x2="12" y2="19" />
+                <line x1="5" y1="12" x2="19" y2="12" />
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <div class="empty-filter" *ngIf="filteredGroups.length === 0">
+          <p>
+            No permissions match <strong>"{{ permSearch }}"</strong>
+          </p>
+        </div>
+
+        <div class="diff-bar" *ngIf="hasPendingChanges">
+          <div class="diff-info">
+            <svg
+              width="15"
+              height="15"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#92400e"
+              stroke-width="2"
+            >
+              <circle cx="12" cy="12" r="10" />
+              <line x1="12" y1="8" x2="12" y2="12" />
+              <line x1="12" y1="16" x2="12.01" y2="16" />
+            </svg>
+            <span
+              >{{ pendingAdd.length }} to assign &nbsp;·&nbsp; {{ pendingRemove.length }} to
+              remove</span
+            >
+          </div>
+          <button class="btn btn-ghost btn-sm" (click)="discardChanges()">Discard</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

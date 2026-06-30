@@ -1,0 +1,199 @@
+<div class="node-wrapper">
+  <div class="node-hero">
+    <div class="hero-copy">
+      <span class="hero-kicker">Navigation Control</span>
+      <h1>Sidebar Nodes</h1>
+      <p>
+        Create, edit and remove sidebar navigation items, and assign which roles can see each one.
+      </p>
+    </div>
+    <div class="hero-side">
+      <div class="hero-chip chip-purple">
+        <i class="bi bi-diagram-3"></i>
+        {{ totalNodes }} Nodes
+      </div>
+      <div class="hero-chip chip-blue">
+        <i class="bi bi-people"></i>
+        {{ roles.length }} Roles
+      </div>
+    </div>
+  </div>
+
+  <div class="node-layout">
+    <div class="glass-panel list-panel">
+      <div class="panel-header">
+        <div class="panel-header-left">
+          <span class="panel-subtitle">Sidebar Items</span>
+          <h2>All Nodes</h2>
+        </div>
+        <div class="panel-tools">
+          <div class="search-box">
+            <i class="bi bi-search"></i>
+            <input
+              type="text"
+              placeholder="Search nodes..."
+              [(ngModel)]="nodeSearch"
+              id="Search nodes"
+              aria-label="search-box"
+            />
+          </div>
+          <button class="btn btn-primary" *hasPermission="['create:node']" (click)="openCreate()">
+            <i class="bi bi-plus-lg"></i>
+            New Node
+          </button>
+        </div>
+      </div>
+
+      <div class="node-list" *ngIf="filteredNodes.length; else emptyList">
+        <div
+          class="node-row"
+          *ngFor="let node of filteredNodes; trackBy: trackFn"
+          [class.node-row--active]="selectedNode?.order === node.order"
+          (click)="selectNode(node)"
+          (keydown.enter)="selectNode(node)"
+          (keydown.space)="selectNode(node)"
+        >
+          <div class="node-avatar" [ngClass]="getNodeAvatarClass(node)">
+            <i [class]="node.icon"></i>
+          </div>
+          <div class="node-info">
+            <span class="node-name">{{ node.name }}</span>
+            <span class="node-path">{{ node.path }}</span>
+          </div>
+          <div class="node-order-badge">#{{ node.order }}</div>
+          <div class="node-role-count">
+            <i class="bi bi-shield-lock"></i>
+            {{ node.role.length }}
+          </div>
+          <div class="node-actions">
+            <button
+              class="icon-btn"
+              *hasPermission="['edit:node']"
+              (click)="openEdit(node); $event.stopPropagation()"
+              title="Edit node"
+            >
+              <i class="bi bi-pencil"></i>
+            </button>
+            <button
+              class="icon-btn icon-btn--danger"
+              *hasPermission="['delete:node']"
+              [disabled]="isDeleting"
+              (click)="deleteNode(node); $event.stopPropagation()"
+              title="Delete node"
+            >
+              <i class="bi bi-trash"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <ng-template #emptyList>
+        <div class="empty-state">
+          <div class="empty-icon">
+            <i class="bi bi-diagram-3"></i>
+          </div>
+          <h3>No nodes found</h3>
+          <p>Try a different search or create a new sidebar node to get started.</p>
+        </div>
+      </ng-template>
+    </div>
+
+    <div class="side-panel">
+      <div class="glass-panel form-panel" *ngIf="isEditing">
+        <div class="panel-header-left">
+          <span class="panel-subtitle">{{ selectedNode ? 'Edit Node' : 'Create Node' }}</span>
+          <h2>{{ selectedNode ? selectedNode.name : 'New Sidebar Node' }}</h2>
+        </div>
+
+        <form [formGroup]="nodeForm" (ngSubmit)="saveNode()" class="node-form">
+          <div class="form-field">
+            <label class="form-label" for="name">Name <span class="required">*</span></label>
+            <input
+              class="form-input"
+              type="text"
+              formControlName="name"
+              placeholder="Dashboard"
+              id="name"
+            />
+          </div>
+
+          <div class="form-field">
+            <label class="form-label" for="path">Path <span class="required">*</span></label>
+            <input
+              class="form-input"
+              type="text"
+              formControlName="path"
+              placeholder="/dashboard"
+              id="path"
+            />
+          </div>
+
+          <div class="form-field">
+            <label class="form-label" for="icon">Icon <span class="required">*</span></label>
+            <input
+              class="form-input"
+              type="text"
+              formControlName="icon"
+              placeholder="bi bi-speedometer2"
+              id="icon"
+            />
+          </div>
+
+          <div class="form-field">
+            <label class="form-label" for="order">Order <span class="required">*</span></label>
+            <input class="form-input" type="number" formControlName="order" min="1" id="order" />
+          </div>
+
+          <div class="form-actions">
+            <button type="button" class="btn btn-ghost" (click)="closeForm()">Cancel</button>
+            <button type="submit" class="btn btn-primary" [disabled]="nodeForm.invalid || isSaving">
+              <i class="bi bi-check-lg"></i>
+              {{ isSaving ? 'Saving...' : 'Save Node' }}
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <div class="glass-panel roles-panel" *ngIf="selectedNode && !isEditing">
+        <div class="panel-header-left">
+          <span class="panel-subtitle">Access Control</span>
+          <h2>Roles for {{ selectedNode.name }}</h2>
+        </div>
+
+        <div class="role-assign-list" *ngIf="roles.length; else noRoles">
+          <div class="role-assign-row" *ngFor="let role of roles">
+            <div class="role-avatar" [ngClass]="getRoleAvatarClass(role.role_name)">
+              {{ role.role_name.charAt(0) }}
+            </div>
+            <span class="role-assign-name">{{ role.role_name }}</span>
+            <label class="role-toggle" aria-label="role-toggle">
+              <input
+                type="checkbox"
+                id="role-toggle"
+                [checked]="isRoleAssigned(selectedNode, role.role_name)"
+                (change)="toggleRole(selectedNode, role.role_name)"
+                *hasPermission="['edit:node']"
+                [disabled]="role.role_name == 'Super Admin'"
+              />
+              <span class="role-toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <ng-template #noRoles>
+          <div class="empty-filter">No roles available yet.</div>
+        </ng-template>
+      </div>
+
+      <div class="glass-panel" *ngIf="!selectedNode && !isEditing">
+        <div class="empty-state">
+          <div class="empty-icon">
+            <i class="bi bi-cursor"></i>
+          </div>
+          <h3>No node selected</h3>
+          <p>Select a node from the list to manage its assigned roles, or create a new one.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

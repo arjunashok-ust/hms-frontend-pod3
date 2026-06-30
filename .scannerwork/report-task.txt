@@ -2,5 +2,5 @@ projectKey=hms-frontend
 serverUrl=http://localhost:9000
 serverVersion=26.1.0.118079
 dashboardUrl=http://localhost:9000/dashboard?id=hms-frontend
-ceTaskId=b195cd9d-789b-457c-9a36-5778c0cd5cce
-ceTaskUrl=http://localhost:9000/api/ce/task?id=b195cd9d-789b-457c-9a36-5778c0cd5cce
+ceTaskId=c706e307-106e-4b55-a63b-e2b0c2a34800
+ceTaskUrl=http://localhost:9000/api/ce/task?id=c706e307-106e-4b55-a63b-e2b0c2a34800

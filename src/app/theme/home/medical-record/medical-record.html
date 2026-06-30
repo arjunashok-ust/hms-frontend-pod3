@@ -120,7 +120,7 @@
     </div>
   </div>
 
-  <div class="glass-panel" style="margin-bottom: 22px">
+  <div class="glass-panel" style="margin-bottom: 22px" *hasPermission="['create:medical-record']">
     <div class="panel-header">
       <div>
         <span class="panel-subtitle">New Entry</span>
@@ -586,6 +586,7 @@
           class="btn btn-primary"
           (click)="onSubmit('Draft')"
           [disabled]="isCreateLoading || isDraftLoading"
+          *hasPermission="['edit:medical-record']"
         >
           <svg
             width="14"
@@ -607,6 +608,7 @@
           class="btn btn-primary"
           (click)="onSubmit('Completed')"
           [disabled]="isCreateLoading || isDraftLoading"
+          *hasPermission="['create:medical-record']"
         >
           <svg
             width="14"
@@ -700,6 +702,7 @@
                       doctorMap[record.doctorId]
                     )
                   "
+                  *hasPermission="['view:medical-record']"
                 >
                   <svg
                     width="14"

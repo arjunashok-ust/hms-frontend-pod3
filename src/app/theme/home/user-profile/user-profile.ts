@@ -4,10 +4,11 @@ import { UserEmployeeModel } from '../../../models/user.model';
 import { CommonModule } from '@angular/common';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
+import { HasPermissionDirective } from '../../../directive/has-permission.directive';
 
 @Component({
   selector: 'app-user-profile',
-  imports: [CommonModule],
+  imports: [CommonModule, HasPermissionDirective],
   templateUrl: './user-profile.html',
   styleUrl: './user-profile.css',
 })

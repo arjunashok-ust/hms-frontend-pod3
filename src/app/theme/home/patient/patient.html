@@ -242,6 +242,7 @@
             [disabled]="!patientForm.valid"
             [disabled]="patientForm.invalid"
             [ngClass]="{ 'btn-disabled': patientForm.invalid }"
+            *hasPermission="['create:patient']"
           >
             <i class="bi bi-person-plus-fill"></i> {{ isLoading ? 'Saving...' : 'Save Patient' }}
           </button>
@@ -316,6 +317,7 @@
                   <button
                     class="action-btn edit"
                     title="Edit"
+                    *hasPermission="['edit:patient']"
                     (click)="editPatientProfile(patient.email)"
                   >
                     <i class="bi bi-pencil"></i>
@@ -323,6 +325,7 @@
                   <button
                     class="action-btn delete"
                     title="Delete"
+                    *hasPermission="['delete:patient']"
                     (click)="deletePatient(patient.uhid)"
                   >
                     <i class="bi bi-trash"></i>

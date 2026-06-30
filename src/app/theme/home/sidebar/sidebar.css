@@ -173,11 +173,6 @@
   color: var(--sb-accent);
 }
 
-.sidebar-footer {
-  margin-top: auto;
-  padding-top: 12px;
-}
-
 .upgrade-card {
   position: relative;
   display: flex;
