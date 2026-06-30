@@ -1,4 +1,7 @@
-<div *hasPermission="['CREATE_PATIENT','UPDATE_PATIENT','DELETE_PATIENT','VIEW_PATIENTS']" class="page-wrapper">
+<div
+  *hasPermission="['CREATE_PATIENT', 'UPDATE_PATIENT', 'DELETE_PATIENT', 'VIEW_PATIENTS']"
+  class="page-wrapper"
+>
   <div class="page-header">
     <div>
       <p class="subtitle">DIRECTORY</p>
@@ -13,6 +16,7 @@
     <div class="filter-bar">
       <div class="search-box">
         <input
+          aria-label="searchTerm"
           type="text"
           placeholder="Search Patient Name, Email, or UHID"
           [(ngModel)]="searchTerm"
@@ -50,10 +54,18 @@
                 <td>{{ pat.gender }}</td>
                 <td>
                   <div class="action-links">
-                    <button *hasPermission="'UPDATE_PATIENT'" class="btn-action edit" (click)="editPatient(pat)">
+                    <button
+                      *hasPermission="'UPDATE_PATIENT'"
+                      class="btn-action edit"
+                      (click)="editPatient(pat)"
+                    >
                       <i class="bi bi-pencil"></i>
                     </button>
-                    <button *hasPermission="'DELETE_PATIENT'" class="btn-action delete" (click)="deletePatient(pat.UHID)">
+                    <button
+                      *hasPermission="'DELETE_PATIENT'"
+                      class="btn-action delete"
+                      (click)="deletePatient(pat.UHID)"
+                    >
                       <i class="bi bi-trash"></i>
                     </button>
                   </div>
@@ -70,10 +82,10 @@
 
       <div class="pagination-container">
         <div class="pagination-info">
-          Showing Page {{ currentPage }} of {{ totalPages }} 
+          Showing Page {{ currentPage }} of {{ totalPages }}
           <span style="font-weight: 400; margin-left: 8px">({{ totalRecords }} Total Records)</span>
         </div>
-        
+
         <div class="pagination-controls">
           <button class="btn-page prev" [disabled]="currentPage === 1" (click)="prevPage()">
             <i class="bi bi-chevron-left"></i> Prev
@@ -83,8 +95,8 @@
               @if (page === '...') {
                 <span class="pagination-ellipsis">...</span>
               } @else {
-                <button 
-                  class="btn-page-number" 
+                <button
+                  class="btn-page-number"
                   [class.active]="currentPage === page"
                   (click)="goToPage(page)"
                 >
@@ -93,7 +105,11 @@
               }
             }
           </div>
-          <button class="btn-page next" [disabled]="currentPage === totalPages || totalPages === 0" (click)="nextPage()">
+          <button
+            class="btn-page next"
+            [disabled]="currentPage === totalPages || totalPages === 0"
+            (click)="nextPage()"
+          >
             Next <i class="bi bi-chevron-right"></i>
           </button>
         </div>
@@ -127,7 +143,7 @@
           <div class="form-grid-2-col">
             <div class="input-group">
               <label for="name">FULL NAME *</label>
-              <input type="text" formControlName="name" />
+              <input aria-label="name" type="text" formControlName="name" />
               @if (newpatientForm.get('name')?.touched && newpatientForm.get('name')?.invalid) {
                 <span class="error-msg">Name is required</span>
               }
@@ -135,7 +151,7 @@
 
             <div class="input-group">
               <label for="email">EMAIL *</label>
-              <input type="email" formControlName="email" />
+              <input aria-label="email" type="email" formControlName="email" />
               @if (
                 newpatientForm.get('email')?.touched &&
                 newpatientForm.get('email')?.hasError('email')
@@ -146,7 +162,7 @@
 
             <div class="input-group">
               <label for="phone">PHONE *</label>
-              <input type="text" formControlName="phone" />
+              <input aria-label="phone" type="text" formControlName="phone" />
               @if (newpatientForm.get('phone')?.touched && newpatientForm.get('phone')?.invalid) {
                 <span class="error-msg">Must be 10 digits</span>
               }
@@ -154,7 +170,13 @@
 
             <div class="input-group">
               <label for="dob">DOB *</label>
-              <input type="date" formControlName="dob" [min]="getMinDate()" [max]="getMaxDate()" />
+              <input
+                aria-label="dob"
+                type="date"
+                formControlName="dob"
+                [min]="getMinDate()"
+                [max]="getMaxDate()"
+              />
               @if (
                 newpatientForm.get('dob')?.touched &&
                 newpatientForm.get('dob')?.hasError('futureDate')
@@ -170,19 +192,19 @@
             >
               <div class="input-group col-span-2">
                 <label for="line1">ADDRESS-Line 1 *</label>
-                <input type="text" formControlName="line1" />
+                <input aria-label="line1" type="text" formControlName="line1" />
               </div>
               <div class="input-group col-span-2">
                 <label for="line2">ADDRESS- Line 2 *</label>
-                <input type="text" formControlName="line2" />
+                <input aria-label="line2" type="text" formControlName="line2" />
               </div>
               <div class="input-group">
                 <label for="state">STATE *</label>
-                <input type="text" formControlName="state" />
+                <input aria-label="state" type="text" formControlName="state" />
               </div>
               <div class="input-group">
                 <label for="pincode">PINCODE *</label>
-                <input type="number" formControlName="pincode" />
+                <input aria-label="pincode" type="number" formControlName="pincode" />
               </div>
             </div>
           </div>
