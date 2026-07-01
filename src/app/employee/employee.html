@@ -91,298 +91,180 @@
         <!-- TABLE -->
 
         <div class="table-wrapper">
-
             <table class="modern-table">
-
                 <thead>
-
                     <tr>
-
                         <th>ID</th>
-
                         <th>Employee</th>
-
                         <th>Email</th>
-
                         <th>Department</th>
-
                         <th>Role</th>
-
                         <th>Status</th>
-
                         <th>Action</th>
-
                     </tr>
-
                 </thead>
-
                 <tbody *ngIf="filteredEmployeeData.length > 0">
-
                     <tr *ngFor="let employee of filteredEmployeeData">
-
                         <!-- ID -->
-
                         <td>
-
                             <span class="employee-id">
-
                                 {{ employee.employeeId }}
-
                             </span>
-
                         </td>
-
                         <!-- NAME -->
-
                         <td>
-
                             <div class="employee-info">
-
                                 <div class="avatar blue-avatar">
-
                                     {{ employee.name.slice(0,2).toUpperCase() }}
-
                                 </div>
-
                                 <div>
-
                                     <h4>
                                         {{ employee.name }}
                                     </h4>
-
                                 </div>
-
                             </div>
-
                         </td>
-
                         <!-- EMAIL -->
 
                         <td class="muted-text">
-
                             {{ employee.email }}
-
                         </td>
 
                         <!-- DEPARTMENT -->
 
                         <td>
-
                             <span class="department-text">
-
                                 {{ employee.department }}
-
                             </span>
-
                         </td>
-
                         <!-- ROLE -->
-
                         <td>
-
                             <span class="designation-badge">
-
                                 {{ employee.role }}
-
                             </span>
-
                         </td>
-
                         <!-- STATUS -->
-
                         <td>
-
                             <span class="status-badge"
                                 [ngClass]="employee.status ? 'active-status' : 'inactive-status'">
-
                                 {{ employee.status ? 'Active' : 'Inactive' }}
-
                             </span>
-
                         </td>
-
                         <!-- ACTION -->
-
                         <td>
-
                             <div class="action-buttons">
-
                                 <button *ngIf="canEditEmployee(employee)" class="icon-btn edit-btn"
                                     (click)="editEmployee(employee)">
-
                                     Edit
-
                                 </button>
-
                                 <button *ngIf="canDeleteEmployee(employee)" class="icon-btn delete-btn"
                                     (click)="deleteEmployee(employee.employeeId)">
-
                                     Delete
-
                                 </button>
-
                             </div>
-
                         </td>
-
                     </tr>
-
                 </tbody>
-
             </table>
-
             <app-pagination [page]="currentPage" [totalPages]="totalPages" [hasNextPage]="hasNextPage"
                 [hasPrevPage]="hasPrevPage" (pageChange)="onPageChange($event)">
             </app-pagination>
-
         </div>
-
     </div>
-
 </section>
-
 <!-- MODAL -->
-
 <div class="modal-overlay" *ngIf="showModal">
-
     <div class="employee-modal">
-
         <!-- HEADER -->
-
         <div class="modal-header">
-
             <h2>
-
                 {{ isEditMode ? 'Edit Employee' : 'Add Employee' }}
-
             </h2>
-
             <button class="close-btn" (click)="closeModal()">
                 <i class="fa-solid fa-xmark"></i>
             </button>
-
         </div>
-
         <!-- FORM -->
-
         <form #employeeFormRef="ngForm" (ngSubmit)="addEmployee(employeeFormRef)">
-
             <div class="form-grid">
-
                 <!-- NAME -->
-
                 <div class="input-group" [class.invalid]="nameField.invalid && nameField.touched">
-
                     <label for="full name">
                         Full Name
                     </label>
-
                     <input type="text" [(ngModel)]="employeeForm.name" name="name" #nameField="ngModel" required
                         pattern="^[A-Za-z ]+$">
-
                     <div class="validation-error" *ngIf="nameField.invalid && nameField.touched">
                         <span *ngIf="nameField.errors?.['required']">Name is required</span>
                         <span *ngIf="nameField.errors?.['pattern']">Only alphabets and spaces allowed</span>
                     </div>
-
                 </div>
-
                 <!-- EMAIL -->
-
                 <div class="input-group" [class.invalid]="emailField.invalid && emailField.touched">
-
                     <label for="email">
                         Email
                     </label>
-
                     <input type="email" [(ngModel)]="employeeForm.email" name="email" #emailField="ngModel" required
                         email>
-
                     <div class="validation-error" *ngIf="emailField.invalid && emailField.touched">
                         <span *ngIf="emailField.errors?.['required']">Email is required</span>
                         <span *ngIf="emailField.errors?.['email']">Enter a valid email</span>
                     </div>
-
                 </div>
-
                 <!-- PHONE -->
-
                 <div class="input-group" [class.invalid]="phoneField.invalid && phoneField.touched">
-
                     <label for="phone">
                         Phone
                     </label>
-
                     <input type="text" [(ngModel)]="employeeForm.phone" name="phone" #phoneField="ngModel" required
                         pattern="^[0-9]{10}$" maxlength="10">
-
                     <div class="validation-error" *ngIf="phoneField.invalid && phoneField.touched">
                         <span *ngIf="phoneField.errors?.['required']">Phone number is required</span>
                         <span *ngIf="phoneField.errors?.['pattern']">Phone number must be exactly 10 digits</span>
                     </div>
-
                 </div>
-
                 <!-- ROLE -->
-
                 <div class="input-group" [class.invalid]="roleField.invalid && roleField.touched">
-
                     <label for="role">
                         Role
                     </label>
-
                     <select [(ngModel)]="employeeForm.role" name="role" #roleField="ngModel" required>
-
                         <option value="">
                             Select Role
                         </option>
-
                         <option value="doctor">
                             Doctor
                         </option>
-
                         <option value="nurse">
                             Nurse
                         </option>
-
                         <option value="receptionist">
                             Receptionist
                         </option>
-
                         <option value="pharmacist">
                             Pharmacist
                         </option>
-
                         <option value="lab_Tech">
                             Lab Technician
                         </option>
-
                         <!-- Admin-tier: only a super admin (manage:admin) may create an admin -->
                         <option *hasPermission="PERMISSIONS.MANAGE_ADMIN" value="admin">
                             Admin
                         </option>
-
                     </select>
-
                     <div class="validation-error" *ngIf="roleField.invalid && roleField.touched">
                         Role is required
                     </div>
-
                 </div>
-
                 <!-- DEPARTMENT -->
-
                 <div class="input-group" [class.invalid]="departmentField.invalid && departmentField.touched">
-
                     <label for="department">
                         Department
                     </label>
-
                     <select [(ngModel)]="employeeForm.department" name="department" #departmentField="ngModel" required>
                         <option value="">
                             Select Department
                         </option>
-
                         <option value="OPD">OPD</option>
                         <option value="IPD">IPD</option>
                         <option value="Lab">Lab</option>

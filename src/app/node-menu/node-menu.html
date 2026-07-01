@@ -1,26 +1,20 @@
 <section class="node-wrapper">
-
     <!-- HEADER -->
     <div class="panel-header">
-
         <div>
             <span class="panel-subtitle">HMS Admin</span>
-            <h2>Sidebar Menu Management</h2>
+            <h2>Node Path Management</h2>
         </div>
-
         <div class="header-actions">
             <button *hasPermission="PERMISSIONS.NODE_MANAGE" class="btn-primary" (click)="openModal()">
                 Add Node
             </button>
         </div>
-
     </div>
-
+    
     <!-- PANEL -->
     <div class="directory-panel">
-
         <div class="loading" *ngIf="loading">Loading nodes...</div>
-
         <div class="table-wrapper" *ngIf="!loading">
             <table class="modern-table">
                 <thead>
@@ -33,7 +27,6 @@
                         <th>Action</th>
                     </tr>
                 </thead>
-
                 <tbody *ngIf="nodes.length > 0">
                     <tr *ngFor="let node of nodes">
                         <td><span class="employee-id">{{ node.node_id }}</span></td>
@@ -55,7 +48,6 @@
                         </td>
                     </tr>
                 </tbody>
-
                 <tbody *ngIf="nodes.length === 0">
                     <tr>
                         <td colspan="6" class="empty-state">No nodes configured.</td>
@@ -63,43 +55,33 @@
                 </tbody>
             </table>
         </div>
-
     </div>
-
 </section>
-
 <!-- MODAL -->
 <div class="modal-overlay" *ngIf="showModal">
     <div class="node-modal">
-
         <div class="modal-header">
             <h2>{{ isEditMode ? 'Edit Node' : 'Add Node' }}</h2>
             <button class="close-btn" (click)="closeModal()"><i class="fa-solid fa-xmark"></i></button>
         </div>
-
         <form #nodeFormRef="ngForm" (ngSubmit)="submitNode(nodeFormRef)">
             <div class="form-grid">
-
                 <div class="input-group">
                     <label for="node id">Node ID</label>
                     <input type="number" [(ngModel)]="nodeForm.node_id" name="node_id" required>
                 </div>
-
                 <div class="input-group">
                     <label for="name">Name</label>
                     <input type="text" [(ngModel)]="nodeForm.name" name="name" required>
                 </div>
-
                 <div class="input-group">
                     <label for="path">Path</label>
                     <input type="text" [(ngModel)]="nodeForm.path" name="path" required placeholder="/example-path">
                 </div>
-
                 <div class="input-group">
                     <label for="icon">Icon (Font Awesome class)</label>
                     <input type="text" [(ngModel)]="nodeForm.icon" name="icon" required placeholder="fa-solid fa-gauge">
                 </div>
-
                 <!-- ROLE CHECKBOXES -->
                 <div class="input-group role-checkbox-group">
                     <label>Visible To Roles</label>

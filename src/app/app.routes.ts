@@ -74,20 +74,18 @@ export const routes: Routes = [
       },
 
       {
-        path: 'node-menu',
-        loadComponent: () => import('./node-menu/node-menu').then((m) => m.NodeMenu),
-        canActivate: [roleGuard],
-        data: { roles: ['admin', 'super_admin'] },
-      },
-
-      {
         path: 'medical-records',
         loadComponent: () =>
           import('./medical-record/medical-record').then((m) => m.MedicalRecord),
         canActivate: [roleGuard],
         data: { roles: ['admin', 'super_admin', 'doctor', 'receptionist'] },
       },
-
+       {
+        path: 'node-menu',
+        loadComponent: () => import('./node-menu/node-menu').then((m) => m.NodeMenu),
+        canActivate: [roleGuard],
+        data: { roles: ['admin', 'super_admin'] },
+      },
       {
         path: 'role-menu',
         loadComponent: () => import('./role-menu/role-menu').then((m) => m.RoleMenu),
