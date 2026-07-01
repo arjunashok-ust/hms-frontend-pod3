@@ -4,7 +4,7 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } 
 import { ApiService } from '../../services/apiService/api-service';
 import { ToastrService } from 'ngx-toastr';
 import { HasPermissionDirective } from '../../directives/has-permission.directive';
-const Users = require('../../models/users');
+
 
 interface PermissionGroup {
   groupName: string;
@@ -37,7 +37,8 @@ export class RoleManagement implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly cdr = inject(ChangeDetectorRef);
 
-  constructor(@Inject(PLATFORM_ID) private platformId: Object) { }
+  constructor(@Inject(PLATFORM_ID) private readonly platformId: Object) { }
+
   ngOnInit() {
     this.newPermForm = this.fb.group({
       action: ['', Validators.required],
@@ -49,7 +50,7 @@ export class RoleManagement implements OnInit {
       this.fetchPermissions();
     });
 
-    this.userCanUpdatePermissions = this.checkUpdatePermissions();
+    this.userCanUpdatePermissions = this.checkUserPermissionAccess();
   }
 
   fetchRoles(): Promise<void> {
@@ -147,6 +148,8 @@ export class RoleManagement implements OnInit {
 
 
   togglePermission(perm: string) {
+    if (!this.userCanUpdatePermissions) return;
+
     if (this.hasPermission(perm)) {
       this.selectedRolePermissions.delete(perm);
     } else {
@@ -160,6 +163,8 @@ export class RoleManagement implements OnInit {
   }
 
   toggleGroup(group: PermissionGroup) {
+    if (!this.userCanUpdatePermissions) return;
+
     if (this.isGroupFullyAssigned(group)) {
       group.permissions.forEach(p => this.selectedRolePermissions.delete(p));
     } else {
@@ -167,24 +172,45 @@ export class RoleManagement implements OnInit {
     }
   }
 
-  private checkUpdatePermissions(): boolean {
-    if (isPlatformBrowser(this.platformId)) {
-      const userString = localStorage.getItem('user');
-      if (userString) {
-        try {
-          const user = JSON.parse(userString);
-          return user?.role?.rolePermissions?.includes('UPDATE_PERMISSIONS');
-        } catch (e) {
-          console.error('Error parsing user from localStorage', e);
-          return false;
-        }
+  private getStoredUserPermissions(): string[] {
+    if (!isPlatformBrowser(this.platformId)) {
+      return [];
+    }
+
+    const token = localStorage.getItem('token');
+    if (token) {
+      try {
+        const payloadBase64 = token.split('.')[1];
+        const decodedJson = atob(payloadBase64.replace(/-/g, '+').replace(/_/g, '/'));
+        const decodedPayload = JSON.parse(decodedJson);
+
+        return Array.isArray(decodedPayload.permissions) ? decodedPayload.permissions : [];
+      } catch (error) {
+        console.error('Error parsing token permissions from localStorage', error);
       }
     }
-    return false;
+
+    const userString = localStorage.getItem('user');
+    if (userString) {
+      try {
+        const user = JSON.parse(userString);
+        const permissions = user?.permissions || user?.role?.rolePermissions || [];
+        return Array.isArray(permissions) ? permissions : [];
+      } catch (e) {
+        console.error('Error parsing user from localStorage', e);
+      }
+    }
+
+    return [];
+  }
+
+  private checkUserPermissionAccess(): boolean {
+    const permissions = new Set(this.getStoredUserPermissions().map(permission => permission.toUpperCase()));
+    return permissions.has('UPDATE_PERMISSIONS') || permissions.has('DELETE_PERMISSIONS');
   }
   // --- Saves & Actions ---
   saveRoleChanges() {
-    if (!this.selectedRole) return;
+    if (!this.selectedRole || !this.userCanUpdatePermissions) return;
     this.isSaving = true;
 
     const payload = {

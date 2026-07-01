@@ -11,6 +11,8 @@
               class="role-card"
               [class.active]="selectedRole?._id === role._id"
               (click)="selectRole(role)"
+              (keydown.enter)="selectRole(role)"
+              (keydown.space)="selectRole(role)"
             >
               <div class="role-avatar" [class.active-avatar]="selectedRole?._id === role._id">
                 {{ getRoleInitials(role.roleName) }}
@@ -34,11 +36,12 @@
 
       <form [formGroup]="newPermForm" (ngSubmit)="registerNewPermission()">
         <div class="input-group mb-3">
-          <label
+          <label for="action"
             ><i class="bi bi-lightning text-purple"></i> ACTION
             <span class="text-danger">*</span></label
           >
           <input
+            aria-label="action"
             type="text"
             class="form-control"
             formControlName="action"
@@ -50,11 +53,12 @@
         </div>
 
         <div class="input-group mb-3">
-          <label
+          <label for="resource"
             ><i class="bi bi-box text-purple"></i> RESOURCE
             <span class="text-danger">*</span></label
           >
           <input
+            aria-label="resource"
             type="text"
             class="form-control"
             formControlName="resource"
@@ -83,13 +87,18 @@
         <div class="header-actions">
           <div class="search-box">
             <i class="bi bi-search"></i>
-            <input type="text" placeholder="Filter permissions" [(ngModel)]="searchQuery" />
+            <input
+              type="text"
+              aria-label="search"
+              placeholder="Filter permissions"
+              [(ngModel)]="searchQuery"
+            />
           </div>
           <button
             class="btn-save"
-            *hasPermission="'MANAGE_PERMISSIONS'"
+            *hasPermission="['UPDATE_PERMISSIONS', 'DELETE_PERMISSIONS']"
             (click)="saveRoleChanges()"
-            [disabled]="isSaving"
+            [disabled]="isSaving || !userCanUpdatePermissions"
           >
             <i class="bi bi-save"></i> {{ isSaving ? 'Saving...' : 'Save Changes' }}
           </button>
@@ -107,11 +116,19 @@
               </div>
 
               @if (isGroupFullyAssigned(group)) {
-                <button class="btn-group-action remove" (click)="toggleGroup(group)">
+                <button
+                  class="btn-group-action remove"
+                  (click)="toggleGroup(group)"
+                  [disabled]="!userCanUpdatePermissions"
+                >
                   Remove All
                 </button>
               } @else {
-                <button class="btn-group-action assign" (click)="toggleGroup(group)">
+                <button
+                  class="btn-group-action assign"
+                  (click)="toggleGroup(group)"
+                  [disabled]="!userCanUpdatePermissions"
+                >
                   Assign All
                 </button>
               }
@@ -123,7 +140,10 @@
                   class="perm-pill"
                   [class.active]="hasPermission(perm)"
                   [class.disabled]="!userCanUpdatePermissions"
+                  [attr.aria-disabled]="!userCanUpdatePermissions"
                   (click)="userCanUpdatePermissions && togglePermission(perm)"
+                  (keydown.enter)="userCanUpdatePermissions && togglePermission(perm)"
+                  (keydown.space)="userCanUpdatePermissions && togglePermission(perm)"
                 >
                   <span class="pill-dot"></span>
                   <span class="pill-text">{{ formatPermissionForUI(perm) }}</span>
