@@ -7,7 +7,7 @@
         </div>
       </div>
       <div class="stat-body">
-        <h2>{{ appointmentUiData?.appointmentCount }}</h2>
+        <h2>{{ appointmentUiData()?.appointmentCount }}</h2>
         <p>Total Appointments</p>
       </div>
     </div>
@@ -18,7 +18,7 @@
         </div>
       </div>
       <div class="stat-body">
-        <h2>{{ appointmentUiData?.completedCount }}</h2>
+        <h2>{{ appointmentUiData()?.completedCount }}</h2>
         <p>Completed</p>
       </div>
     </div>
@@ -29,7 +29,7 @@
         </div>
       </div>
       <div class="stat-body">
-        <h2>{{ appointmentUiData?.bookedCount }}</h2>
+        <h2>{{ appointmentUiData()?.bookedCount }}</h2>
         <p>Booked</p>
       </div>
     </div>
@@ -40,7 +40,7 @@
         </div>
       </div>
       <div class="stat-body">
-        <h2>{{ appointmentUiData?.cancelledCount }}</h2>
+        <h2>{{ appointmentUiData()?.cancelledCount }}</h2>
         <p>Cancelled</p>
       </div>
     </div>
@@ -55,7 +55,7 @@
         </div>
         <div class="panel-actions"></div>
       </div>
-      <form [formGroup]="appointmentForm" id="appointmentForm" (submit)="onSubmit()">
+      <form [formGroup]="appointmentForm" id="appointmentForm" (ngSubmit)="onSubmit()">
         <div class="form-grid">
           <div class="form-group">
             <label class="form-label" for="patientId">
@@ -73,7 +73,7 @@
               required
             />
             <mat-autocomplete #auto="matAutocomplete">
-              <mat-option *ngFor="let patient of patients" [value]="patient.uhid">
+              <mat-option *ngFor="let patient of patients()" [value]="patient.uhid">
                 <span class="option-title">{{ patient.name }}</span
                 ><br />
                 <span class="option-value">{{ patient.uhid }}</span>
@@ -102,7 +102,7 @@
               required
             >
               <option value="" disabled selected>Select Doctor</option>
-              <ng-container *ngFor="let doctor of doctors">
+              <ng-container *ngFor="let doctor of doctors()">
                 <option [value]="doctor.employeeCode">
                   {{ doctor.name }} — {{ doctor.specialization }}
                 </option>
@@ -153,8 +153,11 @@
               Time Slot
               <span class="required">*</span>
             </label>
-            <div class="time-slots-grid" *ngIf="doctorTimeSlots.length > 0; else noSlots">
-              <div class="time-slot-container" *ngFor="let slot of doctorTimeSlots; let i = index">
+            <div class="time-slots-grid" *ngIf="doctorTimeSlots().length > 0; else noSlots">
+              <div
+                class="time-slot-container"
+                *ngFor="let slot of doctorTimeSlots(); let i = index"
+              >
                 <input
                   type="radio"
                   formControlName="timeSlot"
@@ -172,7 +175,7 @@
               <span
                 class="helper-text"
                 *ngIf="
-                  appointmentForm.get('doctorEmployeeId')?.value && doctorTimeSlots.length === 0
+                  appointmentForm.get('doctorEmployeeId')?.value && doctorTimeSlots().length === 0
                 "
                 >No time slots available right now.</span
               >
@@ -216,7 +219,8 @@
             [ngClass]="appointmentForm.valid ? 'btn-primary' : 'btn-disabled'"
             [disabled]="!appointmentForm.valid"
           >
-            <i class="bi bi-calendar-plus"></i> {{ isLoading ? 'Booking...' : 'Book Appointment' }}
+            <i class="bi bi-calendar-plus"></i>
+            {{ isLoading() ? 'Booking...' : 'Book Appointment' }}
           </button>
         </div>
       </form>
@@ -238,7 +242,7 @@
         <div class="divider-line"></div>
       </div>
       <div class="doctor-list">
-        <div class="doctor-row" *ngFor="let doctor of doctors">
+        <div class="doctor-row" *ngFor="let doctor of doctors()">
           <div class="patient-info">
             <div class="patient-avatar doctor-avatar">
               {{ doctor.name.slice(0, 2).toUpperCase() }}
@@ -259,7 +263,7 @@
       <div>
         <span class="panel-subtitle">Records</span>
         <h2>
-          {{ role === 'Doctor' ? 'Recent Appointments For You' : 'Recent Appointments' }}
+          {{ role() === 'Doctor' ? 'Recent Appointments For You' : 'Recent Appointments' }}
         </h2>
       </div>
       <div class="table-controls">
@@ -269,8 +273,9 @@
             <input
               type="text"
               placeholder="Search appointment"
-              [(ngModel)]="searchText"
-              (input)="fetchAppointments()"
+              [ngModel]="searchText()"
+              (ngModelChange)="searchText.set($event)"
+              (ngModelChange)="fetchAppointments()"
               id="search-box"
               aria-label="search-box"
             />
@@ -295,11 +300,11 @@
         </thead>
 
         <tbody>
-          <tr *ngIf="displayedAppointments.length === 0">
+          <tr *ngIf="displayedAppointments().length === 0">
             <td colspan="8">No appointments available</td>
           </tr>
 
-          <tr *ngFor="let appointment of displayedAppointments; trackBy: trackFn">
+          <tr *ngFor="let appointment of displayedAppointments(); trackBy: trackFn">
             <td>
               <span class="apt-id">{{ appointment.appointmentId }}</span>
             </td>
@@ -308,11 +313,13 @@
               <div class="patient-info">
                 <div class="patient-avatar">
                   {{
-                    patientNameMap[appointment.patientId] || 'Loading...' | slice: 0 : 2 | uppercase
+                    patientNameMap()[appointment.patientId] || 'Loading...'
+                      | slice: 0 : 2
+                      | uppercase
                   }}
                 </div>
                 <div>
-                  <h4>{{ patientNameMap[appointment.patientId] || 'Loading...' }}</h4>
+                  <h4>{{ patientNameMap()[appointment.patientId] || 'Loading...' }}</h4>
                   <span>{{ appointment.patientId }}</span>
                 </div>
               </div>
@@ -320,7 +327,7 @@
 
             <td>
               <span class="designation-badge">
-                {{ doctorNameMap[appointment.doctorEmployeeId] || 'Loading...' }}
+                {{ doctorNameMap()[appointment.doctorEmployeeId] || 'Loading...' }}
               </span>
             </td>
 
@@ -391,20 +398,22 @@
         </tbody>
       </table>
       <div class="pagination-bar">
-        <button class="page-btn" (click)="prevPage()" [disabled]="page === 1">Prev</button>
+        <button class="page-btn" (click)="prevPage()" [disabled]="page() === 1">Prev</button>
 
         <div class="page-numbers">
           <button
-            *ngFor="let p of [].constructor(totalPages); let i = index"
+            *ngFor="let p of [].constructor(totalPages()); let i = index"
             class="page-number"
-            [class.active]="page === i + 1"
+            [class.active]="page() === i + 1"
             (click)="goToPage(i + 1)"
           >
             {{ i + 1 }}
           </button>
         </div>
 
-        <button class="page-btn" (click)="nextPage()" [disabled]="page === totalPages">Next</button>
+        <button class="page-btn" (click)="nextPage()" [disabled]="page() === totalPages()">
+          Next
+        </button>
       </div>
     </div>
   </div>

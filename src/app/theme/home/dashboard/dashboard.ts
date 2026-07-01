@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { DashboardModel } from '../../../models/ui.model';
 import { EmployeeModel } from '../../../models/user.model';
 import { AdminService } from '../../../services/admin.service';
@@ -13,21 +13,19 @@ import { ToastrService } from 'ngx-toastr';
   styleUrl: './dashboard.css',
 })
 export class DashboardComponent implements OnInit {
-  dashboardData: DashboardModel | null = null;
-  userData: EmployeeModel[] = [];
+  dashboardData = signal<DashboardModel | null>(null);
+  userData = signal<EmployeeModel[]>([]);
 
   adminService: AdminService = inject(AdminService);
-  cd: ChangeDetectorRef = inject(ChangeDetectorRef);
   toast: ToastrService = inject(ToastrService);
   route: Router = inject(Router);
 
-  employeeEmail: string = localStorage.getItem('email') ?? '';
+  employeeEmail = signal(localStorage.getItem('email') ?? '');
 
   ngOnInit() {
     this.adminService.getDashboardData().subscribe({
       next: (res) => {
-        this.dashboardData = res;
-        this.cd.detectChanges();
+        this.dashboardData.set(res);
       },
       error: (err) => {
         this.toast.error(err?.error?.message);
@@ -36,8 +34,7 @@ export class DashboardComponent implements OnInit {
 
     this.adminService.getEmployees('', '', 1, 10).subscribe({
       next: (res) => {
-        this.userData = res.data;
-        this.cd.detectChanges();
+        this.userData.set(res.data);
       },
       error: (err) => {
         console.error(err);

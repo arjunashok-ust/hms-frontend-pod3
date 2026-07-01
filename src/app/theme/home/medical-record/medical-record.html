@@ -23,7 +23,7 @@
           <line x1="12" y1="11" x2="12" y2="17" />
           <line x1="9" y1="14" x2="15" y2="14" />
         </svg>
-        <span>{{ medicalRecordCount }} Records</span>
+        <span>{{ medicalRecordCount() }} Records</span>
       </div>
     </div>
   </div>
@@ -48,7 +48,7 @@
         <span class="metric-tag">Total</span>
       </div>
       <div class="metric-body">
-        <h2>{{ medicalRecordCount }}</h2>
+        <h2>{{ medicalRecordCount() }}</h2>
         <p>Total Records</p>
       </div>
     </div>
@@ -70,7 +70,7 @@
         <span class="metric-tag">Completed</span>
       </div>
       <div class="metric-body">
-        <h2>{{ completedCount }}</h2>
+        <h2>{{ completedCount() }}</h2>
         <p>Completed Records</p>
       </div>
     </div>
@@ -92,7 +92,7 @@
         <span class="metric-tag">Review</span>
       </div>
       <div class="metric-body">
-        <h2>{{ draftCount }}</h2>
+        <h2>{{ draftCount() }}</h2>
         <p>Draft</p>
       </div>
     </div>
@@ -114,7 +114,7 @@
         <span class="metric-tag">Deleted</span>
       </div>
       <div class="metric-body">
-        <h2>{{ deletedCount }}</h2>
+        <h2>{{ deletedCount() }}</h2>
         <p>Deleted Records</p>
       </div>
     </div>
@@ -159,7 +159,7 @@
                 (input)="getPatients()"
               />
               <mat-autocomplete #auto="matAutocomplete">
-                <mat-option *ngFor="let patient of filteredPatients" [value]="patient.uhid">
+                <mat-option *ngFor="let patient of filteredPatients()" [value]="patient.uhid">
                   <span class="option-title">{{ patient.name }}</span
                   ><br />
                   <span class="option-value">{{ patient.uhid }}</span>
@@ -201,7 +201,7 @@
                 (input)="getDoctors()"
               />
               <mat-autocomplete #autoDoctor="matAutocomplete">
-                <mat-option *ngFor="let doctor of filteredDoctors" [value]="doctor.employeeCode">
+                <mat-option *ngFor="let doctor of filteredDoctors()" [value]="doctor.employeeCode">
                   <span class="option-title">{{ doctor.name }}</span
                   ><br />
                   <span class="option-value">{{ doctor.employeeCode }}</span>
@@ -244,7 +244,7 @@
               />
               <mat-autocomplete #autoAppointment="matAutocomplete">
                 <mat-option
-                  *ngFor="let appointment of filteredAppointments"
+                  *ngFor="let appointment of filteredAppointments()"
                   [value]="appointment.appointmentId"
                 >
                   <span class="option-title">{{ appointment.appointmentId }}</span
@@ -543,7 +543,7 @@
       <div class="meta-bar">
         <div class="meta-item">
           <span class="meta-label">Created By</span>
-          <span class="meta-value"> {{ employeeId }}</span>
+          <span class="meta-value"> {{ employeeId() }}</span>
         </div>
       </div>
 
@@ -566,7 +566,7 @@
           type="button"
           class="btn btn-danger-outline"
           (click)="cancelEdit()"
-          *ngIf="isEditable"
+          *ngIf="isEditable()"
         >
           <svg
             width="14"
@@ -601,7 +601,7 @@
             <line x1="12" y1="11" x2="12" y2="17" />
             <line x1="9" y1="14" x2="15" y2="14" />
           </svg>
-          {{ isDraftLoading ? 'Drafting...' : 'Draft' }}
+          {{ isDraftLoading() ? 'Drafting...' : 'Draft' }}
         </button>
         <button
           type="submit"
@@ -623,7 +623,7 @@
             <line x1="12" y1="11" x2="12" y2="17" />
             <line x1="9" y1="14" x2="15" y2="14" />
           </svg>
-          {{ isCreateLoading ? 'Creating...' : 'Create' }}
+          {{ isCreateLoading() ? 'Creating...' : 'Create' }}
         </button>
       </div>
     </form>
@@ -664,22 +664,22 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let record of medicalRecords; trackBy: trackFn">
+          <tr *ngFor="let record of medicalRecords(); trackBy: trackFn">
             <td>
               <span class="record-id">{{ record.medicalRecordId }}</span>
             </td>
             <td>
               <div class="patient-cell">
                 <div class="patient-avatar pa-1">
-                  {{ patientMap[record.patientId] || 'Loading...' | slice: 0 : 2 | uppercase }}
+                  {{ patientMap()[record.patientId] || 'Loading...' | slice: 0 : 2 | uppercase }}
                 </div>
                 <div>
-                  <h4>{{ patientMap[record.patientId] || 'Loading...' }}</h4>
+                  <h4>{{ patientMap()[record.patientId] || 'Loading...' }}</h4>
                   <span>{{ record.patientId }}</span>
                 </div>
               </div>
             </td>
-            <td class="muted-text">{{ doctorMap[record.doctorId] || 'Loading...' }}</td>
+            <td class="muted-text">{{ doctorMap()[record.doctorId] || 'Loading...' }}</td>
             <td>
               <span class="diagnosis-text">{{ record.diagnosis }}</span>
             </td>
@@ -698,8 +698,8 @@
                   (click)="
                     viewMedicalRecord(
                       record.medicalRecordId,
-                      patientMap[record.patientId],
-                      doctorMap[record.doctorId]
+                      patientMap()[record.patientId],
+                      doctorMap()[record.doctorId]
                     )
                   "
                   *hasPermission="['view:medical-record']"
@@ -762,20 +762,22 @@
         </tbody>
       </table>
       <div class="pagination-bar">
-        <button class="page-btn" (click)="prevPage()" [disabled]="page === 1">Prev</button>
+        <button class="page-btn" (click)="prevPage()" [disabled]="page() === 1">Prev</button>
 
         <div class="page-numbers">
           <button
-            *ngFor="let p of [].constructor(totalPages); let i = index"
+            *ngFor="let p of [].constructor(totalPages()); let i = index"
             class="page-number"
-            [class.active]="page === i + 1"
+            [class.active]="page() === i + 1"
             (click)="goToPage(i + 1)"
           >
             {{ i + 1 }}
           </button>
         </div>
 
-        <button class="page-btn" (click)="nextPage()" [disabled]="page === totalPages">Next</button>
+        <button class="page-btn" (click)="nextPage()" [disabled]="page() === totalPages()">
+          Next
+        </button>
       </div>
     </div>
   </div>

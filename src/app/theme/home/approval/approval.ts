@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -16,27 +16,25 @@ import { HasPermissionDirective } from '../../../directive/has-permission.direct
 })
 export class ApprovalComponent implements OnInit {
   adminService: AdminService = inject(AdminService);
-
-  cd: ChangeDetectorRef = inject(ChangeDetectorRef);
   toast: ToastrService = inject(ToastrService);
   route: Router = inject(Router);
 
-  userData: UserEmployeeModel[] = [];
+  userData = signal<UserEmployeeModel[]>([]);
 
-  page: number = 1;
-  limit: number = 5;
-  totalPages: number = 1;
+  page = signal(1);
+  limit = signal(5);
+  totalPages = signal(1);
 
-  approvalUiData = {
+  approvalUiData = signal({
     activeCount: 0,
     inactiveCount: 0,
     verifiedCount: 0,
     pendingApprovalCount: 0,
     pendingVerifyCount: 0,
     pendingFirstLoginCount: 0,
-  };
+  });
 
-  searchText = '';
+  searchText = signal('');
 
   ngOnInit(): void {
     this.fetchUsersData();
@@ -44,13 +42,12 @@ export class ApprovalComponent implements OnInit {
   }
 
   fetchUsersData() {
-    this.adminService.getUserEmployee(this.searchText, this.page, this.limit).subscribe({
+    this.adminService.getUserEmployee(this.searchText(), this.page(), this.limit()).subscribe({
       next: (res) => {
-        if(res.data.length == 0) return;
-        this.userData = res.data as UserEmployeeModel[];
-        this.totalPages = res.totalPages;
+        if (res.data.length == 0) return;
+        this.userData.set(res.data as UserEmployeeModel[]);
+        this.totalPages.set(res.totalPages);
         this.loadUiData();
-        this.cd.detectChanges();
       },
       error: (error) => {
         this.toast.error(error?.error?.message);
@@ -61,8 +58,7 @@ export class ApprovalComponent implements OnInit {
   loadUiData() {
     this.adminService.getDashboardData().subscribe({
       next: (res) => {
-        this.approvalUiData = res as any;
-        this.cd.detectChanges();
+        this.approvalUiData.set(res as any);
       },
       error: (err) => {
         this.toast.error(err?.error?.message);
@@ -79,13 +75,11 @@ export class ApprovalComponent implements OnInit {
 
     this.adminService.approveUser(payload).subscribe({
       next: (res) => {
-        this.userData = this.userData.map((user) =>
-          user.employeeId === id ? { ...user, status: 'Active' } : user,
+        this.userData.update((users) =>
+          users.map((user) => (user.employeeId === id ? { ...user, status: 'Active' } : user)),
         );
 
         this.fetchUsersData();
-
-        this.cd.detectChanges();
         this.toast.success(res.message || 'Account Activated.');
       },
       error: (err) => {
@@ -98,13 +92,11 @@ export class ApprovalComponent implements OnInit {
     const payload = { employeeId: id };
     this.adminService.rejectUser(payload).subscribe({
       next: (res) => {
-        this.userData = this.userData.map((user) =>
-          user.employeeId === id ? { ...user, status: 'Inactive' } : user,
+        this.userData.update((users) =>
+          users.map((user) => (user.employeeId === id ? { ...user, status: 'Inactive' } : user)),
         );
 
         this.fetchUsersData();
-        this.cd.detectChanges();
-
         this.toast.success(res?.message || 'Application Rejected!');
       },
       error: (err) => {
@@ -114,25 +106,25 @@ export class ApprovalComponent implements OnInit {
   }
 
   prevPage() {
-    if (this.page > 1) {
-      this.page--;
+    if (this.page() > 1) {
+      this.page.set(this.page() - 1);
     }
     this.fetchUsersData();
   }
 
   nextPage() {
-    if (this.page < this.totalPages) {
-      this.page++;
+    if (this.page() < this.totalPages()) {
+      this.page.set(this.page() + 1);
     }
     this.fetchUsersData();
   }
 
   goToPage(index: number) {
-    this.page = index;
+    this.page.set(index);
     this.fetchUsersData();
   }
 
-  trackFn(index: number,item: UserModel){
+  trackFn(index: number, item: UserModel) {
     return item.employeeId;
   }
 }

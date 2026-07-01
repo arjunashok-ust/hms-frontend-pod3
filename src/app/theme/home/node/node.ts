@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -24,29 +24,28 @@ const NODE_COLOR_MAP: string[] = ['purple', 'blue', 'green', 'rose', 'amber', 'c
 export class NodeComponent implements OnInit {
   adminService: AdminService = inject(AdminService);
   userService: UserService = inject(UserService);
-  cd: ChangeDetectorRef = inject(ChangeDetectorRef);
   toast: ToastrService = inject(ToastrService);
   fb: FormBuilder = inject(FormBuilder);
 
-  nodes: NodeModel[] = [];
-  role = localStorage.getItem('role');
-  roles: RoleModel[] = [];
+  nodes = signal<NodeModel[]>([]);
+  role = signal(localStorage.getItem('role'));
+  roles = signal<RoleModel[]>([]);
 
-  selectedNode: NodeModel | null = null;
-  isEditing = false;
-  isSaving = false;
-  isDeleting = false;
+  selectedNode = signal<NodeModel | null>(null);
+  isEditing = signal(false);
+  isSaving = signal(false);
+  isDeleting = signal(false);
 
   nodeForm!: FormGroup;
-  nodeSearch = '';
+  nodeSearch = signal('');
 
   get totalNodes(): number {
-    return this.nodes.length;
+    return this.nodes().length;
   }
 
   get filteredNodes(): NodeModel[] {
-    const q = this.nodeSearch.trim().toLowerCase();
-    const sorted = [...this.nodes].sort((a, b) => a.order - b.order);
+    const q = this.nodeSearch().trim().toLowerCase();
+    const sorted = [...this.nodes()].sort((a, b) => a.order - b.order);
     if (!q) return sorted;
     return sorted.filter(
       (n) => n.name.toLowerCase().includes(q) || n.path.toLowerCase().includes(q),
@@ -54,7 +53,7 @@ export class NodeComponent implements OnInit {
   }
 
   get selectedNodeRoles(): string[] {
-    return this.selectedNode?.role ?? [];
+    return this.selectedNode()?.role ?? [];
   }
 
   ngOnInit(): void {
@@ -75,8 +74,7 @@ export class NodeComponent implements OnInit {
   fetchNodes(): void {
     this.userService.getNodes('Super Admin').subscribe({
       next: (res) => {
-        this.nodes = res;
-        this.cd.detectChanges();
+        this.nodes.set(res);
       },
       error: (err: unknown) => {
         console.error('Failed to fetch nodes', err);
@@ -87,8 +85,7 @@ export class NodeComponent implements OnInit {
   fetchRoles(): void {
     this.adminService.getRoles().subscribe({
       next: (res: RoleModel[]) => {
-        this.roles = res;
-        this.cd.detectChanges();
+        this.roles.set(res);
       },
       error: (err: unknown) => {
         console.error('Failed to fetch roles', err);
@@ -97,14 +94,14 @@ export class NodeComponent implements OnInit {
   }
 
   openCreate(): void {
-    this.selectedNode = null;
-    this.isEditing = true;
+    this.selectedNode.set(null);
+    this.isEditing.set(true);
     this.nodeForm.reset({ name: '', path: '', icon: '', order: this.nodes.length + 1 });
   }
 
   openEdit(node: NodeModel): void {
-    this.selectedNode = node;
-    this.isEditing = true;
+    this.selectedNode.set(node);
+    this.isEditing.set(true);
     this.nodeForm.reset({
       name: node.name,
       path: node.path,
@@ -114,13 +111,13 @@ export class NodeComponent implements OnInit {
   }
 
   closeForm(): void {
-    this.isEditing = false;
+    this.isEditing.set(false);
     this.nodeForm.reset();
   }
 
   saveNode(): void {
     if (this.nodeForm.invalid) return;
-    this.isSaving = true;
+    this.isSaving.set(true);
 
     const value = this.nodeForm.value as {
       name: string;
@@ -129,30 +126,28 @@ export class NodeComponent implements OnInit {
       order: number;
     };
 
-    if (this.selectedNode) {
+    if (this.selectedNode()) {
       const payload = {
         path: value.path.trim(),
         icon: value.icon.trim(),
         order: value.order,
-        role: this.selectedNode.role,
+        role: this.selectedNode()?.role,
       };
 
       this.adminService.editNode(value.name.trim(), payload).subscribe({
         next: (updated: NodeModel) => {
-          const idx = this.nodes.findIndex((n) => n.order === updated.order);
+          const idx = this.nodes().findIndex((n) => n.name === updated.name);
           if (idx !== -1) {
-            this.nodes[idx] = updated;
-            this.nodes = [...this.nodes];
+            this.nodes.update((nodes) => nodes.map((node, i) => (i === idx ? updated : node)));
           }
-          this.selectedNode = updated;
-          this.isSaving = false;
-          this.isEditing = false;
+          this.selectedNode.set(updated);
+          this.isSaving.set(false);
+          this.isEditing.set(false);
           this.toast.success('Node', 'Updated successfully.');
-          this.cd.detectChanges();
         },
         error: (err: unknown) => {
           console.error('Failed to update node', err);
-          this.isSaving = false;
+          this.isSaving.set(false);
         },
       });
     } else {
@@ -166,16 +161,15 @@ export class NodeComponent implements OnInit {
 
       this.adminService.createNode(payload).subscribe({
         next: (created) => {
-          this.nodes = [...this.nodes, created];
-          this.selectedNode = created;
-          this.isSaving = false;
-          this.isEditing = false;
+          this.nodes.update((nodes) => [...nodes, created]);
+          this.selectedNode.set(created);
+          this.isSaving.set(false);
+          this.isEditing.set(false);
           this.toast.success('Node', 'Created successfully.');
-          this.cd.detectChanges();
         },
         error: (err: unknown) => {
           console.error('Failed to create node', err);
-          this.isSaving = false;
+          this.isSaving.set(false);
         },
       });
     }
@@ -185,28 +179,27 @@ export class NodeComponent implements OnInit {
     const confirmed = globalThis.confirm(`Delete the "${node.name}" node? This cannot be undone.`);
     if (!confirmed) return;
 
-    this.isDeleting = true;
+    this.isDeleting.set(true);
     this.adminService.deleteNode(node.name).subscribe({
       next: () => {
-        this.nodes = this.nodes.filter((n) => n.order !== node.order);
-        if (this.selectedNode?.order === node.order) {
-          this.selectedNode = null;
-          this.isEditing = false;
+        this.nodes.set(this.nodes().filter((n) => n.name !== node.name));
+        if (this.selectedNode()?.name === node.name) {
+          this.selectedNode.set(null);
+          this.isEditing.set(false);
         }
-        this.isDeleting = false;
+        this.isDeleting.set(false);
         this.toast.success('Node', 'Deleted successfully.');
-        this.cd.detectChanges();
       },
       error: (err: unknown) => {
         console.error('Failed to delete node', err);
-        this.isDeleting = false;
+        this.isDeleting.set(false);
       },
     });
   }
 
   selectNode(node: NodeModel): void {
-    this.selectedNode = node;
-    this.isEditing = false;
+    this.selectedNode.set(node);
+    this.isEditing.set(false);
   }
 
   isRoleAssigned(node: NodeModel, roleName: string): boolean {
@@ -229,15 +222,13 @@ export class NodeComponent implements OnInit {
 
     this.adminService.editNode(node.name, payload).subscribe({
       next: (updated: NodeModel) => {
-        const idx = this.nodes.findIndex((n) => n.order === updated.order);
+        const idx = this.nodes().findIndex((n) => n.name === updated.name);
         if (idx !== -1) {
-          this.nodes[idx] = updated;
-          this.nodes = [...this.nodes];
+          this.nodes.update((nodes) => nodes.map((nodes, i) => (i === idx ? updated : nodes)));
         }
-        if (this.selectedNode?.order === updated.order) {
-          this.selectedNode = updated;
+        if (this.selectedNode()?.name === updated.name) {
+          this.selectedNode.set(updated);
         }
-        this.cd.detectChanges();
       },
       error: (err: unknown) => {
         console.error('Failed to update node roles', err);
@@ -246,13 +237,13 @@ export class NodeComponent implements OnInit {
   }
 
   getNodeAvatarClass(node: NodeModel): string {
-    const idx = this.nodes.findIndex((n) => n.order === node.order);
+    const idx = this.nodes().findIndex((n) => n.name === node.name);
     const color = NODE_COLOR_MAP[idx % NODE_COLOR_MAP.length];
     return `na-${color}`;
   }
 
   getRoleAvatarClass(roleName: string): string {
-    const idx = this.roles.findIndex((r) => r.role_name === roleName);
+    const idx = this.roles().findIndex((r) => r.role_name === roleName);
     const color = NODE_COLOR_MAP[idx % NODE_COLOR_MAP.length];
     return `na-${color}`;
   }

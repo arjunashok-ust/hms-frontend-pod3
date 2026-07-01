@@ -1,10 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  inject,
-  OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -33,7 +27,6 @@ import { debounceTime, distinctUntilChanged, filter, switchMap } from 'rxjs';
     HasPermissionDirective,
     FormsModule,
     MatAutocompleteModule,
-    HasPermissionDirective,
   ],
   templateUrl: './appointment.html',
   styleUrl: './appointment.css',
@@ -44,31 +37,30 @@ export class AppointmentComponent implements OnInit {
 
   appointmentService: AppointmentService = inject(AppointmentService);
   userService: UserService = inject(UserService);
-  cd: ChangeDetectorRef = inject(ChangeDetectorRef);
   toast: ToastrService = inject(ToastrService);
 
-  doctors: EmployeeModel[] = [];
-  patients: PatientModel[] = [];
-  appointmentUiData: AppointmentResponseModel | null = null;
-  appointments: AppointmentModel[] = [];
-  doctorAppointments: AppointmentModel[] = [];
-  displayedAppointments: AppointmentModel[] = [];
+  doctors = signal<EmployeeModel[]>([]);
+  patients = signal<PatientModel[]>([]);
+  appointmentUiData = signal<AppointmentResponseModel | null>(null);
+  appointments = signal<AppointmentModel[]>([]);
+  doctorAppointments = signal<AppointmentModel[]>([]);
+  displayedAppointments = signal<AppointmentModel[]>([]);
 
-  isLoading: boolean = false;
+  isLoading = signal<boolean>(false);
 
   // for setting doctor time slots
-  doctorTimeSlots: string[] = [];
+  doctorTimeSlots = signal<string[]>([]);
 
-  page: number = 1;
-  totalPages: number = 1;
-  limit: number = 5;
-  searchText: string = '';
+  page = signal(1);
+  totalPages = signal(1);
+  limit = signal(5);
+  searchText = signal('');
 
-  employeeId = localStorage.getItem('employeeId');
-  role = localStorage.getItem('role');
+  employeeId = signal(localStorage.getItem('employeeId'));
+  role = signal(localStorage.getItem('role'));
 
-  doctorNameMap: { [key: string]: string } = {};
-  patientNameMap: { [key: string]: string } = {};
+  doctorNameMap = signal<{ [key: string]: string }>({});
+  patientNameMap = signal<{ [key: string]: string }>({});
 
   public constructor(readonly fb: FormBuilder) {
     this.appointmentForm = this.fb.group(
@@ -77,7 +69,7 @@ export class AppointmentComponent implements OnInit {
         doctorEmployeeId: ['', Validators.required],
         date: ['', Validators.required],
         timeSlot: ['', Validators.required],
-        createdByEmployeeId: [this.employeeId, Validators.required],
+        createdByEmployeeId: [this.employeeId(), Validators.required],
       },
       {
         validators: appointmentDateValidator,
@@ -100,22 +92,20 @@ export class AppointmentComponent implements OnInit {
       .subscribe({
         next: (res) => {
           if (res.data.length == 0) return;
-          this.patients = res.data;
-          this.cd.detectChanges();
+          this.patients.set(res.data);
         },
         error: (err) => {
           this.toast.error(err.error?.message || 'Error occured while getting patients');
         },
       });
     // time slot container bug fix
-    this.doctorTimeSlots.length = 0;
+    this.doctorTimeSlots.set([]);
   }
 
   loadUiData() {
     this.appointmentService.getAppointmentUiData().subscribe({
       next: (res) => {
-        this.appointmentUiData = res;
-        this.cd.detectChanges();
+        this.appointmentUiData.set(res);
       },
       error: (err) => {
         this.toast.error(err?.error?.message);
@@ -124,8 +114,7 @@ export class AppointmentComponent implements OnInit {
 
     this.appointmentService.getAllDoctors().subscribe({
       next: (res) => {
-        this.doctors = res;
-        this.cd.detectChanges();
+        this.doctors.set(res);
       },
       error: (err) => {
         this.toast.error(err?.error?.message);
@@ -134,29 +123,30 @@ export class AppointmentComponent implements OnInit {
   }
 
   fetchAppointments() {
-    this.appointmentService.getAllAppointment(this.searchText, this.page, this.limit).subscribe({
-      next: (res) => {
-        if (res.data.length == 0) return;
-        this.totalPages = res.totalPages;
-        if (this.role === 'Doctor') {
-          this.fetchDoctorAppointments(res.data);
-          this.displayedAppointments = this.doctorAppointments;
-        } else {
-          this.appointments = res.data;
-          this.displayedAppointments = this.appointments;
-        }
-        this.mapDoctorAndPatients(res.data);
-        this.cd.detectChanges();
-      },
-      error: (err) => {
-        this.toast.error(err?.message);
-      },
-    });
+    this.appointmentService
+      .getAllAppointment(this.searchText(), this.page(), this.limit())
+      .subscribe({
+        next: (res) => {
+          if (res.data.length == 0) return;
+          this.totalPages.set(res.totalPages);
+          if (this.role() === 'Doctor') {
+            this.fetchDoctorAppointments(res.data);
+            this.displayedAppointments.set(this.doctorAppointments());
+          } else {
+            this.appointments.set(res.data);
+            this.displayedAppointments.set(this.appointments());
+          }
+          this.mapDoctorAndPatients(res.data);
+        },
+        error: (err) => {
+          this.toast.error(err?.message);
+        },
+      });
   }
 
   fetchDoctorAppointments(appointmentData: AppointmentModel[]) {
-    this.doctorAppointments = appointmentData.filter(
-      (apt) => apt.doctorEmployeeId === this.employeeId,
+    this.doctorAppointments.set(
+      appointmentData.filter((apt) => apt.doctorEmployeeId === this.employeeId()),
     );
   }
 
@@ -170,10 +160,10 @@ export class AppointmentComponent implements OnInit {
     const inputDate = this.appointmentForm.get('date')?.value;
     const date = new Date(inputDate);
 
-    let doctor = this.doctors?.find((d) => d.employeeCode === doctorEmployeeId);
+    let doctor = this.doctors().find((d) => d.employeeCode === doctorEmployeeId);
 
     if (!date || !doctor) {
-      this.doctorTimeSlots = [];
+      this.doctorTimeSlots.set([]);
       return;
     }
 
@@ -181,13 +171,13 @@ export class AppointmentComponent implements OnInit {
 
     // appointment before joining date
     if (date <= new Date(doctor.joiningDate)) {
-      this.doctorTimeSlots = [];
+      this.doctorTimeSlots.set([]);
       return;
     }
 
     const now = new Date();
 
-    const bookedSlots = this.appointments
+    const bookedSlots = this.appointments()
       ?.filter((apt) => {
         const apt_date = new Date(apt.date);
         return (
@@ -198,7 +188,7 @@ export class AppointmentComponent implements OnInit {
       })
       .map((apt) => apt.timeSlot);
 
-    this.doctorTimeSlots =
+    this.doctorTimeSlots.set(
       allSlots?.filter((slot) => {
         if (bookedSlots?.includes(slot)) return false;
 
@@ -213,10 +203,10 @@ export class AppointmentComponent implements OnInit {
         }
 
         return true;
-      }) || [];
+      }) || [],
+    );
 
     this.appointmentForm.patchValue({ timeSlot: '' });
-    this.cd.detectChanges();
   }
 
   deleteAppointment(appointmentId: string) {
@@ -225,11 +215,10 @@ export class AppointmentComponent implements OnInit {
     );
 
     if (isConfirmed) {
-      this.appointmentService.deleteAppointment(appointmentId, this.employeeId ?? '').subscribe({
+      this.appointmentService.deleteAppointment(appointmentId, this.employeeId() ?? '').subscribe({
         next: (res) => {
           this.loadUiData();
           this.fetchAppointments();
-          this.cd.detectChanges();
           this.toast.success(res.message);
         },
         error: (err) => {
@@ -247,20 +236,19 @@ export class AppointmentComponent implements OnInit {
     try {
       this.appointmentService.editAppointmentStatus(payload).subscribe({
         next: (res) => {
-          const apt = this.appointments.find((a) => a.appointmentId === appointmentId);
+          const apt = this.appointments().find((a) => a.appointmentId === appointmentId);
 
           if (apt) {
             apt.status = status;
           }
 
-          if (this.role === 'Doctor') {
-            this.fetchDoctorAppointments(this.appointments);
+          if (this.role() === 'Doctor') {
+            this.fetchDoctorAppointments(this.appointments());
           }
 
           this.loadUiData();
           this.fetchAppointments();
 
-          this.cd.detectChanges();
           this.toast.success(res.message);
         },
         error: (err) => {
@@ -275,17 +263,21 @@ export class AppointmentComponent implements OnInit {
   mapDoctorAndPatients(appointments: AppointmentModel[]) {
     appointments.forEach((appointment) => {
       // patient name map
-      if (appointment.patientId && !this.patientNameMap[appointment.patientId]) {
+      if (appointment.patientId && !this.patientNameMap()[appointment.patientId]) {
         this.userService.getPatientById(appointment.patientId).subscribe((res) => {
-          this.patientNameMap[appointment.patientId] = res.name;
-          this.cd.detectChanges();
+          this.patientNameMap.update((map) => ({
+            ...map,
+            [appointment.patientId]: res.name,
+          }));
         });
       }
       // doctor name map
-      if (appointment.doctorEmployeeId && !this.doctorNameMap[appointment.doctorEmployeeId]) {
+      if (appointment.doctorEmployeeId && !this.doctorNameMap()[appointment.doctorEmployeeId]) {
         this.userService.getDoctorById(appointment.doctorEmployeeId).subscribe((res) => {
-          this.doctorNameMap[appointment.doctorEmployeeId] = res.name;
-          this.cd.detectChanges();
+          this.doctorNameMap.update((map) => ({
+            ...map,
+            [appointment.doctorEmployeeId]: res.name,
+          }));
         });
       }
     });
@@ -296,26 +288,32 @@ export class AppointmentComponent implements OnInit {
   }
 
   prevPage() {
-    if (this.page > 1) {
-      this.page--;
+    if (this.page() > 1) {
+      this.page.set(this.page() - 1);
     }
     this.fetchAppointments();
   }
 
   nextPage() {
-    if (this.page < this.totalPages) {
-      this.page++;
+    if (this.page() < this.totalPages()) {
+      this.page.set(this.page() + 1);
     }
     this.fetchAppointments();
   }
 
   goToPage(index: number) {
-    this.page = index;
+    this.page.set(index);
     this.fetchAppointments();
   }
 
   onSubmit() {
-    this.isLoading = true;
+    if (this.appointmentForm.invalid) {
+      this.toast.warning('Validation failed,please check all the input fields');
+      return;
+    }
+
+    this.isLoading.set(true);
+
     const payload = {
       patientId: this.appointmentForm.value.patientId,
       doctorEmployeeId: this.appointmentForm.value.doctorEmployeeId,
@@ -329,18 +327,16 @@ export class AppointmentComponent implements OnInit {
       next: (res) => {
         this.loadUiData();
         this.fetchAppointments();
-        this.isLoading = false;
-        this.cd.detectChanges();
+        this.isLoading.set(false);
         this.toast.success(res.message);
       },
       error: (err) => {
-        this.isLoading = false;
-        this.cd.detectChanges();
+        this.isLoading.set(false);
         this.toast.error(err?.error?.message || err?.message || 'Something went wrong!');
       },
     });
 
     this.appointmentForm.get('doctorEmployeeId')?.reset();
-    this.doctorTimeSlots.length = 0;
+    this.doctorTimeSlots.set([]);
   }
 }

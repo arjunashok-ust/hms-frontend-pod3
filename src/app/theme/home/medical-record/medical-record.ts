@@ -1,11 +1,5 @@
 import { CommonModule } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  inject,
-  OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import {
   FormArray,
   FormBuilder,
@@ -48,36 +42,35 @@ export class MedicalRecordComponent implements OnInit {
   router: Router = inject(Router);
   editRoute: ActivatedRoute = inject(ActivatedRoute);
   toast: ToastrService = inject(ToastrService);
-  cd: ChangeDetectorRef = inject(ChangeDetectorRef);
 
-  filteredDoctors: EmployeeModel[] | [] = [];
-  filteredPatients: PatientModel[] | [] = [];
-  filteredAppointments: AppointmentModel[] | [] = [];
+  filteredDoctors = signal<EmployeeModel[]>([]);
+  filteredPatients = signal<PatientModel[]>([]);
+  filteredAppointments = signal<AppointmentModel[]>([]);
 
-  employeeId = localStorage.getItem('employeeId');
-  role = localStorage.getItem('role');
+  employeeId = signal(localStorage.getItem('employeeId'));
+  role = signal(localStorage.getItem('role'));
 
-  medicalRecordCount = 0;
-  completedCount = 0;
-  draftCount = 0;
-  deletedCount = 0;
+  medicalRecordCount = signal(0);
+  completedCount = signal(0);
+  draftCount = signal(0);
+  deletedCount = signal(0);
 
-  isCreateLoading = false;
-  isDraftLoading = false;
-  isEditable = false;
+  isCreateLoading = signal(false);
+  isDraftLoading = signal(false);
+  isEditable = signal(false);
 
-  totalPages = 0;
-  page = 1;
-  limit = 5;
-  total = 0;
-  selectedText = '';
+  totalPages = signal(0);
+  page = signal(1);
+  limit = signal(5);
+  total = signal(0);
+  selectedText = signal('');
 
-  medicalRecords: MedicalRecordModel[] | [] = [];
-  medicalRecord: MedicalRecordModel | null = null;
-  medicalRecordId = '';
+  medicalRecords = signal<MedicalRecordModel[]>([]);
+  medicalRecord = signal<MedicalRecordModel | null>(null);
+  medicalRecordId = signal('');
 
-  patientMap: { [key: string]: string } = {};
-  doctorMap: { [key: string]: string } = {};
+  patientMap = signal<{ [key: string]: string }>({});
+  doctorMap = signal<{ [key: string]: string }>({});
 
   constructor(readonly fb: FormBuilder) {
     this.medicalForm = fb.group({
@@ -101,15 +94,15 @@ export class MedicalRecordComponent implements OnInit {
     this.getPatients();
 
     this.editRoute.paramMap.subscribe((params) => {
-      this.medicalRecordId = params.get('medRecordId') || '';
+      this.medicalRecordId.set(params.get('medRecordId') || '');
 
-      this.isEditable = false;
-      this.medicalRecord = null;
+      this.isEditable.set(false);
+      this.medicalRecord.set(null);
       this.resetForm();
 
-      if (this.medicalRecordId) {
-        this.isEditable = true;
-        this.fetchMedicalRecord(this.medicalRecordId);
+      if (this.medicalRecordId()) {
+        this.isEditable.set(true);
+        this.fetchMedicalRecord(this.medicalRecordId());
       }
 
       this.fetchMedicalRecordPageDetails();
@@ -117,8 +110,8 @@ export class MedicalRecordComponent implements OnInit {
 
     // attaching an event listener to appointment form control
     this.medicalForm.get('appointmentId')?.valueChanges.subscribe((value) => {
-      if (this.isEditable) return;
-      let appointment = this.filteredAppointments.find((apt) => {
+      if (this.isEditable()) return;
+      let appointment = this.filteredAppointments().find((apt) => {
         return apt.appointmentId === value;
       });
 
@@ -143,9 +136,9 @@ export class MedicalRecordComponent implements OnInit {
 
     this.medications.push(this.createMedRow());
     this.observations.push(this.createObsRow());
-    if (this.isEditable) {
+    if (this.isEditable()) {
       this.medicalForm.reset({
-        createdBy: this.employeeId,
+        createdBy: this.employeeId(),
         status: 'Completed',
         doctorId: this.medicalForm.get('doctorId')?.value,
         patientId: this.medicalForm.get('patientId')?.value,
@@ -153,7 +146,7 @@ export class MedicalRecordComponent implements OnInit {
       });
     } else {
       this.medicalForm.reset({
-        createdBy: this.employeeId,
+        createdBy: this.employeeId(),
         status: 'Completed',
       });
     }
@@ -193,35 +186,34 @@ export class MedicalRecordComponent implements OnInit {
   }
 
   prevPage() {
-    if (this.page > 1) {
-      this.page--;
+    if (this.page() > 1) {
+      this.page.set(this.page() - 1);
     }
     this.fetchMedicalRecordPageDetails();
   }
 
   nextPage() {
-    if (this.page < this.totalPages) {
-      this.page++;
+    if (this.page() < this.totalPages()) {
+      this.page.set(this.page() + 1);
     }
     this.fetchMedicalRecordPageDetails();
   }
 
   goToPage(index: number) {
-    this.page = index;
+    this.page.set(index);
     this.fetchMedicalRecordPageDetails();
   }
 
   fetchMedicalRecordPageDetails() {
-    const doctorId = this.role === 'Doctor' ? (this.employeeId ?? undefined) : undefined;
+    const doctorId = this.role() === 'Doctor' ? (this.employeeId() ?? undefined) : undefined;
     this.medicalRecordService
-      .getMedicalRecords(this.selectedText, this.page, this.limit, doctorId)
+      .getMedicalRecords(this.selectedText(), this.page(), this.limit(), doctorId)
       .subscribe({
         next: (res) => {
-          if(res.data.length == 0) return;
-          this.totalPages = res.totalPages;
-          this.medicalRecords = res.data;
-          this.mapPatientAndDoctors(this.medicalRecords);
-          this.cd.detectChanges();
+          if (res.data.length == 0) return;
+          this.totalPages.set(res.totalPages);
+          this.medicalRecords.set(res.data);
+          this.mapPatientAndDoctors(this.medicalRecords());
         },
         error: (err) => {
           this.toast.error(err?.error?.message || 'Error getting medical records');
@@ -232,10 +224,10 @@ export class MedicalRecordComponent implements OnInit {
   fetchMedicalRecordStats() {
     this.medicalRecordService.getMedicalStats().subscribe({
       next: (res) => {
-        this.medicalRecordCount = res.medicalRecordCount;
-        this.completedCount = res.completedCount;
-        this.draftCount = res.draftCount;
-        this.deletedCount = res.deletedCount;
+        this.medicalRecordCount.set(res.medicalRecordCount);
+        this.completedCount.set(res.completedCount);
+        this.draftCount.set(res.draftCount);
+        this.deletedCount.set(res.deletedCount);
       },
       error: (error) => {
         this.toast.error(error?.error?.message || 'Error getting medical record stats');
@@ -251,9 +243,8 @@ export class MedicalRecordComponent implements OnInit {
         if (!value?.trim()) return;
         this.userService.getDoctorsBySearch(value).subscribe({
           next: (res) => {
-            this.filteredDoctors = res;
+            this.filteredDoctors.set(res);
             this.getAppointments();
-            this.cd.detectChanges();
           },
           error: (err) => {
             this.toast.error(err?.error?.message || 'Error getting doctors');
@@ -270,9 +261,8 @@ export class MedicalRecordComponent implements OnInit {
         if (!value) return;
         this.userService.getPatientsBySearch(value).subscribe({
           next: (res) => {
-            this.filteredPatients = res;
+            this.filteredPatients.set(res);
             this.getAppointments();
-            this.cd.detectChanges();
           },
           error: (err) => {
             this.toast.error(err?.error?.message || 'Error getting patients');
@@ -290,7 +280,7 @@ export class MedicalRecordComponent implements OnInit {
       .getAppointmentByDoctorIdOrPatientId(doctorId, patientId, appointmentId)
       .subscribe({
         next: (res) => {
-          this.filteredAppointments = res;
+          this.filteredAppointments.set(res);
         },
         error: (err) => {
           this.toast.error(err?.error?.message || 'Error getting appointments');
@@ -301,17 +291,21 @@ export class MedicalRecordComponent implements OnInit {
   mapPatientAndDoctors(records: MedicalRecordModel[]) {
     records.forEach((record) => {
       // for patient name map
-      if (!this.patientMap[record.patientId] && record.patientId) {
+      if (!this.patientMap()[record.patientId] && record.patientId) {
         this.userService.getPatientById(record.patientId).subscribe((res) => {
-          this.patientMap[record.patientId] = res.name;
-          this.cd.detectChanges();
+          this.patientMap.update((map) => ({
+            ...map,
+            [record.patientId]: res.name,
+          }));
         });
       }
       // for doctor name map
-      if (!this.doctorMap[record.doctorId] && record.doctorId) {
+      if (!this.doctorMap()[record.doctorId] && record.doctorId) {
         this.userService.getDoctorById(record.doctorId).subscribe((res) => {
-          this.doctorMap[record.doctorId] = res.name;
-          this.cd.detectChanges();
+          this.doctorMap.update((map) => ({
+            ...map,
+            [record.doctorId]: res.name,
+          }));
         });
       }
     });
@@ -329,9 +323,8 @@ export class MedicalRecordComponent implements OnInit {
   fetchMedicalRecord(medicalRecordId: string) {
     this.medicalRecordService.getMedicalRecordById(medicalRecordId).subscribe({
       next: (res) => {
-        this.medicalRecord = res;
+        this.medicalRecord.set(res);
         this.patchForm(res);
-        this.cd.detectChanges();
       },
       error: (err) => {
         this.toast.error(err?.error?.message || 'Error getting medical record');
@@ -420,7 +413,7 @@ export class MedicalRecordComponent implements OnInit {
   }
 
   cancelEdit() {
-    this.isEditable = false;
+    this.isEditable.set(false);
     this.router.navigate(['medical-record']);
   }
 
@@ -467,7 +460,6 @@ export class MedicalRecordComponent implements OnInit {
         this.toast.success(res.message ?? 'Medical Record Deleted Sucessfully.');
         this.fetchMedicalRecordPageDetails();
         this.fetchMedicalRecordStats();
-        this.cd.detectChanges();
       },
       error: (error) => {
         this.toast.error(error.error.message || 'Unexpected error occured!');
@@ -499,7 +491,7 @@ export class MedicalRecordComponent implements OnInit {
     }
 
     const payload: any = {
-      medicalRecordId: this.isEditable ? this.medicalRecordId : '',
+      medicalRecordId: this.isEditable() ? this.medicalRecordId() : '',
       patientId: this.medicalForm.get('patientId')?.value,
       doctorId: this.medicalForm.get('doctorId')?.value,
       appointmentId: this.medicalForm.get('appointmentId')?.value,
@@ -513,8 +505,8 @@ export class MedicalRecordComponent implements OnInit {
       createdBy: this.medicalForm.get('createdBy')?.value,
     };
 
-    if (this.isEditable) {
-      this.isDraftLoading = true;
+    if (this.isEditable()) {
+      this.isDraftLoading.set(true);
 
       payload.updatedBy = this.employeeId;
       payload.updatedAt = new Date();
@@ -522,42 +514,39 @@ export class MedicalRecordComponent implements OnInit {
       this.medicalRecordService.updateMedicalRecord(payload).subscribe({
         next: (res) => {
           this.toast.success(res?.message || 'Medical Record Updated Sucessfully.');
-          this.isDraftLoading = false;
+          this.isDraftLoading.set(false);
 
           this.fetchMedicalRecordPageDetails();
           this.fetchMedicalRecordStats();
 
           this.medicalForm.reset({
-            createdBy: this.employeeId,
+            createdBy: this.employeeId(),
           });
 
-          this.cd.detectChanges();
           this.cancelEdit();
         },
         error: (err) => {
           this.toast.error(err?.error?.message || err?.message || 'Something went wrong!');
-          this.isDraftLoading = false;
-          this.cd.detectChanges();
+          this.isDraftLoading.set(false);
         },
       });
     } else {
-      this.isCreateLoading = true;
+      this.isCreateLoading.set(true);
       payload.created_at = new Date();
 
       this.medicalRecordService.createMedicalRecord(payload).subscribe({
         next: (res) => {
           this.toast.success('Medical Record Created Sucessfully.');
-          this.isCreateLoading = false;
+          this.isCreateLoading.set(false);
 
           this.fetchMedicalRecordPageDetails();
           this.fetchMedicalRecordStats();
 
-          this.medicalForm.reset({ createdBy: this.employeeId });
-          this.cd.detectChanges();
+          this.medicalForm.reset({ createdBy: this.employeeId() });
         },
         error: (err) => {
           this.toast.error(err?.error?.message || err?.message || 'Something went wrong!');
-          this.isCreateLoading = false;
+          this.isCreateLoading.set(false);
         },
       });
     }

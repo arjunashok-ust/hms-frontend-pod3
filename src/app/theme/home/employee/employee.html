@@ -5,9 +5,10 @@
       <h2>Employee Management</h2>
     </div>
     <div class="header-actions">
-      <button class="btn-secondary">
-        <a routerLink="/approval" *hasPermission="['approve:user']">Approvals</a>
-      </button>
+      <a class="btn-secondary" routerLink="/approval" *hasPermission="['approve:user']">
+        Approvals
+      </a>
+
       <button
         class="btn-primary"
         routerLink="/signup-modal"
@@ -26,19 +27,19 @@
           id="search-employee"
           aria-label="search-employee"
           placeholder="Search Employee"
-          [(ngModel)]="selectedText"
-          (input)="fetchEmployees()"
+          [ngModel]="selectedText()"
+          (ngModelChange)="selectedText.set($event); fetchEmployees()"
         />
       </div>
       <div class="filter-group">
         <select
-          [(ngModel)]="selectedDepartment"
-          (change)="fetchEmployees()"
+          [ngModel]="selectedDepartment()"
+          (ngModelChange)="selectedDepartment.set($event); fetchEmployees()"
           id="selectedDepartment"
           aria-label="selectedDepartment"
         >
           <option value="" selected>All Department</option>
-          <option *ngFor="let department of departmentsData" [value]="department.department_name">
+          <option *ngFor="let department of departmentsData()" [value]="department.department_name">
             {{ department.department_name }}
           </option>
         </select>
@@ -58,11 +59,11 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let employee of employeeData; trackBy: trackFn">
+          <tr *ngFor="let employee of employeeData(); trackBy: trackFn">
             <ng-container
               *ngIf="
-                employee.employeeCode !== employeeId &&
-                (role === 'Super Admin' || employee.department !== 'Administration')
+                employee.employeeCode !== employeeId() &&
+                (role() === 'Super Admin' || employee.department !== 'Administration')
               "
             >
               <td>
@@ -116,20 +117,22 @@
         </tbody>
       </table>
       <div class="pagination-bar">
-        <button class="page-btn" (click)="prevPage()" [disabled]="page === 1">Prev</button>
+        <button class="page-btn" (click)="prevPage()" [disabled]="page() === 1">Prev</button>
 
         <div class="page-numbers">
           <button
-            *ngFor="let p of [].constructor(totalPages); let i = index"
+            *ngFor="let p of [].constructor(totalPages()); let i = index"
             class="page-number"
-            [class.active]="page === i + 1"
+            [class.active]="page() === i + 1"
             (click)="goToPage(i + 1)"
           >
             {{ i + 1 }}
           </button>
         </div>
 
-        <button class="page-btn" (click)="nextPage()" [disabled]="page === totalPages">Next</button>
+        <button class="page-btn" (click)="nextPage()" [disabled]="page() === totalPages()">
+          Next
+        </button>
       </div>
     </div>
   </div>

@@ -8,7 +8,7 @@
       </div>
 
       <div class="metric-body">
-        <h2>{{ dashboardData?.employeeCount }}</h2>
+        <h2>{{ dashboardData()?.employeeCount }}</h2>
         <p>Total Employees</p>
       </div>
     </div>
@@ -21,7 +21,7 @@
       </div>
 
       <div class="metric-body">
-        <h2>{{ dashboardData?.pendingApprovalCount }}</h2>
+        <h2>{{ dashboardData()?.pendingApprovalCount }}</h2>
         <p>Pending Approvals</p>
       </div>
     </div>
@@ -34,7 +34,7 @@
       </div>
 
       <div class="metric-body">
-        <h2>{{ dashboardData?.pendingVerifyCount }}</h2>
+        <h2>{{ dashboardData()?.pendingVerifyCount }}</h2>
         <p>Pending Verifications</p>
       </div>
     </div>
@@ -47,7 +47,7 @@
       </div>
 
       <div class="metric-body">
-        <h2>{{ dashboardData?.patientCount }}</h2>
+        <h2>{{ dashboardData()?.patientCount }}</h2>
         <p>Total Patients</p>
       </div>
     </div>
@@ -60,7 +60,7 @@
       </div>
 
       <div class="metric-body">
-        <h2>{{ dashboardData?.departmentCount }}</h2>
+        <h2>{{ dashboardData()?.departmentCount }}</h2>
         <p>Departments</p>
       </div>
     </div>
@@ -73,7 +73,7 @@
       </div>
 
       <div class="metric-body">
-        <h2>{{ dashboardData?.appointmentCount }}</h2>
+        <h2>{{ dashboardData()?.appointmentCount }}</h2>
         <p>Appointments</p>
       </div>
     </div>
@@ -101,7 +101,7 @@
         </thead>
 
         <tbody>
-          <tr *ngFor="let user of userData">
+          <tr *ngFor="let user of userData()">
             <td>
               <span class="employee-id"> {{ user.employeeCode }} </span>
             </td>

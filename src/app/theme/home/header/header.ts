@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
 import { ToastrService } from 'ngx-toastr';
@@ -14,10 +14,10 @@ export class HeaderComponent implements OnInit {
   readonly authService: AuthService = inject(AuthService);
   readonly toast: ToastrService = inject(ToastrService);
 
-  role: string = '';
+  role = signal('');
 
   ngOnInit(): void {
-    this.role = localStorage.getItem('role') ?? '';
+    this.role.set(localStorage.getItem('role') ?? '');
   }
 
   logout() {
