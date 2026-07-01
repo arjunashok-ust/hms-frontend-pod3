@@ -157,6 +157,7 @@
   justify-content: center;
   gap: 8px;
   transition: 0.2s;
+  margin-top: 12px;
 }
 
 .btn-register:hover:not(:disabled) {
@@ -422,4 +423,8 @@
   align-items: center;
   justify-content: center;
   height: 50vh;
+}
+
+.text-danger{
+  color: red;
 }
