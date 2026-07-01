@@ -89,4 +89,31 @@ export class ApiService {
       );
   }
 
+  // --- ROLES & PERMISSIONS ---
+  getAllRoles() {
+    return this.http.get(`${this.backendUrl}/api/roles/show`);
+  }
+
+  updateRole(id: string, payload: { roleName: string, rolePermissions: string[] }) {
+    return this.http.put(`${this.backendUrl}/api/roles/${id}`, payload);
+  }
+
+  getPermissions() {
+    return this.http.get(`${this.backendUrl}/api/permissions`);
+  }
+
+  createPermission(payload: { name: string }) {
+    return this.http.post(`${this.backendUrl}/api/permissions`, payload);
+  }
+
+  // Note: For assigning/revoking, you can use these individual endpoints, 
+  // but to match the "Save Changes" button in your UI, using the bulk `updateRole` is much more efficient!
+  assignPermission(payload: { roleId: string, permissionName: string }) {
+    return this.http.post(`${this.backendUrl}/api/permissions/assign`, payload);
+  }
+
+  revokePermission(payload: { roleId: string, permissionName: string }) {
+    return this.http.post(`${this.backendUrl}/api/permissions/revoke`, payload);
+  }
+
 }

@@ -22,7 +22,6 @@ export class Approvals implements OnInit {
   selectedDepartment: string = '';
   departments = ["OPD", "IPD", "ADMIN", "LAB", "PHARMACY"];
 
-
   currentPage = 1;
   pageSize = environment.pageSize;
   totalRecords = 0;
