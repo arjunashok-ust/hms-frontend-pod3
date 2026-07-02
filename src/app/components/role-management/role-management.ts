@@ -101,7 +101,7 @@ export class RoleManagement implements OnInit {
         // ----------------------
 
         this.groupedPermissions = Object.keys(permsObj)
-          .sort()
+          .sort((a, b) => a.localeCompare(b))
           .map(key => ({
             groupName: key,
             permissions: permsObj[key].map((p: any) => p.name).sort()
@@ -181,7 +181,7 @@ export class RoleManagement implements OnInit {
     if (token) {
       try {
         const payloadBase64 = token.split('.')[1];
-        const decodedJson = atob(payloadBase64.replace(/-/g, '+').replace(/_/g, '/'));
+        const decodedJson = atob(payloadBase64.replaceAll('-', '+').replaceAll('_', '/'));
         const decodedPayload = JSON.parse(decodedJson);
 
         return Array.isArray(decodedPayload.permissions) ? decodedPayload.permissions : [];

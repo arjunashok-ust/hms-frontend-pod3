@@ -67,7 +67,7 @@
   height: 44px;
   border-radius: 12px;
   background: #f3f0ff;
-  color: #8b5cf6;
+  color: #5b36b3;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -78,7 +78,7 @@
 }
 
 .active-avatar {
-  background: #8b5cf6;
+  background: #5b36b3;
   color: #ffffff;
 }
 
@@ -138,13 +138,13 @@
 }
 
 .form-control:focus {
-  border-color: #8b5cf6;
+  border-color: #5b36b3;
   box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
 }
 
 .btn-register {
   width: 100%;
-  background: #a855f7;
+  background: #5b36b3;
   color: white;
   border: none;
   padding: 12px;
@@ -218,11 +218,11 @@
 
 .search-box input:focus {
   width: 260px;
-  border-color: #8b5cf6;
+  border-color: #5b36b3;
 }
 
 .btn-save {
-  background: #8b5cf6;
+  background: #5b36b3;
   color: white;
   border: none;
   padding: 10px 24px;
@@ -302,8 +302,8 @@
 }
 
 .btn-group-action.remove {
-  color: #ec4899;
-  background: #fdf2f8;
+  color: rgb(200, 1, 1);
+  background: #f5e6e6;
 }
 .btn-group-action.remove:hover {
   background: #fbcfe8;

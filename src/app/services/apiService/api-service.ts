@@ -20,8 +20,12 @@ export class ApiService {
 
   constructor(private readonly http: HttpClient) { }
 
-  getMenus(): Observable<MenuNode[]> {
-    return this.http.get<MenuNode[]>(`${this.backendUrl}/api/menuNode/getMenus`);
+  getMenus(fetchAll: boolean = false): Observable<MenuNode[]> {
+    const url = fetchAll
+      ? `${this.backendUrl}/api/menuNode/getMenus?all=true`
+      : `${this.backendUrl}/api/menuNode/getMenus`;
+
+    return this.http.get<MenuNode[]>(url);
   }
 
   getCurrentUser() {
@@ -114,6 +118,19 @@ export class ApiService {
 
   revokePermission(payload: { roleId: string, permissionName: string }) {
     return this.http.post(`${this.backendUrl}/api/permissions/revoke`, payload);
+  }
+
+  // --- MENU NODES ---
+  createMenuNode(payload: any) {
+    return this.http.post(`${this.backendUrl}/api/menuNode/createMenuNode`, payload);
+  }
+
+  updateMenuNode(id: string, payload: any) {
+    return this.http.put(`${this.backendUrl}/api/menuNode/updateMenuNode/${id}`, payload);
+  }
+
+  deleteMenuNode(id: string) {
+    return this.http.delete(`${this.backendUrl}/api/menuNode/deleteMenuNode/${id}`);
   }
 
 }

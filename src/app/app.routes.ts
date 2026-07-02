@@ -13,6 +13,8 @@ import { roleGuard } from './guards/roleGuard';
 import { AccessDenied } from './components/access-denied/access-denied';
 import { MedicalRecordComponent } from './components/medical-record/medical-record';
 import { RoleManagement } from './components/role-management/role-management';
+import { NodeManagementComponent } from './components/node-management/node-management';
+
 
 export const routes: Routes = [
   { path: 'login', component: Login },
@@ -65,6 +67,11 @@ export const routes: Routes = [
       {
         path: 'permissions', component: RoleManagement, canActivate: [roleGuard], data: {
           permissions: ['MANAGE_PERMISSIONS']
+        }
+      },
+      {
+        path: 'menuNode', component: NodeManagementComponent, canActivate: [roleGuard], data: {
+          permissions: ['VIEW_NODES']
         }
       },
       { path: '', redirectTo: 'profile', pathMatch: 'full' }

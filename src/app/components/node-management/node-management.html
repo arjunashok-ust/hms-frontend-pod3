@@ -1,0 +1,139 @@
+<div class="node-management-wrapper">
+  <div class="page-header">
+    <div class="header-text">
+      <p class="section-eyebrow">NAVIGATION CONTROL</p>
+      <h2 class="page-title">Sidebar Nodes</h2>
+      
+    </div>
+    <div class="header-stats">
+      <div class="stat-badge"><i class="bi bi-diagram-3"></i> {{ nodes.length }} Nodes</div>
+      <div class="stat-badge"><i class="bi bi-people"></i> {{ roles.length }} Roles</div>
+    </div>
+  </div>
+
+  <div class="main-grid">
+    <div class="left-panel card-panel">
+      <div class="panel-header">
+        <div>
+          <p class="section-eyebrow">SIDEBAR ITEMS</p>
+          <h3 class="section-title">All Nodes</h3>
+        </div>
+
+        <div class="header-actions">
+          <div class="search-box">
+            <i class="bi bi-search"></i>
+            <input
+              aria-label="search"
+              type="text"
+              placeholder="Search nodes..."
+              [(ngModel)]="searchQuery"
+            />
+          </div>
+          <button class="btn-create" (click)="openCreateForm()">
+            <i class="bi bi-plus-lg"></i> New Node
+          </button>
+        </div>
+      </div>
+
+      @if (!isLoading) {
+        <div class="nodes-list">
+          @for (node of filteredNodes; track node._id) {
+            <div
+              class="node-card"
+              [class.active]="selectedNode?._id === node._id && rightPanelMode === 'ROLES'"
+              (click)="openRoleAccess(node)"
+              (keydown.enter)="openRoleAccess(node)"
+              (keydown.space)="openRoleAccess(node)"
+            >
+              <div
+                class="node-icon"
+                [class.active-icon]="selectedNode?._id === node._id && rightPanelMode === 'ROLES'"
+              >
+                <i [class]="node.icon || 'bi bi-app'"></i>
+              </div>
+
+              <div class="node-info">
+                <h4>{{ node.name }}</h4>
+                <p>{{ node.path }}</p>
+              </div>
+
+              <div class="node-meta">
+                <span class="order-badge">#{{ node.order }}</span>
+                <span class="role-count-badge" title="Roles Allowed"
+                  ><i class="bi bi-shield-lock"></i> {{ node.rolesAllowed?.length || 0 }}</span
+                >
+              </div>
+
+              <div class="node-actions">
+                <button
+                  class="icon-btn edit"
+                  (click)="openEditForm(node, $event)"
+                  title="Edit Node"
+                >
+                  <i class="bi bi-pencil"></i>
+                </button>
+                <button
+                  class="icon-btn delete"
+                  (click)="deleteNode(node, $event)"
+                  title="Delete Node"
+                >
+                  <i class="bi bi-trash"></i>
+                </button>
+              </div>
+            </div>
+          }
+        </div>
+      } @else {
+        <div class="text-center py-5 text-muted">Loading sidebar configuration...</div>
+      }
+    </div>
+
+    <div class="right-panel card-panel">
+      @if (rightPanelMode === 'EMPTY') {
+        <div class="empty-state">
+          <i class="bi bi-layout-sidebar text-muted fs-1 mb-3"></i>
+          <h3 class="text-muted">Select a node to manage access</h3>
+        </div>
+      }
+
+      @if (rightPanelMode === 'ROLES' && selectedNode) {
+        <div class="roles-container">
+          <p class="section-eyebrow">ACCESS CONTROL</p>
+          <h2 class="section-title mb-4">Roles for {{ selectedNode.name }}</h2>
+
+          <div class="roles-toggle-list">
+            @for (role of roles; track role._id; let i = $index) {
+              <div class="role-toggle-item">
+                <div class="role-label">
+                  <div class="role-avatar" [ngClass]="'avatar-color-' + (i % 6)">
+                    {{ getRoleInitials(role.roleName) }}
+                  </div>
+                  <span class="role-name">{{ role.roleName | titlecase }}</span>
+                </div>
+
+                <label for="roleName" class="switch">
+                  <input
+                    aria-label="roleName"
+                    type="checkbox"
+                    [checked]="hasRoleAccess(role.roleName)"
+                    (change)="toggleRoleAccess(role.roleName, $event)"
+                  />
+                  <span class="slider round"></span>
+                </label>
+              </div>
+            }
+          </div>
+        </div>
+      }
+
+      @if (rightPanelMode === 'FORM') {
+        <app-node-form
+          [node]="selectedNode"
+          (save)="handleSaveNode($event)"
+          (cancel)="closeRightPanel()"
+        >
+        </app-node-form>
+      }
+    </div>
+  </div>
+</div>

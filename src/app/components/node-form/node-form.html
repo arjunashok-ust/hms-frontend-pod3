@@ -1,0 +1,40 @@
+<div class="form-container">
+  <p class="section-eyebrow">{{ node ? 'EDIT NODE' : 'CREATE NODE' }}</p>
+  <h2 class="section-title mb-4">{{ node ? node.name : 'New Node' }}</h2>
+
+  <form [formGroup]="nodeForm" (ngSubmit)="onSubmit()">
+    <div class="input-group mb-3">
+      <label for="name">NAME <span class="text-danger">*</span></label>
+      <input aria-label="name" type="text" class="form-control" formControlName="name" placeholder="e.g. Dashboard" />
+      @if (nodeForm.get('name')?.touched && nodeForm.get('name')?.invalid) {
+        <small class="text-danger mt-1">Name is required.</small>
+      }
+    </div>
+
+    <div class="input-group mb-3">
+      <label for="path">PATH <span class="text-danger">*</span></label>
+      <input aria-label="path" type="text" class="form-control" formControlName="path" placeholder="e.g. /dashboard" />
+      @if (nodeForm.get('path')?.touched && nodeForm.get('path')?.invalid) {
+        <small class="text-danger mt-1">Path is required.</small>
+      }
+    </div>
+
+    <div class="input-group mb-3">
+      <label for="icon">ICON (Bootstrap Class) <span class="text-danger">*</span></label>
+      <input aria-label="icon" type="text" class="form-control" formControlName="icon" placeholder="e.g. bi bi-speedometer2" />
+      <small class="text-muted mt-1"><i [class]="nodeForm.get('icon')?.value"></i> Preview</small>
+    </div>
+
+    <div class="input-group mb-4">
+      <label for="order">ORDER <span class="text-danger">*</span></label>
+      <input aria-label="order" type="number" class="form-control" formControlName="order" min="1" />
+    </div>
+
+    <div class="form-actions">
+      <button type="button" class="btn-cancel" (click)="handleCancel.emit()">Cancel</button>
+      <button type="submit" class="btn-save" [disabled]="nodeForm.invalid">
+        <i class="bi bi-check-lg"></i> {{ node ? 'Save Node' : 'Create Node' }}
+      </button>
+    </div>
+  </form>
+</div>
