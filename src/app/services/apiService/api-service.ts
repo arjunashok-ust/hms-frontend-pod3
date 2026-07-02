@@ -94,10 +94,15 @@ export class ApiService {
   }
 
   // --- ROLES & PERMISSIONS ---
+
+  // --- ROLES & PERMISSIONS ---
   getAllRoles() {
     return this.http.get(`${this.backendUrl}/api/roles/show`);
   }
 
+  createRole(payload: { roleName: string, rolePermissions?: string[], isMedicalRole?: boolean }) {
+    return this.http.post(`${this.backendUrl}/api/roles/create`, payload);
+  }
   updateRole(id: string, payload: { roleName: string, rolePermissions: string[] }) {
     return this.http.put(`${this.backendUrl}/api/roles/${id}`, payload);
   }

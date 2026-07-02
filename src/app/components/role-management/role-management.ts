@@ -5,7 +5,6 @@ import { ApiService } from '../../services/apiService/api-service';
 import { ToastrService } from 'ngx-toastr';
 import { HasPermissionDirective } from '../../directives/has-permission.directive';
 
-
 interface PermissionGroup {
   groupName: string;
   permissions: string[];
@@ -29,8 +28,12 @@ export class RoleManagement implements OnInit {
   isLoading = true;
   isSaving = false;
 
+  // View toggles
+  isCreatingRole = false;
   userCanUpdatePermissions = false;
+
   newPermForm!: FormGroup;
+  newRoleForm!: FormGroup;
 
   private readonly apiService = inject(ApiService);
   private readonly toast = inject(ToastrService);
@@ -45,7 +48,12 @@ export class RoleManagement implements OnInit {
       resource: ['', Validators.required]
     });
 
-    // Chain the requests: Fetch roles first, so if permissions are empty, we have fallback data
+    // New Role Form Initialization
+    this.newRoleForm = this.fb.group({
+      roleName: ['', [Validators.required, Validators.minLength(2)]],
+      isMedicalRole: [false]
+    });
+
     this.fetchRoles().then(() => {
       this.fetchPermissions();
     });
@@ -61,7 +69,7 @@ export class RoleManagement implements OnInit {
           this.roles = res.data || [];
           this.isLoading = false;
 
-          if (this.roles.length > 0 && !this.selectedRole) {
+          if (this.roles.length > 0 && !this.selectedRole && !this.isCreatingRole) {
             this.selectRole(this.roles[0]);
           }
           this.cdr.detectChanges();
@@ -81,9 +89,6 @@ export class RoleManagement implements OnInit {
       next: (res: any) => {
         let permsObj = res.permissions || {};
 
-        // --- SMART FALLBACK ---
-        // If the Permissions collection in DB is empty, auto-generate the UI 
-        // by extracting all existing permissions from the loaded Roles!
         if (Object.keys(permsObj).length === 0) {
           const extractedPerms = new Set<string>();
           this.roles.forEach(role => {
@@ -93,12 +98,11 @@ export class RoleManagement implements OnInit {
           });
 
           extractedPerms.forEach(perm => {
-            const group = perm.split('_')[0]; // Extract first word (e.g., 'VIEW')
+            const group = perm.split('_')[0];
             if (!permsObj[group]) permsObj[group] = [];
-            permsObj[group].push({ name: perm }); // Match expected structure
+            permsObj[group].push({ name: perm });
           });
         }
-        // ----------------------
 
         this.groupedPermissions = Object.keys(permsObj)
           .sort((a, b) => a.localeCompare(b))
@@ -123,7 +127,15 @@ export class RoleManagement implements OnInit {
     })).filter(group => group.permissions.length > 0);
   }
 
+  // Switches Right Panel to "Create Role" mode
+  openCreateRoleForm() {
+    this.selectedRole = null;
+    this.isCreatingRole = true;
+    this.newRoleForm.reset({ isMedicalRole: false });
+  }
+
   selectRole(role: any) {
+    this.isCreatingRole = false;
     this.selectedRole = role;
     this.selectedRolePermissions.clear();
     if (role.rolePermissions) {
@@ -140,12 +152,9 @@ export class RoleManagement implements OnInit {
     return name.substring(0, 2).toUpperCase();
   }
 
-  // --- Permission Toggles ---
   hasPermission(perm: string): boolean {
     return this.selectedRolePermissions.has(perm);
   }
-
-
 
   togglePermission(perm: string) {
     if (!this.userCanUpdatePermissions) return;
@@ -173,9 +182,7 @@ export class RoleManagement implements OnInit {
   }
 
   private getStoredUserPermissions(): string[] {
-    if (!isPlatformBrowser(this.platformId)) {
-      return [];
-    }
+    if (!isPlatformBrowser(this.platformId)) return [];
 
     const token = localStorage.getItem('token');
     if (token) {
@@ -183,24 +190,11 @@ export class RoleManagement implements OnInit {
         const payloadBase64 = token.split('.')[1];
         const decodedJson = atob(payloadBase64.replaceAll('-', '+').replaceAll('_', '/'));
         const decodedPayload = JSON.parse(decodedJson);
-
         return Array.isArray(decodedPayload.permissions) ? decodedPayload.permissions : [];
       } catch (error) {
-        console.error('Error parsing token permissions from localStorage', error);
+        console.error('Error parsing token', error);
       }
     }
-
-    const userString = localStorage.getItem('user');
-    if (userString) {
-      try {
-        const user = JSON.parse(userString);
-        const permissions = user?.permissions || user?.role?.rolePermissions || [];
-        return Array.isArray(permissions) ? permissions : [];
-      } catch (e) {
-        console.error('Error parsing user from localStorage', e);
-      }
-    }
-
     return [];
   }
 
@@ -208,7 +202,7 @@ export class RoleManagement implements OnInit {
     const permissions = new Set(this.getStoredUserPermissions().map(permission => permission.toUpperCase()));
     return permissions.has('UPDATE_PERMISSIONS') || permissions.has('DELETE_PERMISSIONS');
   }
-  // --- Saves & Actions ---
+
   saveRoleChanges() {
     if (!this.selectedRole || !this.userCanUpdatePermissions) return;
     this.isSaving = true;
@@ -233,6 +227,37 @@ export class RoleManagement implements OnInit {
     });
   }
 
+  // --- NEW: Submit New Role Form ---
+  submitNewRole() {
+    if (this.newRoleForm.invalid) {
+      this.newRoleForm.markAllAsTouched();
+      return;
+    }
+
+    this.isSaving = true;
+    const payload = this.newRoleForm.value; // { roleName: '...', isMedicalRole: true/false }
+
+    this.apiService.createRole(payload).subscribe({
+      next: (res: any) => {
+        this.toast.success(`Role ${res.data.roleName} created successfully.`);
+        this.isSaving = false;
+        this.newRoleForm.reset({ isMedicalRole: false });
+
+        // Refresh the list and select the newly created role
+        this.fetchRoles().then(() => {
+          const newlyCreated = this.roles.find(r => r.roleName === res.data.roleName);
+          if (newlyCreated) {
+            this.selectRole(newlyCreated);
+          }
+        });
+      },
+      error: (err: any) => {
+        this.toast.error(err.error?.message || "Failed to create role.");
+        this.isSaving = false;
+      }
+    });
+  }
+
   registerNewPermission() {
     if (this.newPermForm.invalid) {
       this.newPermForm.markAllAsTouched();
@@ -241,8 +266,6 @@ export class RoleManagement implements OnInit {
 
     const action = this.newPermForm.value.action.trim();
     const resource = this.newPermForm.value.resource.trim();
-
-    // Format to UPPER_SNAKE_CASE (e.g., action: "create", resource: "patient details" -> "CREATE_PATIENT_DETAILS")
     const formattedName = `${action}_${resource}`.toUpperCase().replace(/\s+/g, '_');
 
     this.apiService.createPermission({ name: formattedName }).subscribe({
@@ -250,12 +273,10 @@ export class RoleManagement implements OnInit {
         this.toast.success(`Permission registered successfully.`);
         this.newPermForm.reset();
 
-        // Auto-assign to current role so they don't have to search for it
         if (this.selectedRole) {
           this.selectedRolePermissions.add(formattedName);
         }
 
-        // Re-fetch to update groups, but clear groupedPermissions to bypass the fallback
         this.groupedPermissions = [];
         this.fetchPermissions();
       },
@@ -263,7 +284,6 @@ export class RoleManagement implements OnInit {
     });
   }
 
-  // Helper method to make UI readable (e.g., "CREATE_MEDICAL_RECORD" -> "create:medical-record")
   formatPermissionForUI(perm: string): string {
     const parts = perm.split('_');
     if (parts.length <= 1) return perm.toLowerCase();

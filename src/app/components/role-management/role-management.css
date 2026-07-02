@@ -428,3 +428,28 @@
 .text-danger{
   color: red;
 }
+
+/* ADD THIS TO YOUR EXISTING CSS */
+.btn-create-role {
+  background-color: #f3f0ff;
+  color: #5b36b3;
+  border: 1px solid #e0d4fc;
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.btn-create-role:hover {
+  background-color: #e0d4fc;
+  transform: translateY(-1px);
+}
+
+.register-section.mt-4{
+  margin-top: 15px;
+}

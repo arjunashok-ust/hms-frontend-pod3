@@ -96,12 +96,13 @@
         <div class="form-grid">
           <div class="input-group">
             <label for="newPassword">NEW PASSWORD <span class="text-danger">*</span></label>
-            <input type="password" formControlName="newPassword" placeholder="Enter new password" />
+            <input aria-label="password" type="password" formControlName="newPassword" placeholder="Enter new password" />
           </div>
 
           <div class="input-group">
             <label for="confirmPassword">CONFIRM PASSWORD <span class="text-danger">*</span></label>
             <input
+            aria-label="confirmPassword"
               type="password"
               formControlName="confirmPassword"
               placeholder="Confirm new password"

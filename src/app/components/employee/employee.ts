@@ -61,17 +61,9 @@ export class Employee implements OnInit {
 
   userPermissions: string[] = [];
 
-  medicalRoles = ['DOCTOR', 'NURSE', 'LAB_TECH', 'PHARMACIST'];
+  medicalRoles: string[] = [];
 
-  baseRoles = [
-    { value: 'DOCTOR', label: 'Doctor' },
-    { value: 'NURSE', label: 'Nurse' },
-    { value: 'LAB_TECH', label: 'Lab Technician' },
-    { value: 'PHARMACIST', label: 'Pharmacist' },
-    { value: 'RECEPTIONIST', label: 'Receptionist' },
-    { value: 'CASHIER', label: 'Cashier' },
-  ];
-
+  baseRoles: { value: string, label: string }[] = [];
   availableRoles: any[] = [];
 
   rowSubSlotsMap: { [uniqueId: string]: GeneratedSlot[] } = {};
@@ -98,7 +90,7 @@ export class Employee implements OnInit {
   }
 
   ngOnInit() {
-    this.setupAvailableRoles();
+    this.fetchAndSetupRoles();
 
     this.route.data.subscribe(data => {
       if (data['openApprovalsByDefault']) {
@@ -113,20 +105,31 @@ export class Employee implements OnInit {
     });
   }
 
-  setupAvailableRoles() {
+  fetchAndSetupRoles() {
+    this.apiService.getAllRoles().subscribe({
+      next: (res: any) => {
+        const allRoles = res.data || [];
 
-    this.route.data.subscribe(data => {
-      if (data['openApprovalsByDefault']) {
-        this.showPendingApprovals = true;
-        this.selectedStatus = '';
-      } else {
-        this.showPendingApprovals = false;
-        this.selectedStatus = '';
+        this.medicalRoles = allRoles
+          .filter((r: any) => r.isMedicalRole)
+          .map((r: any) => r.roleName.toUpperCase());
+
+        this.baseRoles = allRoles.map((r: any) => ({
+          value: r.roleName.toUpperCase(),
+          label: this.formatRoleLabel(r.roleName)
+        }));
+
+        this.setupAvailableRoles();
+        this.cdr.markForCheck();
+      },
+      error: (err) => {
+        this.toast.error("Failed to load roles from server.");
+        console.error(err);
       }
-      this.applyFilters();
-      this.cdr.detectChanges();
     });
-    this.availableRoles = [...this.baseRoles];
+  }
+
+  setupAvailableRoles() {
 
     if (isPlatformBrowser(this.platformId)) {
       const token = localStorage.getItem('token');
@@ -137,13 +140,22 @@ export class Employee implements OnInit {
           this.userPermissions = payload.permissions || [];
 
           if (this.userPermissions.includes('CREATE_ADMIN')) {
-            this.availableRoles.unshift({ value: 'ADMIN', label: 'Admin' });
+            // Ensure ADMIN is not duplicated if already present
+            const adminRoleExists = this.baseRoles.some(r => r.value === 'ADMIN');
+            if (!adminRoleExists) {
+              this.availableRoles = [{ value: 'ADMIN', label: 'Admin' }, ...this.baseRoles];
+            } else {
+              this.availableRoles = [...this.baseRoles];
+            }
+          } else {
+            this.availableRoles = [...this.baseRoles];
           }
         } catch (err) {
           console.error(err);
+          this.availableRoles = [...this.baseRoles];
         }
       }
-    }
+    } else { this.availableRoles = [...this.baseRoles]; }
   }
 
   @HostListener('document:mousedown', ['$event'])
@@ -393,6 +405,13 @@ export class Employee implements OnInit {
 
   generateHourlySlots(uniqueId: string, slotGroup: FormGroup, start: string, end: string) {
     TimeSlotUtil.populateHalfHourSlots(uniqueId, slotGroup, start, end, this.rowSubSlotsMap);
+  }
+
+  formatRoleLabel(roleName: string): string {
+    if (!roleName) return '';
+    return roleName.split('_').map(word =>
+      word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+    ).join(' ');
   }
 
   updateMedicalValidators(role: string) {

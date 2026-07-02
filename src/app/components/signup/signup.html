@@ -14,7 +14,7 @@
         <div class="form-stack">
           <div class="form-group">
             <label for="fullName">Full Name *</label>
-            <input formControlName="name" type="text" placeholder="John Doe" />
+            <input aria-label="name" formControlName="name" type="text" placeholder="John Doe" />
             @if (signupForm.get('name')?.touched && signupForm.get('name')?.invalid) {
               <span class="error-msg">Name is required</span>
             }
@@ -22,7 +22,12 @@
 
           <div class="form-group">
             <label for="emailAddress">Email Address *</label>
-            <input formControlName="email" type="email" placeholder="example@email.com" />
+            <input
+              aria-label="email"
+              formControlName="email"
+              type="email"
+              placeholder="example@email.com"
+            />
             @if (
               signupForm.get('email')?.touched &&
               (signupForm.get('email')?.hasError('email') || signupForm.get('email')?.invalid)
@@ -33,7 +38,12 @@
 
           <div class="form-group">
             <label for="password">Password *</label>
-            <input formControlName="password" type="password" placeholder="Min 8 characters" />
+            <input
+              aria-label="password"
+              formControlName="password"
+              type="password"
+              placeholder="Min 8 characters"
+            />
             @if (
               signupForm.get('password')?.touched &&
               (signupForm.get('password')?.hasError('pattern') ||
@@ -47,6 +57,7 @@
           <div class="form-group">
             <label for="confirmPassword">Confirm Password *</label>
             <input
+              aria-label="confirmPassword"
               formControlName="confirmPassword"
               type="password"
               placeholder="Retype Password"
@@ -61,7 +72,12 @@
 
           <div class="form-group">
             <label for="phone">Phone Number *</label>
-            <input formControlName="phone" type="text" placeholder="9876543210" />
+            <input
+              aria-label="phone"
+              formControlName="phone"
+              type="text"
+              placeholder="9876543210"
+            />
             @if (signupForm.get('phone')?.touched && signupForm.get('phone')?.invalid) {
               <span class="error-msg"
                 >Valid phone no. with 10 digits required (optional +91 prefix)</span
@@ -72,14 +88,11 @@
           <div class="form-group">
             <label for="role">Role</label>
             <div class="select-wrapper">
-              <select formControlName="role">
-                <option value="" disabled selected>Select Role</option>
-                <option value="doctor">Doctor</option>
-                <option value="nurse">Nurse</option>
-                <option value="receptionist">Receptionist</option>
-                <option value="cashier">Cashier</option>
-                <option value="pharmacist">Pharmacist</option>
-                <option value="lab_tech">Lab Tech</option>
+              <select id="role" formControlName="role">
+                <option value="" disabled>Select Role</option>
+                @for (role of roles; track role.value) {
+                  <option [value]="role.value">{{ role.label }}</option>
+                }
               </select>
               @if (signupForm.get('role')?.touched && signupForm.get('role')?.invalid) {
                 <span class="error-msg">Please select a role</span>
@@ -90,7 +103,7 @@
           <div class="form-group">
             <label for="department">Department</label>
             <div class="select-wrapper">
-              <select formControlName="department">
+              <select id="department" formControlName="department">
                 <option value="" disabled selected>Select Department</option>
                 @for (dept of departments; track dept) {
                   <option [value]="dept">{{ dept }}</option>
@@ -104,7 +117,12 @@
 
           <div class="form-group">
             <label for="designation">Designation</label>
-            <input formControlName="designation" type="text" placeholder="e.g. Senior Surgeon" />
+            <input
+              aria-label="designation"
+              formControlName="designation"
+              type="text"
+              placeholder="e.g. Senior Surgeon"
+            />
             @if (signupForm.get('designation')?.touched && signupForm.get('designation')?.invalid) {
               <span class="error-msg">Designation is required</span>
             }
@@ -112,7 +130,12 @@
 
           <div class="form-group">
             <label for="qualification">Qualifications</label>
-            <input formControlName="qualification" type="text" placeholder="e.g. MBBS, MD" />
+            <input
+              aria-label="qualification"
+              formControlName="qualification"
+              type="text"
+              placeholder="e.g. MBBS, MD"
+            />
             @if (
               signupForm.get('qualification')?.touched && signupForm.get('qualification')?.invalid
             ) {
@@ -122,7 +145,13 @@
 
           <div class="form-group">
             <label for="joiningDate">Joining Date *</label>
-            <input formControlName="joiningDate" type="date" [min]="minDate" [max]="maxDate" />
+            <input
+              aria-label="joiningDate"
+              formControlName="joiningDate"
+              type="date"
+              [min]="minDate"
+              [max]="maxDate"
+            />
             @if (
               signupForm.get('joiningDate')?.touched &&
               signupForm.get('joiningDate')?.hasError('invalidDateRange')
@@ -140,7 +169,12 @@
             <div class="form-stack">
               <div class="form-group">
                 <label for="specialization">Specialization</label>
-                <input formControlName="specialization" type="text" placeholder="e.g. Cardiology" />
+                <input
+                  aria-label="specialization"
+                  formControlName="specialization"
+                  type="text"
+                  placeholder="e.g. Cardiology"
+                />
                 @if (
                   signupForm.get('specialization')?.touched &&
                   signupForm.get('specialization')?.invalid
@@ -151,6 +185,7 @@
               <div class="form-group">
                 <label for="medicalRegNo">Medical Reg No.</label>
                 <input
+                  aria-label="medicalRegNo"
                   formControlName="medicalRegistrationNo"
                   type="text"
                   placeholder="Registration ID"
@@ -174,7 +209,12 @@
 
             <div class="form-group m-b-4">
               <label for="consultationFee">Consultation Fee (₹)</label>
-              <input formControlName="consultationFee" type="number" placeholder="0.00" />
+              <input
+                aria-label="consultationFee"
+                formControlName="consultationFee"
+                type="number"
+                placeholder="0.00"
+              />
               @if (
                 signupForm.get('consultationFee')?.touched &&
                 signupForm.get('consultationFee')?.invalid
@@ -201,7 +241,8 @@
                   >
                     <div class="time-inputs" style="display: flex; gap: 8px; align-items: center">
                       <div class="select-wrapper">
-                        <select formControlName="dayOfWeek">
+                        <label for="dayOfWeek" class="visually-hidden">dayOfWeek</label>
+                        <select id="dayOfWeek" formControlName="dayOfWeek">
                           <option value="" disabled selected>Day</option>
                           <option value="MONDAY">Monday</option>
                           <option value="TUESDAY">Tuesday</option>
@@ -214,7 +255,8 @@
                       </div>
 
                       <div class="select-wrapper">
-                        <select formControlName="startTime">
+                        <label for="startTime" class="visually-hidden">Start Time</label>
+                        <select id="startTime" formControlName="startTime">
                           <option value="" disabled selected>Start</option>
                           @for (hour of availableHours; track hour) {
                             <option [value]="hour">{{ hour }}</option>
@@ -223,7 +265,8 @@
                       </div>
                       <span class="time-separator">to</span>
                       <div class="select-wrapper">
-                        <select formControlName="endTime">
+                        <label for="endTime" class="visually-hidden">End Time</label>
+                        <select id="endTime" formControlName="endTime">
                           <option value="" disabled selected>End</option>
                           @for (hour of availableHours; track hour) {
                             <option [value]="hour">{{ hour }}</option>
