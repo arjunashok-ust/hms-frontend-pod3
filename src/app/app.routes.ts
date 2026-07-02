@@ -14,6 +14,7 @@ import { AccessDenied } from './components/access-denied/access-denied';
 import { MedicalRecordComponent } from './components/medical-record/medical-record';
 import { RoleManagement } from './components/role-management/role-management';
 import { NodeManagementComponent } from './components/node-management/node-management';
+import { DepartmentManagementComponent } from './components/departments/department-management';
 
 
 export const routes: Routes = [
@@ -74,6 +75,12 @@ export const routes: Routes = [
           permissions: ['VIEW_NODES']
         }
       },
+      {
+        path: 'departments', component: DepartmentManagementComponent, canActivate: [roleGuard], data: {
+          permissions: ['VIEW_DEPARTMENTS']
+        }
+      },
+      
       { path: '', redirectTo: 'profile', pathMatch: 'full' }
     ],
   },

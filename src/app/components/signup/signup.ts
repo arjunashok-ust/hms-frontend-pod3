@@ -42,7 +42,7 @@ export class Signup implements OnInit {
   roles: { value: string, label: string }[] = [];
   medicalRoles: string[] = [];
   rowSubSlotsMap: { [uniqueId: string]: GeneratedSlot[] } = {};
-  departments = ["OPD", "IPD", "LAB", "PHARMACY"];
+  departments: string[] = [];
 
   availableHours: string[] = Array.from({ length: 24 }, (_, i) => {
     const hour = i.toString().padStart(2, '0');
@@ -84,6 +84,23 @@ export class Signup implements OnInit {
 
   ngOnInit(): void {
     this.fetchRoles();
+    this.fetchDepartments();
+  }
+
+  fetchDepartments() {
+    this.apiService.getAllDepartments().subscribe({
+      next: (res: any) => {
+        this.departments = (res.data || [])
+          .map((d: any) => d.departmentName)
+          .filter((name: string) => name.toUpperCase() !== 'ADMIN');
+        this.cdr.markForCheck();
+      },
+      error: (err) => {
+        console.error('Failed to load departments', err);
+        this.errorMessage = 'Could not load departments for registration.';
+        this.cdr.markForCheck();
+      },
+    });
   }
 
   fetchRoles() {

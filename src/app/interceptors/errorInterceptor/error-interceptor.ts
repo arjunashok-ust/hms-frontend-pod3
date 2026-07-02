@@ -9,6 +9,7 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
       if (typeof ErrorEvent !== 'undefined' && error.error instanceof ErrorEvent) {
         errorMessage = `Client-side error: ${error.error.message}`;
       } else {
+        console.log(error);
         errorMessage = `Server returned code: ${error.status}, error message is: ${error.message}`;
       }
 

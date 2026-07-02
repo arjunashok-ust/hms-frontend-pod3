@@ -4,6 +4,7 @@ import { RouterModule } from '@angular/router';
 import { ApiService, MenuNode } from '../../services/apiService/api-service';
 import { AppointmentService } from '../../services/appointmentService/appointment-service';
 import { HasPermissionDirective } from '../../directives/has-permission.directive';
+import { hasRoleAccess, normalizeRole } from '../../utils/role-access';
 
 @Component({
   selector: 'app-sidebar',
@@ -25,20 +26,18 @@ export class Sidebar implements OnInit {
 
   ngOnInit(): void {
     if (isPlatformBrowser(this.platformId)) {
-      const userRole = this.getUserRoleFromToken();
-      this.isAdmin = (userRole?.toUpperCase() == "ADMIN");
+      const userRole = normalizeRole(this.getUserRoleFromToken());
+      this.isAdmin = userRole === 'ADMIN';
       this.fetchPendingAppointments();
 
-      this.api.getMenus().subscribe({
+      this.api.getSidebarMenu().subscribe({
         next: (response: any) => {
           let rawMenus = Array.isArray(response)
             ? response
             : response.data || response.menuItems || response.menus || [];
 
           if (userRole) {
-            rawMenus = rawMenus.filter((menu: MenuNode) => {
-              return menu.rolesAllowed?.includes(userRole);
-            });
+            rawMenus = rawMenus.filter((menu: MenuNode) => hasRoleAccess(menu.rolesAllowed, userRole));
           } else {
             rawMenus = [];
           }

@@ -3,7 +3,6 @@
     <div class="header-text">
       <p class="section-eyebrow">NAVIGATION CONTROL</p>
       <h2 class="page-title">Sidebar Nodes</h2>
-      
     </div>
     <div class="header-stats">
       <div class="stat-badge"><i class="bi bi-diagram-3"></i> {{ nodes.length }} Nodes</div>
@@ -111,12 +110,13 @@
                   <span class="role-name">{{ role.roleName | titlecase }}</span>
                 </div>
 
-                <label for="roleName" class="switch">
+                <label [attr.for]="'role-' + role._id" class="switch">
                   <input
+                    id="{{ 'role-' + role._id }}"
                     aria-label="roleName"
                     type="checkbox"
                     [checked]="hasRoleAccess(role.roleName)"
-                    (change)="toggleRoleAccess(role.roleName, $event)"
+                    (change)="toggleRoleAccess(role.roleName, $event.target.checked)"
                   />
                   <span class="slider round"></span>
                 </label>

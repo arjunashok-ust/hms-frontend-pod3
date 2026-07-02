@@ -72,6 +72,7 @@ export class Login {
 
       this.auth.login(payload).subscribe({
         next: (response) => {
+
           this.isLoading = false;
           console.log('Backend Login Success:', response);
 
@@ -97,7 +98,22 @@ export class Login {
         },
         error: (error) => {
           this.isLoading = false;
-          this.errorMessage = error.error?.message || 'Invalid email or password';
+
+          // 1. Check for absolute absence of network response (Status 0)
+          const isNoResponse = error?.status === 0;
+
+          // 2. Check for intermediate gateway errors (Backend crashed, proxy survived)
+          const isGatewayError = error?.status >= 500 && error?.status <= 504;
+
+          if (isNoResponse || isGatewayError) {
+            this.errorMessage = 'Server is down or unreachable. Please try again later.';
+          } else if (error?.status === 401) {
+            this.errorMessage = 'Invalid credentials.';
+          } else {
+            // Provide exact backend message if available, else generic fallback
+            this.errorMessage = error?.error?.message || 'An unexpected error occurred.';
+          }
+
           this.cdr.markForCheck();
         },
       });

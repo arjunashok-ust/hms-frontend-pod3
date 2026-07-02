@@ -28,6 +28,10 @@ export class ApiService {
     return this.http.get<MenuNode[]>(url);
   }
 
+  getSidebarMenu(): Observable<MenuNode[]> {
+    return this.http.get<MenuNode[]>(`${this.backendUrl}/api/menuNode/getSidebarMenu`);
+  }
+
   getCurrentUser() {
     let headers = new HttpHeaders();
 
@@ -138,4 +142,28 @@ export class ApiService {
     return this.http.delete(`${this.backendUrl}/api/menuNode/deleteMenuNode/${id}`);
   }
 
+  // --- DEPARTMENTS ---
+  getAllDepartments(): Observable<any> {
+    return this.http.get(`${this.backendUrl}/api/departments`);
+  }
+
+  createDepartment(departmentData: {
+    departmentName: string;
+  }): Observable<any> {
+    return this.http.post(`${this.backendUrl}/api/departments`, departmentData);
+  }
+
+  updateDepartment(
+    departmentId: string,
+    departmentData: { departmentName: string },
+  ): Observable<any> {
+    return this.http.put(`${this.backendUrl}/api/departments/${departmentId}`, departmentData);
+  }
+
+  deleteDepartment(departmentId: string): Observable<any> {
+    return this.http.delete(`${this.backendUrl}/api/departments/${departmentId}`);
+  }
 }
+
+
+

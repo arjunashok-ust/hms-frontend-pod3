@@ -102,27 +102,26 @@ export class NodeManagementComponent implements OnInit {
     return this.selectedNode.rolesAllowed.includes(roleName.toUpperCase());
   }
 
-  toggleRoleAccess(roleName: string, event: any) {
+  toggleRoleAccess(roleName: string, isChecked: boolean) {
     if (!this.selectedNode?._id) return;
 
-    const isChecked = event.target.checked;
     const roleUpper = roleName.toUpperCase();
-    let currentRoles = this.selectedNode.rolesAllowed || [];
+    const currentRoles = new Set(this.selectedNode.rolesAllowed?.map((r: string) => r.toUpperCase()) || []);
 
     if (isChecked) {
-      currentRoles.push(roleUpper);
+      currentRoles.add(roleUpper);
     } else {
-      currentRoles = currentRoles.filter(r => r !== roleUpper);
+      currentRoles.delete(roleUpper);
     }
 
-    // Optimistic UI Update
-    this.selectedNode.rolesAllowed = currentRoles;
+    const updatedRoles = Array.from(currentRoles);
+    this.selectedNode.rolesAllowed = updatedRoles;
 
-    this.apiService.updateMenuNode(this.selectedNode._id, { rolesAllowed: currentRoles }).subscribe({
+    this.apiService.updateMenuNode(this.selectedNode._id, { rolesAllowed: updatedRoles }).subscribe({
       next: () => this.toast.success(`Access updated for ${this.selectedNode?.name}`),
       error: () => {
         this.toast.error("Failed to update access.");
-        this.fetchData(); // Revert on failure
+        this.fetchData();
       }
     });
   }

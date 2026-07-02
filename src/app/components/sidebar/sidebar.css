@@ -1,19 +1,30 @@
 .sidebar {
   width: 260px;
-  height: 100%;
-  background-color: #ffffff;
-  padding: 32px 20px;
+  height: 100vh;
+  background-color: #ffffff; /* Your existing background */
+  padding: 32px 0; /* Adjust padding to be vertical only */
   box-sizing: border-box;
   z-index: 100;
+  position: sticky;
+  top: 0;
+  display: flex;
+  flex-direction: column;
 }
 
 .menu-list {
   list-style: none;
-  padding: 0;
+  padding: 0 20px; /* Apply horizontal padding here */
   margin: 0;
   display: flex;
   flex-direction: column;
   gap: 8px;
+  overflow-y: auto; /* Enable vertical scrolling */
+  flex-grow: 1; /* Allow the list to fill available space */
+  scrollbar-width: none; /* For Firefox */
+}
+
+.menu-list::-webkit-scrollbar {
+  display: none; /* For Chrome, Safari, and Opera */
 }
 
 .menu-item a {

@@ -20,7 +20,7 @@ export class Approvals implements OnInit {
 
   searchTerm: string = '';
   selectedDepartment: string = '';
-  departments = ["OPD", "IPD", "ADMIN", "LAB", "PHARMACY"];
+  departments: string[] = [];
 
   currentPage = 1;
   pageSize = environment.pageSize;
@@ -39,7 +39,20 @@ export class Approvals implements OnInit {
   ngOnInit() {
     if (isPlatformBrowser(this.platformId)) {
       this.fetchPendingEmployees();
+      this.fetchDepartments();
     }
+  }
+
+  fetchDepartments() {
+    this.apiService.getAllDepartments().subscribe({
+      next: (res: any) => {
+        this.departments = (res.data || []).map((dept: any) => dept.departmentName);
+        this.cdr.markForCheck();
+      },
+      error: (err) => {
+        this.toast.error('Failed to load departments.');
+      },
+    });
   }
 
   fetchPendingEmployees() {

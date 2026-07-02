@@ -1,0 +1,96 @@
+<div class="department-management-wrapper" *hasPermission="'VIEW_DEPARTMENTS'">
+  <div class="main-panel">
+    <div class="header">
+      <div>
+        <p class="section-eyebrow" style="color: #8b5cf6;">MANAGEMENT</p>
+        <h2 class="section-title">Departments</h2>
+      </div>
+    </div>
+
+    <!-- Create/Edit Form -->
+    <div class="form-section" *hasPermission="['CREATE_DEPARTMENT', 'UPDATE_DEPARTMENT']">
+      <h3 class="form-title">
+        {{ editingDepartmentId ? 'Edit Department' : 'Create New Department' }}
+      </h3>
+      <form [formGroup]="departmentForm" (ngSubmit)="handleFormSubmit()" class="department-form">
+        <div class="input-group">
+          <label for="departmentName">Department Name <span class="text-danger">*</span></label>
+          <input
+            id="departmentName"
+            type="text"
+            formControlName="departmentName"
+            placeholder="e.g. BILLING"
+            [class.is-invalid]="
+              departmentForm.get('departmentName')?.invalid &&
+              departmentForm.get('departmentName')?.touched
+            "
+          />
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn-save" [disabled]="departmentForm.invalid || isSaving">
+            <i class="bi" [ngClass]="isSaving ? 'bi-hourglass-split' : 'bi-check-lg'"></i>
+            {{
+              isSaving ? 'Saving...' : editingDepartmentId ? 'Update Department' : 'Add Department'
+            }}
+          </button>
+          <button
+            type="button"
+            class="btn-cancel"
+            (click)="cancelEdit()"
+            *ngIf="editingDepartmentId"
+          >
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Departments List -->
+    <div class="list-section">
+      <div *ngIf="isLoading; else departmentList" class="loading-state">
+        <p>Loading departments...</p>
+      </div>
+
+      <ng-template #departmentList>
+        <div *ngIf="departments.length > 0; else emptyState" class="departments-grid">
+          <div class="department-card" *ngFor="let dept of departments">
+            <div class="department-avatar">
+              {{ getInitials(dept.departmentName) }}
+            </div>
+            <div class="department-info">
+              <h4>{{ dept.departmentName }}</h4>
+              <p class="dept-id">ID: {{ dept.departmentId }}</p>
+            </div>
+            <div class="department-actions">
+              <button
+                class="btn-action btn-edit"
+                *hasPermission="'UPDATE_DEPARTMENT'"
+                (click)="startEdit(dept)"
+                title="Edit Department"
+              >
+                <i class="bi bi-pencil"></i>
+              </button>
+              <button
+                class="btn-action btn-delete"
+                *hasPermission="'DELETE_DEPARTMENT'"
+                (click)="deleteDepartment(dept.departmentId, dept.departmentName)"
+                title="Delete Department"
+              >
+                <i class="bi bi-trash"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </ng-template>
+
+      <ng-template #emptyState>
+        <div class="empty-state">
+          <i class="bi bi-diagram-3 text-muted"></i>
+          <h3 class="text-muted">No departments found.</h3>
+          <p class="text-muted">Get started by creating a new department above.</p>
+        </div>
+      </ng-template>
+    </div>
+  </div>
+</div>

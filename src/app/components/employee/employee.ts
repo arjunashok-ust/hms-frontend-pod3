@@ -52,7 +52,7 @@ export class Employee implements OnInit {
   searchTerm: string = '';
   selectedDepartment: string = '';
   selectedStatus: string = '';
-  departments = ["OPD", "IPD", "ADMIN", "LAB", "PHARMACY"]
+  departments: string[] = [];
 
   showAddModal = false;
   isSubmittingModal = false;
@@ -91,6 +91,7 @@ export class Employee implements OnInit {
 
   ngOnInit() {
     this.fetchAndSetupRoles();
+    this.fetchDepartments();
 
     this.route.data.subscribe(data => {
       if (data['openApprovalsByDefault']) {
@@ -103,6 +104,18 @@ export class Employee implements OnInit {
       this.applyFilters();
       this.cdr.detectChanges();
     });
+  }
+
+  fetchDepartments() {
+    this.apiService.getAllDepartments().subscribe({
+      next: (res: any) => {
+        this.departments = (res.data || []).map((d: any) => d.departmentName);
+        this.cdr.markForCheck();
+      },
+      error: (err) => {
+        this.toast.error("Failed to load departments.");
+      }
+    })
   }
 
   fetchAndSetupRoles() {
