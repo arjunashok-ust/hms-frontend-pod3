@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormGroup, ReactiveFormsModule, FormBuilder, Validators, FormArray } from '@angular/forms';
 import { timeRangeValidator, futureDateValidator } from '../../validators/time-range-validator';
 import { AuthService } from '../../services/auth.service';
@@ -20,27 +20,23 @@ export class SignUpComponent implements OnInit {
   signUpForm: FormGroup;
   auth: AuthService = inject(AuthService);
   route: Router = inject(Router);
-  cd: ChangeDetectorRef = inject(ChangeDetectorRef);
   toast: ToastrService = inject(ToastrService);
 
-  roles_data: RoleModel[] = [];
-  departments_data: DepartmentModel[] = [];
-  specializations_data: SpecializationModel[] = [];
+  roles_data = signal<RoleModel[]>([]);
+  departments_data = signal<DepartmentModel[]>([]);
+  specializations_data = signal<SpecializationModel[]>([]);
 
-  isLoading : boolean = false;
+  isLoading = signal(false);
 
   ngOnInit() {
     this.auth.getUiData<RoleModel[]>('/ui/getRoles').subscribe((res) => {
-      this.roles_data = res;
-      this.cd.detectChanges();
+      this.roles_data.set(res);
     });
     this.auth.getUiData<DepartmentModel[]>('/ui/getDepartments').subscribe((res) => {
-      this.departments_data = res;
-      this.cd.detectChanges();
+      this.departments_data.set(res);
     });
     this.auth.getUiData<SpecializationModel[]>('/ui/getSpecializations').subscribe((res) => {
-      this.specializations_data = res;
-      this.cd.detectChanges();
+      this.specializations_data.set(res);
     });
   }
 
@@ -50,21 +46,25 @@ export class SignUpComponent implements OnInit {
         name: ['', [Validators.required, Validators.pattern(/^[a-z]+( [a-z]+)*$/i)]],
         email: [
           '',
-          [
-            Validators.required,
-            Validators.pattern(/^[a-z0-9._]+@[a-z0-9]*\.[a-z]{2,}$/i),
-          ],
+          [Validators.required, Validators.pattern(/^[a-z0-9._]+@[a-z0-9]*\.[a-z]{2,}$/i)],
         ],
         role: ['', [Validators.required]],
-        password: ['', [Validators.required, Validators.minLength(8),Validators.pattern(/^(?=.*[A-Z])(?=.*\d).+$/)]],
-        confirmPassword: [''],
+        password: [
+          '',
+          [
+            Validators.required,
+            Validators.minLength(8),
+            Validators.pattern(/^(?=.*[A-Z])(?=.*\d).+$/),
+          ],
+        ],
+        confirmPassword: ['', Validators.required],
         department: ['', Validators.required],
         designation: ['', Validators.required],
         status: ['Pending'],
         joiningDate: ['', Validators.required],
         medicalRegistrationNo: ['', Validators.pattern(/^[a-z0-9]*$/i)],
         specialization: [''],
-        qualification: ['', [Validators.pattern(/^[a-z]+([ -][a-z]+)*$/i),Validators.required]],
+        qualification: ['', [Validators.pattern(/^[a-z]+([ -][a-z]+)*$/i), Validators.required]],
         consultationFee: [''],
         startHour: [''],
         endHour: [''],
@@ -122,21 +122,21 @@ export class SignUpComponent implements OnInit {
   }
 
   onSubmit() {
-    if(!this.signUpForm.valid){
-      this.toast.warning("Validation failed,please check the fields");
+    if (!this.signUpForm.valid) {
+      this.toast.warning('Validation failed,please check the fields');
       this.signUpForm.markAllAsTouched();
       return;
     }
-    this.isLoading=true;
+    this.isLoading.set(true);
     const payload = mapToSignUpRequest(this.signUpForm);
     this.auth.signUp(payload).subscribe({
       next: (res) => {
-        this.isLoading=false;
+        this.isLoading.set(false);
         this.toast.success(res.message);
         this.route.navigate(['/login']);
       },
       error: (err) => {
-        this.isLoading=false;
+        this.isLoading.set(false);
         this.toast.error(err?.error?.message || err?.message || 'Something went wrong!');
       },
     });

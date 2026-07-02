@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -49,33 +49,32 @@ const ROLE_COLOR_MAP: string[] = ['purple', 'blue', 'green', 'rose', 'amber', 'c
 })
 export class PermissionComponent implements OnInit {
   adminService: AdminService = inject(AdminService);
-  cd: ChangeDetectorRef = inject(ChangeDetectorRef);
   toast: ToastrService = inject(ToastrService);
 
-  roles: Role[] = [];
-  selectedRole: Role | null = null;
+  roles = signal<Role[]>([]);
+  selectedRole = signal<Role | null>(null);
 
-  currentPermissions: string[] = [];
-  originalPermissions: string[] = [];
+  currentPermissions = signal<string[]>([]);
+  originalPermissions = signal<string[]>([]);
 
-  allPermissions: string[] = [];
+  allPermissions = signal<string[]>([]);
 
-  permSearch = '';
+  permSearch = signal('');
   newPermForm!: FormGroup;
 
-  isCreating = false;
-  isSaving = false;
+  isCreating = signal(false);
+  isSaving = signal(false);
 
   get totalPermissions(): number {
-    return this.allPermissions.length;
+    return this.allPermissions().length;
   }
 
   get pendingAdd(): string[] {
-    return this.currentPermissions.filter((p) => !this.originalPermissions.includes(p));
+    return this.currentPermissions().filter((p) => !this.originalPermissions().includes(p));
   }
 
   get pendingRemove(): string[] {
-    return this.originalPermissions.filter((p) => !this.currentPermissions.includes(p));
+    return this.originalPermissions().filter((p) => !this.currentPermissions().includes(p));
   }
 
   get hasPendingChanges(): boolean {
@@ -84,7 +83,7 @@ export class PermissionComponent implements OnInit {
 
   get allGroups(): PermissionGroup[] {
     const map = new Map<string, string[]>();
-    for (const perm of this.allPermissions) {
+    for (const perm of this.allPermissions()) {
       const key = perm.split(':')[0];
       if (!map.has(key)) map.set(key, []);
       map.get(key)!.push(perm);
@@ -93,7 +92,7 @@ export class PermissionComponent implements OnInit {
   }
 
   get filteredGroups(): PermissionGroup[] {
-    const q = this.permSearch.trim().toLowerCase();
+    const q = this.permSearch().trim().toLowerCase();
     if (!q) return this.allGroups;
     return this.allGroups
       .map((g) => ({
@@ -119,9 +118,8 @@ export class PermissionComponent implements OnInit {
   fetchRoles(): void {
     this.adminService.getRoles().subscribe({
       next: (res) => {
-        this.roles = res;
+        this.roles.set(res);
         this.buildAllPermissions();
-        this.cd.detectChanges();
       },
       error: (err) => {
         console.error('Failed to fetch roles', err);
@@ -131,12 +129,12 @@ export class PermissionComponent implements OnInit {
 
   buildAllPermissions(): void {
     const set = new Set<string>();
-    for (const role of this.roles) {
+    for (const role of this.roles()) {
       for (const perm of role.role_permissions) {
         set.add(perm);
       }
     }
-    this.allPermissions = Array.from(set).sort((a, b) => a.localeCompare(b));
+    this.allPermissions.set(Array.from(set).sort((a, b) => a.localeCompare(b)));
   }
 
   selectRole(role: Role): void {
@@ -144,22 +142,22 @@ export class PermissionComponent implements OnInit {
       const confirm = globalThis.confirm('You have unsaved changes. Discard them and switch role?');
       if (!confirm) return;
     }
-    this.selectedRole = role;
-    this.originalPermissions = [...new Set(role.role_permissions)];
-    this.currentPermissions = [...this.originalPermissions];
-    this.permSearch = '';
+    this.selectedRole.set(role);
+    this.originalPermissions.set([...new Set(role.role_permissions)]);
+    this.currentPermissions.set([...this.originalPermissions()]);
+    this.permSearch.set('');
   }
 
   isAssigned(perm: string): boolean {
-    return this.currentPermissions.includes(perm);
+    return this.currentPermissions().includes(perm);
   }
 
   togglePermission(perm: string): void {
     if (this.isAssigned(perm)) {
-      this.currentPermissions = this.currentPermissions.filter((p) => p !== perm);
+      this.currentPermissions.set(this.currentPermissions().filter((p) => p !== perm));
     } else {
-      this.currentPermissions = [...this.currentPermissions, perm].sort((a, b) =>
-        a.localeCompare(b),
+      this.currentPermissions.set(
+        [...this.currentPermissions(), perm].sort((a, b) => a.localeCompare(b)),
       );
     }
   }
@@ -174,52 +172,51 @@ export class PermissionComponent implements OnInit {
     const group = this.allGroups.find((g) => g.key === groupKey);
     if (!group) return;
     if (this.isGroupFullyAssigned(groupKey)) {
-      this.currentPermissions = this.currentPermissions.filter(
-        (p) => !group.permissions.includes(p),
+      this.currentPermissions.set(
+        this.currentPermissions().filter((p) => !group.permissions.includes(p)),
       );
     } else {
       const toAdd = group.permissions.filter((p) => !this.isAssigned(p));
-      this.currentPermissions = [...this.currentPermissions, ...toAdd].sort((a, b) =>
-        a.localeCompare(b),
+      this.currentPermissions.set(
+        [...this.currentPermissions(), ...toAdd].sort((a, b) => a.localeCompare(b)),
       );
     }
   }
 
   saveChanges(): void {
-    if (!this.selectedRole || !this.hasPendingChanges) return;
-    this.isSaving = true;
+    if (!this.selectedRole() || !this.hasPendingChanges) return;
+    this.isSaving.set(true);
 
     const payload = {
-      role_name: this.selectedRole.role_name,
-      role_permissions: this.currentPermissions,
+      role_name: this.selectedRole()?.role_name,
+      role_permissions: this.currentPermissions(),
     };
 
     this.adminService.updateRole(payload).subscribe({
       next: (updated) => {
-        const idx = this.roles.findIndex((r) => r._id.$oid === this.selectedRole!._id.$oid);
+        const idx = this.roles().findIndex((r) => r._id.$oid === this.selectedRole()!._id.$oid);
         if (idx !== -1) {
-          this.roles[idx] = updated;
-          this.roles = [...this.roles];
+          this.roles.update((roles) =>
+            roles.map((r) => (r.role_id === updated.role_id ? updated : r)),
+          );
         }
-        this.selectedRole = updated;
-        this.originalPermissions = [...new Set(updated.role_permissions as string[])];
-        this.currentPermissions = [...this.originalPermissions];
+        this.selectedRole.set(updated);
+        this.originalPermissions.set([...new Set(updated.role_permissions as string[])]);
+        this.currentPermissions.set([...this.originalPermissions()]);
         this.buildAllPermissions();
 
         this.toast.success('Role', 'Updated sucessfully.');
-        this.isSaving = false;
-
-        this.cd.detectChanges();
+        this.isSaving.set(false);
       },
       error: (err) => {
         console.error('Failed to save permissions', err);
-        this.isSaving = false;
+        this.isSaving.set(false);
       },
     });
   }
 
   discardChanges(): void {
-    this.currentPermissions = [...this.originalPermissions];
+    this.currentPermissions.set([...this.originalPermissions()]);
   }
 
   createPermission(): void {
@@ -227,37 +224,36 @@ export class PermissionComponent implements OnInit {
     const { action, resource } = this.newPermForm.value as { action: string; resource: string };
     const slug = `${action.trim()}:${resource.trim()}`;
 
-    if (this.allPermissions.includes(slug)) {
+    if (this.allPermissions().includes(slug)) {
       alert(`Permission "${slug}" already exists.`);
       return;
     }
 
-    this.isCreating = true;
-    this.allPermissions = [...this.allPermissions, slug];
+    this.isCreating.set(true);
+    this.allPermissions.set([...this.allPermissions(), slug]);
 
     const payload = {
       role_name: 'Super Admin',
-      role_permissions: this.allPermissions,
+      role_permissions: this.allPermissions(),
     };
 
     this.adminService.updateRole(payload).subscribe({
       next: () => {
-        this.allPermissions.sort((a, b) => a.localeCompare(b));
+        this.allPermissions.update((perms) => [...perms].sort((a, b) => a.localeCompare(b)));
         this.newPermForm.reset();
-        this.isCreating = false;
+        this.isCreating.set(false);
 
         this.toast.success('Permission Added successfully.');
-        this.cd.detectChanges();
       },
       error: (err) => {
         console.error('Failed to create permission', err);
-        this.isCreating = false;
+        this.isCreating.set(false);
       },
     });
   }
 
   getRoleAvatarClass(roleName: string): string {
-    const idx = this.roles.findIndex((r) => r.role_name === roleName);
+    const idx = this.roles().findIndex((r) => r.role_name === roleName);
     const color = ROLE_COLOR_MAP[idx % ROLE_COLOR_MAP.length];
     return `ra-${color}`;
   }

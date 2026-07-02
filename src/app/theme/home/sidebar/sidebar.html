@@ -5,7 +5,7 @@
 
   <nav class="sidebar-nav">
     <ul>
-      <li *ngFor="let node of nodeData" routerLinkActive="active">
+      <li *ngFor="let node of nodeData()" routerLinkActive="active">
         <a [routerLink]="node.path">
           <span class="nav-indicator"></span>
           <span class="nav-icon">

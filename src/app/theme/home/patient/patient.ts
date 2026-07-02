@@ -1,10 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  inject,
-  OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -40,37 +34,35 @@ export class PatientComponent implements OnInit {
 
   userService: UserService = inject(UserService);
   toast: ToastrService = inject(ToastrService);
-  cd: ChangeDetectorRef = inject(ChangeDetectorRef);
   route: Router = inject(Router);
 
-  isLoading: boolean = false;
+  isLoading = signal(false);
 
-  patientData: PatientModel[] = [];
-  employeeId: string = localStorage.getItem('employeeId') ?? '';
+  patientData = signal<PatientModel[]>([]);
+  employeeId = signal(localStorage.getItem('employeeId'));
 
-  patientUiData = {
+  patientUiData = signal({
     patientCount: 0,
     activeCount: 0,
     inActiveCount: 0,
-  };
+  });
 
-  searchText: string = '';
-  page: number = 1;
-  totalPages: number = 1;
-  limit: number = 5;
+  searchText = signal('');
+  page = signal(1);
+  totalPages = signal(1);
+  limit = signal(5);
 
   ngOnInit(): void {
     this.updateData();
   }
 
   updateData() {
-    this.userService.getPatients(this.searchText, this.page, this.limit).subscribe({
+    this.userService.getPatients(this.searchText(), this.page(), this.limit()).subscribe({
       next: (res) => {
         if (res.data.length == 0) return;
-        this.patientData = res.data;
-        this.totalPages = res.totalPages;
+        this.patientData.set(res.data);
+        this.totalPages.set(res.totalPages);
         this.loadUiData();
-        this.cd.detectChanges();
       },
       error: (err) => {
         this.toast.error(err?.error?.message);
@@ -108,20 +100,19 @@ export class PatientComponent implements OnInit {
   }
 
   loadUiData() {
-    this.patientUiData.patientCount = this.patientData?.length || 0;
+    this.patientUiData.update((data) => ({ ...data, patientCount: this.patientData().length }));
   }
 
   deletePatient(patientId: string) {
     const payload = {
       patientId: patientId,
-      deletedBy: this.employeeId,
+      deletedBy: this.employeeId(),
     };
 
     this.userService.deletePatient(payload).subscribe({
       next: (res) => {
         this.toast.success('Patient deleted sucessfully');
         this.updateData();
-        this.cd.detectChanges();
       },
       error: (error) => {
         this.toast.error('Server error during patient deletion');
@@ -135,21 +126,21 @@ export class PatientComponent implements OnInit {
   }
 
   prevPage() {
-    if (this.page > 1) {
-      this.page--;
+    if (this.page() > 1) {
+      this.page.set(this.page() - 1);
     }
     this.updateData();
   }
 
   nextPage() {
-    if (this.page < this.totalPages) {
-      this.page++;
+    if (this.page() < this.totalPages()) {
+      this.page.set(this.page() + 1);
     }
     this.updateData();
   }
 
   goToPage(index: number) {
-    this.page = index;
+    this.page.set(index);
     this.updateData();
   }
 
@@ -167,7 +158,7 @@ export class PatientComponent implements OnInit {
       return;
     }
 
-    this.isLoading = true;
+    this.isLoading.set(true);
 
     const payload = {
       name: this.patientForm.get('name')?.value,
@@ -184,13 +175,13 @@ export class PatientComponent implements OnInit {
 
     this.userService.createPatient(payload).subscribe({
       next: (res) => {
-        this.isLoading = false;
+        this.isLoading.set(false);
         this.toast.success('Patient added sucessfully');
         this.patientForm.reset({ status: 'Active' });
         this.updateData();
       },
       error: (err) => {
-        this.isLoading = false;
+        this.isLoading.set(false);
         this.toast.error(err?.error?.message || err?.message || 'Something went wrong!');
       },
     });

@@ -8,13 +8,12 @@
     <div class="patient-hero-side">
       <div class="hero-chip">
         <i class="bi bi-people-fill"></i>
-        <span>{{ patientUiData.patientCount }}</span>
+        <span>{{ patientUiData().patientCount }}</span>
       </div>
     </div>
   </div>
 
-  <div class="patient-metrics" *hasPermission="['view:patient-stat']">
-  </div>
+  <div class="patient-metrics" *hasPermission="['view:patient-stat']"></div>
 
   <div class="content-grid">
     <div class="glass-panel" *hasPermission="['create:patient']">
@@ -30,7 +29,7 @@
         </div>
       </div>
 
-      <form [formGroup]="patientForm" (submit)="onSubmit()">
+      <form [formGroup]="patientForm" (ngSubmit)="onSubmit()">
         <div class="form-grid">
           <div class="form-group">
             <label class="form-label" for="patientName">
@@ -239,12 +238,11 @@
           <button
             type="submit"
             class="btn btn-primary"
-            [disabled]="!patientForm.valid"
-            [disabled]="patientForm.invalid"
+            [disabled]="patientForm.invalid || isLoading()"
             [ngClass]="{ 'btn-disabled': patientForm.invalid }"
             *hasPermission="['create:patient']"
           >
-            <i class="bi bi-person-plus-fill"></i> {{ isLoading ? 'Saving...' : 'Save Patient' }}
+            <i class="bi bi-person-plus-fill"></i> {{ isLoading() ? 'Saving...' : 'Save Patient' }}
           </button>
         </div>
       </form>
@@ -265,8 +263,8 @@
               <input
                 type="text"
                 placeholder="Search by name, email or patient id..."
-                [(ngModel)]="searchText"
-                (input)="updateData()"
+                [ngModel]="searchText()"
+                (ngModelChange)="searchText.set($event); updateData()"
                 id="search-box"
                 aria-label="search-box"
               />
@@ -290,7 +288,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let patient of patientData; trackBy: trackFn">
+            <tr *ngFor="let patient of patientData(); trackBy: trackFn">
               <td>
                 <span class="patient-id">{{ patient.uhid }}</span>
               </td>
@@ -336,20 +334,20 @@
           </tbody>
         </table>
         <div class="pagination-bar">
-          <button class="page-btn" (click)="prevPage()" [disabled]="page === 1">Prev</button>
+          <button class="page-btn" (click)="prevPage()" [disabled]="page() === 1">Prev</button>
 
           <div class="page-numbers">
             <button
               *ngFor="let p of [].constructor(totalPages); let i = index"
               class="page-number"
-              [class.active]="page === i + 1"
+              [class.active]="page() === i + 1"
               (click)="goToPage(i + 1)"
             >
               {{ i + 1 }}
             </button>
           </div>
 
-          <button class="page-btn" (click)="nextPage()" [disabled]="page === totalPages">
+          <button class="page-btn" (click)="nextPage()" [disabled]="page() === totalPages()">
             Next
           </button>
         </div>

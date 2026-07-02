@@ -3,7 +3,7 @@ import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { MedicalRecordService } from '../../../../services/medical-record.service';
 import { MedicalRecordModel } from '../../../../models/medical-record.model';
-import { HasPermissionDirective } from "../../../../directive/has-permission.directive";
+import { HasPermissionDirective } from '../../../../directive/has-permission.directive';
 
 @Component({
   selector: 'app-view-medical-record',
