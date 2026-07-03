@@ -19,8 +19,14 @@ import { MedicalRecordComponent } from './theme/home/medical-record/medical-reco
 import { ViewMedicalRecordComponent } from './theme/home/modal/view-medical-record/view-medical-record';
 import { PermissionComponent } from './theme/home/permission/permission';
 import { NodeComponent } from './theme/home/node/node';
+import { authRedirectGuard } from './services/guard/redirect.guard';
 
 export const routes: Routes = [
+  {
+    path: '',
+    canActivate: [authRedirectGuard],
+    children: [],
+  },
   {
     path: '',
     component: HomeComponent,
