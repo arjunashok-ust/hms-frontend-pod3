@@ -176,7 +176,13 @@
               <span class="required">*</span>
             </label>
             <div class="input-wrapper">
-              <select id="bloodGroup" class="form-input form-select" formControlName="bloodGroup">
+              <select
+                id="bloodGroup"
+                class="form-input form-select"
+                formControlName="bloodGroup"
+                id="bloodGroup"
+                aria-label="bloodGroup"
+              >
                 <option value="" disabled>Blood Group</option>
                 <option value="A+">A+</option>
                 <option value="A-">A-</option>
@@ -193,7 +199,8 @@
             </div>
             <small
               *ngIf="
-                updateForm.get('bloodGroup')?.touched && updateForm.get('bloodGroup')?.errors?.['required']
+                updateForm.get('bloodGroup')?.touched &&
+                updateForm.get('bloodGroup')?.errors?.['required']
               "
             >
               Blood group is required.

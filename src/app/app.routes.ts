@@ -20,6 +20,7 @@ import { ViewMedicalRecordComponent } from './theme/home/modal/view-medical-reco
 import { PermissionComponent } from './theme/home/permission/permission';
 import { NodeComponent } from './theme/home/node/node';
 import { authRedirectGuard } from './services/guard/redirect.guard';
+import { ForgotPasswordComponent } from './theme/home/modal/forgot-password/forgot-password';
 
 export const routes: Routes = [
   {
@@ -116,5 +117,6 @@ export const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'signUp', component: SignUpComponent },
   { path: 'access-denied', component: AccessDeniedComponent },
+  { path: 'forgot-password', component: ForgotPasswordComponent },
   { path: '**', component: NotFoundComponent },
 ];

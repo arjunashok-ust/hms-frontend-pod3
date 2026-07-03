@@ -5,13 +5,14 @@ import { AuthService } from '../../services/auth.service';
 import { Router, RouterLink, RouterModule } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { PermissionService } from '../../services/permission.service';
+import { ForgotPasswordComponent } from '../home/modal/forgot-password/forgot-password';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.htm',
   styleUrl: './login.css',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, RouterLink, RouterModule],
+  imports: [ReactiveFormsModule, CommonModule, RouterLink, RouterModule, ForgotPasswordComponent],
 })
 export class LoginComponent implements OnInit {
   loginForm: FormGroup;
@@ -22,6 +23,7 @@ export class LoginComponent implements OnInit {
   toast: ToastrService = inject(ToastrService);
 
   isLoading = signal(false);
+  isForgotPassword = signal(false);
 
   constructor(readonly fb: FormBuilder) {
     this.loginForm = this.fb.group({
@@ -32,6 +34,12 @@ export class LoginComponent implements OnInit {
 
   ngOnInit(): void {
     localStorage.clear();
+
+    const nav = history.state;
+
+    if (nav !== undefined) {
+      this.isForgotPassword.set(nav.isForgotPassword);
+    }
   }
 
   onSubmit() {
@@ -40,7 +48,6 @@ export class LoginComponent implements OnInit {
       this.loginForm.markAllAsTouched();
       return;
     }
-
     this.isLoading.set(true);
 
     const payload = {
