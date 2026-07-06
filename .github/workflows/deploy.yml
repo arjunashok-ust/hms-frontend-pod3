@@ -18,4 +18,7 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             cd hms-frontend-pod3
+            git pull origin feature/sprint_5/arjun
+            npm ci
+            
             

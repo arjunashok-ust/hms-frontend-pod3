@@ -27,7 +27,11 @@
                 "input": "public"
               }
             ],
-            "styles": ["src/styles.css","node_modules/bootstrap-icons/font/bootstrap-icons.css","node_modules/ngx-toastr/toastr.css"]
+            "styles": [
+              "src/styles.css",
+              "node_modules/bootstrap-icons/font/bootstrap-icons.css",
+              "node_modules/ngx-toastr/toastr.css"
+            ]
           },
           "configurations": {
             "production": {
@@ -39,8 +43,8 @@
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "4kB",
-                  "maximumError": "8kB"
+                  "maximumWarning": "20kB",
+                  "maximumError": "30kB"
                 }
               ],
               "outputHashing": "all"
@@ -55,7 +59,7 @@
         },
         "serve": {
           "options": {
-            "allowedHosts": ["hms-frontend-pod3.onrender.com","hms-frontend.fortrancer.in"]
+            "allowedHosts": ["hms.fortrancer.in"]
           },
           "builder": "@angular/build:dev-server",
           "configurations": {
