@@ -111,7 +111,9 @@ export class Login {
             this.errorMessage = 'Invalid credentials.';
           } else {
             // Provide exact backend message if available, else generic fallback
-            this.errorMessage = error?.message || 'An unexpected error occurred.';
+            this.errorMessage =
+              error?.error?.message || error?.message ||
+              'An unexpected error occurred.';
           }
 
           this.cdr.markForCheck();
