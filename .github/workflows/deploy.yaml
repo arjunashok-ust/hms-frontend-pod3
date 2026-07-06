@@ -1,0 +1,48 @@
+name: Deploy Frontend
+
+on:
+  push:
+    branches:
+      - feature/sprint_5/aswin
+
+concurrency:
+  group: frontend-deploy
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy Frontend to EC2
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.FRONTEND_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            set -e
+
+            cd /home/ubuntu/hms-frontend-pod3
+
+            git fetch origin
+            git checkout feature/sprint_5/aswin
+            git pull origin feature/sprint_5/aswin
+
+            npm ci
+            npm run build
+
+            test -d dist/HMS-FRONTEND/browser
+
+            sudo rm -rf /var/www/html/*
+
+            sudo cp -r dist/HMS-FRONTEND/browser/* /var/www/html/
+
+            if [ -f /var/www/html/index.csr.html ]; then
+              sudo cp /var/www/html/index.csr.html /var/www/html/index.html
+            fi
+
+            sudo nginx -t
+            sudo systemctl reload nginx
+
+            echo "Frontend deployment completed successfully"
