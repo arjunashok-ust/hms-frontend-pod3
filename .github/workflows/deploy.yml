@@ -20,6 +20,7 @@ jobs:
             cd hms-frontend-pod3
             git pull origin feature/sprint_5/arjun
             npm ci
+            ng build --configuration production
             rm -rf /var/www/hms-frontend/*
             cp -r dist/hms-frontend/browser/* /var/www/hms-frontend/
             systemctl restart nginx
