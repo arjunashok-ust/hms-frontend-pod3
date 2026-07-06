@@ -8,6 +8,6 @@ export const environmentDevelopment = {
 
 export const environment = {
   production: true,
-  apiUrl: 'http://16.113.27.179:5000',
+  apiUrl: '',
   pageSize: 5,
 };

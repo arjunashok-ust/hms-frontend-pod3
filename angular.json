@@ -31,13 +31,13 @@
               "node_modules/bootstrap-icons/font/bootstrap-icons.css"
             ],
             "server": "src/main.server.ts",
-            "outputMode": "server",
             "security": {
               "allowedHosts": []
             },
             "ssr": {
               "entry": "src/server.ts"
-            }
+            },
+"prerender": false
           },
           "configurations": {
             "production": {
