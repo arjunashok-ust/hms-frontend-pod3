@@ -48,3 +48,9 @@ __screenshots__/
 # System files
 .DS_Store
 Thumbs.db
+.angular 
+.scannerwork
+.vscode
+.editorconfig
+.prettierrc
+sonar-project.properties
