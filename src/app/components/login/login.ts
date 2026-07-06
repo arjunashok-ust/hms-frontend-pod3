@@ -13,6 +13,7 @@ import { RouterLink, Router } from '@angular/router';
 import { Auth } from '../../services/authService/auth-service';
 import { ApiService } from '../../services/apiService/api-service';
 import { ToastrService } from 'ngx-toastr';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-login',
@@ -183,22 +184,27 @@ export class Login {
     this.isForgotPasswordLoading = true;
     this.forgotPasswordMessage = null;
 
-    this.api.requestPasswordReset({ email: this.forgotPasswordForm.value.email }).subscribe({
-      next: (res: any) => {
-        this.isForgotPasswordLoading = false;
-        const message = res?.message || 'If your account exists, a reset email has been sent.';
-        this.forgotPasswordMessage = message;
-        this.toast.success(message);
-        this.forgotPasswordForm.reset();
-        this.showForgotPasswordModal = false;
-      },
-      error: (err) => {
-        this.isForgotPasswordLoading = false;
-        const message = err?.error?.message || 'Unable to send a password reset email right now.';
-        this.forgotPasswordMessage = message;
-        this.toast.error(message);
-      },
-    });
+    this.api
+      .requestPasswordReset({ email: this.forgotPasswordForm.value.email })
+      .pipe(
+        finalize(() => {
+          this.isForgotPasswordLoading = false;
+        }),
+      )
+      .subscribe({
+        next: (res: any) => {
+          const message = res?.message || 'If your account exists, a reset email has been sent.';
+          this.forgotPasswordMessage = message;
+          this.toast.success(message);
+          this.forgotPasswordForm.reset();
+          this.showForgotPasswordModal = false;
+        },
+        error: (err) => {
+          const message = err?.error?.message || err?.message || 'Unable to send a password reset email right now.';
+          this.forgotPasswordMessage = message;
+          this.toast.error(message);
+        },
+      });
   }
 
   cancelPasswordChange() {
