@@ -200,11 +200,28 @@ export class Login {
           this.showForgotPasswordModal = false;
         },
         error: (err) => {
-          const message = err?.error?.message || err?.message || 'Unable to send a password reset email right now.';
+          const message = this.getServerErrorMessage(err) || 'Unable to send a password reset email right now.';
           this.forgotPasswordMessage = message;
           this.toast.error(message);
         },
       });
+  }
+
+  getServerErrorMessage(error: any): string {
+    if (!error) {
+      return 'An unexpected error occurred.';
+    }
+
+    if (error.error?.message) {
+      return error.error.message;
+    }
+
+    if (Array.isArray(error.error?.errors) && error.error.errors.length > 0) {
+      const firstError = error.error.errors[0];
+      return firstError.msg || firstError.message || JSON.stringify(firstError);
+    }
+
+    return error.message || 'An unexpected error occurred.';
   }
 
   cancelPasswordChange() {
