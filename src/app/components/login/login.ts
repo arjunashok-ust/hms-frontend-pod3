@@ -30,10 +30,14 @@ export class Login {
   errorMessage: string | null = null;
   loginForm: FormGroup;
   passwordForm: FormGroup;
+  forgotPasswordForm: FormGroup;
   isLoading = false;
+  isForgotPasswordLoading = false;
   showFirstLoginModal = false;
+  showForgotPasswordModal = false;
   tempEmail = '';
   tempOldPassword = '';
+  forgotPasswordMessage: string | null = null;
 
   toast: ToastrService = inject(ToastrService);
 
@@ -52,6 +56,10 @@ export class Login {
         validators: this.passwordMatchValidator,
       },
     );
+
+    this.forgotPasswordForm = this.fb.group({
+      email: ['', [Validators.required, Validators.email]],
+    });
   }
 
   passwordMatchValidator(control: AbstractControl): ValidationErrors | null {
@@ -150,6 +158,45 @@ export class Login {
       error: (err) => {
         this.isLoading = false;
         this.toast.error(err.error?.message || 'Failed to update password');
+      },
+    });
+  }
+
+  openForgotPasswordModal() {
+    this.forgotPasswordMessage = null;
+    this.showForgotPasswordModal = true;
+    this.forgotPasswordForm.reset();
+  }
+
+  closeForgotPasswordModal() {
+    this.showForgotPasswordModal = false;
+    this.forgotPasswordForm.reset();
+    this.forgotPasswordMessage = null;
+  }
+
+  onForgotPasswordSubmit() {
+    if (this.forgotPasswordForm.invalid) {
+      this.forgotPasswordForm.markAllAsTouched();
+      return;
+    }
+
+    this.isForgotPasswordLoading = true;
+    this.forgotPasswordMessage = null;
+
+    this.api.requestPasswordReset({ email: this.forgotPasswordForm.value.email }).subscribe({
+      next: (res: any) => {
+        this.isForgotPasswordLoading = false;
+        const message = res?.message || 'If your account exists, a reset email has been sent.';
+        this.forgotPasswordMessage = message;
+        this.toast.success(message);
+        this.forgotPasswordForm.reset();
+        this.showForgotPasswordModal = false;
+      },
+      error: (err) => {
+        this.isForgotPasswordLoading = false;
+        const message = err?.error?.message || 'Unable to send a password reset email right now.';
+        this.forgotPasswordMessage = message;
+        this.toast.error(message);
       },
     });
   }

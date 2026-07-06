@@ -59,6 +59,9 @@
         </div>
 
         <div class="form-footer">
+          <button type="button" class="signup-link" (click)="openForgotPasswordModal()">
+            Forgot password?
+          </button>
           <p>Don't you have an account? <a routerLink="/signup" class="signup-link">Sign up</a></p>
         </div>
       </form>
@@ -73,6 +76,59 @@
     </div>
   </div>
 </div>
+
+@if (showForgotPasswordModal) {
+  <div class="modal-overlay">
+    <div class="hms-modal">
+      <button class="close-btn" type="button" (click)="closeForgotPasswordModal()">
+        <i class="bi bi-x-lg"></i>
+      </button>
+
+      <div class="modal-header">
+        <div class="modal-icon">
+          <i class="bi bi-envelope-fill"></i>
+        </div>
+        <p class="modal-eyebrow">PASSWORD RESET</p>
+        <h2 class="modal-title">Forgot your password?</h2>
+        <p class="modal-subtitle">
+          Enter your email address and we’ll send you a temporary password and a reset link.
+        </p>
+      </div>
+
+      <form [formGroup]="forgotPasswordForm" (ngSubmit)="onForgotPasswordSubmit()">
+        <div class="form-grid">
+          <div class="input-group">
+            <label for="forgotEmail">EMAIL ADDRESS <span class="text-danger">*</span></label>
+            <input
+              id="forgotEmail"
+              type="email"
+              formControlName="email"
+              placeholder="Enter your email"
+            />
+            @if (
+              forgotPasswordForm.get('email')?.touched && forgotPasswordForm.get('email')?.invalid
+            ) {
+              <small class="error-text">Please enter a valid email address</small>
+            }
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn-cancel" (click)="closeForgotPasswordModal()">
+            Cancel
+          </button>
+          <button
+            type="submit"
+            class="btn-primary"
+            [disabled]="forgotPasswordForm.invalid || isForgotPasswordLoading"
+          >
+            {{ isForgotPasswordLoading ? 'Sending...' : 'Reset Password' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}
 
 @if (showFirstLoginModal) {
   <div class="modal-overlay">
@@ -96,13 +152,18 @@
         <div class="form-grid">
           <div class="input-group">
             <label for="newPassword">NEW PASSWORD <span class="text-danger">*</span></label>
-            <input aria-label="password" type="password" formControlName="newPassword" placeholder="Enter new password" />
+            <input
+              aria-label="password"
+              type="password"
+              formControlName="newPassword"
+              placeholder="Enter new password"
+            />
           </div>
 
           <div class="input-group">
             <label for="confirmPassword">CONFIRM PASSWORD <span class="text-danger">*</span></label>
             <input
-            aria-label="confirmPassword"
+              aria-label="confirmPassword"
               type="password"
               formControlName="confirmPassword"
               placeholder="Confirm new password"

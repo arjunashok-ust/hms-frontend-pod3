@@ -48,6 +48,10 @@ export class ApiService {
     return this.http.post(`${this.backendUrl}/api/auth/setpassword`, payload);
   }
 
+  requestPasswordReset(payload: any) {
+    return this.http.post(`${this.backendUrl}/api/auth/forgot-password`, payload);
+  }
+
   getAllEmployees(params: any = {}) {
     return this.http.get(`${this.backendUrl}/api/employees/all`, { params });
   }
