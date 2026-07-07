@@ -1,3 +1,16 @@
+/**
+ * @file node-form.ts
+ * @description
+ * This file defines a reusable form component for creating or editing a navigation menu node.
+ *
+ * @overview
+ * This is a "dumb" or presentational component that receives its state via `@Input()` and communicates changes via `@Output()` events.
+ * It contains a reactive form to capture the details of a menu node (name, path, icon, etc.).
+ * The parent component (`NodeManagementComponent`) is responsible for handling the form submission.
+ *
+ * Connections:
+ *   NodeManagementComponent -> (via @Input) -> NODE-FORM.TS -> (via @Output) -> NodeManagementComponent
+ */
 import { Component, Input, Output, EventEmitter, OnInit, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
@@ -46,7 +59,7 @@ export class NodeFormComponent implements OnInit, OnChanges {
     // Auto-generate a key from the name if creating
     const formValue = this.nodeForm.value;
     if (!this.node) {
-      formValue.key = formValue.name.toUpperCase().replace(/\s+/g, '_');
+      formValue.key = formValue.name.toUpperCase().replaceAll(/\s+/g, '_');
     }
 
     this.save.emit(formValue);

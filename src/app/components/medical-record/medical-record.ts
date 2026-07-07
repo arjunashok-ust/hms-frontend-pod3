@@ -1,3 +1,16 @@
+/**
+ * @file medical-record.ts
+ * @description
+ * This file defines the component for managing patient medical records (encounters).
+ *
+ * @overview
+ * This is a feature-rich component for creating, viewing, updating, and deleting medical records.
+ * It includes a complex reactive form with nested form arrays for medications and observations.
+ * It manages role-based permissions for viewing and editing records and fetches all necessary data (patients, doctors, appointments) via multiple services.
+ *
+ * Connections:
+ *   User Interaction -> MEDICAL-RECORD.TS -> [RecordsService, ApiService, AppointmentService] -> HttpClient -> authInterceptor -> Backend API -> (response)
+ */
 import { Component, OnInit, inject, ChangeDetectorRef, PLATFORM_ID, ChangeDetectionStrategy, HostListener } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';

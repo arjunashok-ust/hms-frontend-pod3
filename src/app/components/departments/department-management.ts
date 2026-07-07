@@ -1,3 +1,16 @@
+/**
+ * @file department-management.ts
+ * @description
+ * This file defines the component for managing hospital departments.
+ *
+ * @overview
+ * This component provides an administrative interface for creating, reading, updating, and deleting hospital departments.
+ * It features a reactive form for adding and editing department names and displays all existing departments in a list.
+ * All CRUD operations are sent to the backend via the `ApiService`.
+ *
+ * Connections:
+ *   User Interaction -> DEPARTMENT-MANAGEMENT.TS -> ApiService -> HttpClient -> authInterceptor -> Backend API -> (response)
+ */
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';

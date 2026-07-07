@@ -1,3 +1,16 @@
+/**
+ * @file employee.ts
+ * @description
+ * This file defines the component for managing employee records.
+ *
+ * @overview
+ * This is a comprehensive component for the full lifecycle management of employees.
+ * It allows administrators to view, filter, search, create, update, and delete employee records.
+ * It features a complex reactive form within a modal for adding and editing employees, including dynamic fields for medical roles and their availability schedules.
+ *
+ * Connections:
+ *   User Interaction -> EMPLOYEE.TS -> ApiService -> HttpClient -> authInterceptor -> Backend API -> (response)
+ */
 import { Component, inject, OnInit, ChangeDetectorRef, PLATFORM_ID, Inject, HostListener, ElementRef } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import {
@@ -143,32 +156,43 @@ export class Employee implements OnInit {
   }
 
   setupAvailableRoles() {
+    if (!isPlatformBrowser(this.platformId)) {
+      this.availableRoles = [...this.baseRoles];
+      return;
+    }
 
-    if (isPlatformBrowser(this.platformId)) {
-      const token = localStorage.getItem('token');
-      if (token) {
-        try {
-          const payload = JSON.parse(atob(token.split('.')[1].replaceAll('-', '+').replaceAll('_', '/')));
+    const token = localStorage.getItem('token');
+    if (!token) {
+      this.availableRoles = [...this.baseRoles];
+      return;
+    }
 
-          this.userPermissions = payload.permissions || [];
+    try {
+      const payload = this.decodeTokenPayload(token);
+      this.userPermissions = payload.permissions || [];
+      this.availableRoles = this.getAvailableRoles();
+    } catch (err) {
+      console.error(err);
+      this.availableRoles = [...this.baseRoles];
+    }
+  }
 
-          if (this.userPermissions.includes('CREATE_ADMIN')) {
-            // Ensure ADMIN is not duplicated if already present
-            const adminRoleExists = this.baseRoles.some(r => r.value === 'ADMIN');
-            if (!adminRoleExists) {
-              this.availableRoles = [{ value: 'ADMIN', label: 'Admin' }, ...this.baseRoles];
-            } else {
-              this.availableRoles = [...this.baseRoles];
-            }
-          } else {
-            this.availableRoles = [...this.baseRoles];
-          }
-        } catch (err) {
-          console.error(err);
-          this.availableRoles = [...this.baseRoles];
-        }
-      }
-    } else { this.availableRoles = [...this.baseRoles]; }
+  private decodeTokenPayload(token: string): any {
+    const encodedPayload = token.split('.')[1].replaceAll('-', '+').replaceAll('_', '/');
+    return JSON.parse(atob(encodedPayload));
+  }
+
+  private getAvailableRoles(): any[] {
+    if (!this.userPermissions.includes('CREATE_ADMIN')) {
+      return [...this.baseRoles];
+    }
+
+    const adminRoleExists = this.baseRoles.some((role) => role.value === 'ADMIN');
+    if (adminRoleExists) {
+      return [...this.baseRoles];
+    }
+
+    return [{ value: 'ADMIN', label: 'Admin' }, ...this.baseRoles];
   }
 
   @HostListener('document:mousedown', ['$event'])

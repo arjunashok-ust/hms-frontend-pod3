@@ -1,3 +1,17 @@
+/**
+ * @file app.routes.ts
+ * @description
+ * This file defines the main routing configuration for the Angular application.
+ *
+ * @overview
+ * This file contains the `Routes` array which maps URL paths to their corresponding Angular components.
+ * It defines the application's page structure, including public routes like `/login` and protected routes nested within the main `LayoutComponent`.
+ * Protected routes are secured using the `authGuard` and `roleGuard` to control access based on authentication status and user permissions.
+ *
+ * Connections:
+ *   Angular Router -> APP.ROUTES.TS -> [authGuard, roleGuard] -> (on success) -> [LayoutComponent -> (Child Component)]
+ *   Angular Router -> APP.ROUTES.TS -> (public route) -> [LoginComponent, SignupComponent, etc.]
+ */
 import { Routes } from '@angular/router';
 import { Login } from './components/login/login';
 import { Signup } from './components/signup/signup';

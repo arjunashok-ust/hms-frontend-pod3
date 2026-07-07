@@ -1,14 +1,14 @@
 .sidebar {
   width: 260px;
-  height: 100vh;
-  background-color: #ffffff; /* Your existing background */
-  padding: 32px 0; /* Adjust padding to be vertical only */
+  background-color: #ffffff;
+  padding: 32px 0;
   box-sizing: border-box;
   z-index: 100;
   position: sticky;
   top: 0;
   display: flex;
   flex-direction: column;
+  height: calc(100vh - 92px); /* Adjust height to account for header */
 }
 
 .menu-list {

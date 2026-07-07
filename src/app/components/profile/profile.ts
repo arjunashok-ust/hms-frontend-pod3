@@ -1,3 +1,16 @@
+/**
+ * @file profile.ts
+ * @description
+ * This file defines the component for displaying the user's own profile page.
+ *
+ * @overview
+ * This component serves as a personal landing page for authenticated users.
+ * It fetches and displays the detailed profile information of the currently logged-in user by calling the `/api/profile/me` endpoint.
+ * It also decodes the JWT token from local storage to display the user's role.
+ *
+ * Connections:
+ *   Component Initialization -> PROFILE.TS -> ApiService -> HttpClient -> authInterceptor -> Backend API -> (response)
+ */
 import { Component, OnInit, ChangeDetectorRef, Inject, PLATFORM_ID } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { ApiService } from '../../services/apiService/api-service';

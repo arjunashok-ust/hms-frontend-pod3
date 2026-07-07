@@ -1,3 +1,16 @@
+/**
+ * @file auth-service.ts
+ * @description
+ * This file defines the primary service for handling user authentication.
+ *
+ * @overview
+ * This service manages the application's authentication state.
+ * It handles login, signup, and token refresh operations by communicating with the backend.
+ * It also manages the user's session and JWT token in local storage and provides an `isAuthenticated` check for guards and other services.
+ *
+ * Connections:
+ *   (Components/Guards) -> AUTH-SERVICE.TS -> HttpClient -> authInterceptor -> Backend API -> (response)
+ */
 import { Injectable, inject, signal, PLATFORM_ID } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { isPlatformBrowser } from '@angular/common';

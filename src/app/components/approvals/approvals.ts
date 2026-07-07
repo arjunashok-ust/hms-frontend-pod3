@@ -1,3 +1,16 @@
+/**
+ * @file approvals.ts
+ * @description
+ * This file defines the component for managing employee account approvals.
+ *
+ * @overview
+ * This component displays a list of employees whose accounts are pending administrative approval.
+ * It allows an administrator to view, filter, and search for pending accounts, and then either approve or reject them.
+ * All interactions are sent to the backend via the `ApiService`.
+ *
+ * Connections:
+ *   User Interaction -> APPROVALS.TS -> ApiService -> HttpClient -> authInterceptor -> Backend API -> (response)
+ */
 import { Component, inject, OnInit, ChangeDetectorRef, Inject, PLATFORM_ID } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';

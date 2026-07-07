@@ -1,3 +1,14 @@
+/**
+ * @file joiningDateValidator.ts
+ * @description
+ * This file provides utility functions and a custom validator for handling date inputs in reactive forms.
+ *
+ * @overview
+ * This module exports helper functions (`getMinDate`, `getMaxDate`) to define a valid date range and a custom `joiningDateValidator` for Angular's `FormBuilder`. The validator ensures that a selected date falls within a specific range (one month before to one month after the current date).
+ *
+ * Connections:
+ *   (Component Form Definitions) -> JOININGDATEVALIDATOR.TS
+ */
 import { AbstractControl, ValidationErrors } from '@angular/forms';
 
 export function getMinDate(): string {

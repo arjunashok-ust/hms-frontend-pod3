@@ -1,3 +1,16 @@
+/**
+ * @file signup.ts
+ * @description
+ * This file defines the component for the employee self-registration page.
+ *
+ * @overview
+ * This component provides a public form for new employees to sign up for an account.
+ * It features a complex reactive form with custom validators and dynamic fields that appear based on the selected role (e.g., availability slots for doctors).
+ * Upon submission, it sends the registration data to the backend via the `Auth` service.
+ *
+ * Connections:
+ *   User Interaction -> SIGNUP.TS -> AuthService -> HttpClient -> authInterceptor -> Backend API -> (response)
+ */
 import { Component, inject, ChangeDetectorRef, ChangeDetectionStrategy, OnInit } from '@angular/core';
 import {
   ReactiveFormsModule,

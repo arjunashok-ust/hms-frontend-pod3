@@ -1,3 +1,16 @@
+/**
+ * @file appointment.ts
+ * @description
+ * This file defines the main component for managing appointments.
+ *
+ * @overview
+ * This component provides the UI and logic for creating, viewing, updating, and deleting appointments.
+ * It fetches data like statistics, doctor lists, and recent appointments from the backend via dedicated services.
+ * It handles complex form interactions, including dynamic dropdowns and time slot fetching based on user selections.
+ *
+ * Connections:
+ *   User Interaction -> APPOINTMENT.TS -> [AppointmentService, ApiService] -> HttpClient -> authInterceptor -> Backend API -> (response)
+ */
 import { Component, inject, OnInit, ChangeDetectorRef, Inject, PLATFORM_ID } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors } from '@angular/forms';

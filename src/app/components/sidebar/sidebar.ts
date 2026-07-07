@@ -1,3 +1,16 @@
+/**
+ * @file sidebar.ts
+ * @description
+ * This file defines the main sidebar navigation component.
+ *
+ * @overview
+ * This component is responsible for rendering the primary navigation menu.
+ * It fetches a list of menu items from the backend that are appropriate for the current user's role.
+ * It also fetches and displays a badge for the number of pending appointments to alert relevant users.
+ *
+ * Connections:
+ *   Component Initialization -> SIDEBAR.TS -> [ApiService, AppointmentService] -> HttpClient -> authInterceptor -> Backend API -> (response)
+ */
 import { Component, OnInit, Inject, PLATFORM_ID, ChangeDetectorRef } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { RouterModule } from '@angular/router';

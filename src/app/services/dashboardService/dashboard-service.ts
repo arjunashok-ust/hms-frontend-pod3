@@ -1,3 +1,15 @@
+/**
+ * @file dashboard-service.ts
+ * @description
+ * This file defines a dedicated service for fetching data for the dashboard.
+ *
+ * @overview
+ * This service provides methods to retrieve aggregated statistics and employee overviews from the backend's dashboard endpoints.
+ * It is used exclusively by the `Dashboard` component to populate its data cards and lists.
+ *
+ * Connections:
+ *   DashboardComponent -> DASHBOARD-SERVICE.TS -> HttpClient -> authInterceptor -> Backend API -> (response)
+ */
 import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';

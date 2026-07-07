@@ -1,3 +1,16 @@
+/**
+ * @file patient.ts
+ * @description
+ * This file defines the component for managing patient records.
+ *
+ * @overview
+ * This component provides an administrative interface for creating, viewing, updating, and deleting patient profiles.
+ * It features a paginated list of all patients with search functionality and a modal with a reactive form for add/edit operations.
+ * All CRUD operations are sent to the backend via the `ApiService`.
+ *
+ * Connections:
+ *   User Interaction -> PATIENT.TS -> ApiService -> HttpClient -> authInterceptor -> Backend API -> (response)
+ */
 import { Component, inject, OnInit, ChangeDetectorRef, ChangeDetectionStrategy, HostListener, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {

@@ -1,3 +1,14 @@
+/**
+ * @file timeSlot.ts
+ * @description
+ * This file provides a utility class for handling time slot calculations in forms.
+ *
+ * @overview
+ * The `TimeSlotUtil` class contains static methods for converting between time strings and minutes, and for generating a list of 30-minute slots between a start and end time. It is used in components like `Signup` and `Employee` to manage the dynamic availability schedule forms.
+ *
+ * Connections:
+ *   (Components with schedule forms) -> TIMESLOT.TS
+ */
 import { FormGroup, FormArray, FormControl } from '@angular/forms';
 
 export interface GeneratedSlot {

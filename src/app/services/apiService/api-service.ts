@@ -1,3 +1,16 @@
+/**
+ * @file api-service.ts
+ * @description
+ * This file defines a general-purpose service for making API calls to the backend.
+ *
+ * @overview
+ * This service acts as a primary data access layer for many components.
+ * It centralizes a wide range of HTTP requests for different features like employees, patients, roles, permissions, and departments.
+ * Each method in this service corresponds to a specific backend API endpoint.
+ *
+ * Connections:
+ *   (Components) -> APISERVICE.TS -> HttpClient -> authInterceptor -> Backend API -> (response)
+ */
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, map, catchError, of } from 'rxjs';
@@ -168,6 +181,3 @@ export class ApiService {
     return this.http.delete(`${this.backendUrl}/api/departments/${departmentId}`);
   }
 }
-
-
-

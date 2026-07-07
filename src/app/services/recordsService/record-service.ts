@@ -1,3 +1,15 @@
+/**
+ * @file record-service.ts
+ * @description
+ * This file defines a dedicated service for all medical record-related API calls.
+ *
+ * @overview
+ * This service encapsulates the logic for communicating with the backend's medical record endpoints.
+ * It provides methods for creating, reading, updating, and deleting records, including role-specific fetch methods (`getAllMedicalRecords` vs. `getMyMedicalRecords`).
+ *
+ * Connections:
+ *   MedicalRecordComponent -> RECORD-SERVICE.TS -> HttpClient -> authInterceptor -> Backend API -> (response)
+ */
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, map } from 'rxjs';

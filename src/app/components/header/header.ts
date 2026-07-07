@@ -1,3 +1,16 @@
+/**
+ * @file header.ts
+ * @description
+ * This file defines the main header component for the application layout.
+ *
+ * @overview
+ * The header component displays information about the currently logged-in user, such as their name and initials.
+ * It fetches this user data via the `ApiService`. It also contains the primary logout functionality, which clears local storage and redirects the user to the login page.
+ *
+ * Connections:
+ *   Component Initialization -> HEADER.TS -> ApiService -> HttpClient -> authInterceptor -> Backend API -> (response)
+ *   User Interaction (Logout) -> HEADER.TS -> AuthService -> Angular Router
+ */
 import { Component, OnInit, Inject, PLATFORM_ID, ChangeDetectorRef } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { ApiService } from '../../services/apiService/api-service';

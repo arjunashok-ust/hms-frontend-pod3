@@ -1,3 +1,16 @@
+/**
+ * @file node-management.ts
+ * @description
+ * This file defines the component for managing the application's navigation menu nodes.
+ *
+ * @overview
+ * This component provides an administrative UI to manage the items that appear in the sidebar.
+ * It allows an admin to create, edit, and delete menu nodes, as well as manage which user roles have access to each node.
+ * It uses the `NodeFormComponent` for create/edit operations.
+ *
+ * Connections:
+ *   User Interaction -> NODE-MANAGEMENT.TS -> ApiService -> HttpClient -> authInterceptor -> Backend API -> (response)
+ */
 import { Component, OnInit, inject, ChangeDetectorRef, PLATFORM_ID } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';

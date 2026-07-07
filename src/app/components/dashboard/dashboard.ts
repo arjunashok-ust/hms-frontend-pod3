@@ -1,3 +1,16 @@
+/**
+ * @file dashboard.ts
+ * @description
+ * This file defines the main dashboard component.
+ *
+ * @overview
+ * This component serves as the landing page for administrative users.
+ * It fetches and displays high-level statistics about the system (e.g., total employees, patients, appointments) and a list of recently added employees.
+ * Data is retrieved from the backend via the `DashboardService`.
+ *
+ * Connections:
+ *   Component Initialization -> DASHBOARD.TS -> DashboardService -> HttpClient -> authInterceptor -> Backend API -> (response)
+ */
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DashboardService } from '../../services/dashboardService/dashboard-service';

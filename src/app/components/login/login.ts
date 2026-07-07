@@ -1,3 +1,15 @@
+/**
+ * @file login.ts
+ * @description
+ * This file defines the component for the user login page.
+ *
+ * @overview
+ * This component handles the entire user authentication flow, including standard login, first-time password changes, and forgot password requests.
+ * It uses reactive forms for data capture and validation. It communicates with the backend through the `Auth` and `ApiService` to perform authentication and password management tasks.
+ *
+ * Connections:
+ *   User Interaction -> LOGIN.TS -> [AuthService, ApiService] -> HttpClient -> authInterceptor -> Backend API -> (response)
+ */
 import { Component, inject, ChangeDetectorRef } from '@angular/core';
 import {
   ReactiveFormsModule,

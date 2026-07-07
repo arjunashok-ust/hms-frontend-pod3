@@ -1,3 +1,16 @@
+/**
+ * @file roleGuard.ts
+ * @description
+ * This file defines a route guard to protect routes based on user permissions.
+ *
+ * @overview
+ * This function is a route guard that checks if a user has the required permissions to access a specific route.
+ * It reads the required permissions from the route's `data` property and compares them against the permissions found in the user's JWT from local storage.
+ * If the user lacks the necessary permissions, they are redirected to an 'access-denied' page.
+ *
+ * Connections:
+ *   Angular Router (on navigation) -> ROLEGUARD.TS -> localStorage -> (allow/deny navigation and redirect)
+ */
 import { inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { Router, ActivatedRouteSnapshot } from '@angular/router';

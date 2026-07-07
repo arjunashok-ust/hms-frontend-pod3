@@ -1,3 +1,16 @@
+/**
+ * @file role-management.ts
+ * @description
+ * This file defines the component for managing user roles and their associated permissions.
+ *
+ * @overview
+ * This component provides a comprehensive UI for administrators to manage the application's access control system.
+ * It allows for creating new roles, viewing existing roles, and assigning/revoking granular permissions for each role.
+ * It fetches all roles and available permissions from the backend and sends updates via the `ApiService`.
+ *
+ * Connections:
+ *   User Interaction -> ROLE-MANAGEMENT.TS -> ApiService -> HttpClient -> authInterceptor -> Backend API -> (response)
+ */
 import { Component, OnInit, inject, ChangeDetectorRef, PLATFORM_ID, Inject } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
@@ -120,7 +133,7 @@ export class RoleManagement implements OnInit {
   get filteredGroups(): PermissionGroup[] {
     if (!this.searchQuery.trim()) return this.groupedPermissions;
 
-    const term = this.searchQuery.toLowerCase().replace(/\s+/g, '_');
+    const term = this.searchQuery.toLowerCase().replaceAll(/\s+/g, '_');
     return this.groupedPermissions.map(group => ({
       groupName: group.groupName,
       permissions: group.permissions.filter(p => p.toLowerCase().includes(term))
@@ -266,7 +279,7 @@ export class RoleManagement implements OnInit {
 
     const action = this.newPermForm.value.action.trim();
     const resource = this.newPermForm.value.resource.trim();
-    const formattedName = `${action}_${resource}`.toUpperCase().replace(/\s+/g, '_');
+    const formattedName = `${action}_${resource}`.toUpperCase().replaceAll(/\s+/g, '_');
 
     this.apiService.createPermission({ name: formattedName }).subscribe({
       next: () => {

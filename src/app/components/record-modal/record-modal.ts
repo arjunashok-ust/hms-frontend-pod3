@@ -1,3 +1,16 @@
+/**
+ * @file record-modal.ts
+ * @description
+ * This file defines a modal component for viewing the details of a medical record.
+ *
+ * @overview
+ * This is a presentational component that displays a read-only view of a medical record.
+ * It receives the record data and lists of patients/doctors via `@Input()` to resolve IDs into names.
+ * It emits events to its parent (`MedicalRecordComponent`) to close the modal or to request the deletion of the record.
+ *
+ * Connections:
+ *   MedicalRecordComponent -> (via @Input) -> RECORD-MODAL.TS -> (via @Output event) -> MedicalRecordComponent
+ */
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HasPermissionDirective } from '../../directives/has-permission.directive';

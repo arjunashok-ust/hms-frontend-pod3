@@ -1,3 +1,16 @@
+/**
+ * @file has-permission.directive.ts
+ * @description
+ * This file defines a structural directive for conditionally rendering elements based on user permissions.
+ *
+ * @overview
+ * This directive provides a declarative way to show or hide parts of the UI based on the current user's permissions.
+ * It reads the required permission(s) from its input and checks them against the permissions stored in the user's JWT, which is retrieved from local storage.
+ * It supports checking for any single permission from a list or requiring all of them.
+ *
+ * Connections:
+ *   Angular Template -> HAS-PERMISSION.DIRECTIVE.TS -> localStorage -> (renders/removes embedded view)
+ */
 import { Directive, Input, TemplateRef, ViewContainerRef, inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 

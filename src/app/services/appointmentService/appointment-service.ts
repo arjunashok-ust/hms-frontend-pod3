@@ -1,3 +1,15 @@
+/**
+ * @file appointment-service.ts
+ * @description
+ * This file defines a dedicated service for all appointment-related API calls.
+ *
+ * @overview
+ * This service encapsulates the logic for communicating with the backend's appointment endpoints.
+ * It provides methods for fetching statistics, doctor lists, available slots, and performing CRUD operations on appointments.
+ *
+ * Connections:
+ *   (Components) -> APPOINTMENT-SERVICE.TS -> HttpClient -> authInterceptor -> Backend API -> (response)
+ */
 import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, of } from 'rxjs';

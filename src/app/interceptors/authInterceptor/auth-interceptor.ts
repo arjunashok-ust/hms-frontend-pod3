@@ -1,3 +1,17 @@
+/**
+ * @file auth-interceptor.ts
+ * @description
+ * This file defines an HTTP interceptor for handling authentication tokens and token refreshing.
+ *
+ * @overview
+ * This interceptor automatically attaches the JWT access token from local storage to all outgoing HTTP requests.
+ * It also contains crucial logic to handle 401 (Unauthorized) errors. If a token expires, it will attempt to use the refresh token to get a new access token and then retry the original failed request.
+ * If refreshing fails, it logs the user out.
+ *
+ * Connections:
+ *   HttpClient -> AUTH-INTERCEPTOR.TS -> (on 401) -> AuthService -> HttpClient (for refresh) -> Backend API
+ *   HttpClient -> AUTH-INTERCEPTOR.TS -> (on success) -> Backend API
+ */
 import { HttpInterceptorFn, HttpErrorResponse } from '@angular/common/http';
 import { inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
