@@ -8,29 +8,30 @@
   top: 0;
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 92px); /* Adjust height to account for header */
+  height: calc(100vh - 92px); 
 }
 
 .menu-container {
   display: flex;
   flex-direction: column;
   flex-grow: 1;
+  min-height: 0;
 }
 
 .menu-list {
   list-style: none;
-  padding: 0 20px; /* Apply horizontal padding here */
+  padding: 0 20px;
   margin: 0;
   display: flex;
   flex-direction: column;
   gap: 8px;
-  overflow-y: auto; /* Enable vertical scrolling */
-  flex-grow: 1; /* Allow the list to fill available space */
-  scrollbar-width: none; /* For Firefox */
+  overflow-y: auto; 
+  flex-grow: 1; 
+  scrollbar-width: none; 
 }
 
 .menu-list::-webkit-scrollbar {
-  display: none; /* For Chrome, Safari, and Opera */
+  display: none; 
 }
 
 .menu-item a {
