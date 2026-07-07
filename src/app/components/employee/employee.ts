@@ -135,12 +135,15 @@ export class Employee implements OnInit {
     this.apiService.getAllRoles().subscribe({
       next: (res: any) => {
         const allRoles = res.data || [];
+        const employeeRoles = allRoles.filter(
+          (r: any) => r.roleName.toUpperCase() !== 'PATIENT'
+        );
 
-        this.medicalRoles = allRoles
+        this.medicalRoles = employeeRoles
           .filter((r: any) => r.isMedicalRole)
           .map((r: any) => r.roleName.toUpperCase());
 
-        this.baseRoles = allRoles.map((r: any) => ({
+        this.baseRoles = employeeRoles.map((r: any) => ({
           value: r.roleName.toUpperCase(),
           label: this.formatRoleLabel(r.roleName)
         }));
