@@ -116,9 +116,12 @@ export class ApiService {
 
   // --- ROLES & PERMISSIONS ---
 
-  // --- ROLES & PERMISSIONS ---
   getAllRoles() {
     return this.http.get(`${this.backendUrl}/api/roles/show`);
+  }
+
+  getPublicRoles() {
+    return this.http.get(`${this.backendUrl}/api/roles/public`);
   }
 
   createRole(payload: { roleName: string, rolePermissions?: string[], isMedicalRole?: boolean }) {

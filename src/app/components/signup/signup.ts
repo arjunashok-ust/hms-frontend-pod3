@@ -117,7 +117,7 @@ export class Signup implements OnInit {
   }
 
   fetchRoles() {
-    this.apiService.getAllRoles().subscribe({
+    this.apiService.getPublicRoles().subscribe({
       next: (res: any) => {
         const allRoles = res.data || [];
         // Filter out roles that shouldn't be available for self-registration
