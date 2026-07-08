@@ -132,6 +132,7 @@ export class AppointmentComponent implements OnInit {
           if (this.role() === 'Doctor') {
             this.fetchDoctorAppointments(res.data);
             this.displayedAppointments.set(this.doctorAppointments());
+            this.totalPages.set(Math.ceil(this.displayedAppointments().length / this.limit()));
           } else {
             this.appointments.set(res.data);
             this.displayedAppointments.set(this.appointments());
@@ -155,12 +156,12 @@ export class AppointmentComponent implements OnInit {
     .slice(0, 10);
 
   onDoctorChange() {
-    let doctorEmployeeId = this.appointmentForm.get('doctorEmployeeId')?.value;
+    const doctorEmployeeId = this.appointmentForm.get('doctorEmployeeId')?.value;
 
     const inputDate = this.appointmentForm.get('date')?.value;
     const date = new Date(inputDate);
 
-    let doctor = this.doctors().find((d) => d.employeeCode === doctorEmployeeId);
+    const doctor = this.doctors().find((d) => d.employeeCode === doctorEmployeeId);
 
     if (!date || !doctor) {
       this.doctorTimeSlots.set([]);
@@ -328,6 +329,8 @@ export class AppointmentComponent implements OnInit {
         this.loadUiData();
         this.fetchAppointments();
         this.isLoading.set(false);
+        this.appointmentForm.get('doctorEmployeeId')?.reset();
+        this.doctorTimeSlots.set([]);
         this.toast.success(res.message);
       },
       error: (err) => {
@@ -335,8 +338,5 @@ export class AppointmentComponent implements OnInit {
         this.toast.error(err?.error?.message || err?.message || 'Something went wrong!');
       },
     });
-
-    this.appointmentForm.get('doctorEmployeeId')?.reset();
-    this.doctorTimeSlots.set([]);
   }
 }

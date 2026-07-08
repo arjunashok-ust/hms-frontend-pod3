@@ -38,6 +38,24 @@ export class SignUpComponent implements OnInit {
     this.auth.getUiData<SpecializationModel[]>('/ui/getSpecializations').subscribe((res) => {
       this.specializations_data.set(res);
     });
+    
+    this.signUpForm.get('role')?.valueChanges.subscribe(() => {
+      this.generatedSlots = [];
+
+      (this.signUpForm.get('availabilitySlots') as FormArray).clear();
+
+      this.signUpForm.patchValue({
+        department: '',
+        designation: '',
+        joiningDate: '',
+        medicalRegistrationNo: '',
+        specialization: '',
+        qualification: '',
+        consultationFee: '',
+        startHour: '',
+        endHour: '',
+      });
+    });
   }
 
   public constructor(readonly fb: FormBuilder) {
