@@ -35,7 +35,12 @@ export class Auth {
   login(data: any) {
     return this.http.post(`${this.apiUrl}/login`, data, { withCredentials: true });
   }
-
+  
+  forgotPassword(email: string) {
+  return this.http.post(`${this.apiUrl}/forgot-password`, {
+    email,
+  });
+}
   /* REFRESH ACCESS TOKEN — sends the httpOnly refresh cookie, gets a new access token */
   refresh() {
     return this.http.post(`${this.apiUrl}/refresh`, {}, { withCredentials: true });

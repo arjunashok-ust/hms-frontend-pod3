@@ -62,10 +62,7 @@
           Email
         </label>
 
-        <div class="input-box" [class.invalid]="
-            emailField.invalid &&
-            emailField.touched
-          ">
+        <div class="input-box" [class.invalid]="emailField.invalid && emailField.touched">
 
           <input type="email" [(ngModel)]="email" name="email" #emailField="ngModel" placeholder="Enter your email"
             required email>
@@ -74,21 +71,14 @@
 
         <!-- EMAIL ERROR -->
 
-        <div class="validation-error" *ngIf="
-            emailField.invalid &&
-            emailField.touched
-          ">
+        <div class="validation-error" *ngIf="emailField.invalid && emailField.touched">
 
           <span *ngIf="emailField.errors?.['required']">
-
             Email is required
-
           </span>
 
           <span *ngIf="emailField.errors?.['email']">
-
             Enter a valid email
-
           </span>
 
         </div>
@@ -99,10 +89,7 @@
           Password
         </label>
 
-        <div class="input-box password-box" [class.invalid]="
-    passwordField.invalid &&
-    passwordField.touched
-  ">
+        <div class="input-box password-box" [class.invalid]="passwordField.invalid && passwordField.touched">
 
           <input [type]="showPassword ? 'text' : 'password'" [(ngModel)]="password" name="password"
             #passwordField="ngModel" placeholder="Enter your password" required minlength="8">
@@ -117,22 +104,27 @@
 
         <!-- PASSWORD ERROR -->
 
-        <div class="validation-error" *ngIf="
-    passwordField.invalid &&
-    passwordField.touched
-  ">
+        <div class="validation-error" *ngIf="passwordField.invalid && passwordField.touched">
 
           <span *ngIf="passwordField.errors?.['required']">
-
             Password is required
-
           </span>
 
           <span *ngIf="passwordField.errors?.['minlength']">
-
             Minimum 8 characters required
-
           </span>
+
+        </div>
+
+        <!-- FORGOT PASSWORD -->
+
+        <div class="forgot-password">
+
+          <a routerLink="/forgot-password">
+
+            Forgot Password?
+
+          </a>
 
         </div>
 
@@ -187,5 +179,4 @@
     </div>
 
   </div>
-
 </div>
