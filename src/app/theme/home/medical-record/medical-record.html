@@ -27,7 +27,7 @@
       </div>
     </div>
   </div>
-  <div class="records-metrics">
+  <div class="records-metrics" *hasPermission="['view:medical-record-stats']">
     <div class="metric-card m-purple">
       <div class="metric-top">
         <div class="metric-icon">
@@ -585,7 +585,6 @@
           type="submit"
           class="btn btn-primary"
           (click)="onSubmit('Draft')"
-          [disabled]="isCreateLoading || isDraftLoading"
           *hasPermission="['edit:medical-record']"
         >
           <svg
@@ -607,7 +606,6 @@
           type="submit"
           class="btn btn-primary"
           (click)="onSubmit('Completed')"
-          [disabled]="isCreateLoading || isDraftLoading"
           *hasPermission="['create:medical-record']"
         >
           <svg

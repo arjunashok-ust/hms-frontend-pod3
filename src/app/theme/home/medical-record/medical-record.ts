@@ -74,9 +74,9 @@ export class MedicalRecordComponent implements OnInit {
 
   constructor(readonly fb: FormBuilder) {
     this.medicalForm = fb.group({
-      patientId: ['', [Validators.required, Validators.pattern(String.raw`PAT-[0-9]{6}`)]],
-      appointmentId: ['', [Validators.required, Validators.pattern(String.raw`APT-[0-9]{6}`)]],
-      doctorId: ['', [Validators.required, Validators.pattern(String.raw`EMP-[0-9]{6}`)]],
+      patientId: ['', [Validators.required, Validators.pattern(`PAT-[0-9]{6}`)]],
+      appointmentId: ['', [Validators.required, Validators.pattern(`APT-[0-9]{6}`)]],
+      doctorId: ['', [Validators.required, Validators.pattern(`EMP-[0-9]{6}`)]],
       complaint: ['', [Validators.required, Validators.pattern(String.raw`^[A-Za-z0-9\-\s,.]+$`)]],
       symptoms: ['', [Validators.required, Validators.pattern(String.raw`^[A-Za-z0-9\-\s,.]+$`)]],
       diagnosis: ['', [Validators.required, Validators.pattern(String.raw`^[A-Za-z0-9\-\s,.]+$`)]],
@@ -111,7 +111,7 @@ export class MedicalRecordComponent implements OnInit {
     // attaching an event listener to appointment form control
     this.medicalForm.get('appointmentId')?.valueChanges.subscribe((value) => {
       if (this.isEditable()) return;
-      let appointment = this.filteredAppointments().find((apt) => {
+      const appointment = this.filteredAppointments().find((apt) => {
         return apt.appointmentId === value;
       });
 
@@ -508,7 +508,7 @@ export class MedicalRecordComponent implements OnInit {
     if (this.isEditable()) {
       this.isDraftLoading.set(true);
 
-      payload.updatedBy = this.employeeId;
+      payload.updatedBy = this.employeeId();
       payload.updatedAt = new Date();
 
       this.medicalRecordService.updateMedicalRecord(payload).subscribe({
@@ -535,7 +535,7 @@ export class MedicalRecordComponent implements OnInit {
       payload.created_at = new Date();
 
       this.medicalRecordService.createMedicalRecord(payload).subscribe({
-        next: (res) => {
+        next: () => {
           this.toast.success('Medical Record Created Sucessfully.');
           this.isCreateLoading.set(false);
 

@@ -17,7 +17,6 @@ import { HasPermissionDirective } from '../../../directive/has-permission.direct
 export class ApprovalComponent implements OnInit {
   adminService: AdminService = inject(AdminService);
   toast: ToastrService = inject(ToastrService);
-  route: Router = inject(Router);
 
   userData = signal<UserEmployeeModel[]>([]);
 
@@ -47,7 +46,6 @@ export class ApprovalComponent implements OnInit {
         if (res.data.length == 0) return;
         this.userData.set(res.data as UserEmployeeModel[]);
         this.totalPages.set(res.totalPages);
-        this.loadUiData();
       },
       error: (error) => {
         this.toast.error(error?.error?.message);
@@ -78,8 +76,7 @@ export class ApprovalComponent implements OnInit {
         this.userData.update((users) =>
           users.map((user) => (user.employeeId === id ? { ...user, status: 'Active' } : user)),
         );
-
-        this.fetchUsersData();
+        this.loadUiData();
         this.toast.success(res.message || 'Account Activated.');
       },
       error: (err) => {
@@ -95,8 +92,7 @@ export class ApprovalComponent implements OnInit {
         this.userData.update((users) =>
           users.map((user) => (user.employeeId === id ? { ...user, status: 'Inactive' } : user)),
         );
-
-        this.fetchUsersData();
+        this.loadUiData();
         this.toast.success(res?.message || 'Application Rejected!');
       },
       error: (err) => {
