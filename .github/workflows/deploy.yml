@@ -1,4 +1,4 @@
-name: Deploy HMS FRONTEND
+name: Deploy HMS_FRONTEND
  
 on:
   push:
