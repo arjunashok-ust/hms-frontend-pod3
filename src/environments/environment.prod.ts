@@ -3,5 +3,5 @@
    before building for production. */
 export const environment = {
   production: true,
-  apiBaseUrl: 'https://REPLACE_WITH_PROD_API_URL',
+  apiBaseUrl: '3.106.77.205',
 };
