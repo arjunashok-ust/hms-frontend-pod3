@@ -2,6 +2,12 @@
 
 This is the frontend client for the Hospital Management System (HMS), a comprehensive web application designed to streamline hospital operations. Built with Angular, this Single Page Application (SPA) provides a responsive, secure, and user-friendly interface for all hospital staff and administrators.
 
+## Project Owner
+
+- **Aswin A S**
+  - GitHub: [AswinAS-308247](https://github.com/AswinAS-308247)
+  - Email: [Aswin.AS2@ust.com](mailto:Aswin.AS2@ust.com)
+
 ## Table of Contents
 
 1.  [About The Project](#about-the-project)
@@ -105,8 +111,3 @@ A typical authenticated API request follows this pipeline:
     - **On `401 Unauthorized` Error**: The `authInterceptor` catches the error, attempts to get a new access token using the refresh token, and automatically retries the original request with the new token. If refreshing fails, the user is logged out.
     - **On Other Errors**: The `errorInterceptor` logs the error, and it is propagated to the service's error handling block, where a user-facing notification is typically triggered.
 
-## Project Maintainers
-
-This project is currently maintained by:
-
-- **[Your Name/Team Name]** - _Project Lead_
