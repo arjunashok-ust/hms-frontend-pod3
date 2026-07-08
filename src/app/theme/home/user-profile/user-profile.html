@@ -7,15 +7,15 @@
       </div>
       <div class="hero-info">
         <span class="panel-subtitle">My Profile</span>
-        <h2>{{ userData?.name }}</h2>
+        <h2>{{ userData()?.name }}</h2>
         <p class="designation">
           <i class="bi bi-briefcase"></i>
-          {{ userData?.designation }}
+          {{ userData()?.designation }}
         </p>
         <div class="hero-badges">
           <span class="status-badge status-active"><span class="status-dot"></span> Active</span>
           <span class="designation-badge">
-            <i class="bi bi-shield-check"></i> {{ userData?.role }}
+            <i class="bi bi-shield-check"></i> {{ userData()?.role }}
           </span>
         </div>
       </div>
@@ -28,7 +28,7 @@
       <div class="stat-icon"><i class="bi bi-envelope-at"></i></div>
       <div class="stat-body">
         <span class="stat-label">Email</span>
-        <h4>{{ userData?.email }}</h4>
+        <h4>{{ userData()?.email }}</h4>
       </div>
     </div>
 
@@ -36,7 +36,7 @@
       <div class="stat-icon"><i class="bi bi-person-badge"></i></div>
       <div class="stat-body">
         <span class="stat-label">Role</span>
-        <h4>{{ userData?.role }}</h4>
+        <h4>{{ userData()?.role }}</h4>
       </div>
     </div>
 
@@ -44,7 +44,7 @@
       <div class="stat-icon"><i class="bi bi-briefcase"></i></div>
       <div class="stat-body">
         <span class="stat-label">Designation</span>
-        <h4>{{ userData?.designation }}</h4>
+        <h4>{{ userData()?.designation }}</h4>
       </div>
     </div>
 
@@ -60,7 +60,7 @@
       <div class="stat-icon"><i class="bi bi-building"></i></div>
       <div class="stat-body">
         <span class="stat-label">Department</span>
-        <h4>{{ userData?.department }}</h4>
+        <h4>{{ userData()?.department }}</h4>
       </div>
     </div>
 
@@ -68,7 +68,7 @@
       <div class="stat-icon"><i class="bi bi-hash"></i></div>
       <div class="stat-body">
         <span class="stat-label">Employee ID</span>
-        <h4>{{ userData?.employeeId }}</h4>
+        <h4>{{ userData()?.employeeId }}</h4>
       </div>
     </div>
 
@@ -76,7 +76,7 @@
       <div class="stat-icon"><i class="bi bi-calendar-check"></i></div>
       <div class="stat-body">
         <span class="stat-label">Joining Date</span>
-        <h4>{{ userData?.joiningDate | date: 'dd/MM/yyyy'}}</h4>
+        <h4>{{ userData()?.joiningDate | date: 'dd/MM/yyyy'}}</h4>
       </div>
     </div>
 
@@ -84,7 +84,7 @@
       <div class="stat-icon"><i class="bi bi-mortarboard"></i></div>
       <div class="stat-body">
         <span class="stat-label">Qualification</span>
-        <h4>{{ userData?.qualification || '—' }}</h4>
+        <h4>{{ userData()?.qualification || '—' }}</h4>
       </div>
     </div>
   </div>
@@ -117,7 +117,7 @@
           <i class="bi bi-person"></i>
           Full Name
         </label>
-        <input type="text" id="name" class="form-input" [value]="userData?.name" readonly />
+        <input type="text" id="name" class="form-input" [value]="userData()?.name" readonly />
       </div>
 
       <div class="form-group">
@@ -125,7 +125,7 @@
           <i class="bi bi-envelope"></i>
           Email Address
         </label>
-        <input type="email" id="email" class="form-input" [value]="userData?.email" readonly />
+        <input type="email" id="email" class="form-input" [value]="userData()?.email" readonly />
       </div>
 
       <div class="form-group">
@@ -133,7 +133,7 @@
           <i class="bi bi-shield-lock"></i>
           Role
         </label>
-        <input type="text" id="role" class="form-input" [value]="userData?.role" readonly />
+        <input type="text" id="role" class="form-input" [value]="userData()?.role" readonly />
       </div>
 
       <div class="form-group">
@@ -141,7 +141,7 @@
           <i class="bi bi-briefcase"></i>
           Designation
         </label>
-        <input type="text" id="designation" class="form-input" [value]="userData?.designation" readonly />
+        <input type="text" id="designation" class="form-input" [value]="userData()?.designation" readonly />
       </div>
 
       <div class="form-group">
@@ -149,7 +149,7 @@
           <i class="bi bi-building"></i>
           Department
         </label>
-        <input type="text" id="department" class="form-input" [value]="userData?.department" readonly />
+        <input type="text" id="department" class="form-input" [value]="userData()?.department" readonly />
       </div>
 
       <div class="form-group">
@@ -157,7 +157,7 @@
           <i class="bi bi-hash"></i>
           Employee ID
         </label>
-        <input type="text" id="employeeCode" class="form-input" [value]="userData?.employeeId" readonly />
+        <input type="text" id="employeeCode" class="form-input" [value]="userData()?.employeeId" readonly />
       </div>
 
       <div class="form-group">
@@ -165,7 +165,7 @@
           <i class="bi bi-calendar-event"></i>
           Joining Date
         </label>
-        <input type="text" id="joiningDate" class="form-input" [value]="userData?.joiningDate | date: 'dd/MM/yyyy'" readonly />
+        <input type="text" id="joiningDate" class="form-input" [value]="userData()?.joiningDate | date: 'dd/MM/yyyy'" readonly />
       </div>
 
       <div class="form-group">
@@ -173,11 +173,11 @@
           <i class="bi bi-mortarboard"></i>
           Qualification
         </label>
-        <input type="text" id="qualification" class="form-input" [value]="userData?.qualification || '—'" readonly />
+        <input type="text" id="qualification" class="form-input" [value]="userData()?.qualification || '—'" readonly />
       </div>
     </div>
 
-    <ng-container *ngIf="userData?.role === 'Doctor' || userData?.role === 'Nurse'">
+    <ng-container *ngIf="userData()?.role === 'Doctor' || userData()?.role === 'Nurse'">
       <div class="section-divider">
         <div class="divider-line"></div>
         <span class="divider-label">
@@ -193,28 +193,28 @@
             <i class="bi bi-clipboard2-pulse"></i>
             Medical Registration No.
           </label>
-          <input type="text" id="medicalReg" class="form-input" [value]="userData?.medicalRegistrationNo" readonly />
+          <input type="text" id="medicalReg" class="form-input" [value]="userData()?.medicalRegistrationNo" readonly />
         </div>
 
-        <div class="form-group" *ngIf="userData?.role === 'Doctor'">
+        <div class="form-group" *ngIf="userData()?.role === 'Doctor'">
           <label class="form-label" for="specialization">
             <i class="bi bi-award"></i>
             Specialization
           </label>
-          <input type="text" id="specialization" class="form-input" [value]="userData?.specialization" readonly />
+          <input type="text" id="specialization" class="form-input" [value]="userData()?.specialization" readonly />
         </div>
 
-        <div class="form-group" *ngIf="userData?.role === 'Doctor'">
+        <div class="form-group" *ngIf="userData()?.role === 'Doctor'">
           <label class="form-label" for="consultFee">
             <i class="bi bi-currency-rupee"></i>
             Consultation Fee
           </label>
-          <input type="text" id="consultFee" class="form-input" [value]="userData?.consultationFee || '—'" readonly />
+          <input type="text" id="consultFee" class="form-input" [value]="userData()?.consultationFee || '—'" readonly />
         </div>
       </div>
     </ng-container>
 
-    <ng-container *ngIf="userData?.role === 'Doctor' && userData?.availabilitySlots?.length">
+    <ng-container *ngIf="userData()?.role === 'Doctor' && userData()?.availabilitySlots?.length">
       <div class="section-divider">
         <div class="divider-line"></div>
         <span class="divider-label">
@@ -225,7 +225,7 @@
       </div>
 
       <div class="slot-chips">
-        <span class="slot-chip active" *ngFor="let slot of userData?.availabilitySlots">
+        <span class="slot-chip active" *ngFor="let slot of userData()?.availabilitySlots">
           {{ slot }}
         </span>
       </div>
@@ -246,14 +246,14 @@
         Current Status
       </label>
       <input type="text" id="status" class="form-input" value="Active" readonly />
-      <div class="info-box" *ngIf="userData?.role !== 'Admin'">
+      <div class="info-box" *ngIf="userData()?.role !== 'Admin'">
         <i class="bi bi-info-circle"></i>
         Email and role changes are restricted. Please reach out to the administrator for any updates.
       </div>
     </div>
 
     <div class="form-footer">
-      <button type="button" class="btn btn-primary" (click)="updateProfile(userData?.email??'')" *hasPermission="['edit:profile']">
+      <button type="button" class="btn btn-primary" (click)="updateProfile(userData()?.email??'')" *hasPermission="['edit:profile']">
         <i class="bi bi-pencil-square"></i> Edit Profile
       </button>
       <button type="button" class="btn btn-danger-outline" (click)="logout()">

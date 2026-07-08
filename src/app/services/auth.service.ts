@@ -57,6 +57,13 @@ export class AuthService {
       .pipe(catchError((error) => this.handleError(error)));
   }
 
+  // forgot password
+  resetPassword(data: any): Observable<any> {
+    return this.http
+      .post(`${this.api.backend_url}/auth/reset-password`, data)
+      .pipe(catchError((error) => this.handleError(error)));
+  }
+
   logout(): Observable<any> {
     return this.http
       .get(`${this.api.backend_url}/auth/logout`)

@@ -23,8 +23,10 @@
             >password is required.</span
           >
         </small>
-        <p class="forgot-password"></p>
-        <button type="submit">{{isLoading?'Logging in...':'Login'}}</button>
+        <p class="forgot-password" routerLink="/forgot-password">forgot password?</p>
+        <button type="submit" [disabled]="loginForm.invalid || isLoading()">
+          {{isLoading()?'Logging in...':'Login'}}
+        </button>
         <span class="signup"
           >Doesn't have an account? <b><a routerLink="/signUp">SignUp</a></b></span
         >
@@ -33,3 +35,4 @@
   </div>
   <div class="cover-image"></div>
 </div>
+<app-forgot-password *ngIf="isForgotPassword()"></app-forgot-password>

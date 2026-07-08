@@ -1,17 +1,18 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormGroup, Validators, ReactiveFormsModule, FormBuilder } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { Router, RouterLink, RouterModule } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { PermissionService } from '../../services/permission.service';
+import { ForgotPasswordComponent } from '../home/modal/forgot-password/forgot-password';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.htm',
   styleUrl: './login.css',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, RouterLink, RouterModule],
+  imports: [ReactiveFormsModule, CommonModule, RouterLink, RouterModule, ForgotPasswordComponent],
 })
 export class LoginComponent implements OnInit {
   loginForm: FormGroup;
@@ -21,7 +22,8 @@ export class LoginComponent implements OnInit {
   router: Router = inject(Router);
   toast: ToastrService = inject(ToastrService);
 
-  isLoading: boolean = false;
+  isLoading = signal(false);
+  isForgotPassword = signal(false);
 
   constructor(readonly fb: FormBuilder) {
     this.loginForm = this.fb.group({
@@ -32,6 +34,12 @@ export class LoginComponent implements OnInit {
 
   ngOnInit(): void {
     localStorage.clear();
+
+    const nav = history.state;
+
+    if (nav !== undefined) {
+      this.isForgotPassword.set(nav.isForgotPassword);
+    }
   }
 
   onSubmit() {
@@ -40,18 +48,17 @@ export class LoginComponent implements OnInit {
       this.loginForm.markAllAsTouched();
       return;
     }
+    this.isLoading.set(true);
 
     const payload = {
       email: this.loginForm.value.email,
       password: this.loginForm.value.password,
     };
 
-
     this.auth.login(payload).subscribe({
       next: (loginRes) => {
-        this.isLoading = true;
         if (loginRes.status !== 'Active') {
-          this.isLoading = false;
+          this.isLoading.set(false);
           this.toast.info('Your account is not activated yet,Please contact the admin');
           this.router.navigate(['/login']);
           return;
@@ -68,34 +75,34 @@ export class LoginComponent implements OnInit {
             this.permission.setPermission(res.role_permissions);
 
             if (loginRes.role === 'Patient') {
-              this.isLoading = false;
+              this.isLoading.set(false);
               this.toast.error('Patients are allowed to log in only through the mobile app.');
               this.router.navigate(['/access-denied']);
               return;
             }
-          
+
             if (loginRes.firstLogin) {
-              this.isLoading = false;
+              this.isLoading.set(false);
               this.toast.info('Set your password');
               this.router.navigate(['/password-modal']);
             } else {
-              this.isLoading = false;
-              this.toast.success('Login Sucessfull');
+              this.isLoading.set(false);
+              this.toast.success('Login Successfull');
               this.router.navigate(['/profile']);
             }
           },
           error: (err) => {
-            this.isLoading = false;
+            this.isLoading.set(false);
             this.toast.error('Error fetching user permissions');
           },
         });
       },
       error: (error) => {
         if (error.status === 401) {
-          this.isLoading=false;
+          this.isLoading.set(false);
           this.toast.warning('Invalid email or password');
         } else {
-          this.isLoading=false;
+          this.isLoading.set(false);
           this.toast.error(error?.error?.message || error?.message || 'Login Failed!');
         }
       },

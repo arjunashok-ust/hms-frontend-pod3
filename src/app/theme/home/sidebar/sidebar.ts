@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { RouterLink, RouterModule } from '@angular/router';
 import { UserService } from '../../../services/user.service';
 import { NodeModel } from '../../../models/ui.model';
@@ -13,17 +13,14 @@ import { ToastrService } from 'ngx-toastr';
 })
 export class SidebarComponent implements OnInit {
   userService: UserService = inject(UserService);
-  cd: ChangeDetectorRef = inject(ChangeDetectorRef);
   toast: ToastrService = inject(ToastrService);
-
-  nodeData: NodeModel[] | null = null;
+  nodeData = signal<NodeModel[] | null>(null);
 
   ngOnInit() {
     const role = localStorage.getItem('role') ?? '';
     this.userService.getNodes(role).subscribe({
       next: (res) => {
-        this.nodeData = res;
-        this.cd.detectChanges();
+        this.nodeData.set(res);
       },
       error: (err) => {
         this.toast.error(err.error.message);

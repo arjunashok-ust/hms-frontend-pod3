@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { UserService } from '../../../services/user.service';
 import { UserEmployeeModel } from '../../../models/user.model';
 import { CommonModule } from '@angular/common';
@@ -14,19 +14,17 @@ import { HasPermissionDirective } from '../../../directive/has-permission.direct
 })
 export class UserProfileComponent implements OnInit {
   userService: UserService = inject(UserService);
-  cd: ChangeDetectorRef = inject(ChangeDetectorRef);
   toast: ToastrService = inject(ToastrService);
   route: Router = inject(Router);
-  userData: UserEmployeeModel | null = null;
+  userData = signal<UserEmployeeModel | null>(null);
 
   ngOnInit() {
     const email = localStorage.getItem('email') ?? '';
     this.userService.getUserProfile(email).subscribe({
       next: (res) => {
-        this.userData = res;
-        localStorage.setItem('employeeId', this.userData?.employeeId ?? '');
+        this.userData.set(res);
+        localStorage.setItem('employeeId', this.userData()?.employeeId ?? '');
         localStorage.setItem('name', this.userData?.name ?? '');
-        this.cd.detectChanges();
       },
       error: (err) => {
         this.toast.error(err?.error?.message);

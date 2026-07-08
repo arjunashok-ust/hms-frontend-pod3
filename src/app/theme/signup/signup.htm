@@ -22,7 +22,7 @@
         </small>
         <select id="roles" formControlName="role" aria-label="role">
           <option value="" disabled>Role</option>
-          <ng-container *ngFor="let role of roles_data"
+          <ng-container *ngFor="let role of roles_data()"
             ><option [ngValue]="role.role_name" *ngIf="role.role_name != 'Admin'">
               {{ role.role_name }}
             </option>
@@ -62,7 +62,7 @@
         >
         <select id="department" formControlName="department" aria-label="department">
           <option value="" disabled>Department</option>
-          <ng-container *ngFor="let department of departments_data">
+          <ng-container *ngFor="let department of departments_data()">
             <option
               [ngValue]="department.department_name"
               *ngIf="department.department_name !== 'Administration'"
@@ -119,7 +119,7 @@
         >
           <option value="" disabled>Specialization</option>
           <option
-            *ngFor="let specialization of specializations_data"
+            *ngFor="let specialization of specializations_data()"
             [ngValue]="specialization.specialization_name"
           >
             {{ specialization.specialization_name }}
@@ -187,7 +187,7 @@
             <label for="selected-option">{{ slot }}</label>
           </div>
         </div>
-        <input type="submit" [value]="isLoading?'Processing...':'Signup'" placeholder="Signup" />
+        <input type="submit" [value]="isLoading()?'Processing...':'Signup'" placeholder="Signup" />
         <span class="login"
           >Already have an account? <b><a routerLink="/login">Login</a></b></span
         >
