@@ -1,0 +1,27 @@
+name: Deploy HMS FRONTEND
+ 
+on:
+  push:
+    branches:
+      - feature/sprint_5/ayush
+ 
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+ 
+    steps:
+      - name: Deploy EC2 FRONTEND
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.EC2_AYUSH_HOST }}
+          username: ${{ secrets.EC2_AYUSH_USER }}
+          key: ${{ secrets.EC2_AYUSH_KEY }}
+          script: |
+            cd hms_project/hms-frontend-pod3
+            git pull origin feature/sprint_5/ayush
+            npm ci
+            sudo ng build --configuration production
+            sudo rm -rf /var/www/hms/*
+            sudo cp -r dist/hms-frontend/browser/* /var/www/hms/
+            sudo systemctl restart nginx
+ 
