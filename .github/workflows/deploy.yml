@@ -1,3 +1,5 @@
+#CD FOR HMS BACKEND
+
 name: Deploy HMS_FRONTEND
  
 on:
@@ -25,3 +27,4 @@ jobs:
             sudo cp -r dist/hms-frontend/browser/* /var/www/hms/
             sudo systemctl restart nginx
  
+
