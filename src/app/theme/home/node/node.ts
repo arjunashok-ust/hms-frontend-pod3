@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -20,7 +20,9 @@ const NODE_COLOR_MAP: string[] = ['purple', 'blue', 'green', 'rose', 'amber', 'c
   templateUrl: 'node.html',
   styleUrls: ['node.css'],
   imports: [CommonModule, FormsModule, ReactiveFormsModule, HasPermissionDirective],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
+
 export class NodeComponent implements OnInit {
   adminService: AdminService = inject(AdminService);
   userService: UserService = inject(UserService);
@@ -96,7 +98,7 @@ export class NodeComponent implements OnInit {
   openCreate(): void {
     this.selectedNode.set(null);
     this.isEditing.set(true);
-    this.nodeForm.reset({ name: '', path: '', icon: '', order: this.nodes.length + 1 });
+    this.nodeForm.reset({ name: '', path: '', icon: '', order: this.nodes().length + 1 });
   }
 
   openEdit(node: NodeModel): void {
@@ -138,12 +140,12 @@ export class NodeComponent implements OnInit {
         next: (updated: NodeModel) => {
           const idx = this.nodes().findIndex((n) => n.name === updated.name);
           if (idx !== -1) {
-            this.nodes.update((nodes) => nodes.map((node, i) => (i === idx ? updated : node)));
+            this.nodes.update((currentNodes) => currentNodes.map((node, i) => (i === idx ? updated : node)));
           }
           this.selectedNode.set(updated);
           this.isSaving.set(false);
           this.isEditing.set(false);
-          this.toast.success('Node', 'Updated successfully.');
+          this.toast.success('Updated successfully.','Node');
         },
         error: (err: unknown) => {
           console.error('Failed to update node', err);
@@ -165,7 +167,7 @@ export class NodeComponent implements OnInit {
           this.selectedNode.set(created);
           this.isSaving.set(false);
           this.isEditing.set(false);
-          this.toast.success('Node', 'Created successfully.');
+          this.toast.success('Created successfully.','Node');
         },
         error: (err: unknown) => {
           console.error('Failed to create node', err);
@@ -188,7 +190,7 @@ export class NodeComponent implements OnInit {
           this.isEditing.set(false);
         }
         this.isDeleting.set(false);
-        this.toast.success('Node', 'Deleted successfully.');
+        this.toast.success('Deleted successfully.','Node');
       },
       error: (err: unknown) => {
         console.error('Failed to delete node', err);
