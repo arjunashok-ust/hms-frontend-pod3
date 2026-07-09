@@ -53,7 +53,7 @@ export class AppointmentComponent implements OnInit {
 
   page = signal(1);
   totalPages = signal(1);
-  limit = signal(5);
+  limit = signal(10);
   searchText = signal('');
 
   employeeId = signal(localStorage.getItem('employeeId'));
