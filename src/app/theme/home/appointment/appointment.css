@@ -886,6 +886,16 @@ small {
   color: #94a3b8;
 }
 
+.option-title {
+  font-size: 14px;
+  color: #141414;
+}
+
+.option-value {
+  font-size: 10px;
+  color: #c4c4c4;
+}
+
 @media (max-width: 1200px) {
   .content-grid {
     grid-template-columns: 1fr;
