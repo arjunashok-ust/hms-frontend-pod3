@@ -24,7 +24,7 @@ export class EmployeeComponent implements OnInit {
 
   page = signal(1);
   totalPages = signal(1);
-  limit = signal(10);
+  limit = signal(5);
 
   employeeData = signal<EmployeeModel[]>([]);
   departmentsData = signal<DepartmentModel[]>([]);
